@@ -1,9 +1,11 @@
 Package: bbsBayes
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
+Title: An R Package for North American Breeding Bird Survey Bayesian Data Analysis
+Version: 0.1.2016
+Authors@R: c(person("Brandon P.M.", "Edwards", role = c("aut", "cre"),
+                     email = "edwardsb@uoguelph.ca"),
+              person("Adam C.", "Smith", role = "aut",
+                      email = "adam.smith2@canada.ca"))
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 License: What license is it under?

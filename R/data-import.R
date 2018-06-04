@@ -1,0 +1,4 @@
+getBBSdata <- function()
+{
+  data(bbs)
+}
