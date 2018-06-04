@@ -6,6 +6,10 @@ Authors@R: c(person("Brandon P.M.", "Edwards", role = c("aut", "cre"),
                      email = "edwardsb@uoguelph.ca"),
               person("Adam C.", "Smith", role = "aut",
                       email = "adam.smith2@canada.ca"))
+Depends: jagsUI
+SystemRequirements: JAGS (http://mcmc-jags.sourceforge.net)
+URL: https://github.com/BrandonEdwards/bbsBayes
+NeedsCompilation: no
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 License: What license is it under?
