@@ -1,0 +1,15 @@
+citHeader("To cite bbsBayes in publication, please use:")
+
+citEntry(
+  entry = "article",
+  title = "bbsBayes: An R Package for North American Breeding Bird Survey Bayesian Data Analysis",
+  volume = "6",
+  number = "1",
+  journal = "Journal of Open Research Software",
+  author = "Smith, Adam C. and Edwards, Brandon P.M.",
+  year = "2018",
+  textVersion = paste("Smith, A.C., Edwards, B.P.M. (2018).",
+                      "bbsBayes: An R Package for North American Breeding Bird Survey Bayesian Data Analysis.",
+                      "Journal of Open Research Software.",
+                      "6(1).")
+)
