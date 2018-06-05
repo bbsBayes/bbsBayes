@@ -1,4 +1,4 @@
-cleanData <- function()
+cleanData <- function(reduced = TRUE)
 {
   datacounts <- datacount.sp
   names(datacounts) <- c("sp","eng","nprov","nroute","nyear","nrouteyears","rungroup")
@@ -6,7 +6,15 @@ cleanData <- function()
   bcan <- birds
   rcan <- route
 
-  sptorun <- datacounts[which(datacounts$nroute > 10 & datacounts$nyear > 15),]
+  sptorun <- NULL
+  if (reduced)
+  {
+    sptorun <- datacounts[which(datacounts$nroute > 10 & datacounts$nyear > 15),]
+  }
+  else
+  {
+    sptorun <- datacounts
+  }
 
   sptorun[,"sp1f"] <- sptorun[,"eng"]
 
@@ -25,19 +33,10 @@ cleanData <- function()
   sptorun2[,"unmod"] <- ""
   sptorun2[,"mod"] <- ""
 
-  #write.csv(sptorun2,"species.run.continental.sum2.csv",row.names = F)
-
   unmod.sp <- NA
   w <- 1
 
-  #species <- sptorun[which(sptorun$rungroup == stream),"eng"]
   species <- sptorun[,"eng"]
-
-  reruntest <- T #changing to false will overwrite any previous model runs
-
-  #if (stream %in% c(2,4)){species <- rev(species)}
-
-  #spsob = sob[grep(sob$Survey,pattern = "BBS"),"Species.Name"]
 
   sv <- ls()
   sv <- c(sv,"sv")
@@ -46,6 +45,19 @@ cleanData <- function()
               unmod.sp = unmod.sp,
               sptorun = sptorun,
               sptorun2 = sptorun2))
+}
+
+gamPrep <- function(yminsc, ymaxsc, nyears, nknots)
+{
+  # GAM basis function
+  knotsX<- seq(yminsc,ymaxsc,length=(nknots+2))[-c(1,nknots+2)]
+  X_K<-(abs(outer(seq(yminsc,ymaxsc,length = nyears),knotsX,"-")))^3
+  X_OMEGA_all<-(abs(outer(knotsX,knotsX,"-")))^3
+  X_svd.OMEGA_all<-svd(X_OMEGA_all)
+  X_sqrt.OMEGA_all<-t(X_svd.OMEGA_all$v  %*% (t(X_svd.OMEGA_all$u)*sqrt(X_svd.OMEGA_all$d)))
+  X.basis<-t(solve(X_sqrt.OMEGA_all,t(X_K)))
+
+  return(X.basis)
 }
 
 getSpeciesIndex <- function(speciesList, speciesToFind)
@@ -60,10 +72,10 @@ getSpeciesIndex <- function(speciesList, speciesToFind)
 }
 
 speciesDataPrep <- function(species, unmod.sp,
-                            sptorun, sptorun2, speciesIndex)
+                            sptorun, sptorun2, speciesIndex,
+                            gam = FALSE,
+                            nknots = 9)
 {
-  #Eventually we will want a list of species to loop through.
-  #For now, just the one.
   sp.1 <- species[speciesIndex]
   cat(paste(sp.1,date(),"\n"))
   sp.2 <- sptorun[sptorun$eng == sp.1,"sp"]
@@ -74,6 +86,7 @@ speciesDataPrep <- function(species, unmod.sp,
                     "-",
                     sp.1,sep = "")
 
+  dir.create("output")
   dir.create(dir.spsp)
 
   datacounts <- datacount.sp
@@ -111,8 +124,6 @@ speciesDataPrep <- function(species, unmod.sp,
   pR <- dta$pR
   pR2 <- dta$pR2
   nobservers <- as.integer(dta$nobservers)
-  #midyear2 <- floor(mean(range(spsp.f$year)))
-  nknots = 9
 
   ymin = range(spsp.f$year)[1]
   ymax = range(spsp.f$year)[2]
@@ -139,23 +150,20 @@ speciesDataPrep <- function(species, unmod.sp,
     yminscpred = scaledyear[as.character(1)]
   }
 
-  # GAM basis function
-  knotsX<- seq(yminsc,ymaxsc,length=(nknots+2))[-c(1,nknots+2)]
-  X_K<-(abs(outer(seq(yminsc,ymaxsc,length = nyears),knotsX,"-")))^3
-  X_OMEGA_all<-(abs(outer(knotsX,knotsX,"-")))^3
-  X_svd.OMEGA_all<-svd(X_OMEGA_all)
-  X_sqrt.OMEGA_all<-t(X_svd.OMEGA_all$v  %*% (t(X_svd.OMEGA_all$u)*sqrt(X_svd.OMEGA_all$d)))
-  X.basis<-t(solve(X_sqrt.OMEGA_all,t(X_K)))
-
   nstrata=length(unique(spsp.f$strat))
 
-  return(list(nknots = nknots,
-              X.basis = X.basis,
-              spsp.f = spsp.f,
-              ymin = ymin,
-              ymax = ymax,
-              pR.wts = pR.wts,
-              nobservers = nobservers,
-              dir = dir.spsp,
-              sp.1 = sp.1))
+  toReturn <- list(spsp.f = spsp.f,
+                   ymin = ymin,
+                   ymax = ymax,
+                   pR.wts = pR.wts,
+                   nobservers = nobservers,
+                   dir = dir.spsp,
+                   sp.1 = sp.1)
+  if (gam)
+  {
+    X.basis <- gamPrep(yminsc, ymaxsc, nyears, nknots)
+    toReturn <- c(toReturn, list(nknots = nknots, X.basis = X.basis))
+  }
+
+  return(toReturn)
 }
