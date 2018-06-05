@@ -9,7 +9,6 @@ autoBBS <- function(speciesList)
 
   spNum <- 1
   totalSp <- length(speciesList)
-  dir.create("output")
   for (index in speciesIndex)
   {
     cat(paste("Species ", spNum, "/", totalSp, ": ", sep = ""))
