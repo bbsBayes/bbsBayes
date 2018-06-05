@@ -59,21 +59,22 @@ getSpeciesIndex <- function(speciesList, speciesToFind)
   return(indexList)
 }
 
-speciesDataPrep <- function(bbsDataPath, species, unmod.sp,
+speciesDataPrep <- function(species, unmod.sp,
                             sptorun, sptorun2, speciesIndex)
 {
   #Eventually we will want a list of species to loop through.
   #For now, just the one.
   sp.1 <- species[speciesIndex]
-  print(paste(sp.1,date()))
+  cat(paste(sp.1,date(),"\n"))
   sp.2 <- sptorun[sptorun$eng == sp.1,"sp"]
   sp.1f <- sptorun[sptorun$eng == sp.1,"sp1f"]
 
-  dir.spsp <- paste("output/xGAMreparam",sp.2,sep = "")
+  dir.spsp <- paste("output/",
+                    format(Sys.Date(), format="%Y-%m-%d"),
+                    "-",
+                    sp.1,sep = "")
 
   dir.create(dir.spsp)
-
-  load(bbsDataPath)
 
   datacounts <- datacount.sp
   names(datacounts) <- c("sp","eng","nprov","nroute","nyear","nrouteyears","rungroup")
