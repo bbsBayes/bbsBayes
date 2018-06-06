@@ -78,7 +78,7 @@ speciesDataPrep <- function(species, unmod.sp,
                             nknots = 9)
 {
   sp.1 <- species[speciesIndex]
-  cat(paste(sp.1,date(),"\n"))
+  cat(paste(sp.1, modelName, date(),"\n"))
   sp.2 <- sptorun[sptorun$eng == sp.1,"sp"]
   sp.1f <- sptorun[sptorun$eng == sp.1,"sp1f"]
 
