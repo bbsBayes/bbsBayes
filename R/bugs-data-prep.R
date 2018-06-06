@@ -72,8 +72,8 @@ bugsdataprep <- function(sp.1 = sp.1,sp.1f = sp.1,
       pR[pR$strat == p,"p.r.ever"] <-  pR[pR$strat == p,"nr.ever"]/(pR[pR$strat == p,"nr.ever"]+ pR[pR$strat == p,"nr.never"])
       pR[pR$strat == p,"nry.ever"] <-  length(spsp.c[which(spsp.c$strat.name == p & spsp.c$TotalInd > 0),"rt.uni.y"])
 
-      pR[pR$strat == p,"fy.wspecies"] <-  min(spsp.routes.ever[spsp.routes.ever$strat.name == p,"fyr_rt_run"])
-      pR[pR$strat == p,"max.nry"] <-  max(spsp.routes.ever[spsp.routes.ever$strat.name == p,"nyr_rt_run"])
+      pR[pR$strat == p,"fy.wspecies"] <-  min(spsp.routes.ever[spsp.routes.ever$strat.name == p,"fyr_rt_run"], showWarnings = FALSE)
+      pR[pR$strat == p,"max.nry"] <-  max(spsp.routes.ever[spsp.routes.ever$strat.name == p,"nyr_rt_run"], showWarnings = FALSE)
 
       pR[pR$strat == p,"meanry.ever"] <-  length(spsp.c[which(spsp.c$strat.name == p & spsp.c$TotalInd > 0),"rt.uni.y"])/pR[pR$strat == p,"nr.ever"]
     }
