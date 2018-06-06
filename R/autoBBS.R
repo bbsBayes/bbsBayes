@@ -26,7 +26,7 @@ autoBBS <- function(speciesList = NULL,
                                  data.cleaned$unmod.sp,
                                  data.cleaned$sptorun,
                                  data.cleaned$sptorun2,
-                                 index)
+                                 index, modelName)
     spNum <- spNum + 1
   }
 }
