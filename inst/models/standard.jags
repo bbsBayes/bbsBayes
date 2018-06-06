@@ -1,4 +1,4 @@
-standard <- function()
+model
 {
   #### counts and overdispersion effects  ###### Link-Sauer model with nested observer-route effect
   for( k in 1 : ncounts )
