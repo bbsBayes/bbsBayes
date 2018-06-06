@@ -1,5 +1,15 @@
-autoBBS <- function(speciesList)
+autoBBS <- function(speciesList = NULL,
+                    modelName = NULL,
+                    adaptSteps = 500,
+                    burnInSteps = 20000,
+                    nChains = 3,
+                    numSavedSteps = 2000,
+                    thinSteps = 10,
+                    nIter = ceiling( ( numSavedSteps * thinSteps ) / nChains ),
+                    parallel = TRUE)
 {
+  processInput(speciesList, modelName)
+
   cat("Cleaning data...")
   data.cleaned <- cleanData()
   cat("done!\n")
