@@ -73,20 +73,25 @@ getSpeciesIndex <- function(speciesList, speciesToFind)
 
 speciesDataPrep <- function(species, unmod.sp,
                             sptorun, sptorun2, speciesIndex,
+                            modelName,
                             gam = FALSE,
                             nknots = 9)
 {
   sp.1 <- species[speciesIndex]
-  cat(paste(sp.1,date(),"\n"))
+  cat(paste(sp.1, modelName, date(),"\n"))
   sp.2 <- sptorun[sptorun$eng == sp.1,"sp"]
   sp.1f <- sptorun[sptorun$eng == sp.1,"sp1f"]
 
   dir.spsp <- paste("output/",
+                    sp.1,
+                    "-",
+                    modelName,
+                    "-",
                     format(Sys.Date(), format="%Y-%m-%d"),
                     "-",
-                    sp.1,sep = "")
+                    format(Sys.time(), format="%H%M%S"), sep = "")
 
-  dir.create("output")
+  dir.create("output", showWarnings = FALSE)
   dir.create(dir.spsp)
 
   datacounts <- datacount.sp

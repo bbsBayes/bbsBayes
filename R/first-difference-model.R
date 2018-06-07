@@ -1,0 +1,89 @@
+fd <- function()
+{
+  for( k in 1 : ncounts )
+  {
+    log(lambda[k]) <-  obs[strat[k],obser[k]] + eta*firstyr[k] + strata[strat[k]] + yeareffect[strat[k],year[k]]
+    noise[k] ~ dnorm(0.0, taunoise)
+
+    count[k] ~ dpois(lambda[k])
+    #----------------------------------#
+    fcount[k] ~ dpois(lambda[k])
+    err[k] <- pow(count[k]-lambda[k],2)/lambda[k]
+    ferr[k] <- pow(fcount[k]-lambda[k],2)/lambda[k]
+    fzero[k] <- equals(fcount[k],0)
+    loglik[k] <- logdensity.pois(count[k], lambda[k])
+    #----------------------------------#
+  }
+
+
+  nfzero <- sum(fzero[1:ncounts])
+  gof <- sum(err[1:ncounts])
+  fgof <- sum(ferr[1:ncounts])
+  diffgof <- gof-fgof
+  posdiff <- step(diffgof)
+
+  taunoise ~ dgamma(0.001,0.001)
+  nu ~ dgamma(2, 0.1) #prior suggested by Bill Link in email dated March 27, 2018
+  sdnoise <- 1 / pow(taunoise, 0.5)
+  tauobs ~ dgamma(0.001,0.001)
+  sdobs <- 1 / pow(tauobs, 0.5)
+  eta ~ dnorm( 0.0,1.0E-6)
+  STRATA ~ dnorm( 0.0,0.01)
+  taustrata ~ dgamma(0.001,0.0001) #<- 1/pow(sdbeta,2)#
+  sdstrata <- 1/pow(taubeta,0.5)#~ dunif(0.001,10)
+  taubeta ~ dgamma(1,0.0001) #
+
+
+
+  #---------------------------------------------------------#
+
+
+
+  #----------------------------------#
+  #### stratum effects  ######
+  for( s in 1 : nstrata )
+  {
+    #### observer effects  ######
+    for( i in 1 : nobservers[s] )
+    {
+      obs[s,i] ~ dnorm( 0.0,tauobs)
+    }
+
+
+    #### end observer effects  ######
+
+    sdyear[s] <- 1/pow(tauyear[s],0.5)
+    sdyear.eps[s] <- 1/pow(tauyear.eps[s],0.5)
+    tauyear[s] ~ dgamma(0.001,0.001)
+    tauyear.eps[s] <- tauyear[s]*0.0001
+
+    ### stratum-level priors
+
+    strata[s] ~ dnorm(STRATA,taustrata)
+    #tauyear[s] <- 1/pow(sdyear[s],2)
+    #sdyear[s] ~ dunif(0.00001,5)
+    expstrata[s] <- exp(strata[s])
+    overdisp[s] <- 1 + 1/(expstrata[s]*taunoise)
+
+    #### stratum specific year effects  ######
+
+    yeareffect[s,ymin] ~ dnorm(0,tauyear.eps[s])
+
+    for( j in (ymin+1) : ymax )
+    {
+      yeareffect[s,j] ~ dnorm(yeareffect[s,j-1],tauyear[s])
+    }
+
+    #-------------------------------------------------#
+  }
+
+  for( i in 1 : nstrata )
+  {
+    for( t in ymin : ymax )
+    {
+      n[i,t] <- nonzeroweight[i]*exp(yeareffect[i,t] + 0.5*sdnoise*sdnoise+ 0.5*sdobs*sdobs)
+    }
+  }
+
+  #-------------------------------------------------#
+}
