@@ -1,5 +1,5 @@
-autoBBS <- function(speciesList = NULL,
-                    modelName = NULL,
+autoBBS <- function(species = NULL,
+                    model = NULL,
                     outputDir = NULL,
                     inits = NULL,
                     adaptSteps = 500,
@@ -10,17 +10,17 @@ autoBBS <- function(speciesList = NULL,
                     nIter = ceiling( ( numSavedSteps * thinSteps ) / nChains ),
                     runParallelChains = FALSE)
 {
-  processInput(speciesList, modelName, outputDir)
+  processAutoBBSInput(species, model, outputDir)
 
   cat("Cleaning data...")
   data.cleaned <- cleanData()
   cat("done!\n")
 
   speciesIndex <- getSpeciesIndex(data.cleaned$species,
-                                  speciesList)
+                                  species)
 
   spNum <- 1
-  totalSp <- length(speciesList)
+  totalSp <- length(species)
   for (index in speciesIndex)
   {
     cat(paste("Species ", spNum, "/", totalSp, ": ", sep = ""))
@@ -28,7 +28,7 @@ autoBBS <- function(speciesList = NULL,
                                  data.cleaned$unmod.sp,
                                  data.cleaned$sptorun,
                                  data.cleaned$sptorun2,
-                                 index, modelName, outputDir)
+                                 index, model, outputDir)
 
     data.jags <- list(ncounts = nrow(data.prep$spsp.f),
                       nstrata=length(unique(data.prep$spsp.f$strat)),
@@ -41,7 +41,7 @@ autoBBS <- function(speciesList = NULL,
                       year = data.prep$spsp.f$year,
                       firstyr = data.prep$spsp.f$firstyr,
                       nobservers = data.prep$nobservers)
-    if (tolower(modelName) == "standard")
+    if (tolower(model) == "standard")
     {
       data.jags <- c(data.jags, list(fixedyear = midyear))
     }
