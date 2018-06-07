@@ -31,7 +31,7 @@ processModel <- function(model)
   }
 }
 
-processOutputDir <- function(out)
+processOutputDir <- function(outputDir)
 {
   # Check for output directory
   if (is.null(outputDir))
