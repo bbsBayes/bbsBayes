@@ -73,7 +73,7 @@ getSpeciesIndex <- function(speciesList, speciesToFind)
 
 speciesDataPrep <- function(species, unmod.sp,
                             sptorun, sptorun2, speciesIndex,
-                            modelName,
+                            modelName, outputDir,
                             gam = FALSE,
                             nknots = 9)
 {
@@ -82,7 +82,12 @@ speciesDataPrep <- function(species, unmod.sp,
   sp.2 <- sptorun[sptorun$eng == sp.1,"sp"]
   sp.1f <- sptorun[sptorun$eng == sp.1,"sp1f"]
 
-  dir.spsp <- paste("output/",
+  dir1 <- outputDir
+  if (is.null(outputDir))
+  {
+    dir1 <- getwd()
+  }
+  dir.spsp <- paste(dir1, "/",
                     sp.1,
                     "-",
                     modelName,
@@ -91,7 +96,7 @@ speciesDataPrep <- function(species, unmod.sp,
                     "-",
                     format(Sys.time(), format="%H%M%S"), sep = "")
 
-  dir.create("output", showWarnings = FALSE)
+  dir.create(dir1, showWarnings = FALSE)
   dir.create(dir.spsp)
 
   datacounts <- datacount.sp

@@ -1,5 +1,6 @@
 autoBBS <- function(speciesList = NULL,
                     modelName = NULL,
+                    outputDir = NULL,
                     inits = NULL,
                     adaptSteps = 500,
                     burnInSteps = 20000,
@@ -9,7 +10,7 @@ autoBBS <- function(speciesList = NULL,
                     nIter = ceiling( ( numSavedSteps * thinSteps ) / nChains ),
                     runParallelChains = FALSE)
 {
-  processInput(speciesList, modelName)
+  processInput(speciesList, modelName, outputDir)
 
   cat("Cleaning data...")
   data.cleaned <- cleanData()
@@ -27,7 +28,7 @@ autoBBS <- function(speciesList = NULL,
                                  data.cleaned$unmod.sp,
                                  data.cleaned$sptorun,
                                  data.cleaned$sptorun2,
-                                 index, modelName)
+                                 index, modelName, outputDir)
 
     data.jags <- list(ncounts = nrow(data.prep$spsp.f),
                       nstrata=length(unique(data.prep$spsp.f$strat)),
@@ -71,6 +72,7 @@ autoBBS <- function(speciesList = NULL,
                             burnInSteps,
                             thinSteps,
                             runParallelChains)
+    save(jagsjob, file = paste(data.prep$dir, "/jags.Rdata", sep=""))
     spNum <- spNum + 1
   }
 }
