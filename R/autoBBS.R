@@ -28,6 +28,7 @@
 #'   minimum of number of chains and number of available cores.
 #'   JAGS console output is supressed with run in parallel.
 #' @return The sum of \code{x} and \code{y}
+#' @export
 #' @examples
 #' add(1, 1)
 #' add(10, 1)
