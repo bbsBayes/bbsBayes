@@ -1,10 +1,10 @@
-runModel <- function(data.jags, initVals, sp.params, mod,
+runModel <- function(data, initVals, params, mod,
                      nChains, nAdapt, nIter, nBurnin, nThin, parallel)
 {
   return(jags(data = data.jags,
               inits = initVals,
-              parameters.to.save = sp.params,
-              model.file = system.file("models","standard.jags",package="bbsBayes"),
+              parameters.to.save = params,
+              model.file = system.file("models",mod,package="bbsBayes"),
               n.chains = nChains,
               n.adapt = nAdapt,
               n.iter = nIter + nBurnin,
