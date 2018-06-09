@@ -36,6 +36,7 @@ autoBBS <- function(species = NULL,
                     model = NULL,
                     outputDir = NULL,
                     inits = NULL,
+                    params = c("n"),
                     adaptSteps = 500,
                     burnInSteps = 20000,
                     nChains = 3,
@@ -80,32 +81,16 @@ autoBBS <- function(species = NULL,
       data.jags <- c(data.jags, list(fixedyear = midyear))
     }
 
-    sp.params = c("sdbeta",
-                  "strata",
-                  "STRATA",
-                  "sdstrata",
-                  "sdobs",
-                  "obs",
-                  "n",
-                  "posdiff",
-                  "sdnoise",
-                  "eta",
-                  "overdisp",
-                  "nfzero",
-                  "gof",
-                  "fgof",
-                  "diffgof")
-
-    jagsjob <- runModel(data.jags,
-                            NULL,
-                            sp.params,
-                            mod = standard,
-                            nChains,
-                            adaptSteps,
-                            nIter,
-                            burnInSteps,
-                            thinSteps,
-                            runParallelChains)
+    jagsjob <- runModel(data = data.jags,
+                            initVals = NULL,
+                            params = params,
+                            mod = models[[model]],
+                            nchains = nChains,
+                            nAdapt = adaptSteps,
+                            nIter = nIter,
+                            nBurnin = burnInSteps,
+                            nThin = thinSteps,
+                            parallel = runParallelChains)
     save(jagsjob, file = paste(data.prep$dir, "/jags.Rdata", sep=""))
     spNum <- spNum + 1
   }
