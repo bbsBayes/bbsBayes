@@ -1,4 +1,13 @@
-dataFTP <- function()
+#' Fetch Breeding Bird Survey dataset
+#'
+#' \code{fetchBBSdata} uses File Transfer Protocol (FTP) to fetch Breeding Bird
+#'  Survey data from the United States Geological Survey (USGS) FTP site. This
+#'  is the raw data that is uploaded to the site before any analyses are performed.
+#'
+#'  @return Large list (5 elements) containing point count data, route data, weather
+#'    data, and species data. This is a very large file.
+#'  @export
+fetchBBSdata <- function()
 {
   baseURL <- "ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/"
   version <- 2017 #Figure out how to make this dynamic
@@ -106,19 +115,4 @@ dataFTP <- function()
               routes = routes,
               weather = weather,
               species = species))
-}
-
-saveBBSdata <- function(outputDir = NULL)
-{
-  processOutputDir(outputDir)
-
-  dir1 <- outputDir
-  if (is.null(dir1))
-  {
-    dir1 <- getwd()
-  }
-  toSave <- c(birds, datacount.sp, route, sp, st.areas, midyear)
-
-  save(toSave,
-       file = paste(dir1,"/bbsData.RData", sep =""))
 }
