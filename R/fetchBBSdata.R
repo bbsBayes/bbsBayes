@@ -4,9 +4,10 @@
 #'  Survey data from the United States Geological Survey (USGS) FTP site. This
 #'  is the raw data that is uploaded to the site before any analyses are performed.
 #'
-#'  @return Large list (5 elements) containing point count data, route data, weather
+#' @return Large list (5 elements) containing point count data, route data, weather
 #'    data, and species data. This is a very large file.
-#'  @export
+#' @export
+#'
 fetchBBSdata <- function()
 {
   baseURL <- "ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/"
