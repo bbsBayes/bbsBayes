@@ -91,7 +91,7 @@ fetchBBSdata <- function()
   pb <- progress_bar$new(
     format = "Downloading species data [:bar] :percent eta: :eta",
     clear = FALSE,
-    total = 4,
+    total = 6,
     width = 80)
   pb$tick(0)
 
@@ -110,6 +110,11 @@ fetchBBSdata <- function()
                       header = F,
                       width = c(6,-1,5,-1,50,-1,50,-1,50,-1,50,-1,50,-1,50,-1,50)); pb$tick()
   unlink(temp); pb$tick()
+
+  names(species) <- c("seq","aou","english","french","spanish","order","family","genus","species"); pb$tick()
+
+  # this reads in the USGS BBS ftp site species file
+  species[,"sp.bbs"] <- as.integer(as.character(species[,"aou"])); pb$tick()
 
   return(list(bird = bird,
               route = route,
