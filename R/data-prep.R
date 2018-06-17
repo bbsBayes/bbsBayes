@@ -71,24 +71,27 @@ getSpeciesIndex <- function(speciesList, speciesToFind)
   return(indexList)
 }
 
-speciesDataPrep <- function(species, unmod.sp,
-                            sptorun, sptorun2, speciesIndex,
+getSpeciesAOU <- function(species, sp.eng)
+{
+  return(species[species$english == sp.eng, "sp.bbs"])
+}
+
+speciesDataPrep <- function(sp.eng,
                             modelName, outputDir,
                             gam = FALSE,
                             nknots = 9)
 {
-  sp.1 <- species[speciesIndex]
-  cat(paste(sp.1, modelName, date(),"\n"))
-  sp.2 <- sptorun[sptorun$eng == sp.1,"sp"]
-  sp.1f <- sptorun[sptorun$eng == sp.1,"sp1f"]
+  cat(paste(sp.eng, modelName, date(),"\n")) # output information about run and time
+  #sp.1f <- sptorun[sptorun$eng == sp.1,"sp1f"] #English name again
 
+  # We may not be creating an output directory after all. This block might get deleted
   dir1 <- outputDir
   if (is.null(outputDir))
   {
     dir1 <- getwd()
   }
   dir.spsp <- paste(dir1, "/",
-                    sp.1,
+                    sp.eng,
                     "-",
                     modelName,
                     "-",
@@ -99,18 +102,13 @@ speciesDataPrep <- function(species, unmod.sp,
   dir.create(dir1, showWarnings = FALSE)
   dir.create(dir.spsp)
 
-  datacounts <- datacount.sp
-  names(datacounts) <- c("sp","eng","nprov","nroute","nyear","nrouteyears","rungroup")
-
-  bcan <- birds
-  rcan <- route
-
-  dta <- bugsdataprep(sp.1 = sp.1,sp.1f = sp.1f, sp.2 = sp.2,
+  dta <- bugsdataprep(sp.eng = sp.eng,
+                      sp.aou = getSpeciesAOU(species, sp.eng),
                       dir.spsp = dir.spsp, outdata = T,
                       minNRoutes = 3,# require 3 or more routes where species has been observed
                       minMaxRouteYears = 3,# require at least 1 route with non-zero obs of species in 3 or more years
                       minMeanRouteYears = 1,
-                      bcan = bcan, rcan = rcan)# require an average of 1 year per route with the species observed (setting this to 1 effectively removes this criterion)
+                      bird = bird, route = route)# require an average of 1 year per route with the species observed (setting this to 1 effectively removes this criterion)
 
   if (nrow(dta$output) == 0 | length(unique(dta$output$strat)) < 4)
   {

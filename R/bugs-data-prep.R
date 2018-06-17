@@ -1,29 +1,33 @@
-bugsdataprep <- function(sp.1 = sp.1,sp.1f = sp.1,
-                         sp.2 = sp.2,dir.spsp = dir.spsp,
+bugsdataprep <- function(sp.eng = sp.eng,
+                         sp.aou = sp.aou,
+                         dir.spsp = dir.spsp,
                          strata.rem = NA,
                          outdata = F,
                          minNRoutes = 3,
                          minMaxRouteYears = 5,
-                         minMeanRouteYears = 3, bcan = bcan,
-                         rcan = rcan) {
-
-  #sp.1 = sp.1;sp.1f = sp.1f; sp.2 = sp.2;dir.spsp = dir.spsp; strata.rem = NA; outdata = F
+                         minMeanRouteYears = 3, bird = bird,
+                         route = route) {
 
 
-  #load("bbs data 2012.RData")
+  spsp <- bird[which(bird$AOU == sp.aou),] # Gets all observations of the species of interest
+  names(spsp)[which(names(spsp) == "StopTotal")] <- "TotalInd" # change header to totalInd
 
-  spsp <- bcan[which(bcan$sp.bbs == sp.2),]
+  # Create unique identifiers for each observation
+  spsp$rt.uni.y <- paste(spsp$StateNum, spsp$Route, spsp$Year, sep = "-")
+  spsp$rt.uni <- paste(spsp$StateNum, spsp$Route, sep = "-")
+  route$rt.uni.y <- paste(route$StateNum, route$Route, route$Year, sep = "-")
+  route$rt.uni <- paste(route$StateNum, route$Route, sep = "-")
 
-  names(spsp)[which(names(spsp) == "SpeciesTotal")] <- "TotalInd"
-  ##################
 
 
-
-
-  spsp.c <- merge(rcan,spsp[,-which(names(spsp) %in% c("countrynum",
+  # create a dataframe that combines BOTH route information for ANY route a species has been seen
+  #   for ALL years of a given route regardlless if the species was seen that year.
+  # For years where the species was seen on that given route, keep the relevant count information
+  # Otherwise, it will just be filled with NA
+  spsp.c <- merge(route,spsp[,-which(names(spsp) %in% c("CountryNum",
                                                        "rt.uni.y",
                                                        "rt.uni",
-                                                       "statenum",
+                                                       "StateNum",
                                                        "Route",
                                                        "RPID",
                                                        "Year"))],
@@ -32,8 +36,10 @@ bugsdataprep <- function(sp.1 = sp.1,sp.1f = sp.1,
                          "runyear",
                          "BCR"),all.x = T)
 
+  # Now those NAs get turned to 0s. We have presence/absence, bitchezz
   spsp.c[which(is.na(spsp.c$TotalInd)),"TotalInd"] <- 0
 
+  # Adds some more inormation I suppose?
   spsp.c <- merge(spsp.c,st.areas[,-which(names(st.areas) == "state")],
                   by.x = c("state","BCR","countrynum"),
                   by.y = c("RegionCode","bcr","countrynum")) ### currently strips off anything in BCR3 canada because those strata are not in st.areas
@@ -50,13 +56,16 @@ bugsdataprep <- function(sp.1 = sp.1,sp.1f = sp.1,
 
 
   #spsp.routes <- unique(spsp.c[,"rt.uni.ob"])
-  spsp.routes.ever <- unique(spsp.c[which(spsp.c$TotalInd != 0),c("strat.name","rt.uni")])
-  spsp.routes.never <- unique(spsp.c[-which(spsp.c$rt.uni %in% spsp.routes.ever$rt.uni),c("strat.name","rt.uni")])
+  spsp.routes.ever <- unique(spsp.c[which(spsp.c$TotalInd != 0),c("strat.name","rt.uni")]) #routes which have had at least 1 species counted
+  spsp.routes.never <- unique(spsp.c[-which(spsp.c$rt.uni %in% spsp.routes.ever$rt.uni),c("strat.name","rt.uni")]) #routes that have not had this species before
   #tmp <-
-  spsp.c2 <- spsp.c[which(spsp.c$rt.uni %in% spsp.routes.ever$rt.uni),]
+  spsp.c2 <- spsp.c[which(spsp.c$rt.uni %in% spsp.routes.ever$rt.uni),] #All data counts for routes which has had seen
 
+  # first year each given route was run
   miny.rt <- tapply(spsp.c2[,"runyear"],spsp.c2[,"rt.uni"],min)
   miny.df <- data.frame(rt.uni = names(miny.rt),fyr_rt_run = as.integer(miny.rt))
+
+  # number of times the species was seen on the given route since it has run
   n.yr.rt <- tapply(spsp.c[which(spsp.c$TotalInd != 0),"runyear"],spsp.c[which(spsp.c$TotalInd != 0),"rt.uni"],length)
   n.yr.df <- data.frame(rt.uni = names(n.yr.rt),nyr_rt_run = as.integer(n.yr.rt))
 
@@ -65,20 +74,31 @@ bugsdataprep <- function(sp.1 = sp.1,sp.1f = sp.1,
     spsp.routes.ever <- merge(spsp.routes.ever,miny.df,by = "rt.uni")
     spsp.routes.ever <- merge(spsp.routes.ever,n.yr.df,by = "rt.uni")
 
+    # this will give some ever/never stats PER STRATUM
     pR <- data.frame(strat = unique(spsp.c$strat.name), nr.ever = NA, nr.never = NA, p.r.ever = NA,nry.ever = NA,meanry.ever = NA)
     for(p in unique(spsp.c$strat.name)) {
+      # routes ever observed in this strata
       pR[pR$strat == p,"nr.ever"] <- nrow(spsp.routes.ever[spsp.routes.ever$strat.name == p,])
+      # routes never observed in this strata
       pR[pR$strat == p,"nr.never"] <- nrow(spsp.routes.never[spsp.routes.never$strat.name == p,])
+
+      # proportion of routes that have ever observed by stratum
       pR[pR$strat == p,"p.r.ever"] <-  pR[pR$strat == p,"nr.ever"]/(pR[pR$strat == p,"nr.ever"]+ pR[pR$strat == p,"nr.never"])
+
+      # total counts that have included this species (ex: 5 routes in year 1, 4 in year 2 = 9 overall)
       pR[pR$strat == p,"nry.ever"] <-  length(spsp.c[which(spsp.c$strat.name == p & spsp.c$TotalInd > 0),"rt.uni.y"])
 
-      pR[pR$strat == p,"fy.wspecies"] <-  min(spsp.routes.ever[spsp.routes.ever$strat.name == p,"fyr_rt_run"], showWarnings = FALSE)
-      pR[pR$strat == p,"max.nry"] <-  max(spsp.routes.ever[spsp.routes.ever$strat.name == p,"nyr_rt_run"], showWarnings = FALSE)
+      # still don't know what these do
+      pR[pR$strat == p,"fy.wspecies"] <-  min(spsp.routes.ever[spsp.routes.ever$strat.name == p,"fyr_rt_run"])
+      pR[pR$strat == p,"max.nry"] <-  max(spsp.routes.ever[spsp.routes.ever$strat.name == p,"nyr_rt_run"])
+
 
       pR[pR$strat == p,"meanry.ever"] <-  length(spsp.c[which(spsp.c$strat.name == p & spsp.c$TotalInd > 0),"rt.uni.y"])/pR[pR$strat == p,"nr.ever"]
     }
 
     pR[,"strat"] <- as.character(pR[,"strat"])
+
+    #gets rid of infinite values
     pR[which(pR$fy.wspecies > 2100),"fy.wspecies"] <- NA
     pR[which(pR$max.nry < 0),"max.nry"] <- NA
 
@@ -100,6 +120,9 @@ bugsdataprep <- function(sp.1 = sp.1,sp.1f = sp.1,
 
 
     rts.used <- unique(spsp.2[,c("rt.uni","strat.name")])
+
+    #get number of routes used per strata
+    #incidentally this ends up being all the strata that are used
     rts.summary <- tapply(rts.used$rt.uni,rts.used$strat.name,length)
     nrts.used <- data.frame(strat.name = names(rts.summary),nroutes.used = as.integer(rts.summary))
 
@@ -112,25 +135,21 @@ bugsdataprep <- function(sp.1 = sp.1,sp.1f = sp.1,
 
     spsp.2 <- spsp.temp.2
 
-
-    #spsp.2 <- spsp.2[spsp.2$Year > 1969,]  # in 2011 analysis, this is where the pre-1970 data was stripped off...
-
+    #the nth year
     spsp.2[,"yr"] <- (spsp.2[,"runyear"]+1)-min(spsp.2[,"runyear"])
+
+
     spsp.2[,"count"] <- spsp.2[,c("TotalInd")]
     #spsp.f <- spsp.2[which(spsp.2$strat.name %in% pR[which(pR$nr.ever > 2 & pR$meanry.ever >= 2),"strat"]),]
 
 
     spsp.f <- spsp.2
 
+  }
+  else{spsp.f <- spsp.c[-c(1:nrow(spsp.c)),]}
 
-
-    #spsp.f <- spsp.2[which(spsp.2$strat.name %in% pR[which(pR$meanry.ever > 2),"strat"]),] ### a different criterion
-    #if (length(pR[which(pR$nr.ever > 3 & pR$meanry.ever > 2),"strat"]) < 2 & length(pR[which(pR$nr.ever > 3 & pR$meanry.ever > 2),"strat"]) > 0) {
-    # spsp.f <- spsp.2[which(spsp.2$strat.name %in% pR[which(pR$nr.ever > 3),"strat"]),]
-    #}   ### this was used in 2011 analysis as a way to get > 1 strata for a handful of species
-
-  }else{spsp.f <- spsp.c[-c(1:nrow(spsp.c)),]}
-  if(nrow(spsp.f) > 0) {
+  if(nrow(spsp.f) > 0)
+    {
     spsp.f[,"stratcode"] <- spsp.f[,"St_12"]
     spsp.f[,"stratum"] <- as.numeric(factor(spsp.f$St_12))
 
@@ -209,6 +228,8 @@ bugsdataprep <- function(sp.1 = sp.1,sp.1f = sp.1,
 
 
     tmp <- unique(spsp.f[,c("stratum","rt.uni.ob")])
+
+    # number of observers per stratum
     nobservers <- tapply(tmp$rt.uni.ob,tmp$stratum,length)
 
 

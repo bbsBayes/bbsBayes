@@ -47,6 +47,14 @@ autoBBS <- function(species = NULL,
 {
   processAutoBBSInput(species, model, outputDir)
 
+  #' bbs <- fetchBBSdata()
+  #' bird <- bbs$bird
+  #' route <- bbs$route
+  #' routes <- bbs$routes
+  #' weather <- bbs$weather
+  #' species <- bbs$species
+
+
   cat("Cleaning data...")
   data.cleaned <- cleanData()
   cat("done!\n")
