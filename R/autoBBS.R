@@ -35,6 +35,7 @@
 autoBBS <- function(species = NULL,
                     model = NULL,
                     bbs.data = NA,
+                    stratify.by = "bbs",
                     outputDir = NULL,
                     inits = NULL,
                     params = c("n"),
@@ -60,7 +61,7 @@ autoBBS <- function(species = NULL,
   remove(bbs.data)
 
   cat("Stratify...\n")
-  data.strat <- stratify(bird, route, routes, speciesList)
+  data.strat <- stratify(bird, route, routes, stratify.by)
 
   spNum <- 1
   totalSp <- length(species)
