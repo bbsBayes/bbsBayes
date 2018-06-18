@@ -69,9 +69,11 @@ autoBBS <- function(species = NULL,
     cat(paste("Species ", spNum, "/", totalSp, ": ", sep = ""))
     cat(paste(sp, model, date(),"\n")) # output information about run and time
 
+    dir <- createRunDirectory(outputDir, sp, model)
+
     data.jags <- speciesDataPrep(sp,
                                  model,
-                                 outputDir,
+                                 dir,
                                  data.strat$birds,
                                  data.strat$route,
                                  data.strat$st.areas,
@@ -87,7 +89,7 @@ autoBBS <- function(species = NULL,
                             nBurnin = burnInSteps,
                             nThin = thinSteps,
                             parallel = runParallelChains)
-    save(jagsjob, file = paste(data.prep$dir, "/jags.Rdata", sep=""))
+    save(jagsjob, file = paste(dir, "/jags.Rdata", sep=""))
     spNum <- spNum + 1
   }
 }
