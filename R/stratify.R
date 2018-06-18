@@ -1,17 +1,17 @@
-stratify <- function(bird, route, routes, species)
+stratify <- function(bird, route, routes, stratify.by = "bbs")
 {
-  s.area <- read.csv(system.file("strat",
-                                 "Strata_US_Can_new_strata_names.csv",
+  s.area <- read.csv(system.file("strata",
+                                 strata[[stratify.by]],
                                  package="bbsBayes"),
                      stringsAsFactors = F)
 
-  regs <- read.csv(system.file("strat",
+  regs <- read.csv(system.file("helper",
                                "RegionCodes.csv",
                                package="bbsBayes"),
                    stringsAsFactors = F)
 
-  abrev <- read.csv(system.file("strat",
-                                "state abrev.csv",
+  abrev <- read.csv(system.file("helper",
+                                "state_abrev.csv",
                                 package="bbsBayes"),
                     stringsAsFactors = F)
 
@@ -25,7 +25,14 @@ stratify <- function(bird, route, routes, species)
 
   st1 <- st1[which(!is.na(st1$St_12)),]
 
-  st1[,"strat.name"] <- paste(st1[,"State"],"-BCR",st1[,"bcr"],sep = "")
+  if (stratify.by == "bbs")
+  {
+    st1[,"strat.name"] <- paste(st1[,"State"],"-BCR",st1[,"bcr"],sep = "")
+  }
+  else if (stratify.by == "state")
+  {
+    st1[,"strat.name"] <- paste(st1[,"State"],sep = "")
+  }
 
   st2 <- merge(st1,regs,by.x = "State",by.y = "State.Prov.TerrName", all.x = T)
   st2[which(st2$prov == "BCR7"),"countrynum"] <- 124
