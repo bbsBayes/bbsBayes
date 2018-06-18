@@ -34,6 +34,7 @@
 #' add(10, 1)
 autoBBS <- function(species = NULL,
                     model = NULL,
+                    bbs.data = NA,
                     outputDir = NULL,
                     inits = NULL,
                     params = c("n"),
@@ -47,53 +48,40 @@ autoBBS <- function(species = NULL,
 {
   processAutoBBSInput(species, model, outputDir)
 
-  #' bbs <- fetchBBSdata()
-  #' bird <- bbs$bird
-  #' route <- bbs$route
-  #' routes <- bbs$routes
-  #' weather <- bbs$weather
-  #' species <- bbs$species
+  if (is.na(bbs.data))
+  {
+    bbs.data <- fetchBBSdata()
+  }
+  bird <- bbs.data$bird
+  route <- bbs.data$route
+  routes <- bbs.data$routes
+  weather <- bbs.data$weather
+  speciesList <- bbs.data$species
+  remove(bbs.data)
 
-
-  cat("Cleaning data...")
-  data.cleaned <- cleanData()
-  cat("done!\n")
-
-  speciesIndex <- getSpeciesIndex(data.cleaned$species,
-                                  species)
+  cat("Stratify...\n")
+  data.strat <- stratify(bird, route, routes, speciesList)
 
   spNum <- 1
   totalSp <- length(species)
-  for (index in speciesIndex)
+  for (sp in species)
   {
     cat(paste("Species ", spNum, "/", totalSp, ": ", sep = ""))
-    data.prep <- speciesDataPrep(data.cleaned$species,
-                                 data.cleaned$unmod.sp,
-                                 data.cleaned$sptorun,
-                                 data.cleaned$sptorun2,
-                                 index, model, outputDir)
+    cat(paste(sp, model, date(),"\n")) # output information about run and time
 
-    data.jags <- list(ncounts = nrow(data.prep$spsp.f),
-                      nstrata=length(unique(data.prep$spsp.f$strat)),
-                      ymin = data.prep$ymin,
-                      ymax = data.prep$ymax,
-                      nonzeroweight = data.prep$pR.wts$p.r.ever,
-                      count = as.integer(data.prep$spsp.f$count),
-                      strat = as.integer(data.prep$spsp.f$strat),
-                      obser = as.integer(data.prep$spsp.f$obser),
-                      year = data.prep$spsp.f$year,
-                      firstyr = data.prep$spsp.f$firstyr,
-                      nobservers = data.prep$nobservers)
-    if (tolower(model) == "standard")
-    {
-      data.jags <- c(data.jags, list(fixedyear = midyear))
-    }
+    data.jags <- speciesDataPrep(sp,
+                                 model,
+                                 outputDir,
+                                 data.strat$birds,
+                                 data.strat$route,
+                                 data.strat$st.areas,
+                                 speciesList)
 
     jagsjob <- runModel(data = data.jags,
                             initVals = NULL,
                             params = params,
                             mod = models[[model]],
-                            nchains = nChains,
+                            nChains = nChains,
                             nAdapt = adaptSteps,
                             nIter = nIter,
                             nBurnin = burnInSteps,
