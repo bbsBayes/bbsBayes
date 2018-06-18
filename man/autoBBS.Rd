@@ -4,10 +4,11 @@
 \alias{autoBBS}
 \title{Automatically run a BBS analysis for a given species}
 \usage{
-autoBBS(species = NULL, model = NULL, outputDir = NULL, inits = NULL,
-  params = c("n"), adaptSteps = 500, burnInSteps = 20000, nChains = 3,
-  numSavedSteps = 2000, thinSteps = 10, nIter = ceiling((numSavedSteps *
-  thinSteps)/nChains), runParallelChains = FALSE)
+autoBBS(species = NULL, model = NULL, bbs.data = NA, outputDir = NULL,
+  inits = NULL, params = c("n"), adaptSteps = 500, burnInSteps = 20000,
+  nChains = 3, numSavedSteps = 2000, thinSteps = 10,
+  nIter = ceiling((numSavedSteps * thinSteps)/nChains),
+  runParallelChains = FALSE)
 }
 \arguments{
 \item{species}{Character strings or vector of character strings of what
