@@ -1,7 +1,7 @@
 runModel <- function(data, initVals, params, mod,
                      nChains, nAdapt, nIter, nBurnin, nThin, parallel)
 {
-  return(jags(data = data.jags,
+  return(jags(data = data,
               inits = initVals,
               parameters.to.save = params,
               model.file = system.file("models",mod,package="bbsBayes"),
