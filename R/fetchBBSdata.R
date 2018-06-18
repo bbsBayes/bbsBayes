@@ -20,7 +20,7 @@ fetchBBSdata <- function()
   pb <- progress_bar$new(
     format = "Downloading count data   [:bar] :percent eta: :eta",
     clear = FALSE,
-    total = nrow(bfiles),
+    total = nrow(bfiles) + 2,
     width = 80)
   pb$tick(0)
 
@@ -42,6 +42,9 @@ fetchBBSdata <- function()
       bird <- rbind(bird,data)
     }
   }
+
+  names(bird)[which(tolower(names(bird)) == "countrynum")] = "countrynum"; pb$tick()
+  names(bird)[which(tolower(names(bird)) == "statenum")] = "statenum"; pb$tick()
 
   ################################################################
   # Route List Data
@@ -68,7 +71,7 @@ fetchBBSdata <- function()
   pb <- progress_bar$new(
     format = "Downloading weather data [:bar] :percent eta: :eta",
     clear = FALSE,
-    total = 6,
+    total = 8,
     width = 80)
   pb$tick(0)
 
@@ -84,6 +87,8 @@ fetchBBSdata <- function()
   # removes some rows from weather that are associated with the removed
   #   routes above (mini-routes etc.)
   route <- merge(routes, weather, by = c("CountryNum","StateNum","Route")); pb$tick()
+  names(route)[which(tolower(names(route)) == "countrynum")] = "countrynum"; pb$tick()
+  names(route)[which(tolower(names(route)) == "statenum")] = "statenum"; pb$tick
 
   ################################################################
   # Species Data
