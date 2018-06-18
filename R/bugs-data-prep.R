@@ -28,8 +28,8 @@ bugsdataprep <- function(sp.eng = sp.eng,
   spsp.c[which(is.na(spsp.c$TotalInd)),"TotalInd"] <- 0
 
   spsp.c <- merge(spsp.c,st.areas[,-which(names(st.areas) == "state")],
-                  by.x = c("state","BCR","countrynum"),
-                  by.y = c("RegionCode","bcr","countrynum")) ### currently strips off anything in BCR3 canada because those strata are not in st.areas
+                  by.x = c("state","countrynum"),
+                  by.y = c("RegionCode","countrynum")) ### currently strips off anything in BCR3 canada because those strata are not in st.areas
 
   if (!is.na(strata.rem)) {spsp.c <- spsp.c[-which(spsp.c$strata.name %in% strata.rem),] }
 
@@ -92,8 +92,6 @@ bugsdataprep <- function(sp.eng = sp.eng,
     #incidentally this ends up being all the strata that are used
     rts.summary <- tapply(rts.used$rt.uni,rts.used$strat.name,length)
     nrts.used <- data.frame(strat.name = names(rts.summary),nroutes.used = as.integer(rts.summary))
-
-    aw <- data.frame(unique(spsp.2[,c("Area","strat.name","state","BCR","St_12")]))
 
     spsp.temp.2 <- merge(spsp.2,pR[,c("strat","p.r.ever","meanry.ever","max.nry")], by.x = "strat.name", by.y = "strat",all.x = T)
 
@@ -169,7 +167,7 @@ bugsdataprep <- function(sp.eng = sp.eng,
     if (outdata == T) {write.csv(output,paste(dir.spsp,"\\",sp.eng," prebugsdata.csv", sep = ""))
       write.csv(nrts.used,paste(dir.spsp,"\\",sp.eng," number of routes used by stratum.csv", sep = ""),row.names = F)
     }
-    return(list(output = output, pR.wts = pR.wts, aw = aw, pR = pR,pR2 = pR2, nobservers = nobservers, nrts.used = nrts.used)) #adjmat = adjmat,LT5.strata = LT5.strata, num = num, adj = adj, sumNumNeigh = sumNumNeigh
+    return(list(output = output, pR.wts = pR.wts, pR = pR,pR2 = pR2, nobservers = nobservers, nrts.used = nrts.used)) #adjmat = adjmat,LT5.strata = LT5.strata, num = num, adj = adj, sumNumNeigh = sumNumNeigh
   }else
   {
     output <- spsp.f

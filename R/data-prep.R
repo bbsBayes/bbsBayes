@@ -20,7 +20,6 @@ speciesDataPrep <- function(sp.eng,
   spsp.f <- dta$output
   a.wts <- dta$a.wts
   pR.wts <- dta$pR.wts
-  aw <- dta$aw
   pR <- dta$pR
   pR2 <- dta$pR2
   nobservers <- as.integer(dta$nobservers)
