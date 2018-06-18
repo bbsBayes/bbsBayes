@@ -1,106 +1,12 @@
-cleanData <- function(reduced = TRUE)
-{
-  datacounts <- datacount.sp
-  names(datacounts) <- c("sp","eng","nprov","nroute","nyear","nrouteyears","rungroup")
-
-  bcan <- birds
-  rcan <- route
-
-  sptorun <- NULL
-  if (reduced)
-  {
-    sptorun <- datacounts[which(datacounts$nroute > 10 & datacounts$nyear > 15),]
-  }
-  else
-  {
-    sptorun <- datacounts
-  }
-
-  sptorun[,"sp1f"] <- sptorun[,"eng"]
-
-  for(j in grep(" (",sptorun$eng,fixed = T))
-  {
-    sptorun[j,"sp1f"] <- strsplit(sptorun[j,"sp1f"]," (",fixed = T)[[1]][1]
-  }
-
-  for(j in grep(") ",sptorun$eng,fixed = T))
-  {
-    sptorun[j,"sp1f"] <- strsplit(sptorun[j,"sp1f"],") ",fixed = T)[[1]][1]
-    sptorun[j,"sp1f"] <- gsub(sptorun[j,"sp1f"],pattern = "(",replacement = "",fixed = T)
-  }
-
-  sptorun2 <- sptorun
-  sptorun2[,"unmod"] <- ""
-  sptorun2[,"mod"] <- ""
-
-  unmod.sp <- NA
-  w <- 1
-
-  species <- sptorun[,"eng"]
-
-  sv <- ls()
-  sv <- c(sv,"sv")
-
-  return(list(species = species,
-              unmod.sp = unmod.sp,
-              sptorun = sptorun,
-              sptorun2 = sptorun2))
-}
-
-gamPrep <- function(yminsc, ymaxsc, nyears, nknots)
-{
-  # GAM basis function
-  knotsX<- seq(yminsc,ymaxsc,length=(nknots+2))[-c(1,nknots+2)]
-  X_K<-(abs(outer(seq(yminsc,ymaxsc,length = nyears),knotsX,"-")))^3
-  X_OMEGA_all<-(abs(outer(knotsX,knotsX,"-")))^3
-  X_svd.OMEGA_all<-svd(X_OMEGA_all)
-  X_sqrt.OMEGA_all<-t(X_svd.OMEGA_all$v  %*% (t(X_svd.OMEGA_all$u)*sqrt(X_svd.OMEGA_all$d)))
-  X.basis<-t(solve(X_sqrt.OMEGA_all,t(X_K)))
-
-  return(X.basis)
-}
-
-getSpeciesIndex <- function(speciesList, speciesToFind)
-{
-  indexList <- NULL
-  for (species in speciesToFind)
-  {
-    indexList <- c(indexList, match(species, speciesList))
-  }
-
-  return(indexList)
-}
-
-getSpeciesAOU <- function(species, sp.eng)
-{
-  return(species[species$english == sp.eng, "sp.bbs"])
-}
-
 speciesDataPrep <- function(sp.eng,
-                            modelName, outputDir,
-                            gam = FALSE,
+                            modelName,
+                            dir.spsp,
+                            birds,
+                            route,
+                            st.areas,
+                            species,
                             nknots = 9)
 {
-  cat(paste(sp.eng, modelName, date(),"\n")) # output information about run and time
-  #sp.1f <- sptorun[sptorun$eng == sp.1,"sp1f"] #English name again
-
-  # We may not be creating an output directory after all. This block might get deleted
-  dir1 <- outputDir
-  if (is.null(outputDir))
-  {
-    dir1 <- getwd()
-  }
-  dir.spsp <- paste(dir1, "/",
-                    sp.eng,
-                    "-",
-                    modelName,
-                    "-",
-                    format(Sys.Date(), format="%Y-%m-%d"),
-                    "-",
-                    format(Sys.time(), format="%H%M%S"), sep = "")
-
-  dir.create(dir1, showWarnings = FALSE)
-  dir.create(dir.spsp)
 
   dta <- bugsdataprep(sp.eng = sp.eng,
                       sp.aou = getSpeciesAOU(species, sp.eng),
@@ -108,22 +14,8 @@ speciesDataPrep <- function(sp.eng,
                       minNRoutes = 3,# require 3 or more routes where species has been observed
                       minMaxRouteYears = 3,# require at least 1 route with non-zero obs of species in 3 or more years
                       minMeanRouteYears = 1,
-                      bird = bird, route = route)# require an average of 1 year per route with the species observed (setting this to 1 effectively removes this criterion)
-
-  if (nrow(dta$output) == 0 | length(unique(dta$output$strat)) < 4)
-  {
-    unmod.sp[w] <- sp.1
-    species.l <- read.csv("species.run.continental.sum2.csv",stringsAsFactors = F)
-    species.l[which(species.l$sp == sp.2),"unmod"] <- "no data"
-    write.csv(species.l,"species.run.continental.sum2.csv",row.names = F)
-    w <- w+1
-    n.sv <- ls()
-    n.sv <- n.sv[-which(n.sv %in% sv)]
-
-    rm(list = n.sv)
-    gc(verbose = F)
-    next
-  }
+                      birds = birds, route = route,
+                      st.areas = st.areas)# require an average of 1 year per route with the species observed (setting this to 1 effectively removes this criterion)
 
   spsp.f <- dta$output
   a.wts <- dta$a.wts
@@ -160,18 +52,36 @@ speciesDataPrep <- function(sp.eng,
 
   nstrata=length(unique(spsp.f$strat))
 
-  toReturn <- list(spsp.f = spsp.f,
+  toReturn <- list(ncounts = nrow(spsp.f),
+                   nstrata=length(unique(spsp.f$strat)),
                    ymin = ymin,
                    ymax = ymax,
-                   pR.wts = pR.wts,
-                   nobservers = nobservers,
-                   dir = dir.spsp,
-                   sp.1 = sp.1)
-  if (gam)
+                   nonzeroweight = pR.wts$p.r.ever,
+                   count = as.integer(spsp.f$count),
+                   strat = as.integer(spsp.f$strat),
+                   obser = as.integer(spsp.f$obser),
+                   year = spsp.f$year,
+                   firstyr = spsp.f$firstyr,
+                   nobservers = nobservers)
+
+  if (tolower(modelName) == "standard")
   {
-    X.basis <- gamPrep(yminsc, ymaxsc, nyears, nknots)
+    toReturn <- c(toReturn,
+                   list(fixedyear = median(unique(birds$Year))))
+  }
+
+  if (tolower(modelName) == "gam")
+  {
+    knotsX<- seq(yminsc,ymaxsc,length=(nknots+2))[-c(1,nknots+2)]
+    X_K<-(abs(outer(seq(yminsc,ymaxsc,length = nyears),knotsX,"-")))^3
+    X_OMEGA_all<-(abs(outer(knotsX,knotsX,"-")))^3
+    X_svd.OMEGA_all<-svd(X_OMEGA_all)
+    X_sqrt.OMEGA_all<-t(X_svd.OMEGA_all$v  %*% (t(X_svd.OMEGA_all$u)*sqrt(X_svd.OMEGA_all$d)))
+    X.basis<-t(solve(X_sqrt.OMEGA_all,t(X_K)))
+
     toReturn <- c(toReturn, list(nknots = nknots, X.basis = X.basis))
   }
 
   return(toReturn)
 }
+
