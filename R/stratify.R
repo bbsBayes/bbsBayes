@@ -40,15 +40,22 @@ stratify <- function(bbs_data, stratify_by = "bbs")
                                 package="bbsBayes"),
                     stringsAsFactors = F)
 
+  pb <- progress_bar$new(
+    format = "Stratifying data   [:bar] :percent eta: :eta",
+    clear = FALSE,
+    total = nrow(s_area) + 33,
+    width = 80)
+  pb$tick(0)
+
   # area weights, strata names in st files
-  st1 <- merge(s_area,abrev,by.x = c("country","prov"),by.y = c("country","code"),all = T)
+  st1 <- merge(s_area,abrev,by.x = c("country","prov"),by.y = c("country","code"),all = T); pb$tick()
 
   # These also may be a product of just this particular stratifcation
-  st1[which(st1$prov == "NS" & st1$country == "CA"),"State"] <- "Nova Scotia Prince Edward Island"
-  st1[which(st1$prov == "NS" & st1$country == "CA"),"prov"] <- "NSPE"
-  st1[which(st1$prov == "BCR7"),"State"] <- "BCR-7"
+  st1[which(st1$prov == "NS" & st1$country == "CA"),"State"] <- "Nova Scotia Prince Edward Island"; pb$tick()
+  st1[which(st1$prov == "NS" & st1$country == "CA"),"prov"] <- "NSPE"; pb$tick()
+  st1[which(st1$prov == "BCR7"),"State"] <- "BCR-7"; pb$tick()
 
-  st1 <- st1[which(!is.na(st1$St_12)),]
+  st1 <- st1[which(!is.na(st1$St_12)),]; pb$tick()
 
   if (stratify_by == "bbs")
   {
@@ -57,18 +64,19 @@ stratify <- function(bbs_data, stratify_by = "bbs")
   else if (stratify_by == "state")
   {
     st1[,"strat.name"] <- paste(st1[,"State"],sep = "")
-  }
+  }; pb$tick()
 
-  st2 <- merge(st1,regs,by.x = "State",by.y = "State.Prov.TerrName", all.x = T)
-  st2[which(st2$prov == "BCR7"),"countrynum"] <- 124
-  st2[which(st2$prov == "BCR7"),"RegionCode"] <- 777
+  st2 <- merge(st1,regs,by.x = "State",by.y = "State.Prov.TerrName", all.x = T); pb$tick()
+  st2[which(st2$prov == "BCR7"),"countrynum"] <- 124; pb$tick()
+  st2[which(st2$prov == "BCR7"),"RegionCode"] <- 777; pb$tick()
 
 
-  st2[which(st2$prov == "NSPE"),"RegionCode"] <- 765
-  st2[which(st2$prov == "NSPE"),"countrynum"] <- 124
+  st2[which(st2$prov == "NSPE"),"RegionCode"] <- 765; pb$tick()
+  st2[which(st2$prov == "NSPE"),"countrynum"] <- 124; pb$tick()
 
-  st_areas <- st2
+  st_areas <- st2; pb$tick()
   for (i in 1:nrow(st_areas)) {
+    pb$tick()
     if (nchar(st_areas[i,"RegionCode"]) == 1 ) {
       st_areas[i,"state"] <- paste("0",st_areas[i,"RegionCode"],sep = "")
     }else{
@@ -77,61 +85,60 @@ stratify <- function(bbs_data, stratify_by = "bbs")
   }
 
   # fix the strata designations on route file
-  route$route <- route$Route
+  route$route <- route$Route; pb$tick()
 
   js <- which(route$statenum == 75)
-  route[js,"route"] <- paste(route[js,"Route"],"75",sep = "")
+  route[js,"route"] <- paste(route[js,"Route"],"75",sep = ""); pb$tick()
 
 
   js <- which(route$statenum == 65)
-  route[js,"route"] <- paste(route[js,"Route"],"65",sep = "")
+  route[js,"route"] <- paste(route[js,"Route"],"65",sep = ""); pb$tick()
 
 
   js <- which(route$BCR == 7)
-  route[js,"route"] <- paste(route[js,"Route"],"7",sep = "")
+  route[js,"route"] <- paste(route[js,"Route"],"7",sep = ""); pb$tick()
 
-  bird[,"sp.bbs"] <- as.integer(as.character(bird[,"AOU"]))
+  bird[,"sp.bbs"] <- as.integer(as.character(bird[,"AOU"])); pb$tick()
 
-  tmp <- unique(route[,c("BCR","statenum","Route","countrynum")]) # all unique routes by BCR and state
+  tmp <- unique(route[,c("BCR","statenum","Route","countrynum")]); pb$tick() # all unique routes by BCR and state
 
-  bird2 <- merge(bird,tmp,by = c("statenum","Route","countrynum"))  ## this merge removes bird data from unacceptable routes (i.e., routes that are unacceptable in all years) and adds the BCR and countrynum info
+  bird2 <- merge(bird,tmp,by = c("statenum","Route","countrynum")); pb$tick()  ## this merge removes bird data from unacceptable routes (i.e., routes that are unacceptable in all years) and adds the BCR and countrynum info
 
-  bird2$route <- bird2$Route
+  bird2$route <- bird2$Route; pb$tick()
 
   js <- which(bird2$statenum == 75)
-  bird2[js,"route"] <- paste(bird2[js,"Route"],"75",sep = "")
+  bird2[js,"route"] <- paste(bird2[js,"Route"],"75",sep = ""); pb$tick()
 
   js <- which(bird2$statenum == 65)
-  bird2[js,"route"] <- paste(bird2[js,"Route"],"65",sep = "")
+  bird2[js,"route"] <- paste(bird2[js,"Route"],"65",sep = ""); pb$tick()
 
   js <- which(bird2$BCR == 7)
-  bird2[js,"route"] <- paste(bird2[js,"Route"],"7",sep = "")
+  bird2[js,"route"] <- paste(bird2[js,"Route"],"7",sep = ""); pb$tick()
 
-  bird2[,"state"] <- as.character(bird2[,"statenum"])
+  bird2[,"state"] <- as.character(bird2[,"statenum"]); pb$tick()
 
   bird2[which(bird2$state == "75"),"state"] <- "765"  # combined PEI and NS
-  bird2[which(bird2$state == "65"),"state"] <- "765"
+  bird2[which(bird2$state == "65"),"state"] <- "765"; pb$tick()
 
-  bird2[which(bird2$BCR == 7),"state"] <- "777"
+  bird2[which(bird2$BCR == 7),"state"] <- "777"; pb$tick()
 
-  route[,"state"] <- as.character(route[,"statenum"])
+  route[,"state"] <- as.character(route[,"statenum"]); pb$tick()
 
   route[which(route$state == "75"),"state"] <- "765" # combined PEI and NS
-  route[which(route$state == "65"),"state"] <- "765"
+  route[which(route$state == "65"),"state"] <- "765"; pb$tick()
 
-  route[which(route$BCR == 7),"state"] <- "777"
-
+  route[which(route$BCR == 7),"state"] <- "777"; pb$tick()
 
   route[,"rt.uni"] <- paste(route[,"state"],route[,"route"],sep = "-")  # regenerates the rt.uni value with newly defined combined states
-  bird2[,"rt.uni"] <- paste(bird2[,"state"],bird2[,"route"],sep = "-")
+  bird2[,"rt.uni"] <- paste(bird2[,"state"],bird2[,"route"],sep = "-"); pb$tick()
 
   route[,"rt.uni.y"] <- paste(route[,"state"],route[,"route"],route[,"Year"],sep = "-")  # regenerates the rt.uni.y value with newly defined combined states
-  bird2[,"rt.uni.y"] <- paste(bird2[,"state"],bird2[,"route"],bird2[,"Year"],sep = "-")
+  bird2[,"rt.uni.y"] <- paste(bird2[,"state"],bird2[,"route"],bird2[,"Year"],sep = "-"); pb$tick()
 
-  birds <- bird2
+  birds <- bird2; pb$tick()
 
   birds$runyear <- birds$Year
-  route$runyear <- route$Year
+  route$runyear <- route$Year; pb$tick()
 
   return(list(bird_strat = birds,
               route_strat = route,
