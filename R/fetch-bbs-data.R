@@ -1,16 +1,19 @@
 #' Fetch Breeding Bird Survey dataset
 #'
-#' \code{fetchBBSdata} uses File Transfer Protocol (FTP) to fetch Breeding Bird
+#' \code{fetch_bbs_data} uses File Transfer Protocol (FTP) to fetch Breeding Bird
 #'  Survey data from the United States Geological Survey (USGS) FTP site. This
 #'  is the raw data that is uploaded to the site before any analyses are performed.
 #'
-#' @return Large list (5 elements) containing point count data, route data, weather
-#'    data, and species data. This is a very large file.
+#' @return Large list (3 elements) containing point count data, route data, and species data.
+#'
 #' @export
 #'
-fetchBBSdata <- function()
+#' @examples
+#' bbs_data <- fetch_bbs_data() # Be sure to save the output in an R object!
+#'
+fetch_bbs_data <- function()
 {
-  baseURL <- "ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/"
+  base_url <- "ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/"
   version <- 2017 #Figure out how to make this dynamic
 
   ################################################################
@@ -29,7 +32,7 @@ fetchBBSdata <- function()
     pb$tick()
     st <- substring(st1,first = 1,last = nchar(st1)-4)
     temp <- tempfile()
-    download.file(paste0(baseURL, "States/", st, ".zip"),temp, quiet = TRUE)
+    download.file(paste0(base_url, "States/", st, ".zip"),temp, quiet = TRUE)
     data <- read.csv(unz(temp, paste0(st,".csv")),stringsAsFactors = F)
     unlink(temp)
 
@@ -57,7 +60,7 @@ fetchBBSdata <- function()
   pb$tick(0)
 
   temp <- tempfile(); pb$tick()
-  download.file(paste0(baseURL,"routes.zip"),temp, quiet = TRUE); pb$tick()
+  download.file(paste0(base_url,"routes.zip"),temp, quiet = TRUE); pb$tick()
   routes <- read.csv(unz(temp, paste0("routes.csv")),stringsAsFactors = F); pb$tick()
   unlink(temp); pb$tick()
 
@@ -76,7 +79,7 @@ fetchBBSdata <- function()
   pb$tick(0)
 
   temp <- tempfile(); pb$tick()
-  download.file(paste0(baseURL,"Weather.zip"),temp, quiet = TRUE); pb$tick()
+  download.file(paste0(base_url,"Weather.zip"),temp, quiet = TRUE); pb$tick()
   weather <- read.csv(unz(temp, paste0("weather.csv")),stringsAsFactors = F); pb$tick()
   unlink(temp); pb$tick()
 
@@ -101,7 +104,7 @@ fetchBBSdata <- function()
   pb$tick(0)
 
   temp <- tempfile(); pb$tick()
-  download.file(paste0(baseURL,"SpeciesList.txt"),temp, quiet = TRUE); pb$tick()
+  download.file(paste0(base_url,"SpeciesList.txt"),temp, quiet = TRUE); pb$tick()
   species <- read.fwf(temp, skip = 9, strip.white = T,
                       colClasses = c("integer",
                                      "character",
@@ -123,7 +126,5 @@ fetchBBSdata <- function()
 
   return(list(bird = bird,
               route = route,
-              routes = routes,
-              weather = weather,
               species = species))
 }

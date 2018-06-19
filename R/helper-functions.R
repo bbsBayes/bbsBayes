@@ -1,4 +1,4 @@
-getSpeciesAOU <- function(species, sp.eng)
+get_species_aou <- function(species, sp_eng)
 {
-  return(species[species$english == sp.eng, "sp.bbs"])
+  return(species[species$english == sp_eng, "sp.bbs"])
 }

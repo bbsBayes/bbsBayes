@@ -1,22 +1,22 @@
-createRunDirectory <- function(outputDir, sp.eng, modelName)
+create_run_directory <- function(output_dir, species_to_run, model)
 {
-  dir1 <- outputDir
-  if (is.null(outputDir))
+  dir1 <- output_dir
+  if (is.null(output_dir))
   {
     dir1 <- getwd()
   }
-  dir.spsp <- paste(dir1, "/",
-                    sp.eng,
+  dir_spsp <- paste(dir1, "/",
+                    species_to_run,
                     "-",
-                    modelName,
+                    model,
                     "-",
                     format(Sys.Date(), format="%Y-%m-%d"),
                     "-",
                     format(Sys.time(), format="%H%M%S"), sep = "")
 
   dir.create(dir1, showWarnings = FALSE)
-  dir.create(dir.spsp)
+  dir.create(dir_spsp)
 
-  return(dir.spsp)
+  return(dir_spsp)
 }
 

@@ -1,7 +1,32 @@
-stratify <- function(bird, route, routes, stratify.by = "bbs")
+#' Stratify raw Breeding Bird Survey data
+#'
+#' Assigns each bird count data point and each route a strata
+#'   based on its geographic location and the stratification
+#'   as specified by the user.
+#'
+#' @param bbs_data Large list of raw BBS data. Can be obtained using
+#'   the \code{fetchBBSdata()} function.
+#' @param stratify_by String argument of stratification type. Defaults
+#'   to "bbs", which is the standard BCR X State used in BBS data analysis.
+#'   Other options are "state", "bcr", "latlong"
+#'
+#' @return Large list (4 elements) containing stratified point count data,
+#' route data, and species data, as well as a data frame containing area
+#' information about each strata.
+#'
+#' @export
+#'
+#' @examples
+#' data.strat <- stratify(bbs_data = data, stratify_by = "bbs")
+#' data.strat <- stratify(fetchBBSdata())
+#'
+stratify <- function(bbs_data, stratify_by = "bbs")
 {
-  s.area <- read.csv(system.file("strata",
-                                 strata[[stratify.by]],
+  bird <- bbs_data$bird
+  route <- bbs_data$route
+
+  s_area <- read.csv(system.file("strata",
+                                 strata[[stratify_by]],
                                  package="bbsBayes"),
                      stringsAsFactors = F)
 
@@ -16,7 +41,7 @@ stratify <- function(bird, route, routes, stratify.by = "bbs")
                     stringsAsFactors = F)
 
   # area weights, strata names in st files
-  st1 <- merge(s.area,abrev,by.x = c("country","prov"),by.y = c("country","code"),all = T)
+  st1 <- merge(s_area,abrev,by.x = c("country","prov"),by.y = c("country","code"),all = T)
 
   # These also may be a product of just this particular stratifcation
   st1[which(st1$prov == "NS" & st1$country == "CA"),"State"] <- "Nova Scotia Prince Edward Island"
@@ -25,11 +50,11 @@ stratify <- function(bird, route, routes, stratify.by = "bbs")
 
   st1 <- st1[which(!is.na(st1$St_12)),]
 
-  if (stratify.by == "bbs")
+  if (stratify_by == "bbs")
   {
     st1[,"strat.name"] <- paste(st1[,"State"],"-BCR",st1[,"bcr"],sep = "")
   }
-  else if (stratify.by == "state")
+  else if (stratify_by == "state")
   {
     st1[,"strat.name"] <- paste(st1[,"State"],sep = "")
   }
@@ -42,12 +67,12 @@ stratify <- function(bird, route, routes, stratify.by = "bbs")
   st2[which(st2$prov == "NSPE"),"RegionCode"] <- 765
   st2[which(st2$prov == "NSPE"),"countrynum"] <- 124
 
-  st.areas <- st2
-  for (i in 1:nrow(st.areas)) {
-    if (nchar(st.areas[i,"RegionCode"]) == 1 ) {
-      st.areas[i,"state"] <- paste("0",st.areas[i,"RegionCode"],sep = "")
+  st_areas <- st2
+  for (i in 1:nrow(st_areas)) {
+    if (nchar(st_areas[i,"RegionCode"]) == 1 ) {
+      st_areas[i,"state"] <- paste("0",st_areas[i,"RegionCode"],sep = "")
     }else{
-      st.areas[i,"state"] <- paste(st.areas[i,"RegionCode"],sep = "")
+      st_areas[i,"state"] <- paste(st_areas[i,"RegionCode"],sep = "")
     }
   }
 
@@ -108,7 +133,8 @@ stratify <- function(bird, route, routes, stratify.by = "bbs")
   birds$runyear <- birds$Year
   route$runyear <- route$Year
 
-  return(list(birds = birds,
-              route = route,
-              st.areas = st.areas))
+  return(list(bird_strat = birds,
+              route_strat = route,
+              species_strat = bbs_data$species,
+              strata = st_areas))
 }
