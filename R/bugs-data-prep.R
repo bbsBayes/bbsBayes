@@ -1,8 +1,6 @@
 bugs_data_prep <- function(sp_eng = sp_eng,
                          sp_aou = sp_aou,
-                         dir_spsp = dir_spsp,
                          strata_rem = NA,
-                         outdata = F,
                          min_n_routes = 3,
                          min_max_route_years = 5,
                          min_mean_route_years = 3, birds = birds,
@@ -76,8 +74,6 @@ bugs_data_prep <- function(sp_eng = sp_eng,
     #gets rid of infinite values
     pR[which(pR$fy.wspecies > 2100),"fy.wspecies"] <- NA
     pR[which(pR$max.nry < 0),"max.nry"] <- NA
-
-    write.csv(pR,paste(dir_spsp,"\\",sp_eng," pR pre strata exclusion.csv", sep = ""))
 
     spsp.c.l <- spsp.c[which(spsp.c$rt.uni %in% unique(spsp_routes_ever$rt.uni)),]
     spsp.c.drop <- spsp.c[-which(spsp.c$rt.uni %in% unique(spsp_routes_ever$rt.uni)),]
@@ -164,9 +160,6 @@ bugs_data_prep <- function(sp_eng = sp_eng,
     output <- spsp_f[,c("count","stratum","obser","yr","firstyear","strat.name","rt.uni","runyear")]
     names(output) <- c("count","strat","obser","year","firstyr","strat.name","route","rYear")
 
-    if (outdata == T) {write.csv(output,paste(dir_spsp,"\\",sp_eng," prebugsdata.csv", sep = ""))
-      write.csv(nrts.used,paste(dir_spsp,"\\",sp_eng," number of routes used by stratum.csv", sep = ""),row.names = F)
-    }
     return(list(output = output, pR_wts = pR.wts, pR = pR, pR2 = pR2, n_observers = nobservers, nrts_used = nrts.used)) #adjmat = adjmat,LT5.strata = LT5.strata, num = num, adj = adj, sumNumNeigh = sumNumNeigh
   }else
   {
