@@ -63,8 +63,8 @@ bugs_data_prep <- function(sp_eng = sp_eng,
       # total counts that have included this species (ex: 5 routes in year 1, 4 in year 2 = 9 overall)
       pR[pR$strat == p,"nry.ever"] <-  length(spsp.c[which(spsp.c$strat.name == p & spsp.c$TotalInd > 0),"rt.uni.y"])
 
-      pR[pR$strat == p,"fy.wspecies"] <-  min(spsp_routes_ever[spsp_routes_ever$strat.name == p,"fyr_rt_run"])
-      pR[pR$strat == p,"max.nry"] <-  max(spsp_routes_ever[spsp_routes_ever$strat.name == p,"nyr_rt_run"])
+      pR[pR$strat == p,"fy.wspecies"] <-  suppressWarnings(min(spsp_routes_ever[spsp_routes_ever$strat.name == p,"fyr_rt_run"]))
+      pR[pR$strat == p,"max.nry"] <-  suppressWarnings(max(spsp_routes_ever[spsp_routes_ever$strat.name == p,"nyr_rt_run"]))
 
       pR[pR$strat == p,"meanry.ever"] <-  length(spsp.c[which(spsp.c$strat.name == p & spsp.c$TotalInd > 0),"rt.uni.y"])/pR[pR$strat == p,"nr.ever"]
     }
