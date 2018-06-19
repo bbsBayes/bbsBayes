@@ -4,8 +4,9 @@
 \alias{run_model}
 \title{Run JAGS model for prepared species data}
 \usage{
-run_model(data, init_vals, params, mod, n_chains, n_adapt, n_iter, n_burnin,
-  n_thin, parallel)
+run_model(data, init_vals = NULL, params = c("n"), model, n_chains = 3,
+  n_adapt = 500, num_saved_steps = 2000, n_burnin = 20000, n_thin = 10,
+  n_iter = ceiling((num_saved_steps * n_thin)/n_chains), parallel = FALSE)
 }
 \value{
 jagsUI object
