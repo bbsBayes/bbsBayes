@@ -110,8 +110,8 @@ bugs_data_prep <- function(sp_eng = sp_eng,
 
   if(nrow(spsp_f) > 0)
   {
-    spsp_f[,"stratcode"] <- spsp_f[,"St_12"]
-    spsp_f[,"stratum"] <- as.numeric(factor(spsp_f$St_12))
+    spsp_f[,"stratcode"] <- spsp_f[,"strat.name"]
+    spsp_f[,"stratum"] <- as.numeric(factor(spsp_f$strat.name))
 
     spsp_f <- spsp_f[order(spsp_f$stratum,spsp_f$route,spsp_f$runyear),]
 
