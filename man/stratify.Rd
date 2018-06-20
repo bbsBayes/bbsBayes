@@ -12,7 +12,7 @@ the \code{fetchBBSdata()} function.}
 
 \item{stratify_by}{String argument of stratification type. Defaults
 to "bbs", which is the standard BCR X State used in BBS data analysis.
-Other options are "state", "bcr", "latlong"}
+Other options are "state", "bcr", "degree_block"}
 }
 \value{
 Large list (4 elements) containing stratified point count data,
@@ -25,7 +25,26 @@ Assigns each bird count data point and each route a strata
   as specified by the user.
 }
 \examples{
-data.strat <- stratify(bbs_data = data, stratify_by = "bbs")
-data.strat <- stratify(fetchBBSdata())
+
+\dontrun{
+
+# Download BBS data and stratify by traditional BBS stratifications.
+bbs <- fetch_bbs_data()
+data_strat <- stratify(bbs_data = bbs, stratify_by = "bbs")
+
+# Stratify by Bird Conservation Regions only
+# If you don't need the raw BBS data, you can call fetch_bbs_data()
+#   directly in the stratify command.
+data_strat <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
+
+# Stratify by State/Province/Territory only
+data_strat <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "state")
+
+# Stratify by blocks of 1 degree of latitude X 1 degree of longitude
+data_strat <- stratify(bbs_data = fetch_bbs_data(), stratify_bs = "degree_block")
+
+# You can choose not to specify a stratification type and default to BBS stratification
+data_strat <- stratify(bbs_data = fetch_bbs_data())
+}
 
 }

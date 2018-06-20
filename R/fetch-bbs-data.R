@@ -9,7 +9,23 @@
 #' @export
 #'
 #' @examples
-#' bbs_data <- fetch_bbs_data() # Be sure to save the output in an R object!
+#'
+#' \dontrun{
+#'
+#' # Be sure to assign the output of fetch_bbs_data() to a variable.
+#' # This function downloads a lot of data, and if the output is not
+#' # captured in a variable, R attempts to dump it into the console
+#' # which tends to get highly bogged down.
+#'
+#' bbs_data <- fetch_bbs_data()
+#'
+#' # USGS updates their data up to twice a year, so one potential
+#' # option is to save the bbs_data to a file so that you do not
+#' # have to run fetch_bbs_data() every new session.
+#'
+#' bbs_data <- fetch_bbs_data()
+#' save(bbs_data, file = "bbs_data.RData")
+#' }
 #'
 fetch_bbs_data <- function()
 {
