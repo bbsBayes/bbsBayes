@@ -6,7 +6,7 @@ Authors@R: c(person("Brandon P.M.", "Edwards", role = c("aut", "cre"),
                      email = "edwardsb@uoguelph.ca"),
               person("Adam C.", "Smith", role = "aut",
                       email = "adam.smith2@canada.ca"))
-Depends: jagsUI, progress
+Depends: rjags, progress
 SystemRequirements: JAGS (http://mcmc-jags.sourceforge.net)
 URL: https://github.com/BrandonEdwards/bbsBayes
 NeedsCompilation: no
