@@ -4,7 +4,7 @@ model
 	for( k in 1 : ncounts )
 	{
 		Elambdas[k] <- beta[strat[k]] * (year[k] - fixedyear) + eta*firstyr[k] + obs[strat[k],obser[k]] + strata[strat[k]] + yeareffect[year[k],strat[k]]
-		Elambda[k] ~ dt(Elambdas[k], taunoise, nu)
+		Elambda[k] ~ dnorm(Elambdas[k], taunoise)
 		log(lambda[k]) <- Elambda[k]
 
 		count[k] ~ dpois(lambda[k])
@@ -24,7 +24,6 @@ model
 	posdiff <- step(diffgof)
 
 	taunoise ~ dgamma(0.001,0.001)
-	nu ~ dgamma(2, 0.1) #prior suggested by Bill Link in email dated March 27, 2018
 	sdnoise <- 1 / pow(taunoise, 0.5)
 	sdobs <- 1 / pow(tauobs, 0.5)
 	tauobs ~ dgamma(0.001,0.001)
