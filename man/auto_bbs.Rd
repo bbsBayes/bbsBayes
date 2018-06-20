@@ -5,11 +5,7 @@
 \title{Automatically run a BBS analysis for a given species}
 \usage{
 auto_bbs(species = NULL, model = NULL, bbs_data = NULL,
-  stratify_by = "bbs", output_dir = NULL, inits = NULL, params = c("n"),
-  adapt_steps = 500, burn_in_steps = 20000, n_chains = 3,
-  num_saved_steps = 2000, thin_steps = 10,
-  n_iter = ceiling((num_saved_steps * thin_steps)/n_chains),
-  run_parallel_chains = FALSE)
+  stratify_by = "bbs", output_dir = NULL, ...)
 }
 \arguments{
 \item{species}{Character strings or vector of character strings of what
@@ -27,34 +23,8 @@ the latest data from the USGS website.}
 \item{output_dir}{Path to directory where output should be directed to.
 Defaults to current directory.}
 
-\item{inits}{Optional list of initialization values for JAGS model.
-If none are specified, the JAGS model will generate its own
-initial values.}
-
-\item{params}{Character vector of parameters to monitor in JAGS. Defaults
-to just monitoring "n"}
-
-\item{adapt_steps}{Optional integer specifying the number of steps to
-adapt the JAGS model. It is recommended to do a minimum of 100,
-\code{autoBBS} will default to 500.}
-
-\item{burn_in_steps}{Optional integer specifying the number of iterations
-to burn in the model. Defaults to 20000 per chain.}
-
-\item{n_chains}{Optional number of chains to run. Defaults to 3.}
-
-\item{num_saved_steps}{Optional number of steps to save per chain.
-Defaults to 2000.}
-
-\item{thin_steps}{Optional number of steps to thin or discard.}
-
-\item{n_iter}{Optional number of iterations.}
-
-\item{run_parallel_chains}{Optional boolean value to specify whether
-the chains are run in parallel. By default, the chains are not
-run in parallel. If TRUE, the number of cores used will be the
-minimum of number of chains and number of available cores.
-JAGS console output is supressed with run in parallel.}
+\item{...}{Optional arguments for JAGS data prepping or modelling.
+See \code{run_model} and \code{prepare_jags_data} for other argument details}
 }
 \value{
 Some sort of output with cool stuff. Don't know yet
