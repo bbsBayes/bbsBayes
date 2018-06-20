@@ -24,7 +24,9 @@ process_model <- function(model)
   }
   else
   {
-    if ((tolower(model) %in% c("standard", "fd")) == FALSE)
+    if ((tolower(model) %in% c("standard", "s",
+                               "firstdifference", "fd", "f",
+                               "gam", "g")) == FALSE)
     {
       stop(paste(model, "is not a valid model.\n"))
     }
