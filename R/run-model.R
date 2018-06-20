@@ -19,14 +19,26 @@ run_model <- function(data,
                       n_iter = ceiling( ( num_saved_steps * n_thin ) / n_chains ),
                       parallel = FALSE)
 {
-  return(jags(data = data,
-              inits = init_vals,
-              parameters.to.save = params,
-              model.file = system.file("models",models[[model]],package="bbsBayes"),
-              n.chains = n_chains,
-              n.adapt = n_adapt,
-              n.iter = n_iter + n_burnin,
-              n.burnin = n_burnin,
-              n.thin = n_thin,
-              parallel = parallel))
+  jags <- jags.model(file = system.file("models",models[[model]],package="bbsBayes"),
+                     data = data,
+                     inits = init_vals,
+                     n.chains = n_chains,
+                     n.adapt = n_adapt)
+
+  if (n_burnin > 0)
+  {
+    cat(paste("Burning in for", n_burnin, "iterations.\n"))
+    update(object = jags,
+           n.iter = n_burnin)
+  }
+
+  cat("Sampling MCMC chain.\n")
+  mcmc_samples <- coda.samples(model = jags,
+                               variable.names = params,
+                               n.iter = n_iter,
+                               thin = n_thin)
+
+
+  return(list(jags_model = jags,
+              mcmc_samples = mcmc_samples))
 }
