@@ -11,6 +11,7 @@
 #'
 #' @return Large list of data to be used in JAGS
 #'
+#' @importFrom stats median
 #' @export
 #'
 #' @examples

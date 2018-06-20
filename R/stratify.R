@@ -37,6 +37,8 @@
 #' data_strat <- stratify(bbs_data = fetch_bbs_data())
 #' }
 #'
+#' @importFrom utils read.csv
+#' @importFrom progress progress_bar
 #' @export
 #'
 

@@ -24,6 +24,8 @@
 #'   Defaults to 2000.
 #' @return List containing jags model object and mcmc.list object
 #'
+#' @importFrom rjags jags.model coda.samples
+#' @importFrom stats update
 #' @export
 #'
 #' @examples

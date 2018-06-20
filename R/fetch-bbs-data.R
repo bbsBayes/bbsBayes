@@ -6,6 +6,8 @@
 #'
 #' @return Large list (3 elements) containing point count data, route data, and species data.
 #'
+#' @importFrom utils download.file read.csv read.fwf
+#' @importFrom progress progress_bar
 #' @export
 #'
 #' @examples
