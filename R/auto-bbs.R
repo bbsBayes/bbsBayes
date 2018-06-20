@@ -40,7 +40,7 @@
 #'
 auto_bbs <- function(species = NULL,
                     model = NULL,
-                    bbs_data = NA,
+                    bbs_data = NULL,
                     stratify_by = "bbs",
                     output_dir = NULL,
                     inits = NULL,
@@ -55,29 +55,32 @@ auto_bbs <- function(species = NULL,
 {
   process_auto_bbs_input(species, model, output_dir)
 
-  if (is.na(bbs_data))
+  if (is.null(bbs_data))
   {
     bbs_data <- fetch_bbs_data()
   }
   species_list <- bbs_data$species
 
-  cat("Stratify...\n")
   data_strat <- stratify(bbs_data, stratify_by)
 
   sp_num <- 1
   total_sp <- length(species)
   for (sp in species)
   {
-    cat(paste("Species ", sp_num, "/", total_sp, ": ", sep = ""))
-    cat(paste(sp, model, date(),"\n")) # output information about run and time
-
-    dir <- create_run_directory(output_dir, sp, model)
-
+    cat(paste("Prepping data for species ",
+              sp_num,
+              " of ",
+              total_sp,
+              ": ",
+              sp,
+              "\n",
+              sep = ""))
+    #cat(paste(sp, model, date(),"\n")) # output information about run and time
     data_jags <- prepare_jags_data(data_strat,
                                  sp,
-                                 model,
-                                 dir)
+                                 model)
 
+    cat("Beginning JAGS model.\n")
     jagsjob <- run_model(data = data_jags,
                             init_vals = NULL,
                             params = params,
@@ -88,7 +91,6 @@ auto_bbs <- function(species = NULL,
                             n_burnin = burn_in_steps,
                             n_thin = thin_steps,
                             parallel = run_parallel_chains)
-    save(jagsjob, file = paste(dir, "/jags.Rdata", sep=""))
     sp_num <- sp_num + 1
   }
 }
