@@ -84,7 +84,8 @@ run_model <- function(data,
                       n_burnin = 20000,
                       n_thin = 10,
                       n_saved_steps = 2000,
-                      n_iter = ceiling( ( n_saved_steps * n_thin ) / n_chains ))
+                      n_iter = ceiling( ( n_saved_steps * n_thin ) / n_chains ),
+                      ...)
 {
   # The case where the user does their own data prep. Rare, but possible
   if (is.null(model) & is.null(data[["model"]]))

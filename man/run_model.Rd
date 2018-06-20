@@ -6,7 +6,8 @@
 \usage{
 run_model(data, model = NULL, inits = NULL, variable_names = c("n"),
   n_chains = 3, n_adapt = 500, n_burnin = 20000, n_thin = 10,
-  n_saved_steps = 2000, n_iter = ceiling((n_saved_steps * n_thin)/n_chains))
+  n_saved_steps = 2000, n_iter = ceiling((n_saved_steps * n_thin)/n_chains),
+  ...)
 }
 \arguments{
 \item{data}{List or environment containing the data to model, as output

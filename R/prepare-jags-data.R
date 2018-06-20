@@ -58,7 +58,8 @@
 prepare_jags_data <- function(data,
                             species_to_run,
                             model,
-                            n_knots = 9)
+                            n_knots = 9,
+                            ...)
 {
   birds <- data$bird_strat
   route <- data$route_strat

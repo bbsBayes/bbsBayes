@@ -4,7 +4,7 @@
 \alias{prepare_jags_data}
 \title{Transform data to use for JAGS input}
 \usage{
-prepare_jags_data(data, species_to_run, model, n_knots = 9)
+prepare_jags_data(data, species_to_run, model, n_knots = 9, ...)
 }
 \arguments{
 \item{data}{Large list of stratified data returned by \code{stratify()}}
