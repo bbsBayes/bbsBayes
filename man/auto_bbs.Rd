@@ -4,7 +4,7 @@
 \alias{auto_bbs}
 \title{Automatically run a BBS analysis for a given species}
 \usage{
-auto_bbs(species = NULL, model = NULL, bbs_data = NA,
+auto_bbs(species = NULL, model = NULL, bbs_data = NULL,
   stratify_by = "bbs", output_dir = NULL, inits = NULL, params = c("n"),
   adapt_steps = 500, burn_in_steps = 20000, n_chains = 3,
   num_saved_steps = 2000, thin_steps = 10,

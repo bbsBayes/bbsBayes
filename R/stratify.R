@@ -70,6 +70,12 @@ stratify <- function(bbs_data, stratify_by = "bbs")
   }else if (stratify_by == "bcr")
   {
     st1[,"strat.name"] <- paste("BCR",st1[,"bcr"],sep = "")
+  }else if (stratify_by == "degree_block")
+  {
+    st1[,"strat.name"] <- paste("BCR",st1[,"bcr"],sep = "")
+    route[,"DegreeBlock"] <- paste(trunc(route[,"Latitude"]),
+                                      trunc(route[,"Longitude"]),
+                                      sep = "-")
   }; pb$tick()
 
   st2 <- merge(st1,regs,by.x = "State",by.y = "State.Prov.TerrName", all.x = T); pb$tick()

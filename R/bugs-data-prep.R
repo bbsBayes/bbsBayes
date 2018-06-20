@@ -31,6 +31,11 @@ bugs_data_prep <- function(sp_eng = sp_eng,
 
   if (!is.na(strata_rem)) {spsp.c <- spsp.c[-which(spsp.c$strata.name %in% strata_rem),] }
 
+  if ("DegreeBlock" %in% colnames(spsp.c))
+  {
+    spsp.c$strat.name <- spsp.c$DegreeBlock
+  }
+
   spsp_routes_ever <- unique(spsp.c[which(spsp.c$TotalInd != 0),c("strat.name","rt.uni")]) #routes which have had at least 1 species counted
   spsp_routes_never <- unique(spsp.c[-which(spsp.c$rt.uni %in% spsp_routes_ever$rt.uni),c("strat.name","rt.uni")]) #routes that have not had this species before
   spsp.c2 <- spsp.c[which(spsp.c$rt.uni %in% spsp_routes_ever$rt.uni),] #All data counts for routes which has had seen
