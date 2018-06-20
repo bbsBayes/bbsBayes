@@ -3,7 +3,7 @@
 #' \code{prepare_jags_data} transforms stratified data for use as input
 #'   to run JAGS models.
 #'
-#' @param data_strat Large list of stratified data returned by \code{stratify()}
+#' @param data Large list of stratified data returned by \code{stratify()}
 #' @param species_to_run Character string of the English name of the species to run
 #' @param model Character strings or vector of character strings of what
 #'   species are wanting to be analysed.
@@ -22,48 +22,48 @@
 #'
 #' # Prepare the stratified data for use in a JAGS model.
 #' # This particular instance prepares for the Standard BBS model.
-#' data_jags <- prepare_jags_data(data_strat = stratified_data,
+#' data_jags <- prepare_jags_data(data = stratified_data,
 #'                                species_to_run = "Spruce Grouse",
 #'                                model = "standard")
 #'
 #' # Prepare data for use the First Difference BBS model.
-#' data_jags <- prepare_jags_data(data_strat = stratified_data,
+#' data_jags <- prepare_jags_data(data = stratified_data,
 #'                                species_to_run = "Mallard",
 #'                                model = "firstdifference")
 #'
 #' # You can also specify the GAM model, with an optional number of
 #' # knots to use for the GAM basis (defaults to 9 knots)
-#' data_jags <- prepare_jags_data(data_strat = stratified_data,
+#' data_jags <- prepare_jags_data(data = stratified_data,
 #'                                species_to_run = "Barn Swallow",
 #'                                model = "gam",
 #'                                n_knots = 9)
 #'
 #' # This function accepts French bird names
-#' data_jags <- prepare_jags_data(data_strat = stratified_data,
+#' data_jags <- prepare_jags_data(data = stratified_data,
 #'                                species_to_run = "Oie des neiges",
 #'                                model = "standard")
 #'
 #' # Capitalization and punctuation matter (for now)
 #' # This code will produce an error.
-#' data_jags <- prepare_jags_data(data_strat = stratified_data,
+#' data_jags <- prepare_jags_data(data = stratified_data,
 #'                                species_to_run = "Eastern whippoorwill"
 #'                                model = "standard")
 #' # But this code will be fine
-#' data_jags <- prepare_jags_data(data_strat = stratified_data,
+#' data_jags <- prepare_jags_data(data = stratified_data,
 #'                                species_to_run = "Eastern Whip-poor-will"
 #'                                model = "standard")
 #' }
 #'
 
-prepare_jags_data <- function(data_strat,
+prepare_jags_data <- function(data,
                             species_to_run,
                             model,
                             n_knots = 9)
 {
-  birds <- data_strat$bird_strat
-  route <- data_strat$route_strat
-  species <- data_strat$species_strat
-  st_areas <- data_strat$strata
+  birds <- data$bird_strat
+  route <- data$route_strat
+  species <- data$species_strat
+  st_areas <- data$strata
 
   dta <- bugs_data_prep(sp_eng = species_to_run,
                       sp_aou = get_species_aou(species, species_to_run),
@@ -107,7 +107,8 @@ prepare_jags_data <- function(data_strat,
 
   nstrata=length(unique(spsp_f$strat))
 
-  to_return <- list(ncounts = nrow(spsp_f),
+  to_return <- list(model = model,
+                   ncounts = nrow(spsp_f),
                    nstrata=length(unique(spsp_f$strat)),
                    ymin = ymin,
                    ymax = ymax,
