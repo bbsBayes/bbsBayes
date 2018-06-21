@@ -8,6 +8,7 @@
 #' @param model Character strings or vector of character strings of what
 #'   species are wanting to be analysed.
 #' @param n_knots Number of knots to be used in GAM function
+#' @param ... Additional arguments
 #'
 #' @return Large list of data to be used in JAGS
 #'

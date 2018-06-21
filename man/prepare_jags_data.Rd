@@ -15,6 +15,8 @@ prepare_jags_data(data, species_to_run, model, n_knots = 9, ...)
 species are wanting to be analysed.}
 
 \item{n_knots}{Number of knots to be used in GAM function}
+
+\item{...}{Additional arguments}
 }
 \value{
 Large list of data to be used in JAGS

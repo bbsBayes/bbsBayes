@@ -22,6 +22,7 @@
 #' @param n_iter Optional number of iterations.
 #' @param n_saved_steps Optional number of steps to save per chain.
 #'   Defaults to 2000.
+#' @param ... Additional arguments
 #' @return List containing jags model object and mcmc.list object
 #'
 #' @importFrom rjags jags.model coda.samples

@@ -38,6 +38,8 @@ to burn in the model. Defaults to 20000 per chain.}
 Defaults to 2000.}
 
 \item{n_iter}{Optional number of iterations.}
+
+\item{...}{Additional arguments}
 }
 \value{
 List containing jags model object and mcmc.list object

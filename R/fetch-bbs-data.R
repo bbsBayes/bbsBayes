@@ -134,7 +134,7 @@ fetch_bbs_data <- function()
                                      "character",
                                      "character"),
                       header = F,
-                      width = c(6,-1,5,-1,50,-1,50,-1,50,-1,50,-1,50,-1,50,-1,50)); pb$tick()
+                      widths = c(6,-1,5,-1,50,-1,50,-1,50,-1,50,-1,50,-1,50,-1,50)); pb$tick()
   unlink(temp); pb$tick()
 
   names(species) <- c("seq","aou","english","french","spanish","order","family","genus","species"); pb$tick()
