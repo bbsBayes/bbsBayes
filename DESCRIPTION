@@ -1,18 +1,23 @@
 Package: bbsBayes
 Type: Package
-Title: An R Package for Hierarchical Bayesian Analysis of North American Breeding Bird Survey Data
-Version: 0.0.0.9122
+Title: Hierarchical Bayesian Analysis of North American Breeding Bird Survey Data
+Version: 0.0.0.9123
 Authors@R: c(person("Brandon P.M.", "Edwards", role = c("aut", "cre"),
                      email = "edwardsb@uoguelph.ca"),
               person("Adam C.", "Smith", role = "aut",
                       email = "adam.smith2@canada.ca"))
-Imports: rjags, progress
+Imports:
+  progress,
+  rjags
 SystemRequirements: JAGS (http://mcmc-jags.sourceforge.net)
 URL: https://github.com/BrandonEdwards/bbsBayes
 NeedsCompilation: no
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: MIT
+Description: A package to perform hierarchical Bayesian analysis of North
+  American Breeding Bird Survey (BBS) data. 'bbsBayes' will run a full
+  model analysis for one or more species that you choose, or you can take
+  more control and specify how the data should be stratified, prepared
+  for JAGS, or modelled. 
+License: MIT | file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1

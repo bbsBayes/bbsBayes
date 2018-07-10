@@ -1,10 +1,11 @@
-bugs_data_prep <- function(sp_eng = sp_eng,
-                         sp_aou = sp_aou,
-                         strata_rem = NA,
-                         min_n_routes = 3,
-                         min_max_route_years = 5,
-                         min_mean_route_years = 3, birds = birds,
-                         route = route) {
+bugs_data_prep <- function(sp_eng,
+                         sp_aou,
+                         strata_rem,
+                         min_n_routes,
+                         min_max_route_years,
+                         min_mean_route_years,
+                         birds,
+                         route) {
 
 
   spsp <- birds[which(birds$AOU == sp_aou),] # Gets all observations of the species of interest

@@ -4,7 +4,9 @@
 \alias{prepare_jags_data}
 \title{Transform data to use for JAGS input}
 \usage{
-prepare_jags_data(data, species_to_run, model, n_knots = 9, ...)
+prepare_jags_data(data, species_to_run, model, n_knots = 9,
+  min_n_routes = 3, min_max_route_years = 3, min_mean_route_years = 1,
+  strata_rem = NA, ...)
 }
 \arguments{
 \item{data}{Large list of stratified data returned by \code{stratify()}}
@@ -15,6 +17,17 @@ prepare_jags_data(data, species_to_run, model, n_knots = 9, ...)
 species are wanting to be analysed.}
 
 \item{n_knots}{Number of knots to be used in GAM function}
+
+\item{min_n_routes}{Minimum routes per strata where species has been observed.
+Defaults to 3}
+
+\item{min_max_route_years}{Minimum number of years with non-zero observations
+of species on at least 1 route. Defaults to 3}
+
+\item{min_mean_route_years}{Minimum average of years per route with the
+species observed. Defaults to 1.}
+
+\item{strata_rem}{Strata to remove from analysis. Defaults to NA}
 
 \item{...}{Additional arguments}
 }

@@ -8,6 +8,13 @@
 #' @param model Character strings or vector of character strings of what
 #'   species are wanting to be analysed.
 #' @param n_knots Number of knots to be used in GAM function
+#' @param min_n_routes Minimum routes per strata where species has been observed.
+#'   Defaults to 3
+#' @param min_max_route_years Minimum number of years with non-zero observations
+#'   of species on at least 1 route. Defaults to 3
+#' @param min_mean_route_years Minimum average of years per route with the
+#'   species observed. Defaults to 1.
+#' @param strata_rem Strata to remove from analysis. Defaults to NA
 #' @param ... Additional arguments
 #'
 #' @return Large list of data to be used in JAGS
@@ -61,6 +68,10 @@ prepare_jags_data <- function(data,
                             species_to_run,
                             model,
                             n_knots = 9,
+                            min_n_routes = 3,
+                            min_max_route_years = 3,
+                            min_mean_route_years = 1,
+                            strata_rem = NA,
                             ...)
 {
   birds <- data$bird_strat
@@ -69,10 +80,12 @@ prepare_jags_data <- function(data,
 
   dta <- bugs_data_prep(sp_eng = species_to_run,
                       sp_aou = get_species_aou(species, species_to_run),
-                      min_n_routes = 3,# require 3 or more routes where species has been observed
-                      min_max_route_years = 3,# require at least 1 route with non-zero obs of species in 3 or more years
-                      min_mean_route_years = 1,
-                      birds = birds, route = route)# require an average of 1 year per route with the species observed (setting this to 1 effectively removes this criterion)
+                      strata_rem = strata_rem,
+                      min_n_routes = min_n_routes,# require 3 or more routes where species has been observed
+                      min_max_route_years = min_max_route_years,# require at least 1 route with non-zero obs of species in 3 or more years
+                      min_mean_route_years = min_mean_route_years,
+                      birds = birds,
+                      route = route)# require an average of 1 year per route with the species observed (setting this to 1 effectively removes this criterion)
 
   spsp_f <- dta$output
   a_wts <- dta$a_wts
