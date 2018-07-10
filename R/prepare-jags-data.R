@@ -66,15 +66,13 @@ prepare_jags_data <- function(data,
   birds <- data$bird_strat
   route <- data$route_strat
   species <- data$species_strat
-  st_areas <- data$strata
 
   dta <- bugs_data_prep(sp_eng = species_to_run,
                       sp_aou = get_species_aou(species, species_to_run),
                       min_n_routes = 3,# require 3 or more routes where species has been observed
                       min_max_route_years = 3,# require at least 1 route with non-zero obs of species in 3 or more years
                       min_mean_route_years = 1,
-                      birds = birds, route = route,
-                      st_areas = st_areas)# require an average of 1 year per route with the species observed (setting this to 1 effectively removes this criterion)
+                      birds = birds, route = route)# require an average of 1 year per route with the species observed (setting this to 1 effectively removes this criterion)
 
   spsp_f <- dta$output
   a_wts <- dta$a_wts
