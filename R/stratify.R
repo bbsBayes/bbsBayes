@@ -47,7 +47,7 @@ stratify <- function(bbs_data, stratify_by = "bbs")
   pb <- progress_bar$new(
     format = "Stratifying data   [:bar] :percent eta: :eta",
     clear = FALSE,
-    total = 7,
+    total = 9,
     width = 80)
   pb$tick(0)
 
@@ -68,7 +68,7 @@ stratify <- function(bbs_data, stratify_by = "bbs")
 
   route <- merge(route, regs, by = c("countrynum", "statenum")); pb$tick()
   tmp <- unique(route[,c("BCR","statenum","Route","countrynum")]); pb$tick() # all unique routes by BCR and state
-  bird <- merge(bird,tmp,by = c("statenum","Route","countrynum")); pb$tick()
+  bird <- merge(bird, tmp, by = c("statenum","Route","countrynum")); pb$tick()
 
   if (stratify_by == "bbs")
   {
@@ -78,7 +78,7 @@ stratify <- function(bbs_data, stratify_by = "bbs")
                                   sep = "-")
   }else if (stratify_by == "state")
   {
-    route[,"strat_name"] <- paste(st1[,"St_Abrev"],
+    route[,"strat_name"] <- paste(route[,"St_Abrev"],
                                   sep = "")
   }else if (stratify_by == "bcr")
   {
@@ -118,8 +118,14 @@ stratify <- function(bbs_data, stratify_by = "bbs")
 
   }; pb$tick()
 
+  route[,"rt.uni"] <- paste(route[,"statenum"],route[,"Route"],sep = "-")  # regenerates the rt.uni value with newly defined combined states
+  bird[,"rt.uni"] <- paste(bird[,"statenum"],bird[,"Route"],sep = "-"); pb$tick()
 
-  return(list(bird_strat = birds,
+  route[,"rt.uni.y"] <- paste(route[,"statenum"],route[,"Route"],route[,"Year"],sep = "-")  # regenerates the rt.uni.y value with newly defined combined states
+  bird[,"rt.uni.y"] <- paste(bird[,"statenum"],bird[,"Route"],bird[,"Year"],sep = "-"); pb$tick()
+
+
+  return(list(bird_strat = bird,
               route_strat = route,
               species_strat = bbs_data$species))
 }
