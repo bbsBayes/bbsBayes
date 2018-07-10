@@ -47,28 +47,12 @@ stratify <- function(bbs_data, stratify_by = "bbs")
   pb <- progress_bar$new(
     format = "Stratifying data   [:bar] :percent eta: :eta",
     clear = FALSE,
-    total = 9,
+    total = 7,
     width = 80)
   pb$tick(0)
 
   bird <- bbs_data$bird; pb$tick()
   route <- bbs_data$route; pb$tick()
-
-  #CHANGE TO CHOOSE FROM LIST BASED ON USER INPUT
-  # s_area <- read.csv(system.file("strata",
-  #                                "bbs.csv",
-  #                                package="bbsBayes"),
-  #                    stringsAsFactors = F)
-
-  regs <- read.csv(system.file("helper",
-                               "regs.csv",
-                               package="bbsBayes"),
-                   stringsAsFactors = F)
-  pb$tick()
-
-  route <- merge(route, regs, by = c("countrynum", "statenum")); pb$tick()
-  tmp <- unique(route[,c("BCR","statenum","Route","countrynum")]); pb$tick() # all unique routes by BCR and state
-  bird <- merge(bird, tmp, by = c("statenum","Route","countrynum")); pb$tick()
 
   if (stratify_by == "bbs")
   {
@@ -118,10 +102,10 @@ stratify <- function(bbs_data, stratify_by = "bbs")
 
   }; pb$tick()
 
-  route[,"rt.uni"] <- paste(route[,"statenum"],route[,"Route"],sep = "-")  # regenerates the rt.uni value with newly defined combined states
+  route[,"rt.uni"] <- paste(route[,"statenum"],route[,"Route"],sep = "-"); pb$tick() # regenerates the rt.uni value with newly defined combined states
   bird[,"rt.uni"] <- paste(bird[,"statenum"],bird[,"Route"],sep = "-"); pb$tick()
 
-  route[,"rt.uni.y"] <- paste(route[,"statenum"],route[,"Route"],route[,"Year"],sep = "-")  # regenerates the rt.uni.y value with newly defined combined states
+  route[,"rt.uni.y"] <- paste(route[,"statenum"],route[,"Route"],route[,"Year"],sep = "-"); pb$tick()  # regenerates the rt.uni.y value with newly defined combined states
   bird[,"rt.uni.y"] <- paste(bird[,"statenum"],bird[,"Route"],bird[,"Year"],sep = "-"); pb$tick()
 
 

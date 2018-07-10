@@ -117,7 +117,7 @@ fetch_bbs_data <- function()
   pb <- progress_bar$new(
     format = "Downloading species data [:bar] :percent eta: :eta",
     clear = FALSE,
-    total = 6,
+    total = 10,
     width = 80)
   pb$tick(0)
 
@@ -141,6 +141,17 @@ fetch_bbs_data <- function()
 
   # this reads in the USGS BBS ftp site species file
   species[,"sp.bbs"] <- as.integer(as.character(species[,"aou"])); pb$tick()
+
+  # Add region and BCR information to route and bird data frames
+  regs <- read.csv(system.file("data-import",
+                               "regs.csv",
+                               package="bbsBayes"),
+                   stringsAsFactors = F)
+  pb$tick()
+
+  route <- merge(route, regs, by = c("countrynum", "statenum")); pb$tick()
+  tmp <- unique(route[,c("BCR","statenum","Route","countrynum")]); pb$tick() # all unique routes by BCR and state
+  bird <- merge(bird, tmp, by = c("statenum","Route","countrynum")); pb$tick()
 
   return(list(bird = bird,
               route = route,
