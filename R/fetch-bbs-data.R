@@ -4,7 +4,10 @@
 #'  Survey data from the United States Geological Survey (USGS) FTP site. This
 #'  is the raw data that is uploaded to the site before any analyses are performed.
 #'
-#' @return Large list (3 elements) containing point count data, route data, and species data.
+#' @return Large list (3 elements) consisting of:
+#' \item{bird}{Data frame of bird point count data per route, per year}
+#' \item{route}{Data frame of yearly route data}
+#' \item{species}{List of North American bird species}
 #'
 #' @importFrom utils download.file read.csv read.fwf
 #' @importFrom progress progress_bar

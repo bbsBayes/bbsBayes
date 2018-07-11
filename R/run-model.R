@@ -23,7 +23,9 @@
 #' @param n_saved_steps Optional number of steps to save per chain.
 #'   Defaults to 2000.
 #' @param ... Additional arguments
-#' @return List containing jags model object and mcmc.list object
+#' @return
+#'   \item{jags_model}{Model created by jags.model()}
+#'   \item{mcmc_samples}{MCMC list created by coda.samples()}
 #'
 #' @importFrom rjags jags.model coda.samples
 #' @importFrom stats update

@@ -7,7 +7,10 @@
 fetch_bbs_data()
 }
 \value{
-Large list (3 elements) containing point count data, route data, and species data.
+Large list (3 elements) consisting of:
+\item{bird}{Data frame of bird point count data per route, per year}
+\item{route}{Data frame of yearly route data}
+\item{species}{List of North American bird species}
 }
 \description{
 \code{fetch_bbs_data} uses File Transfer Protocol (FTP) to fetch Breeding Bird

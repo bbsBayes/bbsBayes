@@ -17,7 +17,22 @@
 #' @param strata_rem Strata to remove from analysis. Defaults to NA
 #' @param ... Additional arguments
 #'
-#' @return Large list of data to be used in JAGS
+#' @return List of data to be used in JAGS, including:
+#'   \item{model}{The model to be used in JAGS}
+#'   \item{ncounts}{The number of counts containing useful data for the species}
+#'   \item{nstrata}{The number of strata used in the analysis}
+#'   \item{ymin}{Minimum year used}
+#'   \item{ymax}{Maximum year used}
+#'   \item{nonzeroweight}{Proportion of routes in each strata with species obervation}
+#'   \item{count}{Vector of counts for the species}
+#'   \item{strat}{Vector of strata to be used in the analysis}
+#'   \item{osber}{Vector of observers}
+#'   \item{year}{Vector of years for each count}
+#'   \item{firstyr}{Vector of indicator variables as to whether an observer was a first year}
+#'   \item{nobservers}{Total number of observers}
+#'   \item{fixedyear}{Median of all years, included only with standard model}
+#'   \item{nknots}{Number of knots to use for smooting functions, included only with GAM}
+#'   \item{X.basis}{Basis function for n smoothing functions, included only with GAM}
 #'
 #' @importFrom stats median
 #' @export

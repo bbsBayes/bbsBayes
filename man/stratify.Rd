@@ -15,9 +15,10 @@ to "bbs", which is the standard BCR X State used in BBS data analysis.
 Other options are "state", "bcr", "degree_block"}
 }
 \value{
-Large list (4 elements) containing stratified point count data,
-route data, and species data, as well as a data frame containing area
-information about each strata.
+Large list (3 elements) consisting of:
+  \item{bird_strat}{Dataframe of stratified bird data}
+  \item{route_strat}{Dataframe of stratified route data}
+  \item{species_strat}{Dataframe of stratified species data}
 }
 \description{
 Assigns each bird count data point and each route a strata
