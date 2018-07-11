@@ -3,7 +3,7 @@
 #' \code{run-model} runs a JAGS model as specified by the user for
 #'   the species of interest
 #'
-#' @param data List or environment containing the data to model, as output
+#' @param jags_data List or environment containing the data to model, as output
 #'   by \code{prepare_jags_data}
 #' @param model Character string of the model that should be run.
 #'   Note that this should be the same model used by \code{prepare_jags_data}
@@ -42,12 +42,12 @@
 #'                                model = "standard")
 #'
 #' # Run a JAGS model with the Standard BBS model using the default JAGS arguments
-#' jags_mod <- run_model(data = data_jags, model = "standard")
+#' jags_mod <- run_model(jags_data = data_jags, model = "standard")
 #'
 #' # You can specify how many chains to run, how many adaptation interations,
 #' # how many burn in iterations, how many sampling interations, and how much\
 #' # thinning.
-#' jags_mod <- run_model(data = data_jags,
+#' jags_mod <- run_model(jags_data = data_jags,
 #'                       model = "standard",
 #'                       n_chains = 2,
 #'                       n_adapt = 200,
@@ -57,19 +57,19 @@
 #'
 #' # You can specify a vector of variable names to monitor. By default, the
 #' # variable "n" is monitored to produce trends
-#' jags_mod <- run_model(data = data_jags,
+#' jags_mod <- run_model(jags_data = data_jags,
 #'                       model = "standard",
 #'                       variable_names = c("n", "strata"))
 #'
 #' # If you used \code{prepare_jags_data} to create the data sent to \code{run_model},
 #' # you don't actually have to specify the model again, as this information is
 #' # saved in the output for \code{prepare_jags_data}. The following code works:
-#' jags_mod <- run_model(data = data_jags)
+#' jags_mod <- run_model(jags_data = data_jags)
 #'
 #' # If you happen to use a different function to prepare the JAGS data, you will
 #' # need to specify the model. The following code will not work.
 #' data_jags_other <- some_other_preparation_function(...)
-#' jags_mod <- run_model(data = data_jags_other)
+#' jags_mod <- run_model(jags_data = data_jags_other)
 #'
 #' # If you specify one model in \code{prepare_jags_data} and specify a different
 #' # model in \code{run_model}, the function will default to using the model specified
@@ -77,10 +77,10 @@
 #' data_jags <- prepare_jags_data(data = data_stratified,
 #'                                species_to_run = "Bufflehead",
 #'                                model = "standard")
-#' jags_mod <- run_model(data = data_jags, model = "firstdifference")
+#' jags_mod <- run_model(jags_data = data_jags, model = "firstdifference")
 #' }
 #'
-run_model <- function(data,
+run_model <- function(jags_data = NULL,
                       model = NULL,
                       inits = NULL,
                       variable_names = c("n"),
@@ -93,7 +93,7 @@ run_model <- function(data,
                       ...)
 {
   # The case where the user does their own data prep. Rare, but possible
-  if (is.null(model) & is.null(data[["model"]]))
+  if (is.null(model) & is.null(jags_data[["model"]]))
   {
     stop("No model specified.")
   }
@@ -103,16 +103,16 @@ run_model <- function(data,
   # be used anyway.
   if (!is.null(model))
   {
-    if (models[[model]] != models[[data[["model"]]]])
+    if (models[[model]] != models[[jags_data[["model"]]]])
     {
       warning("Model supplied does not match model used in JAGS preparation.")
     }
   }
-  model <- data[["model"]]
-  data[["model"]] <- NULL
+  model <- jags_data[["model"]]
+  jags_data[["model"]] <- NULL
 
   jags <- jags.model(file = system.file("models",models[[model]],package="bbsBayes"),
-                     data = data,
+                     data = jags_data,
                      inits = inits,
                      n.chains = n_chains,
                      n.adapt = n_adapt)
