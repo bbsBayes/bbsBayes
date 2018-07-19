@@ -96,7 +96,7 @@ stratify <- function(bbs_data, stratify_by = "bbs")
     bird[which(bird$statenum == 65), "statenum"] <- 765
     bird[which(bird$statenum == 75), "statenum"] <- 765
 
-    route[,"strat_name"] <- paste(route[,"Country"],
+    route[,"strat_name"] <- paste(route[,"countrynum"],
                                   route[,"St_Abrev"],
                                   route[,"BCR"],
                                   sep = "-")

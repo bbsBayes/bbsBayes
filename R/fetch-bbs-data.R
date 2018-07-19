@@ -76,7 +76,7 @@ fetch_bbs_data <- function()
   pb <- progress_bar$new(
     format = "Downloading route data   [:bar] :percent eta: :eta",
     clear = FALSE,
-    total = 5,
+    total = 17,
     width = 80)
   pb$tick(0)
 
@@ -92,12 +92,6 @@ fetch_bbs_data <- function()
   ################################################################
   # Weather Data
   ################################################################
-  pb <- progress_bar$new(
-    format = "Downloading weather data [:bar] :percent eta: :eta",
-    clear = FALSE,
-    total = 8,
-    width = 80)
-  pb$tick(0)
 
   temp <- tempfile(); pb$tick()
   download.file(paste0(base_url,"Weather.zip"),temp, quiet = TRUE); pb$tick()
@@ -112,7 +106,18 @@ fetch_bbs_data <- function()
   #   routes above (mini-routes etc.)
   route <- merge(routes, weather, by = c("CountryNum","StateNum","Route")); pb$tick()
   names(route)[which(tolower(names(route)) == "countrynum")] = "countrynum"; pb$tick()
-  names(route)[which(tolower(names(route)) == "statenum")] = "statenum"; pb$tick
+  names(route)[which(tolower(names(route)) == "statenum")] = "statenum"; pb$tick()
+
+  # Add region and BCR information to route and bird data frames
+  regs <- read.csv(system.file("data-import",
+                               "regs.csv",
+                               package="bbsBayes"),
+                   stringsAsFactors = F)
+  pb$tick()
+
+  route <- merge(route, regs, by = c("countrynum", "statenum")); pb$tick()
+  tmp <- unique(route[,c("BCR","statenum","Route","countrynum")]); pb$tick() # all unique routes by BCR and state
+  bird <- merge(bird, tmp, by = c("statenum","Route","countrynum")); pb$tick()
 
   ################################################################
   # Species Data
@@ -120,7 +125,7 @@ fetch_bbs_data <- function()
   pb <- progress_bar$new(
     format = "Downloading species data [:bar] :percent eta: :eta",
     clear = FALSE,
-    total = 10,
+    total = 6,
     width = 80)
   pb$tick(0)
 
@@ -144,17 +149,6 @@ fetch_bbs_data <- function()
 
   # this reads in the USGS BBS ftp site species file
   species[,"sp.bbs"] <- as.integer(as.character(species[,"aou"])); pb$tick()
-
-  # Add region and BCR information to route and bird data frames
-  regs <- read.csv(system.file("data-import",
-                               "regs.csv",
-                               package="bbsBayes"),
-                   stringsAsFactors = F)
-  pb$tick()
-
-  route <- merge(route, regs, by = c("countrynum", "statenum")); pb$tick()
-  tmp <- unique(route[,c("BCR","statenum","Route","countrynum")]); pb$tick() # all unique routes by BCR and state
-  bird <- merge(bird, tmp, by = c("statenum","Route","countrynum")); pb$tick()
 
   return(list(bird = bird,
               route = route,
