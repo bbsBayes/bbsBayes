@@ -3,7 +3,7 @@
 #' \code{prepare_jags_data} transforms stratified data for use as input
 #'   to run JAGS models.
 #'
-#' @param data Large list of stratified data returned by \code{stratify()}
+#' @param strat_data Large list of stratified data returned by \code{stratify()}
 #' @param species_to_run Character string of the English name of the species to run
 #' @param model Character strings or vector of character strings of what
 #'   species are wanting to be analysed.
@@ -79,7 +79,7 @@
 #' }
 #'
 
-prepare_jags_data <- function(data,
+prepare_jags_data <- function(strat_data,
                             species_to_run,
                             model,
                             n_knots = 9,
@@ -89,25 +89,11 @@ prepare_jags_data <- function(data,
                             strata_rem = NA,
                             ...)
 {
-  birds <- data$bird_strat
-  route <- data$route_strat
-  species <- data$species_strat
+  birds <- strat_data$bird_strat
+  route <- strat_data$route_strat
+  species <- strat_data$species_strat
 
-  # dta <- bugs_data_prep(sp_eng = species_to_run,
-  #                     sp_aou = get_species_aou(species, species_to_run),
-  #                     strata_rem = strata_rem,
-  #                     min_n_routes = min_n_routes,# require 3 or more routes where species has been observed
-  #                     min_max_route_years = min_max_route_years,# require at least 1 route with non-zero obs of species in 3 or more years
-  #                     min_mean_route_years = min_mean_route_years,
-  #                     birds = birds,
-  #                     route = route)# require an average of 1 year per route with the species observed (setting this to 1 effectively removes this criterion)
-  #
-  # spsp_f <- dta$output
-  # a_wts <- dta$a_wts
-  # pR_wts <- dta$pR_wts
-  # pR <- dta$pR
-  # pR2 <- dta$pR2
-  # n_observers <- as.integer(dta$n_observers)
+
   ##################################################################
   # Previous function from Bugs Data Prep
   ##################################################################
@@ -130,27 +116,39 @@ prepare_jags_data <- function(data,
 
   if (!is.na(strata_rem)) {spsp.c <- spsp.c[-which(spsp.c$strat_name %in% strata_rem),] }
 
+  pb <- progress_bar$new(
+    format = "Preparing JAGS data   [:bar] :percent eta: :eta",
+    clear = FALSE,
+    total = length(unique(spsp.c$strat_name)) + 26,
+    width = 80)
+  pb$tick(0)
+
   spsp_routes_ever <- unique(spsp.c[which(spsp.c$TotalInd != 0),c("strat_name","rt.uni")]) #routes which have had at least 1 species counted
   spsp_routes_never <- unique(spsp.c[-which(spsp.c$rt.uni %in% spsp_routes_ever$rt.uni),c("strat_name","rt.uni")]) #routes that have not had this species before
   spsp.c2 <- spsp.c[which(spsp.c$rt.uni %in% spsp_routes_ever$rt.uni),] #All data counts for routes which has had seen
+  pb$tick()
 
   # first year each given route was run
   miny.rt <- tapply(spsp.c2[,"Year"],spsp.c2[,"rt.uni"],min)
   miny.df <- data.frame(rt.uni = names(miny.rt),fyr_rt_run = as.integer(miny.rt))
+  pb$tick()
 
   # number of times the species was seen on the given route since it has run
   n.yr.rt <- tapply(spsp.c[which(spsp.c$TotalInd != 0),"Year"],spsp.c[which(spsp.c$TotalInd != 0),"rt.uni"],length)
   n.yr.df <- data.frame(rt.uni = names(n.yr.rt),nyr_rt_run = as.integer(n.yr.rt))
+  pb$tick()
 
   if(nrow(spsp_routes_ever) > 0)
   {
     spsp_routes_ever <- merge(spsp_routes_ever,miny.df,by = "rt.uni")
     spsp_routes_ever <- merge(spsp_routes_ever,n.yr.df,by = "rt.uni")
+    pb$tick()
 
     # this will give some ever/never stats PER STRATUM
     pR <- data.frame(strat = unique(spsp.c$strat_name), nr.ever = NA, nr.never = NA, p.r.ever = NA,nry.ever = NA,meanry.ever = NA)
     for(p in unique(spsp.c$strat_name))
     {
+      pb$tick()
       # routes ever observed in this strata
       pR[pR$strat == p,"nr.ever"] <- nrow(spsp_routes_ever[spsp_routes_ever$strat_name == p,])
       # routes never observed in this strata
@@ -173,13 +171,16 @@ prepare_jags_data <- function(data,
     #gets rid of infinite values
     pR[which(pR$fy.wspecies > 2100),"fy.wspecies"] <- NA
     pR[which(pR$max.nry < 0),"max.nry"] <- NA
+    pb$tick()
 
     spsp.c.l <- spsp.c[which(spsp.c$rt.uni %in% unique(spsp_routes_ever$rt.uni)),]
     spsp.c.drop <- spsp.c[-which(spsp.c$rt.uni %in% unique(spsp_routes_ever$rt.uni)),]
+    pb$tick()
 
     spsp.c <- spsp.c.l
     spsp.2 <- spsp.c
     spsp.2 <- spsp.2[which(spsp.2$strat_name %in% pR[which(pR$nr.ever >= min_n_routes & pR$max.nry >= min_max_route_years & pR$meanry.ever >= min_mean_route_years),"strat"]),]
+    pb$tick()
 
     rts.used <- unique(spsp.2[,c("rt.uni","strat_name")])
 
@@ -187,8 +188,10 @@ prepare_jags_data <- function(data,
     #incidentally this ends up being all the strata that are used
     rts.summary <- tapply(rts.used$rt.uni,rts.used$strat_name,length)
     nrts.used <- data.frame(strat_name = names(rts.summary),nroutes.used = as.integer(rts.summary))
+    pb$tick()
 
     spsp.temp.2 <- merge(spsp.2,pR[,c("strat","p.r.ever","meanry.ever","max.nry")], by.x = "strat_name", by.y = "strat",all.x = T)
+    pb$tick()
 
     spsp.2 <- spsp.temp.2
 
@@ -197,25 +200,33 @@ prepare_jags_data <- function(data,
     spsp.2[,"count"] <- spsp.2[,c("TotalInd")]
 
     spsp_f <- spsp.2
-
+    pb$tick()
   }else
   {
+    for(p in unique(spsp.c$strat_name) + 6)
+    {
+      pb$tick()
+    }
     spsp_f <- spsp.c[-c(1:nrow(spsp.c)),]
+    pb$tick()
   }
 
   spsp_f[,"stratcode"] <- spsp_f[,"strat_name"]
-  spsp_f[,"stratum"] <- as.numeric(factor(spsp_f$strat_name))
+  spsp_f[,"stratum"] <- as.numeric(factor(spsp_f$strat_name)); pb$tick()
 
-  spsp_f <- spsp_f[order(spsp_f$stratum,spsp_f$Route,spsp_f$Year),]
+  spsp_f <- spsp_f[order(spsp_f$stratum,spsp_f$Route,spsp_f$Year),]; pb$tick()
 
   strat.list <- unique(spsp_f[,c("statenum","countrynum","BCR","stratum","strat_name","stratcode","State")])
   strat.use <- strat.list[,"stratcode"]
 
   pR2 <- merge(pR[which(pR$strat %in% strat.list[,"strat_name"]),],strat.list,by.x = "strat", by.y = "strat_name")
+  pb$tick()
 
   pR2 <- pR2[order(pR2$stratum),]
+  pb$tick()
 
   spsp_f <- spsp_f[order(spsp_f$stratum,spsp_f$Route,spsp_f$Year),]
+  pb$tick()
 
   spsp_f[,"rt.uni.ob"] <- paste(spsp_f$statenum,spsp_f$Route,spsp_f$ObsN,sep = "-")
 
@@ -227,6 +238,7 @@ prepare_jags_data <- function(data,
 
   # number of observers per stratum
   nobservers <- tapply(tmp$rt.uni.ob,tmp$stratum,length)
+  pb$tick()
 
   for (s in 1:length(nobservers)) {
     sel1 <- which(spsp_f$stratum == s)
@@ -242,44 +254,41 @@ prepare_jags_data <- function(data,
       obsfact <- rbind(obsfact,tmp)
     }
   }
+  pb$tick()
 
   spsp_ft <- merge(spsp_f,obsfact,by = c("stratum","rt.uni.ob"))
+  pb$tick()
 
   spsp_f <- spsp_ft
 
   fyears <- tapply(spsp_f$Year,spsp_f$rt.uni.ob,min)
   fyr.df <- data.frame(rt.uni.ob = names(fyears),Year = as.integer(fyears),firstyear = 1)
   spsp_ft <- merge(spsp_f,fyr.df,all.x = T,by = c("rt.uni.ob","Year"))
+  pb$tick()
 
   spsp_f <- spsp_ft
 
   spsp_f[which(is.na(spsp_f$firstyear)),"firstyear"] <- 0
   spsp_f <- spsp_f[,c("count","stratum","obser","yr","firstyear","strat_name","rt.uni","Year")]
   names(spsp_f) <- c("count","strat","obser","year","firstyr","strat_name","route","rYear")
+  pb$tick()
 
   pR_wts <- pR.wts
   n_observers = nobservers
   nrts_used = nrts.used
-  #return(list(output = output, pR_wts = pR.wts, pR = pR, pR2 = pR2, n_observers = nobservers, nrts_used = nrts.used)) #adjmat = adjmat,LT5.strata = LT5.strata, num = num, adj = adj, sumNumNeigh = sumNumNeigh
-
+  pb$tick()
 
   ####################### END BUGS DATA PREP #######################
-
-  ### spsp_f <- dta$output
-  ### a_wts <- dta$a_wts
-  # pR_wts <- dta$pR_wts
-  # pR <- dta$pR
-  # pR2 <- dta$pR2
-  # n_observers <- as.integer(dta$n_observers)
-
 
   ymin = range(spsp_f$year)[1]
   ymax = range(spsp_f$year)[2]
   nyears = length(ymin:ymax)
+  pb$tick()
 
   recenter = floor(diff(c(1,ymax))/2)
   rescale = 10 # this generates a year variable with sd ~ 1 because of the ~50 years in the time-series
   spsp_f$yearscale = (spsp_f$year-recenter)/rescale
+  pb$tick()
 
   scaledyear = seq(min(spsp_f$yearscale),max(spsp_f$yearscale),length = nyears)
   names(scaledyear) <- ymin:ymax
@@ -290,6 +299,8 @@ prepare_jags_data <- function(data,
     names(newyscale) <- newys
     scaledyear = c(newyscale,scaledyear)
   }
+  pb$tick()
+
   yminsc = scaledyear[as.character(ymin)]
   ymaxsc = scaledyear[as.character(ymax)]
   if(ymin != 1)
@@ -297,6 +308,7 @@ prepare_jags_data <- function(data,
     yminpred = 1
     yminscpred = scaledyear[as.character(1)]
   }
+  pb$tick()
 
   nstrata=length(unique(spsp_f$strat))
 
@@ -330,6 +342,7 @@ prepare_jags_data <- function(data,
 
     to_return <- c(to_return, list(nknots = n_knots, X.basis = X_basis))
   }
+  pb$tick()
 
   return(to_return)
 }
