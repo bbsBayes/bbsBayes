@@ -4,12 +4,12 @@
 \alias{prepare_jags_data}
 \title{Transform data to use for JAGS input}
 \usage{
-prepare_jags_data(data, species_to_run, model, n_knots = 9,
+prepare_jags_data(strat_data, species_to_run, model, n_knots = 9,
   min_n_routes = 3, min_max_route_years = 3, min_mean_route_years = 1,
   strata_rem = NA, ...)
 }
 \arguments{
-\item{data}{Large list of stratified data returned by \code{stratify()}}
+\item{strat_data}{Large list of stratified data returned by \code{stratify()}}
 
 \item{species_to_run}{Character string of the English name of the species to run}
 

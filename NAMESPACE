@@ -3,6 +3,7 @@
 export(auto_bbs)
 export(fetch_bbs_data)
 export(generate_trend)
+export(model_to_file)
 export(prepare_jags_data)
 export(run_model)
 export(stratify)
