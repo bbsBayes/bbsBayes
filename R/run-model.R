@@ -24,11 +24,9 @@
 #'   Defaults to 2000.
 #' @param ... Additional arguments
 #' @return
-#'   \item{jags_model}{Model created by jags.model()}
-#'   \item{mcmc_samples}{MCMC list created by coda.samples()}
+#'   \item{jags_job}{Object created by jagsUI containing coda samples and summary statistics.}
 #'
-#' @importFrom rjags jags.model coda.samples
-#' @importFrom stats update
+#' @importFrom jagsUI jags
 #' @export
 #'
 #' @examples
@@ -111,26 +109,16 @@ run_model <- function(jags_data = NULL,
   model <- jags_data[["model"]]
   jags_data[["model"]] <- NULL
 
-  jags <- jags.model(file = system.file("models",models[[model]],package="bbsBayes"),
-                     data = jags_data,
-                     inits = inits,
-                     n.chains = n_chains,
-                     n.adapt = n_adapt)
 
-  if (n_burnin > 0)
-  {
-    cat(paste("Burning in for", n_burnin, "iterations.\n"))
-    update(object = jags,
-           n.iter = n_burnin)
-  }
+  jags_job <- jags(data = jags_data,
+                   inits = inits,
+                   parameters.to.save = variable_names,
+                   model.file = system.file("models",models[[model]],package="bbsBayes"),
+                   n.chains = n_chains,
+                   n.adapt = n_adapt,
+                   n.burnin = n_burnin,
+                   n.iter = n_iter,
+                   n.thin = n_thin)
 
-  cat("Sampling MCMC chain.\n")
-  mcmc_samples <- coda.samples(model = jags,
-                               variable.names = variable_names,
-                               n.iter = n_iter,
-                               thin = n_thin)
-
-
-  return(list(jags_model = jags,
-              mcmc_samples = mcmc_samples))
+  return(jags_job)
 }

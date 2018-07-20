@@ -42,8 +42,7 @@ Defaults to 2000.}
 \item{...}{Additional arguments}
 }
 \value{
-\item{jags_model}{Model created by jags.model()}
-  \item{mcmc_samples}{MCMC list created by coda.samples()}
+\item{jags_job}{Object created by jagsUI containing coda samples and summary statistics.}
 }
 \description{
 \code{run-model} runs a JAGS model as specified by the user for
