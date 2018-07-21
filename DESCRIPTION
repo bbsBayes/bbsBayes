@@ -1,7 +1,7 @@
 Package: bbsBayes
 Type: Package
 Title: Hierarchical Bayesian Analysis of North American Breeding Bird Survey Data
-Version: 0.1.0.9016
+Version: 0.1.0.9017
 Authors@R: c(person("Brandon P.M.", "Edwards", role = c("aut", "cre"),
                      email = "edwardsb@uoguelph.ca"),
               person("Adam C.", "Smith", role = "aut",
@@ -9,7 +9,8 @@ Authors@R: c(person("Brandon P.M.", "Edwards", role = c("aut", "cre"),
 Imports:
   progress,
   jagsUI,
-  ggplot2
+  ggplot2,
+  stringr
 SystemRequirements: JAGS (http://mcmc-jags.sourceforge.net)
 URL: https://github.com/BrandonEdwards/bbsBayes
 NeedsCompilation: no

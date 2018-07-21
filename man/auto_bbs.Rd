@@ -5,7 +5,7 @@
 \title{Automatically run a BBS analysis for a given species}
 \usage{
 auto_bbs(species = NULL, model = NULL, bbs_data = NULL,
-  stratify_by = "bbs", output_dir = NULL, ...)
+  stratify_by = "bbs", generate_report = FALSE, output_dir = NULL, ...)
 }
 \arguments{
 \item{species}{Character strings or vector of character strings of what
@@ -14,23 +14,63 @@ species are wanting to be analysed}
 \item{model}{Character strings or vector of character strings of what
 species are wanting to be analysed.}
 
-\item{bbs_data}{Large list of BBS data as downloaded using \code{fetchBBSdata()}.
-If this argument is left blank, \code{autoBBS()} will default to downloading
+\item{bbs_data}{Large list of BBS data as downloaded using \code{fetch_bbs_data}.
+If this argument is left blank, \code{auto_bbs} will default to downloading
 the latest data from the USGS website.}
 
 \item{stratify_by}{Character string of how to stratify the BBS data}
 
-\item{output_dir}{Path to directory where output should be directed to.
-Defaults to current directory.}
+\item{generate_report}{Should \code{auto_bbs} generate an RMarkdown report?}
+
+\item{output_dir}{Path to directory where RMarkdown report should be sent to}
 
 \item{...}{Optional arguments for JAGS data prepping, modelling, or plotting.
 See \code{run_model}, \code{prepare_jags_data}, and \code{generate_trend_plots}
 for other argument details}
 }
 \value{
-Some sort of output with cool stuff. Don't know yet
+Large list. Each entry is a list for unique species-model combination
+  based on the user's input to \code{species} and \code{model}. So, if 2 species
+  are entered and 2 models are entered, \code{auto_bbs} returns a list of 4 lists.
+  Each of these list contains:
+  \item{model}{The model that was used}
+  \item{jags_data}{The data that was prepared and used as input for JAGS}
+  \item{jags_job}{A jagsUI object containing posterior samples from JAGS}
+  \item{plots}{Plots generated for the species}
 }
 \description{
 \code{auto_bbs} generates MCMC chains for a list of species using BBS
   data.
+}
+\examples{
+
+\dontrun{
+# Run BBS analysis for Barn Swallow using the standard model
+bbs_run <- auto_bbs(species = "Barn Swallow",
+                    model = "standard")
+
+# This will produce a list of list entries, with the name of each entry
+# following the format of species_model, with all whitespace replaced with "_"
+names(bbs_run)
+[1] "Barn_Swallow_standard"
+
+# We can run more than one species, and more than one model
+# The following will produce a list with 9 entries for each species X model combination
+bbs_run <- auto_bbs(species = c("Barn Swallow", "Common Merganser", "Dunlin"),
+                    model = c("standard", "fd", "gam"))
+
+# We can choose how to stratify the data
+bbs_run <- auto_bbs(species = "Barn Swallow",
+                    model = "standard",
+                    stratify_by = "bcr")
+
+# We can specify information about how the JAGS models should be run
+bbs_run <- auto_bbs(species = "Barn Swallow",
+                    model = "standard",
+                    n_burnin = 10000,
+                    n_iter = 5000,
+                    variable_names = c("n", "sdobs"))
+
+}
+
 }
