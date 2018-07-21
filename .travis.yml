@@ -1,7 +1,19 @@
 language: r
+sudo: required
+
 before_install:
   - sudo add-apt-repository ppa:marutter/rrutter -y
   - sudo apt-get update
+  - sudo apt-get install jags
   - sudo apt-get install r-cran-rjags
-notifications:
-  email: false
+
+env:
+ global:
+   - CRAN: http://cran.rstudio.com
+   - WARNINGS_ARE_ERRORS=1
+   - R_BUILD_ARGS=--no-manual
+   - R_CHECK_ARGS=--no-manual --as-cran
+
+r_packages:
+  - jagsUI
+  - progress
