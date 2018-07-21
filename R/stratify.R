@@ -14,6 +14,7 @@
 #'   \item{bird_strat}{Dataframe of stratified bird data}
 #'   \item{route_strat}{Dataframe of stratified route data}
 #'   \item{species_strat}{Dataframe of stratified species data}
+#'   \item{stratify_by}{Argument used for stratification}
 #'
 #' @examples
 #'
@@ -112,5 +113,6 @@ stratify <- function(bbs_data, stratify_by = "bbs")
 
   return(list(bird_strat = bird,
               route_strat = route,
-              species_strat = bbs_data$species))
+              species_strat = bbs_data$species,
+              stratify_by = stratify_by))
 }

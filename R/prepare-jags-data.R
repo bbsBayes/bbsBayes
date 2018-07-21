@@ -324,7 +324,8 @@ prepare_jags_data <- function(strat_data,
                    obser = as.integer(spsp_f$obser),
                    year = spsp_f$year,
                    firstyr = spsp_f$firstyr,
-                   nobservers = n_observers)
+                   nobservers = n_observers,
+                   stratify_by = strat_data$stratify_by)
 
   if (tolower(model) == "standard")
   {

@@ -10,8 +10,8 @@
 #' @return ggplot2 object of continental trend plot.
 #'
 #' @importFrom stats quantile
-#' @importFrom ggplot2 ggplot theme margin labs geom_path
-#'   geom_ribbon aes
+#' @importFrom ggplot2 ggplot theme element_blank element_line
+#' labs geom_line geom_ribbon aes
 #'
 #' @keywords internal
 #' @export
@@ -48,7 +48,7 @@ plot_continental <- function(n = NULL,
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
           axis.line = element_line(colour = "black")) +
-    labs(title = paste("Annual Trend"), x = "Year", y = "Index") +
+    labs(title = paste("Annual Trend: Continental"), x = "Year", y = "Index") +
     geom_line(data = data_summary, aes(x = Year, y = Index)) +
     geom_ribbon(data = data_summary, aes(x = Year, ymin = Q25, ymax = Q975), alpha = 0.12)
 

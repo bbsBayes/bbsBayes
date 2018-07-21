@@ -112,6 +112,9 @@ run_model <- function(jags_data = NULL,
   strata_used <- jags_data[["strat_name"]]
   jags_data[["strat_name"]] <- NULL
 
+  stratify_by <- jags_data[["stratify_by"]]
+  jags_data[["stratify_by"]] <- NULL
+
   jags_job <- jags(data = jags_data,
                    inits = inits,
                    parameters.to.save = variable_names,
@@ -123,6 +126,7 @@ run_model <- function(jags_data = NULL,
                    n.thin = n_thin)
 
   jags_job$strat_name <- strata_used
+  jags_job$stratify_by <- stratify_by
 
   return(jags_job)
 }

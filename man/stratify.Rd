@@ -19,6 +19,7 @@ Large list (3 elements) consisting of:
   \item{bird_strat}{Dataframe of stratified bird data}
   \item{route_strat}{Dataframe of stratified route data}
   \item{species_strat}{Dataframe of stratified species data}
+  \item{stratify_by}{Argument used for stratification}
 }
 \description{
 Assigns each bird count data point and each route a strata
