@@ -109,6 +109,8 @@ run_model <- function(jags_data = NULL,
   model <- jags_data[["model"]]
   jags_data[["model"]] <- NULL
 
+  strata_used <- jags_data[["strat_name"]]
+  jags_data[["strat_name"]] <- NULL
 
   jags_job <- jags(data = jags_data,
                    inits = inits,
@@ -119,6 +121,8 @@ run_model <- function(jags_data = NULL,
                    n.burnin = n_burnin,
                    n.iter = n_iter,
                    n.thin = n_thin)
+
+  jags_job$strat_name <- strata_used
 
   return(jags_job)
 }
