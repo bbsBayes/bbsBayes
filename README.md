@@ -1,7 +1,5 @@
 # bbsBayes <img src="man/figures/logo.png" align="right" />
 
-An R Package for Hierarchical Bayesian Analysis of North American Breeding Bird Survey Data
-
 [![Build Status](https://travis-ci.org/BrandonEdwards/bbsBayes.svg?branch=master)](https://travis-ci.org/BrandonEdwards/bbsBayes)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/bbsBayes)](https://cran.r-project.org/package=bbsBayes)
 
