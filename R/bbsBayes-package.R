@@ -11,9 +11,10 @@
          parent.env(environment()))
 
   assign("strata",
-         list(bbs = "bbs.csv",
-              state = "state-prov.csv",
+         list(bbs = "strat.csv",
+              bbs_can = "stratcan.csv",
+              state = "stateprov.csv",
               bcr = "bcr.csv",
-              latlong = "degree-blocks.csv"),
+              latlong = "db.csv"),
          parent.env(environment()))
 }
