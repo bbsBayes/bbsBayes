@@ -23,8 +23,9 @@ the latest data from the USGS website.}
 \item{output_dir}{Path to directory where output should be directed to.
 Defaults to current directory.}
 
-\item{...}{Optional arguments for JAGS data prepping or modelling.
-See \code{run_model} and \code{prepare_jags_data} for other argument details}
+\item{...}{Optional arguments for JAGS data prepping, modelling, or plotting.
+See \code{run_model}, \code{prepare_jags_data}, and \code{generate_trend_plots}
+for other argument details}
 }
 \value{
 Some sort of output with cool stuff. Don't know yet

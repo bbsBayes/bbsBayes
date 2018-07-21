@@ -8,6 +8,7 @@
 #'   of plots? Provide a list of strata to plot or the string "all"
 #'   to plot all the strata used in the analysis.
 #' @param cont Should a continental plot be produced?
+#' @param ... Other arguments
 #'
 #' @return List of ggplot2 objects
 #'
@@ -43,7 +44,8 @@
 
 generate_trend_plot <- function(jags_mod = NULL,
                            strata_to_plot = NULL,
-                           cont = TRUE)
+                           cont = TRUE,
+                           ...)
 {
   # Read area weights
   stratify_by <- jags_mod$stratify_by

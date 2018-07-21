@@ -122,7 +122,7 @@ run_model <- function(jags_data = NULL,
                    n.chains = n_chains,
                    n.adapt = n_adapt,
                    n.burnin = n_burnin,
-                   n.iter = n_iter,
+                   n.iter = n_iter + n_burnin,
                    n.thin = n_thin)
 
   jags_job$strat_name <- strata_used

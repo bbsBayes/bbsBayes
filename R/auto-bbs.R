@@ -13,8 +13,9 @@
 #' @param stratify_by Character string of how to stratify the BBS data
 #' @param output_dir Path to directory where output should be directed to.
 #'   Defaults to current directory.
-#' @param ... Optional arguments for JAGS data prepping or modelling.
-#' See \code{run_model} and \code{prepare_jags_data} for other argument details
+#' @param ... Optional arguments for JAGS data prepping, modelling, or plotting.
+#' See \code{run_model}, \code{prepare_jags_data}, and \code{generate_trend_plots}
+#' for other argument details
 #'
 #' @return Some sort of output with cool stuff. Don't know yet
 #'
@@ -33,7 +34,6 @@ auto_bbs <- function(species = NULL,
   {
     bbs_data <- fetch_bbs_data()
   }
-  species_list <- bbs_data$species
 
   data_strat <- stratify(bbs_data, stratify_by)
 
@@ -41,7 +41,7 @@ auto_bbs <- function(species = NULL,
   total_sp <- length(species)
   for (sp in species)
   {
-    cat(paste("Prepping data for species ",
+    cat(paste("Species ",
               sp_num,
               " of ",
               total_sp,
@@ -49,15 +49,22 @@ auto_bbs <- function(species = NULL,
               sp,
               "\n",
               sep = ""))
-    #cat(paste(sp, model, date(),"\n")) # output information about run and time
-    data_jags <- prepare_jags_data(data = data_strat,
+
+    cat("Runnings JAGS model\n")
+    data_jags <- prepare_jags_data(strat_data = data_strat,
                                  species_to_run = sp,
                                  model = model,
                                  ...)
 
-    cat("Beginning JAGS model.\n")
-    jagsjob <- run_model(data = data_jags,
+    jagsjob <- run_model(jags_data = data_jags,
                          ...)
+
+    plots <- plots <- generate_trend_plot(jags_mod = jagsjob,
+                                          ...)
     sp_num <- sp_num + 1
   }
+
+  return(list(jags_data = data_jags,
+              jags_model = jagsjob,
+              plots = plots))
 }
