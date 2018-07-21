@@ -5,7 +5,8 @@
 \title{Automatically run a BBS analysis for a given species}
 \usage{
 auto_bbs(species = NULL, model = NULL, bbs_data = NULL,
-  stratify_by = "bbs", generate_report = FALSE, output_dir = NULL, ...)
+  stratify_by = "bbs", generate_report = FALSE, output_dir = NULL,
+  quiet = FALSE, ...)
 }
 \arguments{
 \item{species}{Character strings or vector of character strings of what
@@ -23,6 +24,8 @@ the latest data from the USGS website.}
 \item{generate_report}{Should \code{auto_bbs} generate an RMarkdown report?}
 
 \item{output_dir}{Path to directory where RMarkdown report should be sent to}
+
+\item{quiet}{Should all console output be suppressed?}
 
 \item{...}{Optional arguments for JAGS data prepping, modelling, or plotting.
 See \code{run_model}, \code{prepare_jags_data}, and \code{generate_trend_plots}

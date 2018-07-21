@@ -9,6 +9,7 @@
 #' @param stratify_by String argument of stratification type. Defaults
 #'   to "bbs", which is the standard BCR X State used in BBS data analysis.
 #'   Other options are "state", "bcr", "degree_block"
+#' @param quiet Should progress bars be suppressed?
 #'
 #' @return Large list (3 elements) consisting of:
 #'   \item{bird_strat}{Dataframe of stratified bird data}
@@ -44,17 +45,22 @@
 #' @export
 #'
 
-stratify <- function(bbs_data, stratify_by = "bbs")
+stratify <- function(bbs_data,
+                     stratify_by = "bbs",
+                     quiet = FALSE)
 {
-  pb <- progress_bar$new(
-    format = "Stratifying data   [:bar] :percent eta: :eta",
-    clear = FALSE,
-    total = 7,
-    width = 80)
-  pb$tick(0)
+  if (!isTRUE(quiet))
+  {
+    pb <- progress_bar$new(
+      format = "Stratifying data   [:bar] :percent eta: :eta",
+      clear = FALSE,
+      total = 7,
+      width = 80)
+    pb$tick(0)
+  }
 
-  bird <- bbs_data$bird; pb$tick()
-  route <- bbs_data$route; pb$tick()
+  bird <- bbs_data$bird; if (!isTRUE(quiet)){pb$tick()}
+  route <- bbs_data$route; if (!isTRUE(quiet)){pb$tick()}
 
   if (stratify_by == "bbs")
   {
@@ -102,13 +108,13 @@ stratify <- function(bbs_data, stratify_by = "bbs")
                                   route[,"BCR"],
                                   sep = "-")
 
-  }; pb$tick()
+  }; if (!isTRUE(quiet)){pb$tick()}
 
-  route[,"rt.uni"] <- paste(route[,"statenum"],route[,"Route"],sep = "-"); pb$tick() # regenerates the rt.uni value with newly defined combined states
-  bird[,"rt.uni"] <- paste(bird[,"statenum"],bird[,"Route"],sep = "-"); pb$tick()
+  route[,"rt.uni"] <- paste(route[,"statenum"],route[,"Route"],sep = "-"); if (!isTRUE(quiet)){pb$tick()} # regenerates the rt.uni value with newly defined combined states
+  bird[,"rt.uni"] <- paste(bird[,"statenum"],bird[,"Route"],sep = "-"); if (!isTRUE(quiet)){pb$tick()}
 
-  route[,"rt.uni.y"] <- paste(route[,"statenum"],route[,"Route"],route[,"Year"],sep = "-"); pb$tick()  # regenerates the rt.uni.y value with newly defined combined states
-  bird[,"rt.uni.y"] <- paste(bird[,"statenum"],bird[,"Route"],bird[,"Year"],sep = "-"); pb$tick()
+  route[,"rt.uni.y"] <- paste(route[,"statenum"],route[,"Route"],route[,"Year"],sep = "-"); if (!isTRUE(quiet)){pb$tick()}  # regenerates the rt.uni.y value with newly defined combined states
+  bird[,"rt.uni.y"] <- paste(bird[,"statenum"],bird[,"Route"],bird[,"Year"],sep = "-"); if (!isTRUE(quiet)){pb$tick()}
 
 
   return(list(bird_strat = bird,

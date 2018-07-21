@@ -6,7 +6,7 @@
 \usage{
 prepare_jags_data(strat_data, species_to_run, model, n_knots = 9,
   min_n_routes = 3, min_max_route_years = 3, min_mean_route_years = 1,
-  strata_rem = NA, ...)
+  strata_rem = NA, quiet = FALSE, ...)
 }
 \arguments{
 \item{strat_data}{Large list of stratified data returned by \code{stratify()}}
@@ -28,6 +28,8 @@ of species on at least 1 route. Defaults to 3}
 species observed. Defaults to 1.}
 
 \item{strata_rem}{Strata to remove from analysis. Defaults to NA}
+
+\item{quiet}{Should progress bars be suppressed?}
 
 \item{...}{Additional arguments}
 }

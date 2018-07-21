@@ -22,6 +22,7 @@
 #' @param n_iter Optional number of iterations.
 #' @param n_saved_steps Optional number of steps to save per chain.
 #'   Defaults to 2000.
+#' @param quiet Should JAGS output be suppressed?
 #' @param ... Additional arguments
 #' @return
 #'   \item{jags_job}{Object created by jagsUI containing coda samples and summary statistics.}
@@ -88,6 +89,7 @@ run_model <- function(jags_data = NULL,
                       n_thin = 10,
                       n_saved_steps = 2000,
                       n_iter = ceiling( ( n_saved_steps * n_thin ) / n_chains ),
+                      quiet = FALSE,
                       ...)
 {
   # The case where the user does their own data prep. Rare, but possible
@@ -123,7 +125,8 @@ run_model <- function(jags_data = NULL,
                    n.adapt = n_adapt,
                    n.burnin = n_burnin,
                    n.iter = n_iter + n_burnin,
-                   n.thin = n_thin)
+                   n.thin = n_thin,
+                   verbose = !quiet)
 
   jags_job$strat_name <- strata_used
   jags_job$stratify_by <- stratify_by

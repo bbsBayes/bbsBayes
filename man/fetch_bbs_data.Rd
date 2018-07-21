@@ -4,7 +4,10 @@
 \alias{fetch_bbs_data}
 \title{Fetch Breeding Bird Survey dataset}
 \usage{
-fetch_bbs_data()
+fetch_bbs_data(quiet = FALSE)
+}
+\arguments{
+\item{quiet}{Should progress bars be suppressed?}
 }
 \value{
 Large list (3 elements) consisting of:

@@ -4,7 +4,7 @@
 \alias{stratify}
 \title{Stratify raw Breeding Bird Survey data}
 \usage{
-stratify(bbs_data, stratify_by = "bbs")
+stratify(bbs_data, stratify_by = "bbs", quiet = FALSE)
 }
 \arguments{
 \item{bbs_data}{Large list of raw BBS data. Can be obtained using
@@ -13,6 +13,8 @@ the \code{fetchBBSdata()} function.}
 \item{stratify_by}{String argument of stratification type. Defaults
 to "bbs", which is the standard BCR X State used in BBS data analysis.
 Other options are "state", "bcr", "degree_block"}
+
+\item{quiet}{Should progress bars be suppressed?}
 }
 \value{
 Large list (3 elements) consisting of:

@@ -4,6 +4,8 @@
 #'  Survey data from the United States Geological Survey (USGS) FTP site. This
 #'  is the raw data that is uploaded to the site before any analyses are performed.
 #'
+#' @param quiet Should progress bars be suppressed?
+#'
 #' @return Large list (3 elements) consisting of:
 #' \item{bird}{Data frame of bird point count data per route, per year}
 #' \item{route}{Data frame of yearly route data}
@@ -32,7 +34,7 @@
 #' save(bbs_data, file = "bbs_data.RData")
 #' }
 #'
-fetch_bbs_data <- function()
+fetch_bbs_data <- function(quiet = FALSE)
 {
   base_url <- "ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/"
   version <- 2017 #Figure out how to make this dynamic
@@ -41,16 +43,20 @@ fetch_bbs_data <- function()
   # Bird Count Data
   ################################################################
   bfiles <- read.csv(system.file("data-import","state-dir.csv",package="bbsBayes"))
-  pb <- progress_bar$new(
-    format = "Downloading count data   [:bar] :percent eta: :eta",
-    clear = FALSE,
-    total = nrow(bfiles) + 2,
-    width = 80)
-  pb$tick(0)
+
+  if (!isTRUE(quiet))
+  {
+    pb <- progress_bar$new(
+      format = "Downloading count data   [:bar] :percent eta: :eta",
+      clear = FALSE,
+      total = nrow(bfiles) + 2,
+      width = 80)
+    pb$tick(0)
+  }
 
   for(st1 in bfiles$File.Name)
   {
-    pb$tick()
+    if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
     st <- substring(st1,first = 1,last = nchar(st1)-4)
     temp <- tempfile()
     download.file(paste0(base_url, "States/", st, ".zip"),temp, quiet = TRUE)
@@ -67,70 +73,77 @@ fetch_bbs_data <- function()
     }
   }
 
-  names(bird)[which(tolower(names(bird)) == "countrynum")] = "countrynum"; pb$tick()
-  names(bird)[which(tolower(names(bird)) == "statenum")] = "statenum"; pb$tick()
+  names(bird)[which(tolower(names(bird)) == "countrynum")] = "countrynum"; if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
+  names(bird)[which(tolower(names(bird)) == "statenum")] = "statenum"; if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
 
   ################################################################
   # Route List Data
   ################################################################
-  pb <- progress_bar$new(
-    format = "Downloading route data   [:bar] :percent eta: :eta",
-    clear = FALSE,
-    total = 17,
-    width = 80)
-  pb$tick(0)
+  if (!isTRUE(quiet))
+  {
+    pb <- progress_bar$new(
+      format = "Downloading route data   [:bar] :percent eta: :eta",
+      clear = FALSE,
+      total = 17,
+      width = 80)
+    pb$tick(0)
+  }
 
-  temp <- tempfile(); pb$tick()
-  download.file(paste0(base_url,"routes.zip"),temp, quiet = TRUE); pb$tick()
-  routes <- read.csv(unz(temp, paste0("routes.csv")),stringsAsFactors = F); pb$tick()
-  unlink(temp); pb$tick()
+  temp <- tempfile(); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
+  download.file(paste0(base_url,"routes.zip"),temp, quiet = TRUE); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
+  routes <- read.csv(unz(temp, paste0("routes.csv")),stringsAsFactors = F); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
+  unlink(temp); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
 
   #removes the off-road and water routes, as well as non-random and mini-routes
-  routes <- routes[which(routes$RouteTypeDetailID == 1 & routes$RouteTypeID == 1),]; pb$tick()
+  routes <- routes[which(routes$RouteTypeDetailID == 1 & routes$RouteTypeID == 1),]; if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
 
 
   ################################################################
   # Weather Data
   ################################################################
 
-  temp <- tempfile(); pb$tick()
-  download.file(paste0(base_url,"Weather.zip"),temp, quiet = TRUE); pb$tick()
-  weather <- read.csv(unz(temp, paste0("weather.csv")),stringsAsFactors = F); pb$tick()
-  unlink(temp); pb$tick()
+  temp <- tempfile(); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
+  download.file(paste0(base_url,"Weather.zip"),temp, quiet = TRUE); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
+  weather <- read.csv(unz(temp, paste0("weather.csv")),stringsAsFactors = F); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
+  unlink(temp); if (!isTRUE(quiet)){pb$tick()}
 
   #removes the off-road and water routes, as well as non-random and mini-routes
-  weather <- weather[which(weather$RunType == 1),]; pb$tick()
+  weather <- weather[which(weather$RunType == 1),]; if (!isTRUE(quiet)){pb$tick()}
 
   # merge weather and routes
   # removes some rows from weather that are associated with the removed
   #   routes above (mini-routes etc.)
-  route <- merge(routes, weather, by = c("CountryNum","StateNum","Route")); pb$tick()
-  names(route)[which(tolower(names(route)) == "countrynum")] = "countrynum"; pb$tick()
-  names(route)[which(tolower(names(route)) == "statenum")] = "statenum"; pb$tick()
+  route <- merge(routes, weather, by = c("CountryNum","StateNum","Route")); if (!isTRUE(quiet)){pb$tick()}
+  names(route)[which(tolower(names(route)) == "countrynum")] = "countrynum"; if (!isTRUE(quiet)){pb$tick()}
+  names(route)[which(tolower(names(route)) == "statenum")] = "statenum"; if (!isTRUE(quiet)){pb$tick()}
 
   # Add region and BCR information to route and bird data frames
   regs <- read.csv(system.file("data-import",
                                "regs.csv",
                                package="bbsBayes"),
                    stringsAsFactors = F)
-  pb$tick()
+  if (!isTRUE(quiet)){pb$tick()}
 
-  route <- merge(route, regs, by = c("countrynum", "statenum")); pb$tick()
-  tmp <- unique(route[,c("BCR","statenum","Route","countrynum")]); pb$tick() # all unique routes by BCR and state
-  bird <- merge(bird, tmp, by = c("statenum","Route","countrynum")); pb$tick()
+  route <- merge(route, regs, by = c("countrynum", "statenum")); if (!isTRUE(quiet)){pb$tick()}
+  tmp <- unique(route[,c("BCR","statenum","Route","countrynum")]); if (!isTRUE(quiet)){pb$tick()} # all unique routes by BCR and state
+  bird <- merge(bird, tmp, by = c("statenum","Route","countrynum")); if (!isTRUE(quiet)){pb$tick()}
 
   ################################################################
   # Species Data
   ################################################################
-  pb <- progress_bar$new(
-    format = "Downloading species data [:bar] :percent eta: :eta",
-    clear = FALSE,
-    total = 6,
-    width = 80)
-  pb$tick(0)
 
-  temp <- tempfile(); pb$tick()
-  download.file(paste0(base_url,"SpeciesList.txt"),temp, quiet = TRUE); pb$tick()
+  if (!isTRUE(quiet))
+  {
+    pb <- progress_bar$new(
+      format = "Downloading species data [:bar] :percent eta: :eta",
+      clear = FALSE,
+      total = 6,
+      width = 80)
+    pb$tick(0)
+  }
+
+  temp <- tempfile(); if (!isTRUE(quiet)){pb$tick()}
+  download.file(paste0(base_url,"SpeciesList.txt"),temp, quiet = TRUE); if (!isTRUE(quiet)){pb$tick()}
   species <- read.fwf(temp, skip = 9, strip.white = T,
                       colClasses = c("integer",
                                      "character",
@@ -142,13 +155,13 @@ fetch_bbs_data <- function()
                                      "character",
                                      "character"),
                       header = F,
-                      widths = c(6,-1,5,-1,50,-1,50,-1,50,-1,50,-1,50,-1,50,-1,50)); pb$tick()
-  unlink(temp); pb$tick()
+                      widths = c(6,-1,5,-1,50,-1,50,-1,50,-1,50,-1,50,-1,50,-1,50)); if (!isTRUE(quiet)){pb$tick()}
+  unlink(temp); if (!isTRUE(quiet)){pb$tick()}
 
-  names(species) <- c("seq","aou","english","french","spanish","order","family","genus","species"); pb$tick()
+  names(species) <- c("seq","aou","english","french","spanish","order","family","genus","species"); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
 
   # this reads in the USGS BBS ftp site species file
-  species[,"sp.bbs"] <- as.integer(as.character(species[,"aou"])); pb$tick()
+  species[,"sp.bbs"] <- as.integer(as.character(species[,"aou"])); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
 
   return(list(bird = bird,
               route = route,

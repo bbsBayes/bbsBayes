@@ -13,6 +13,7 @@
 #' @param stratify_by Character string of how to stratify the BBS data
 #' @param generate_report Should \code{auto_bbs} generate an RMarkdown report?
 #' @param output_dir Path to directory where RMarkdown report should be sent to
+#' @param quiet Should all console output be suppressed?
 #' @param ... Optional arguments for JAGS data prepping, modelling, or plotting.
 #' See \code{run_model}, \code{prepare_jags_data}, and \code{generate_trend_plots}
 #' for other argument details
@@ -67,6 +68,7 @@ auto_bbs <- function(species = NULL,
                     stratify_by = "bbs",
                     generate_report = FALSE,
                     output_dir = NULL,
+                    quiet = FALSE,
                     ...)
 {
   if (isTRUE(generate_report))
@@ -76,12 +78,12 @@ auto_bbs <- function(species = NULL,
 
   if (is.null(bbs_data))
   {
-    bbs_data <- fetch_bbs_data()
+    bbs_data <- fetch_bbs_data(quiet = quiet)
   }
 
   to_return <- list()
 
-  data_strat <- stratify(bbs_data, stratify_by)
+  data_strat <- stratify(bbs_data, stratify_by, quiet = quiet)
 
   sp_num <- 1
   total_sp <- length(species)
@@ -89,24 +91,28 @@ auto_bbs <- function(species = NULL,
   {
     for (mod in model)
     {
-      cat(paste("Species ",
-                sp_num,
-                " of ",
-                total_sp,
-                ": ",
-                sp,
-                " - ",
-                mod,
-                " model\n",
-                sep = ""))
+      if (!isTRUE(quiet))
+      {
+        cat(paste("Species ",
+                  sp_num,
+                  " of ",
+                  total_sp,
+                  ": ",
+                  sp,
+                  " - ",
+                  mod,
+                  " model\n",
+                  sep = ""))
+      }
 
       data_jags <- prepare_jags_data(strat_data = data_strat,
                                      species_to_run = sp,
                                      model = mod,
+                                     quiet = quiet,
                                      ...)
 
-      cat("Runnings JAGS model\n")
       jagsjob <- run_model(jags_data = data_jags,
+                           quiet = quiet,
                            ...)
 
       plots <- plots <- generate_trend_plot(jags_mod = jagsjob,
