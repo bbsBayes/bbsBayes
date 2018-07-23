@@ -49,7 +49,9 @@ generate_trend_plot <- function(jags_mod = NULL,
 {
   # Read area weights
   stratify_by <- jags_mod$stratify_by
-  all_area_weights <- read.csv(system.file("area-weight", strata[[stratify_by]], package = "bbsBayes"))
+  all_area_weights <- read.csv(system.file("area-weight",
+                                           strata[[stratify_by]],
+                                           package = "bbsBayes"))
 
   # Extract posterior data and other data from jags_mod
   n <- jags_mod$sims.list$n
@@ -59,8 +61,10 @@ generate_trend_plot <- function(jags_mod = NULL,
 
   # Subset area weights based on strata used and ensure same order as JAGS
   strata_used <- unique(jags_mod$strat_name)
+  strata_num <- as.numeric(as.factor(strata_used))
   area_weights <- all_area_weights[which(all_area_weights$region %in% strata_used), ]
   area_weights <- area_weights[ order(match(area_weights$region, strata_used)),]
+  area_weights$num <- strata_num
 
   if (isTRUE(cont))
   {

@@ -33,12 +33,12 @@ plot_strata <- function(n = NULL,
     # Check which strata requested to be plotted, and get indices for names
     if ("all" %in% tolower(strata_to_plot))
     {
-      strata_indices <- seq(1:n_strata)
+      strata_indices <- area_weights$num
     }else
     {
       for (i in strata_to_plot)
       {
-        strata_indices <- c(strata_indices, which(area_weights$region == i))
+        strata_indices <- c(strata_indices, area_weights[which(area_weights$region == i)]$num)
       }
     }
 

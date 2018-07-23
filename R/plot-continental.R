@@ -30,7 +30,7 @@ plot_continental <- function(n = NULL,
   {
     for (j in 1:n_strata)
     {
-      n_weight[i,j,] <- (n_weight[i,j,] * area_weights$area_sq_km[j])/ sum(area_weights$area_sq_km)
+      n_weight[i,j,] <- (n_weight[i,j,] * area_weights$area_sq_km[which(area_weights$num == j)])/ sum(area_weights$area_sq_km)
     }
   }
 
