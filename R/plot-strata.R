@@ -61,7 +61,9 @@ plot_strata <- function(n = NULL,
         labs(title = paste("Annual Trend for Strata", area_weights$region[i]), x = "Year", y = "Index") +
         geom_line(data = data_summary, aes(x = Year, y = Index)) +
         geom_ribbon(data = data_summary, aes(x = Year, ymin = Q25, ymax = Q975), alpha = 0.12)
-      plot_list[[plot_index]] <- p
+      plot_list[[str_replace_all(paste(area_weights$region[i]),
+                                 "[[:punct:]\\s]+",
+                                 "_")]] <- p
       plot_index <- plot_index + 1
     }
 
