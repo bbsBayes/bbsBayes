@@ -1,0 +1,43 @@
+---
+title: "bbsBayes Report"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    social: menu
+params:
+  n: NULL
+  area_weights: NULL
+  y_min: NULL
+  y_max: NULL
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+```
+
+Continental Plot
+=======================================================================
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Continental Plot
+
+```{r}
+plot_continental(n = n,
+                 area_weights = area_weights,
+                 y_min = y_min,
+                 y_max = y_max)
+```
+
+Strata Plots
+=======================================================================
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+```{r}
+
+```
+

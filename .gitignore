@@ -5,3 +5,4 @@
 output/*
 testdata
 testfile.R
+*.html
