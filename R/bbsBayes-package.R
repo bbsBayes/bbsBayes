@@ -2,12 +2,9 @@
 {
   assign("models",
          list(standard = "standard.jags",
-              s = "standard.jags",
-              firstdifference = "first-difference.jags",
               fd = "first-difference.jags",
-              f = "first-difference.jags",
               gam = "gam.jags",
-              g = "gam.jags"),
+              gamye = "gam-ye.jags"),
          parent.env(environment()))
 
   assign("strata",

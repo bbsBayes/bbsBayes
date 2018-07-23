@@ -1,7 +1,7 @@
 Package: bbsBayes
 Type: Package
 Title: Hierarchical Bayesian Analysis of North American Breeding Bird Survey Data
-Version: 0.2.0.9004
+Version: 0.2.0.9005
 Authors@R: c(person("Brandon P.M.", "Edwards", role = c("aut", "cre"),
                      email = "edwardsb@uoguelph.ca"),
               person("Adam C.", "Smith", role = "aut",

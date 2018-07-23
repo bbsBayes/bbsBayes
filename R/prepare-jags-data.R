@@ -338,7 +338,7 @@ prepare_jags_data <- function(strat_data,
                    list(fixedyear = median(unique(birds$Year))))
   }
 
-  if (tolower(model) == "gam")
+  if (tolower(model) %in% c("gam", "gamye"))
   {
     knotsX<- seq(yminsc,ymaxsc,length=(n_knots+2))[-c(1,n_knots+2)]
     X_K<-(abs(outer(seq(yminsc,ymaxsc,length = nyears),knotsX,"-")))^3
