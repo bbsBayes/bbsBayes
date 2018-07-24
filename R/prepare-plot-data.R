@@ -18,7 +18,13 @@ prepare_plot_data <- function(jags_mod = NULL)
 
   # Extract posterior data and other data from jags_mod
   n <- jags_mod$sims.list$n
-  bugs_data <- jags_mod$model$data()
+  if (isTRUE(jags_mod$parallel))
+  {
+    bugs_data <- jags_mod$model$cluster1$data()
+  }else
+  {
+    bugs_data <- jags_mod$model$data()
+  }
   y_min <- bugs_data$ymin
   y_max <- bugs_data$ymax
 

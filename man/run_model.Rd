@@ -7,7 +7,8 @@
 run_model(jags_data = NULL, model = NULL, inits = NULL,
   variable_names = c("n"), n_chains = 3, n_adapt = 500,
   n_burnin = 20000, n_thin = 10, n_saved_steps = 2000,
-  n_iter = ceiling((n_saved_steps * n_thin)/n_chains), quiet = FALSE, ...)
+  n_iter = ceiling((n_saved_steps * n_thin)/n_chains), parallel = FALSE,
+  quiet = FALSE, ...)
 }
 \arguments{
 \item{jags_data}{List or environment containing the data to model, as output
@@ -38,6 +39,10 @@ to burn in the model. Defaults to 20000 per chain.}
 Defaults to 2000.}
 
 \item{n_iter}{Optional number of iterations.}
+
+\item{parallel}{Should each chain be run parallel on separate cores?
+If TRUE, the number of cores used will be the minimum of the
+\code{n_chains} specified and the number of cores on your computer}
 
 \item{quiet}{Should JAGS output be suppressed?}
 

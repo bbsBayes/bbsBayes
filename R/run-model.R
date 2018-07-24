@@ -22,6 +22,9 @@
 #' @param n_iter Optional number of iterations.
 #' @param n_saved_steps Optional number of steps to save per chain.
 #'   Defaults to 2000.
+#' @param parallel Should each chain be run parallel on separate cores?
+#'   If TRUE, the number of cores used will be the minimum of the
+#'   \code{n_chains} specified and the number of cores on your computer
 #' @param quiet Should JAGS output be suppressed?
 #' @param ... Additional arguments
 #' @return
@@ -89,6 +92,7 @@ run_model <- function(jags_data = NULL,
                       n_thin = 10,
                       n_saved_steps = 2000,
                       n_iter = ceiling( ( n_saved_steps * n_thin ) / n_chains ),
+                      parallel = FALSE,
                       quiet = FALSE,
                       ...)
 {
@@ -126,6 +130,7 @@ run_model <- function(jags_data = NULL,
                    n.burnin = n_burnin,
                    n.iter = n_iter + n_burnin,
                    n.thin = n_thin,
+                   parallel = parallel,
                    verbose = !quiet)
 
   jags_job$strat_name <- strata_used
