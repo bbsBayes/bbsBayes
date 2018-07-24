@@ -96,7 +96,7 @@ fetch_bbs_data <- function(quiet = FALSE)
 
   #removes the off-road and water routes, as well as non-random and mini-routes
   routes <- routes[which(routes$RouteTypeDetailID == 1 & routes$RouteTypeID == 1),]; if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
-
+  routes$Stratum <- NULL
 
   ################################################################
   # Weather Data
