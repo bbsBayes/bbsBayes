@@ -38,7 +38,6 @@
 #'
 #' }
 #'
-#' @importFrom utils read.csv
 #' @export
 #'
 
@@ -47,41 +46,43 @@ generate_trend_plot <- function(jags_mod = NULL,
                            cont = TRUE,
                            ...)
 {
-  # Read area weights
-  stratify_by <- jags_mod$stratify_by
-  all_area_weights <- read.csv(system.file("area-weight",
-                                           strata[[stratify_by]],
-                                           package = "bbsBayes"))
+  # # Read area weights
+  # stratify_by <- jags_mod$stratify_by
+  # all_area_weights <- read.csv(system.file("area-weight",
+  #                                          strata[[stratify_by]],
+  #                                          package = "bbsBayes"))
+  #
+  # # Extract posterior data and other data from jags_mod
+  # n <- jags_mod$sims.list$n
+  # bugs_data <- jags_mod$model$data()
+  # y_min <- bugs_data$ymin
+  # y_max <- bugs_data$ymax
+  #
+  # # Subset area weights based on strata used and ensure same order as JAGS
+  # strata_used <- unique(jags_mod$strat_name)
+  # strata_num <- as.numeric(as.factor(strata_used))
+  # area_weights <- all_area_weights[which(all_area_weights$region %in% strata_used), ]
+  # area_weights <- area_weights[ order(match(area_weights$region, strata_used)),]
+  # area_weights$num <- strata_num
 
-  # Extract posterior data and other data from jags_mod
-  n <- jags_mod$sims.list$n
-  bugs_data <- jags_mod$model$data()
-  y_min <- bugs_data$ymin
-  y_max <- bugs_data$ymax
-
-  # Subset area weights based on strata used and ensure same order as JAGS
-  strata_used <- unique(jags_mod$strat_name)
-  strata_num <- as.numeric(as.factor(strata_used))
-  area_weights <- all_area_weights[which(all_area_weights$region %in% strata_used), ]
-  area_weights <- area_weights[ order(match(area_weights$region, strata_used)),]
-  area_weights$num <- strata_num
+  to_plot <- prepare_plot_data(jags_mod = jags_mod)
 
   if (isTRUE(cont))
   {
-    cont_plot <- plot_continental(n = n,
-                             area_weights = area_weights,
-                             y_min = y_min,
-                             y_max = y_max)
+    cont_plot <- plot_continental(n = to_plot$n,
+                             area_weights = to_plot$area_weights,
+                             y_min = to_plot$y_min,
+                             y_max = to_plot$y_max)
   }else
   {
     cont_plot = NULL
   }
 
-  strata_plots <- plot_strata(n = n,
+  strata_plots <- plot_strata(n = to_plot$n,
                               strata_to_plot = strata_to_plot,
-                              area_weights = area_weights,
-                              y_min = y_min,
-                              y_max = y_max)
+                              area_weights = to_plot$area_weights,
+                              y_min = to_plot$y_min,
+                              y_max = to_plot$y_max)
 
   return(list(cont_plot = cont_plot,
               strata_plot = strata_plots))

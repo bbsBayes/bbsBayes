@@ -36,6 +36,7 @@
 #'   \item{X.basis}{Basis function for n smoothing functions, included only with GAM}
 #'
 #' @importFrom stats median
+#' @importFrom progress progress_bar
 #' @export
 #'
 #' @examples

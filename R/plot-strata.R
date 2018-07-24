@@ -13,6 +13,7 @@
 #' @importFrom stats quantile
 #' @importFrom ggplot2 ggplot theme element_blank element_line
 #' labs geom_line geom_ribbon aes
+#' @importFrom stringr str_replace_all
 #'
 #' @keywords internal
 #' @export

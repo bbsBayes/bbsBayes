@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 .travis.yml
 testdata
+bbsBayes-report.html
+testfile.R
