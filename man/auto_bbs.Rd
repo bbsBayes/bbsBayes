@@ -5,7 +5,7 @@
 \title{Automatically run a BBS analysis for a given species}
 \usage{
 auto_bbs(species = NULL, model = NULL, bbs_data = NULL,
-  stratify_by = "bbs", generate_report = FALSE, output_dir = NULL,
+  stratify_by = NULL, generate_report = FALSE, output_dir = NULL,
   quiet = FALSE, ...)
 }
 \arguments{
@@ -49,8 +49,10 @@ Large list. Each entry is a list for unique species-model combination
 
 \dontrun{
 # Run BBS analysis for Barn Swallow using the standard model
+# and stratifying by state/province
 bbs_run <- auto_bbs(species = "Barn Swallow",
-                    model = "standard")
+                    model = "standard",
+                    stratify_by = "state")
 
 # This will produce a list of list entries, with the name of each entry
 # following the format of species_model, with all whitespace replaced with "_"
@@ -60,16 +62,13 @@ names(bbs_run)
 # We can run more than one species, and more than one model
 # The following will produce a list with 9 entries for each species X model combination
 bbs_run <- auto_bbs(species = c("Barn Swallow", "Common Merganser", "Dunlin"),
-                    model = c("standard", "fd", "gam"))
-
-# We can choose how to stratify the data
-bbs_run <- auto_bbs(species = "Barn Swallow",
-                    model = "standard",
-                    stratify_by = "bcr")
+                    model = c("standard", "fd", "gam"),
+                    stratify_by = "state")
 
 # We can specify information about how the JAGS models should be run
 bbs_run <- auto_bbs(species = "Barn Swallow",
                     model = "standard",
+                    stratify_by = "bbs_usgs",
                     n_burnin = 10000,
                     n_iter = 5000,
                     variable_names = c("n", "sdobs"))

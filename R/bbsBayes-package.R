@@ -8,8 +8,8 @@
          parent.env(environment()))
 
   assign("strata",
-         list(bbs = "strat.csv",
-              bbs_can = "stratcan.csv",
+         list(bbs_usgs = "strat.csv",
+              bbs_cws = "stratcan.csv",
               state = "stateprov.csv",
               bcr = "bcr.csv",
               latlong = "db.csv"),
