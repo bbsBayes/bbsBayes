@@ -121,6 +121,8 @@ run_model <- function(jags_data = NULL,
   stratify_by <- jags_data[["stratify_by"]]
   jags_data[["stratify_by"]] <- NULL
 
+  jags_data[["prepped_data"]] <- NULL
+
   jags_job <- jags(data = jags_data,
                    inits = inits,
                    parameters.to.save = variable_names,
