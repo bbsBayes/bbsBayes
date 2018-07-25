@@ -35,7 +35,7 @@ generate_rmd_report <- function(jags_mod = NULL,
   # area_weights <- area_weights[ order(match(area_weights$region, strata_used)),]
   # area_weights$num <- strata_num
 
-  to_plot <- prepare_plot_data(jags_mod = jags_mod)
+  to_plot <- extract_index_data(jags_mod = jags_mod)
 
   rmarkdown::render(system.file("bbsBayes-report.Rmd", package = "bbsBayes"),
                     output_dir = output_dir,

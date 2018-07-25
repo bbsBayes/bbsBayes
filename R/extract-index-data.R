@@ -1,4 +1,4 @@
-#' Prepare data to be plotted
+#' Extract index data
 #'
 #' Subsets area weights and extracts n values from JAGS samples
 #'
@@ -10,7 +10,7 @@
 #' @export
 #'
 
-prepare_plot_data <- function(jags_mod = NULL)
+extract_index_data <- function(jags_mod = NULL)
 {
   # Read area weights
   stratify_by <- jags_mod$stratify_by
