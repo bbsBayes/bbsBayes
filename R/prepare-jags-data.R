@@ -8,13 +8,15 @@
 #' @param model Character strings or vector of character strings of what
 #'   species are wanting to be analysed.
 #' @param n_knots Number of knots to be used in GAM function
+#' @param min_year Minimum year to keep in analysis
+#' @param max_year Maximum year to keep in analysis
 #' @param min_n_routes Minimum routes per strata where species has been observed.
 #'   Defaults to 3
 #' @param min_max_route_years Minimum number of years with non-zero observations
 #'   of species on at least 1 route. Defaults to 3
 #' @param min_mean_route_years Minimum average of years per route with the
 #'   species observed. Defaults to 1.
-#' @param strata_rem Strata to remove from analysis. Defaults to NA
+#' @param strata_rem Strata to remove from analysis. Defaults to NULL
 #' @param quiet Should progress bars be suppressed?
 #' @param ... Additional arguments
 #'
@@ -87,10 +89,12 @@ prepare_jags_data <- function(strat_data,
                             species_to_run,
                             model,
                             n_knots = NULL,
+                            min_year = NULL,
+                            max_year = NULL,
                             min_n_routes = 3,
                             min_max_route_years = 3,
                             min_mean_route_years = 1,
-                            strata_rem = NA,
+                            strata_rem = NULL,
                             quiet = FALSE,
                             ...)
 {
@@ -119,7 +123,20 @@ prepare_jags_data <- function(strat_data,
 
   spsp.c[which(is.na(spsp.c$TotalInd)),"TotalInd"] <- 0
 
-  if (!is.na(strata_rem)) {spsp.c <- spsp.c[-which(spsp.c$strat_name %in% strata_rem),] }
+  if (!is.null(strata_rem))
+  {
+    spsp.c <- spsp.c[-which(spsp.c$strat_name %in% strata_rem),]
+  }
+
+  if (!is.null(min_year))
+  {
+    spsp.c <- spsp.c[which(spsp.c$Year >= min_year), ]
+  }
+
+  if (!is.null(max_year))
+  {
+    spsp.c <- spsp.c[which(spsp.c$Year <= max_year), ]
+  }
 
   if (!isTRUE(quiet))
   {

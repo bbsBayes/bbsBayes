@@ -5,8 +5,9 @@
 \title{Transform data to use for JAGS input}
 \usage{
 prepare_jags_data(strat_data, species_to_run, model, n_knots = NULL,
-  min_n_routes = 3, min_max_route_years = 3, min_mean_route_years = 1,
-  strata_rem = NA, quiet = FALSE, ...)
+  min_year = NULL, max_year = NULL, min_n_routes = 3,
+  min_max_route_years = 3, min_mean_route_years = 1, strata_rem = NULL,
+  quiet = FALSE, ...)
 }
 \arguments{
 \item{strat_data}{Large list of stratified data returned by \code{stratify()}}
@@ -18,6 +19,10 @@ species are wanting to be analysed.}
 
 \item{n_knots}{Number of knots to be used in GAM function}
 
+\item{min_year}{Minimum year to keep in analysis}
+
+\item{max_year}{Maximum year to keep in analysis}
+
 \item{min_n_routes}{Minimum routes per strata where species has been observed.
 Defaults to 3}
 
@@ -27,7 +32,7 @@ of species on at least 1 route. Defaults to 3}
 \item{min_mean_route_years}{Minimum average of years per route with the
 species observed. Defaults to 1.}
 
-\item{strata_rem}{Strata to remove from analysis. Defaults to NA}
+\item{strata_rem}{Strata to remove from analysis. Defaults to NULL}
 
 \item{quiet}{Should progress bars be suppressed?}
 
