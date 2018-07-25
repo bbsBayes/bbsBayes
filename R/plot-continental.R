@@ -42,6 +42,7 @@ plot_continental <- function(n = NULL,
                              Index = colSums(n_mean),
                              Q25 = colSums(n_25),
                              Q975 = colSums(n_975))
+  data_summary$Year <- data_summary$Year + 1966 - 1
 
   p <- ggplot() +
     theme(panel.grid.major = element_blank(),

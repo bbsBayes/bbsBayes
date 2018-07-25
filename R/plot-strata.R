@@ -54,6 +54,8 @@ plot_strata <- function(n = NULL,
                                  Index = as.numeric(as.vector(n_mean[i,])),
                                  Q25 = as.numeric(as.vector(n_25[i,])),
                                  Q975 = as.numeric(as.vector(n_975[i,])))
+      data_summary$Year <- data_summary$Year + 1966 - 1
+
       p <- ggplot() +
         theme(panel.grid.major = element_blank(),
               panel.grid.minor = element_blank(),
