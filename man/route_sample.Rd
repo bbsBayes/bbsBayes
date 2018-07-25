@@ -34,6 +34,7 @@
   \item{EndTime}{Time the route was ended}
   \item{Assistant}{Boolean 0 or 1 as to whether an assistant was used}
   \item{QualityCurrentID}{Quality current ID}
+  \item{RunType}{Type of BBS route run. Only acceptable run type is 1}
   \item{State}{String representation of state or province}
   \item{St_Abrev}{Abbreviated state or province}
   \item{Country}{Abbreviated country}
