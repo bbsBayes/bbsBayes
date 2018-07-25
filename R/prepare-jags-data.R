@@ -58,7 +58,9 @@
 #'                                model = "firstdifference")
 #'
 #' # You can also specify the GAM model, with an optional number of
-#' # knots to use for the GAM basis (defaults to 9 knots)
+#' # knots to use for the GAM basis.
+#' # By default, the number of knots will be equal to the floor
+#' # of the total unique years for the species / 5
 #' data_jags <- prepare_jags_data(data = stratified_data,
 #'                                species_to_run = "Barn Swallow",
 #'                                model = "gam",
@@ -84,7 +86,7 @@
 prepare_jags_data <- function(strat_data,
                             species_to_run,
                             model,
-                            n_knots = 9,
+                            n_knots = NULL,
                             min_n_routes = 3,
                             min_max_route_years = 3,
                             min_mean_route_years = 1,
@@ -342,6 +344,10 @@ prepare_jags_data <- function(strat_data,
 
   if (tolower(model) %in% c("gam", "gamye"))
   {
+    if (is.null(n_knots))
+    {
+      n_knots <- floor(length(unique((spsp_f$year)))/5)
+    }
     knotsX<- seq(yminsc,ymaxsc,length=(n_knots+2))[-c(1,n_knots+2)]
     X_K<-(abs(outer(seq(yminsc,ymaxsc,length = nyears),knotsX,"-")))^3
     X_OMEGA_all<-(abs(outer(knotsX,knotsX,"-")))^3

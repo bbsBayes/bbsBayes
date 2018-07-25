@@ -4,7 +4,7 @@
 \alias{prepare_jags_data}
 \title{Transform data to use for JAGS input}
 \usage{
-prepare_jags_data(strat_data, species_to_run, model, n_knots = 9,
+prepare_jags_data(strat_data, species_to_run, model, n_knots = NULL,
   min_n_routes = 3, min_max_route_years = 3, min_mean_route_years = 1,
   strata_rem = NA, quiet = FALSE, ...)
 }
@@ -74,7 +74,9 @@ data_jags <- prepare_jags_data(data = stratified_data,
                                model = "firstdifference")
 
 # You can also specify the GAM model, with an optional number of
-# knots to use for the GAM basis (defaults to 9 knots)
+# knots to use for the GAM basis.
+# By default, the number of knots will be equal to the floor
+# of the total unique years for the species / 5
 data_jags <- prepare_jags_data(data = stratified_data,
                                species_to_run = "Barn Swallow",
                                model = "gam",
