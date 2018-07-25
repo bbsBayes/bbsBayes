@@ -4,12 +4,12 @@
 \alias{model_to_file}
 \title{Save model to text file}
 \usage{
-model_to_file(filename = NULL, model = NULL)
+model_to_file(model = NULL, filename = NULL)
 }
 \arguments{
-\item{filename}{File name to create on disk.}
-
 \item{model}{Model to be saved}
+
+\item{filename}{File name to create on disk.}
 }
 \description{
 \code{model_to_file} allows you to save any of the preloaded hierarchical
@@ -18,8 +18,8 @@ model_to_file(filename = NULL, model = NULL)
 \examples{
 
 \dontrun{
-# Save the Standard model to a file called "standard.txt"
-model_to_file(filename = "standard.txt", model = "standard")
+# Save the Slope model to a file called "slope.txt"
+model_to_file(model = "slope", filename = "slope.txt")
 }
 
 }

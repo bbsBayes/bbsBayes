@@ -1,8 +1,8 @@
 .onLoad <- function(libname, pkgname)
 {
   assign("models",
-         list(standard = "standard.jags",
-              fd = "first-difference.jags",
+         list(slope = "slope.jags",
+              firstdiff = "first-difference.jags",
               gam = "gam.jags",
               gamye = "gam-ye.jags"),
          parent.env(environment()))

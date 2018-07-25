@@ -33,7 +33,7 @@
 #'   \item{year}{Vector of years for each count}
 #'   \item{firstyr}{Vector of indicator variables as to whether an observer was a first year}
 #'   \item{nobservers}{Total number of observers}
-#'   \item{fixedyear}{Median of all years, included only with standard model}
+#'   \item{fixedyear}{Median of all years, included only with slope model}
 #'   \item{nknots}{Number of knots to use for smooting functions, included only with GAM}
 #'   \item{X.basis}{Basis function for n smoothing functions, included only with GAM}
 #'
@@ -49,15 +49,15 @@
 #' stratified_data <- stratify(bbs_data)
 #'
 #' # Prepare the stratified data for use in a JAGS model.
-#' # This particular instance prepares for the Standard BBS model.
+#' # This particular instance prepares for the Slope BBS model.
 #' data_jags <- prepare_jags_data(data = stratified_data,
 #'                                species_to_run = "Spruce Grouse",
-#'                                model = "standard")
+#'                                model = "slope")
 #'
 #' # Prepare data for use the First Difference BBS model.
 #' data_jags <- prepare_jags_data(data = stratified_data,
 #'                                species_to_run = "Mallard",
-#'                                model = "firstdifference")
+#'                                model = "firstdiff")
 #'
 #' # You can also specify the GAM model, with an optional number of
 #' # knots to use for the GAM basis.
@@ -71,17 +71,17 @@
 #' # This function accepts French bird names
 #' data_jags <- prepare_jags_data(data = stratified_data,
 #'                                species_to_run = "Oie des neiges",
-#'                                model = "standard")
+#'                                model = "slope")
 #'
 #' # Capitalization and punctuation matter (for now)
 #' # This code will produce an error.
 #' data_jags <- prepare_jags_data(data = stratified_data,
 #'                                species_to_run = "Eastern whippoorwill"
-#'                                model = "standard")
+#'                                model = "slope")
 #' # But this code will be fine
 #' data_jags <- prepare_jags_data(data = stratified_data,
 #'                                species_to_run = "Eastern Whip-poor-will"
-#'                                model = "standard")
+#'                                model = "slope")
 #' }
 #'
 
@@ -353,7 +353,7 @@ prepare_jags_data <- function(strat_data,
                    stratify_by = strat_data$stratify_by,
                    prepped_data = spsp_f)
 
-  if (tolower(model) == "standard")
+  if (tolower(model) == "slope")
   {
     to_return <- c(to_return,
                    list(fixedyear = median(unique(birds$Year))))

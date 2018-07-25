@@ -11,13 +11,13 @@
 #' @examples
 #'
 #' \dontrun{
-#' # Save the Standard model to a file called "standard.txt"
-#' model_to_file(filename = "standard.txt", model = "standard")
+#' # Save the Slope model to a file called "slope.txt"
+#' model_to_file(model = "slope", filename = "slope.txt")
 #' }
 #'
 
-model_to_file <- function(filename = NULL,
-                          model = NULL)
+model_to_file <- function(model = NULL,
+                          filename = NULL)
 {
   model_file <- system.file("models",models[[model]],package="bbsBayes")
   write(readChar(model_file, file.info(model_file)$size), file = filename)
