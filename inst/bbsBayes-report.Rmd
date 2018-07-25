@@ -6,7 +6,7 @@ output:
     vertical_layout: fill
     social: menu
 params:
-  to_plot: NULL
+  jags_mod: NULL
 ---
 
 ```{r setup, include=FALSE}
@@ -22,11 +22,8 @@ Column {data-width=650}
 ### Continental Plot
 
 ```{r}
-plot_continental(n = to_plot$n,
-                 area_weights = to_plot$area_weights,
-                 y_min = to_plot$y_min,
-                 y_max = to_plot$y_max,
-                 r_year = to_plot$r_year)
+trend <- generate_cont_trend(jags_mod = jags_mod)
+plot_cont_trend(trend)
 ```
 
 Strata Plots
