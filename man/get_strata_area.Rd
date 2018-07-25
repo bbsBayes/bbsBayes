@@ -7,7 +7,7 @@
 get_strata_area(strata_type = NULL)
 }
 \arguments{
-\item{filename}{strata_type}
+\item{strata_type}{Stratification type to return the areas of}
 }
 \value{
 Data frame with the following variables:

@@ -3,7 +3,7 @@
 #' \code{get_strata_area} allows you to obtain the area of each strata
 #'   for a given stratification type.
 #'
-#' @param filename strata_type
+#' @param strata_type Stratification type to return the areas of
 #'
 #' @return Data frame with the following variables:
 #'   \item{region}{Name of the stratum/region}
