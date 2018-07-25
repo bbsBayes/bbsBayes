@@ -24,3 +24,13 @@ install.packages("devtools")
 library(devtools)
 devtools::install_github("BrandonEdwards/bbsBayes")
 ```
+
+## Lifecycle
+[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+
+bbsBayes is currently going through multiple internal code
+reviews, tests, and API updates. Most likely, the API you use
+today will be slightly different than the one you use tomorrow.
+
+The near-future goal is to publish a maturing version on CRAN.
+Be sure to check back for updates!
