@@ -4,11 +4,15 @@
 \alias{plot_cont_trend}
 \title{Generate continental trend plot.}
 \usage{
-plot_cont_trend(trend = NULL)
+plot_cont_trend(trend = NULL, y_min = NULL, y_max = NULL)
 }
 \arguments{
 \item{trend}{Dataframe of yearly indices produced by
 \code{generate_cont_trend}}
+
+\item{y_min}{Minimum year to plot}
+
+\item{y_max}{Maximum year to plot}
 }
 \value{
 ggplot of continental trend

@@ -4,6 +4,8 @@
 #'
 #' @param trend Dataframe of yearly indices produced by
 #'   \code{generate_cont_trend}
+#' @param y_min Minimum year to plot
+#' @param y_max Maximum year to plot
 #'
 #' @return ggplot of continental trend
 #'
@@ -12,8 +14,20 @@
 #'
 #' @export
 #'
-plot_cont_trend <- function(trend = NULL)
+plot_cont_trend <- function(trend = NULL,
+                            y_min = NULL,
+                            y_max = NULL)
 {
+  if (!is.null(y_min))
+  {
+    trend <- trend[which(trend$Year >= y_min), ]
+  }
+
+  if(!is.null(y_max))
+  {
+    trend <- trend[which(trend$Year <= y_max), ]
+  }
+
   p <- ggplot() +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),

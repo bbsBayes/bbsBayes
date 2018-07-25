@@ -4,6 +4,8 @@
 #'
 #' @param trend Dataframe of yearly indices produced by
 #'   \code{generate_strata_trend}
+#' @param y_min Minimum year to plot
+#' @param y_max Maximum year to plot
 #'
 #' @return List of ggplot objects, each entry being a plot
 #'   of a stratum trend
@@ -13,9 +15,21 @@
 #'
 #' @export
 #'
-plot_strata_trend <- function(trend = NULL)
+plot_strata_trend <- function(trend = NULL,
+                              y_min = NULL,
+                              y_max = NULL)
 {
   plot_list <- list()
+
+  if (!is.null(y_min))
+  {
+    trend <- trend[which(trend$Year >= y_min), ]
+  }
+
+  if(!is.null(y_max))
+  {
+    trend <- trend[which(trend$Year <= y_max), ]
+  }
 
   plot_index <- 1
   for (i in unique(trend$Stratum))
