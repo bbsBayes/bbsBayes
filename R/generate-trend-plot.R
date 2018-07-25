@@ -72,7 +72,8 @@ generate_trend_plot <- function(jags_mod = NULL,
     cont_plot <- plot_continental(n = to_plot$n,
                              area_weights = to_plot$area_weights,
                              y_min = to_plot$y_min,
-                             y_max = to_plot$y_max)
+                             y_max = to_plot$y_max,
+                             r_year = to_plot$r_year)
   }else
   {
     cont_plot = NULL
@@ -82,7 +83,8 @@ generate_trend_plot <- function(jags_mod = NULL,
                               strata_to_plot = strata_to_plot,
                               area_weights = to_plot$area_weights,
                               y_min = to_plot$y_min,
-                              y_max = to_plot$y_max)
+                              y_max = to_plot$y_max,
+                              r_year = to_plot$r_year)
 
   return(list(cont_plot = cont_plot,
               strata_plot = strata_plots))

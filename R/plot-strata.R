@@ -7,6 +7,7 @@
 #' @param area_weights Subsetted area weights, used more for the names of strata
 #' @param y_min Minimum year
 #' @param y_max Maximum year
+#' @param r_year Actual years that were used
 #'
 #' @return List of ggplots for each strata
 #'
@@ -22,7 +23,8 @@ plot_strata <- function(n = NULL,
                         strata_to_plot = NULL,
                         area_weights = NULL,
                         y_min = NULL,
-                        y_max = NULL)
+                        y_max = NULL,
+                        r_year = NULL)
 {
   if (length(strata_to_plot) > 0)
   {
@@ -54,7 +56,7 @@ plot_strata <- function(n = NULL,
                                  Index = as.numeric(as.vector(n_mean[i,])),
                                  Q25 = as.numeric(as.vector(n_25[i,])),
                                  Q975 = as.numeric(as.vector(n_975[i,])))
-      data_summary$Year <- data_summary$Year + 1966 - 1
+      data_summary$Year <- (data_summary$Year - 1) + min(r_year)
 
       p <- ggplot() +
         theme(panel.grid.major = element_blank(),

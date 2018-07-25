@@ -6,6 +6,7 @@
 #' @param area_weights Area weights of strata that were used
 #' @param y_min Minimum year
 #' @param y_max Maximum year
+#' @param r_year Actual years that were used
 #'
 #' @return ggplot2 object of continental trend plot.
 #'
@@ -19,7 +20,8 @@
 plot_continental <- function(n = NULL,
                              area_weights = NULL,
                              y_min = NULL,
-                             y_max = NULL)
+                             y_max = NULL,
+                             r_year = NULL)
 {
   n_samples <- dim(n)[1]
   n_strata <- dim(n)[2]
@@ -42,7 +44,7 @@ plot_continental <- function(n = NULL,
                              Index = colSums(n_mean),
                              Q25 = colSums(n_25),
                              Q975 = colSums(n_975))
-  data_summary$Year <- data_summary$Year + 1966 - 1
+  data_summary$Year <- (data_summary$Year - 1) + min(r_year)
 
   p <- ggplot() +
     theme(panel.grid.major = element_blank(),

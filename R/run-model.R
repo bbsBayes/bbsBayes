@@ -121,6 +121,7 @@ run_model <- function(jags_data = NULL,
   stratify_by <- jags_data[["stratify_by"]]
   jags_data[["stratify_by"]] <- NULL
 
+  r_year <- jags_data$prepped_data$rYear
   jags_data[["prepped_data"]] <- NULL
 
   jags_job <- jags(data = jags_data,
@@ -137,6 +138,7 @@ run_model <- function(jags_data = NULL,
 
   jags_job$strat_name <- strata_used
   jags_job$stratify_by <- stratify_by
+  jags_job$r_year <- r_year
 
   return(jags_job)
 }

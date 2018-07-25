@@ -5,7 +5,7 @@
 \title{Generate continental trend plot.}
 \usage{
 plot_strata(n = NULL, strata_to_plot = NULL, area_weights = NULL,
-  y_min = NULL, y_max = NULL)
+  y_min = NULL, y_max = NULL, r_year = NULL)
 }
 \arguments{
 \item{n}{Posterior samples of n}
@@ -17,6 +17,8 @@ plot_strata(n = NULL, strata_to_plot = NULL, area_weights = NULL,
 \item{y_min}{Minimum year}
 
 \item{y_max}{Maximum year}
+
+\item{r_year}{Actual years that were used}
 }
 \value{
 List of ggplots for each strata

@@ -38,5 +38,6 @@ prepare_plot_data <- function(jags_mod = NULL)
   return(list(n = n,
               area_weights = area_weights,
               y_min = y_min,
-              y_max = y_max))
+              y_max = y_max,
+              r_year = jags_mod$r_year))
 }
