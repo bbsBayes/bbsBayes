@@ -46,14 +46,17 @@ generate_cont_trend <- function(jags_mod = NULL)
     }
   }
 
-  n_mean <- apply(n_weight, c(2,3), mean)
-  n_25 <- apply(n_weight, c(2,3), quantile, probs = 0.025)
-  n_975 <- apply(n_weight, c(2,3), quantile, probs = 0.975)
+  N = apply(n_weight, c(1,3),sum)
+
+  n_mean <- apply(N, 2, mean)
+  n_25 <- apply(N, 2, quantile, probs = 0.025)
+  n_975 <- apply(N, 2, quantile, probs = 0.975)
+
 
   data_summary <- data.frame(Year = seq(y_min:y_max),
-                             Index = colSums(n_mean),
-                             Q25 = colSums(n_25),
-                             Q975 = colSums(n_975))
+                             Index = n_mean,
+                             Q25 = n_25,
+                             Q975 = n_975)
   data_summary$Year <- (data_summary$Year - 1) + min(r_year)
 
   return(data_summary)
