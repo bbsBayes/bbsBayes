@@ -1,6 +1,6 @@
 #' Get the prepped species dataset used for JAGS
 #'
-#' \code{get_prepped_data} returns a dataframe of the data that
+#' \code{get_prepped_data} returns a data frame of the data that
 #'   was used for JAGS. This is the subsetted data based on the
 #'   selected species to model, with zero counts filled in
 #'   and any other route/strata filter applied.

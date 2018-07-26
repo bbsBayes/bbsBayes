@@ -12,6 +12,23 @@
 #' @importFrom ggplot2 ggplot theme element_blank element_line
 #' labs geom_line geom_ribbon aes
 #'
+#' @examples
+#'
+#' \dontrun{
+#' # After generating continental trends, plot them
+#' c_plot <- plot_cont_trend(trend = cont_trend)
+#' print(c_plot)
+#'
+#' # You can specify to only plot a subset of years using y_min and y_max
+#' # Plots trend from 1990 onward
+#' c_plot <- plot_cont_trend(trend = cont_trend, y_min = 1990)
+#' #Plot up trends up to the year 2000
+#' c_plot <- plot_cont_trend(trend = cont_trend, y_max = 2000)
+#' #Plot trends between 1970 and 2010
+#' c_plot <- plot_cont_trend(trend = cont_trend, y_min = 1970, y_max = 2010)
+#'
+#' }
+#'
 #' @export
 #'
 plot_cont_trend <- function(trend = NULL,

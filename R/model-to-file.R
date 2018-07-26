@@ -3,8 +3,8 @@
 #' \code{model_to_file} allows you to save any of the preloaded hierarchical
 #'   Bayesian models to a text file.
 #'
-#' @param filename File name to create on disk.
 #' @param model Model to be saved
+#' @param filename File name to create on disk.
 #'
 #' @export
 #'
@@ -13,6 +13,15 @@
 #' \dontrun{
 #' # Save the Slope model to a file called "slope.txt"
 #' model_to_file(model = "slope", filename = "slope.txt")
+#'
+#' # Save the First Difference model to a file called "fd.txt"
+#' model_to_file(model = "firstdiff", filename = "fd.txt")
+#'
+#' # Save the GAM model to a file called "gam.txt"
+#' model_to_file(model = "gam", filename = "gam.txt")
+#'
+#' # Save the GAM year effects model to a file called "gamye.txt"
+#' model_to_file(model = "gamye", filename = "gamye.txt")
 #' }
 #'
 
