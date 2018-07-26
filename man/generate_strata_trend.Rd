@@ -18,7 +18,15 @@ Data frame of 4 variables:
   \item{Stratum}{Name of the stratum}
 }
 \description{
-\code{generate_strata_trend} creates a dataframe of trend indices for
-  each strata modelled. This is useful if you would like
-  to plot the year-to-year trend using your own plot recipes.
+\code{generate_strata_trend} creates a data frame of indices by year,
+  factored by each stratum. These indicies can be used to generate
+  trajectory plots of the species for each strata.
+}
+\examples{
+
+\dontrun{
+# After running a JAGS model, use that output to create trend data frame
+strat_trend <- generate_strata_trend(jags_mod = mod)
+}
+
 }

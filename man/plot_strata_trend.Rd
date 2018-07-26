@@ -21,3 +21,22 @@ List of ggplot objects, each entry being a plot
 \description{
 Generates the trend plot for each stratum modelled.
 }
+\examples{
+
+\dontrun{
+# After generating strata trends, plot them
+s_plot <- plot_strata_trend(trend = strata_trend)
+# s_plot is just a list of ggplot objects, so you can access by index
+print(s_plot[[1]])
+# Or access by strata name, noting the underscores in place of special characters
+print(s_plot[["US_FL_31"]])
+
+# You can specify to only plot a subset of years using y_min and y_max
+# Plots trend from 1990 onward
+s_plot <- plot_strata_trend(trend = strata_trend, y_min = 1990)
+#Plot up trends up to the year 2000
+s_plot <- plot_strata_trend(trend = strata_trend, y_max = 2000)
+#Plot trends between 1970 and 2010
+s_plot <- plot_strata_trend(trend = strata_trend, y_min = 1970, y_max = 2010)
+}
+}

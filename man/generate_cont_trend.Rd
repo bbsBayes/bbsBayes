@@ -2,7 +2,7 @@
 % Please edit documentation in R/generate-cont-trend.R
 \name{generate_cont_trend}
 \alias{generate_cont_trend}
-\title{Generate a dataframe of the continental trend}
+\title{Generate a dataframe of the continental yearly indices}
 \usage{
 generate_cont_trend(jags_mod = NULL)
 }
@@ -17,7 +17,15 @@ Data frame of 4 variables:
   \item{Q975}{97.5\% quantile of mean strata-weighted indices}
 }
 \description{
-\code{generate_cont_trend} creates the strata-weighted continental
-  trend and returns a data frame. This is useful if you would like
-  to plot the year-to-year trend using your own plot recipes.
+\code{generate_cont_trend} creates a data frame of the strata-weighed
+  continental indices by year. This data frame can then be used to
+  generate a population trajectory of the species.
+}
+\examples{
+
+\dontrun{
+# After running a JAGS model, use that output to create trend data frame
+cont_trend <- generate_cont_trend(jags_mod = mod)
+}
+
 }
