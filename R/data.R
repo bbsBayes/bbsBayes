@@ -51,7 +51,7 @@
 #'   \item{RouteName}{Name of the route, represented as a string}
 #'   \item{Active}{Boolean 0 or 1 as to whether the route is currently active}
 #'   \item{Latitude}{Latitude of the start of the route}
-#'   \item{Longtiude}{Longitude of the start of the route}
+#'   \item{Longitude}{Longitude of the start of the route}
 #'   \item{BCR}{What bird conservation region is the route in}
 #'   \item{RouteTypeID}{Type of the route, only 1 is acceptable}
 #'   \item{RouteTypeDetailID}{Route type detail ID}
