@@ -110,8 +110,18 @@ run_model <- function(jags_data = NULL,
   #     warning("Model supplied does not match model used in JAGS preparation.")
   #   }
   # }
-  model <- jags_data[["model"]]
-  jags_data[["model"]] <- NULL
+
+  if (!is.null(model_file_path))
+  {
+    model <- model_file_path
+    jags_data[["model"]] <- NULL
+  }else{
+    model <- jags_data[["model"]]
+    model <- system.file("models",
+                         models[[model]],
+                         package="bbsBayes")
+    jags_data[["model"]] <- NULL
+  }
 
   strata_used <- jags_data[["strat_name"]]
   jags_data[["strat_name"]] <- NULL
@@ -145,9 +155,7 @@ run_model <- function(jags_data = NULL,
   jags_job <- jags(data = jags_data,
                    inits = inits,
                    parameters.to.save = parameters_to_save,
-                   model.file = system.file("models",
-                                            models[[model]],
-                                            package="bbsBayes"),
+                   model.file = model,
                    n.chains = n_chains,
                    n.adapt = n_adapt,
                    n.burnin = n_burnin,
