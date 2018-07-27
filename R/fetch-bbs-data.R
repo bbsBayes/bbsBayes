@@ -3,10 +3,13 @@
 #' \code{fetch_bbs_data} uses File Transfer Protocol (FTP) to fetch Breeding Bird
 #'  Survey data from the United States Geological Survey (USGS) FTP site. This
 #'  is the raw data that is uploaded to the site before any analyses are performed.
+#'  Before downloading any data, the user must thoroughly read through the terms
+#'  and conditions of the user of the data and type the word "yes" to agree.
 #'
 #' @param quiet Should progress bars be suppressed?
 #'
-#' @return Large list (3 elements) consisting of:
+#' @return NULL if user does not agree to terms and conditions.
+#'   Otherwise: Large list (3 elements) consisting of:
 #' \item{bird}{Data frame of bird point count data per route, per year}
 #' \item{route}{Data frame of yearly route data}
 #' \item{species}{List of North American bird species}
@@ -36,6 +39,23 @@
 #'
 fetch_bbs_data <- function(quiet = FALSE)
 {
+  # Print Terms of Use
+  terms <- readChar(system.file("data-terms",
+                                package = "bbsBayes"),
+                    file.info(system.file("data-terms",
+                                          package = "bbsBayes"))$size)
+
+  cat(terms)
+
+  agree <- readline(prompt = "Type \"yes\" (without quotes) to agree: ")
+
+  if (agree != "yes")
+  {
+    return(NULL)
+  }
+
+
+
   base_url <- "ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/"
   version <- 2017 #Figure out how to make this dynamic
 
