@@ -4,9 +4,9 @@
 \alias{run_model}
 \title{Run JAGS model for prepared species data}
 \usage{
-run_model(jags_data = NULL, model = NULL, inits = NULL,
-  variable_names = c("n"), n_chains = 3, n_adapt = 500,
-  n_burnin = 20000, n_thin = 10, n_saved_steps = 2000,
+run_model(jags_data = NULL, model_file_path = NULL, inits = NULL,
+  parameters_to_save = c("n"), dont_track_n = FALSE, n_chains = 3,
+  n_adapt = 500, n_burnin = 20000, n_thin = 10, n_saved_steps = 2000,
   n_iter = ceiling((n_saved_steps * n_thin)/n_chains), parallel = FALSE,
   quiet = FALSE, ...)
 }
@@ -14,15 +14,21 @@ run_model(jags_data = NULL, model = NULL, inits = NULL,
 \item{jags_data}{List or environment containing the data to model, as output
 by \code{prepare_jags_data}}
 
-\item{model}{Character string of the model that should be run.
-Note that this should be the same model used by \code{prepare_jags_data}}
+\item{model_file_path}{Path to custom model. Overrides the \code{model}
+variable set by \code{prepare_jags_data}}
 
 \item{inits}{Optional list of initialization values for JAGS model.
 If none are specified, the JAGS model will generate its own
 initial values.}
 
-\item{variable_names}{Character vector of parameters to monitor in JAGS. Defaults
+\item{parameters_to_save}{Character vector of parameters to monitor in JAGS. Defaults
 to just monitoring "n"}
+
+\item{dont_track_n}{Force \code{run_model} to not track "n".
+By default, the parameter "n" will always be tracked, even if the user
+forgets to specify it. However, if the user is positive they do not want
+to track "n", this parameter can be be set to \code{TRUE}. NOTE: you will
+not be able to generate annual indices if "n" is not tracked.}
 
 \item{n_chains}{Optional number of chains to run. Defaults to 3.}
 
@@ -65,14 +71,15 @@ data_jags <- prepare_jags_data(data = data_stratified,
                                species_to_run = "Bufflehead",
                                model = "standard")
 
-# Run a JAGS model with the Standard BBS model using the default JAGS arguments
-jags_mod <- run_model(jags_data = data_jags, model = "standard")
+# Run a JAGS model with default JAGS arguments
+# Note that you do not have to specify the model file. This is saved
+#   in the output from prepare_jags_data
+jags_mod <- run_model(jags_data = data_jags)
 
 # You can specify how many chains to run, how many adaptation interations,
 # how many burn in iterations, how many sampling interations, and how much\\
 # thinning.
 jags_mod <- run_model(jags_data = data_jags,
-                      model = "standard",
                       n_chains = 2,
                       n_adapt = 200,
                       n_burnin = 5000,
@@ -80,28 +87,19 @@ jags_mod <- run_model(jags_data = data_jags,
                       n_iter = 10000)
 
 # You can specify a vector of variable names to monitor. By default, the
-# variable "n" is monitored to produce trends
+#   variable "n" is monitored to produce trends
 jags_mod <- run_model(jags_data = data_jags,
-                      model = "standard",
-                      variable_names = c("n", "strata"))
+                      parameters_to_save = c("n", "strata"))
 
-# If you used \\code{prepare_jags_data} to create the data sent to \\code{run_model},
-# you don't actually have to specify the model again, as this information is
-# saved in the output for \\code{prepare_jags_data}. The following code works:
-jags_mod <- run_model(jags_data = data_jags)
+# In fact, the variable "n" will always be tracked, even if you don't specify
+#  it to be tracked. This ensures that trends can always be calculated in
+#  case the user forgets to specify "n" if they went to specify other
+#  variables to track. If, however, you are absolutely sure you do not
+#  want to track "n", you can set the parameter "dont_track_n" to TRUE
 
-# If you happen to use a different function to prepare the JAGS data, you will
-# need to specify the model. The following code will not work.
-data_jags_other <- some_other_preparation_function(...)
-jags_mod <- run_model(jags_data = data_jags_other)
-
-# If you specify one model in \\code{prepare_jags_data} and specify a different
-# model in \\code{run_model}, the function will default to using the model specified
-# in \\code{prepare_jags_data}, with a warning.
-data_jags <- prepare_jags_data(data = data_stratified,
-                               species_to_run = "Bufflehead",
-                               model = "standard")
-jags_mod <- run_model(jags_data = data_jags, model = "firstdifference")
+jags_mod <- run_model(jags_data = data_jags,
+                      parameters_to_save = ("strata", "beta"),
+                      dont_track_n = TRUE)
 }
 
 }
