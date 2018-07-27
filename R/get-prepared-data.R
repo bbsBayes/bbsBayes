@@ -1,6 +1,6 @@
-#' Get the prepped species dataset used for JAGS
+#' Get the prepared species dataset used for JAGS
 #'
-#' \code{get_prepped_data} returns a data frame of the data that
+#' \code{get_prepared_data} returns a data frame of the data that
 #'   was used for JAGS. This is the subsetted data based on the
 #'   selected species to model, with zero counts filled in
 #'   and any other route/strata filter applied.
@@ -30,11 +30,11 @@
 #'                                    model = "gam")
 #'
 #'     # Obtain the reassembled data frame for the data sent to JAGS
-#'     prepped_data <- get_prepped_data(jags_data = jags_prep)
+#'     prepped_data <- get_prepared_data(jags_data = jags_prep)
 #'   }
 #'
 
-get_prepped_data <- function(jags_data)
+get_prepared_data <- function(jags_data)
 {
   return(jags_data$prepped_data)
 }
