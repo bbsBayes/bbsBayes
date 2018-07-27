@@ -124,6 +124,11 @@ run_model <- function(jags_data = NULL,
   r_year <- jags_data$prepped_data$rYear
   jags_data[["prepped_data"]] <- NULL
 
+  if (!("n" %in% variable_names))
+  {
+    variable_names <- c(variable_names, "n")
+  }
+
   jags_job <- jags(data = jags_data,
                    inits = inits,
                    parameters.to.save = variable_names,
