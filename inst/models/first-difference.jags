@@ -1,9 +1,9 @@
 model
-{  
-	for( k in 1 : ncounts ) 
+{
+	for( k in 1 : ncounts )
 	{
 		Elambdas[k] <-  obs[strat[k],obser[k]] + eta*firstyr[k] + strata[strat[k]] + yeareffect[strat[k],year[k]]
-		Elambda[k] ~ dt(Elambdas[k], taunoise, nu)
+		Elambda[k] ~ dnorm(Elambdas[k], taunoise)
 		log(lambda[k]) <- Elambda[k]
 
 		count[k] ~ dpois(lambda[k])
@@ -24,15 +24,14 @@ model
 	posdiff <- step(diffgof)
 
 	taunoise ~ dgamma(0.001,0.001)
-	nu ~ dgamma(2, 0.1) #prior suggested by Bill Link in email dated March 27, 2018
 	sdnoise <- 1 / pow(taunoise, 0.5)
 	tauobs ~ dgamma(0.001,0.001)
 	sdobs <- 1 / pow(tauobs, 0.5)
 	eta ~ dnorm( 0.0,1.0E-6)
 	STRATA ~ dnorm( 0.0,0.01)
-	taustrata ~ dgamma(0.001,0.0001) #<- 1/pow(sdbeta,2)# 
+	taustrata ~ dgamma(0.001,0.0001) #<- 1/pow(sdbeta,2)#
 	sdstrata <- 1/pow(taubeta,0.5)#~ dunif(0.001,10)
-	taubeta ~ dgamma(1,0.0001) # 
+	taubeta ~ dgamma(1,0.0001) #
 
 
 
@@ -42,10 +41,10 @@ model
 
 	#----------------------------------#
 	#### stratum effects  ######
-	for( s in 1 : nstrata ) 
+	for( s in 1 : nstrata )
 	{
 		#### observer effects  ######
-		for( i in 1 : nobservers[s] ) 
+		for( i in 1 : nobservers[s] )
 		{
 			obs[s,i] ~ dnorm( 0.0,tauobs)
 		}
@@ -56,21 +55,21 @@ model
 		sdyear[s] <- 1/pow(tauyear[s],0.5)
 		sdyear.eps[s] <- 1/pow(tauyear.eps[s],0.5)
 		tauyear[s] ~ dgamma(0.001,0.001)
-		tauyear.eps[s] <- tauyear[s]*0.0001    
+		tauyear.eps[s] <- tauyear[s]*0.0001
 
 		### stratum-level priors
-		 
+
 		strata[s] ~ dnorm(STRATA,taustrata)
 		#tauyear[s] <- 1/pow(sdyear[s],2)
 		#sdyear[s] ~ dunif(0.00001,5)
 		expstrata[s] <- exp(strata[s])
-		overdisp[s] <- 1 + 1/(expstrata[s]*taunoise)  		
+		overdisp[s] <- 1 + 1/(expstrata[s]*taunoise)
 
 		#### stratum specific year effects  ######
 
 		yeareffect[s,ymin] ~ dnorm(0,tauyear.eps[s])
 
-		for( j in (ymin+1) : ymax ) 
+		for( j in (ymin+1) : ymax )
 		{
 			yeareffect[s,j] ~ dnorm(yeareffect[s,j-1],tauyear[s])
 		}
@@ -78,24 +77,24 @@ model
 		#-------------------------------------------------#
 	}
 
-	#for( i in 1 : nstrata ) 
+	#for( i in 1 : nstrata )
 	#{
-	#	for( t in ymin : ymax ) 
+	#	for( t in ymin : ymax )
 	#	{
 	#		n[i,t] <- nonzeroweight[i]*exp(yeareffect[i,t] + 0.5*sdnoise*sdnoise+ 0.5*sdobs*sdobs)
 	#	}
 	#}
-	
+
 	#### summary statistics  ######
 	sdn <- exp(0.5*sdnoise*sdnoise)
-	
-	for( i in 1 : nstrata ) 
+
+	for( i in 1 : nstrata )
 	{
-		for( t in ymin : ymax ) 
+		for( t in ymin : ymax )
 		{
 			for(o in 1 : nobservers[i])
 			{
-				no[i,t,o] <- exp(strata[i]+yeareffect[i,t] + obs[i,o])   
+				no[i,t,o] <- exp(strata[i]+yeareffect[i,t] + obs[i,o])
 			}
 
 			mn[i,t] <- mean(no[i,t,1 : nobservers[i]])
