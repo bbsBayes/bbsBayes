@@ -32,8 +32,7 @@
 #'   \code{n_chains} specified and the number of cores on your computer
 #' @param quiet Should JAGS output be suppressed?
 #' @param ... Additional arguments
-#' @return
-#'   \item{jags_job}{Object created by jagsUI containing coda samples and summary statistics.}
+#' @return jagsUI object
 #'
 #' @importFrom jagsUI jags
 #' @export
@@ -44,7 +43,7 @@
 #' # Download BBS data, stratify, and prepare data for a JAGS run with Standard model
 #' bbs_data <- fetch_bbs_data()
 #' data_stratified <- stratify(bbs_data)
-#' data_jags <- prepare_jags_data(data = data_stratified,
+#' data_jags <- prepare_jags_data(strat_data = data_stratified,
 #'                                species_to_run = "Bufflehead",
 #'                                model = "standard")
 #'
@@ -94,23 +93,6 @@ run_model <- function(jags_data = NULL,
                       quiet = FALSE,
                       ...)
 {
-  # # The case where the user does their own data prep. Rare, but possible
-  # if (is.null(model) & is.null(jags_data[["model"]]))
-  # {
-  #   stop("No model specified.")
-  # }
-  #
-  # # If the user happens to specify a model for this function, check that they
-  # # are the same. The data was prepped for a certain model so that one has to
-  # # be used anyway.
-  # if (!is.null(model))
-  # {
-  #   if (models[[model]] != models[[jags_data[["model"]]]])
-  #   {
-  #     warning("Model supplied does not match model used in JAGS preparation.")
-  #   }
-  # }
-
   if (!is.null(model_file_path))
   {
     model <- model_file_path

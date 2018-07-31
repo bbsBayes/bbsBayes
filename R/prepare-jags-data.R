@@ -50,12 +50,12 @@
 #'
 #' # Prepare the stratified data for use in a JAGS model.
 #' # This particular instance prepares for the Slope BBS model.
-#' data_jags <- prepare_jags_data(data = stratified_data,
+#' data_jags <- prepare_jags_data(strat_data = stratified_data,
 #'                                species_to_run = "Spruce Grouse",
 #'                                model = "slope")
 #'
 #' # Prepare data for use the First Difference BBS model.
-#' data_jags <- prepare_jags_data(data = stratified_data,
+#' data_jags <- prepare_jags_data(strat_data = stratified_data,
 #'                                species_to_run = "Mallard",
 #'                                model = "firstdiff")
 #'
@@ -63,23 +63,18 @@
 #' # knots to use for the GAM basis.
 #' # By default, the number of knots will be equal to the floor
 #' # of the total unique years for the species / 5
-#' data_jags <- prepare_jags_data(data = stratified_data,
+#' data_jags <- prepare_jags_data(strat_data = stratified_data,
 #'                                species_to_run = "Barn Swallow",
 #'                                model = "gam",
 #'                                n_knots = 9)
 #'
-#' # This function accepts French bird names
-#' data_jags <- prepare_jags_data(data = stratified_data,
-#'                                species_to_run = "Oie des neiges",
-#'                                model = "slope")
-#'
 #' # Capitalization and punctuation matter (for now)
 #' # This code will produce an error.
-#' data_jags <- prepare_jags_data(data = stratified_data,
+#' data_jags <- prepare_jags_data(strat_data = stratified_data,
 #'                                species_to_run = "Eastern whippoorwill"
 #'                                model = "slope")
 #' # But this code will be fine
-#' data_jags <- prepare_jags_data(data = stratified_data,
+#' data_jags <- prepare_jags_data(strat_data = stratified_data,
 #'                                species_to_run = "Eastern Whip-poor-will"
 #'                                model = "slope")
 #' }

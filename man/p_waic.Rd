@@ -38,7 +38,7 @@ See examples for details.
 \dontrun{
   # Run a JAGS model, and be sure to track the parameter "lambda"
   jags_mod <- run_model(jags_data = prepared_data,
-                        variable_names = "lambda")
+                        parameters_to_save = "lambda")
 
   # Output the pWAIC value
   p_waic(jags_data = prepared_data,

@@ -24,7 +24,7 @@
 #' \dontrun{
 #'   # Run a JAGS model, and be sure to track the parameter "lambda"
 #'   jags_mod <- run_model(jags_data = prepared_data,
-#'                         variable_names = "lambda")
+#'                         parameters_to_save = "lambda")
 #'
 #'   # Output WAIC
 #'   waic(jags_mod)

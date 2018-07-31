@@ -4,7 +4,7 @@
 \alias{get_prepared_data}
 \title{Get the prepared species dataset used for JAGS}
 \usage{
-get_prepared_data(jags_data)
+get_prepared_data(jags_data = NULL)
 }
 \arguments{
 \item{jags_data}{List of JAGS input data produced by

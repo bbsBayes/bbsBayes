@@ -34,7 +34,7 @@
 #'   }
 #'
 
-get_prepared_data <- function(jags_data)
+get_prepared_data <- function(jags_data = NULL)
 {
   return(jags_data$prepped_data)
 }

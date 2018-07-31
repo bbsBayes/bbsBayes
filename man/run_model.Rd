@@ -55,7 +55,7 @@ If TRUE, the number of cores used will be the minimum of the
 \item{...}{Additional arguments}
 }
 \value{
-\item{jags_job}{Object created by jagsUI containing coda samples and summary statistics.}
+jagsUI object
 }
 \description{
 \code{run-model} runs a JAGS model as specified by the user for
@@ -67,7 +67,7 @@ If TRUE, the number of cores used will be the minimum of the
 # Download BBS data, stratify, and prepare data for a JAGS run with Standard model
 bbs_data <- fetch_bbs_data()
 data_stratified <- stratify(bbs_data)
-data_jags <- prepare_jags_data(data = data_stratified,
+data_jags <- prepare_jags_data(strat_data = data_stratified,
                                species_to_run = "Bufflehead",
                                model = "standard")
 
