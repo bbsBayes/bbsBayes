@@ -24,6 +24,8 @@
 #'
 #' @export
 #'
+#' @importFrom stats dpois var
+#'
 #' @examples
 #' \dontrun{
 #'   # Run a JAGS model, and be sure to track the parameter "lambda"
