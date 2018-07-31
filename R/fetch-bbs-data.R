@@ -178,7 +178,8 @@ fetch_bbs_data <- function(quiet = FALSE)
                       widths = c(6,-1,5,-1,50,-1,50,-1,50,-1,50,-1,50,-1,50,-1,50)); if (!isTRUE(quiet)){pb$tick()}
   unlink(temp); if (!isTRUE(quiet)){pb$tick()}
 
-  names(species) <- c("seq","aou","english","french","spanish","order","family","genus","species"); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
+  species <- species[,-c(4,5)]
+  names(species) <- c("seq","aou","english","order","family","genus","species"); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
 
   # this reads in the USGS BBS ftp site species file
   species[,"sp.bbs"] <- as.integer(as.character(species[,"aou"])); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}

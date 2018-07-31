@@ -98,8 +98,6 @@
 #'   \item{seq}{Sequence - USGS use}
 #'   \item{aou}{Numerical representation of the species, designated by American Ornithological Union}
 #'   \item{english}{Species name in English}
-#'   \item{french}{Species name in French}
-#'   \item{spanish}{Species name in Spanish}
 #'   \item{order}{Taxonomic order}
 #'   \item{family}{Taxonomic family}
 #'   \item{genus}{Taxonomic genus}
