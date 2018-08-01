@@ -4,8 +4,8 @@
 #'
 #' @param indices Dataframe of yearly indices produced by
 #'   \code{generate_cont_indices}
-#' @param y_min Minimum year to plot
-#' @param y_max Maximum year to plot
+#' @param min_year Minimum year to plot
+#' @param max_year Maximum year to plot
 #'
 #' @return ggplot of continental indices
 #'
@@ -19,30 +19,30 @@
 #' c_plot <- plot_cont_indices(indices = cont_index)
 #' print(c_plot)
 #'
-#' # You can specify to only plot a subset of years using y_min and y_max
+#' # You can specify to only plot a subset of years using min_year and max_year
 #' # Plots indices from 1990 onward
-#' c_plot <- plot_cont_indices(indices = cont_indices, y_min = 1990)
+#' c_plot <- plot_cont_indices(indices = cont_indices, min_year = 1990)
 #' #Plot up indicess up to the year 2000
-#' c_plot <- plot_cont_indices(indices = cont_indices, y_max = 2000)
+#' c_plot <- plot_cont_indices(indices = cont_indices, max_year = 2000)
 #' #Plot indicess between 1970 and 2010
-#' c_plot <- plot_cont_indices(indices = cont_indices, y_min = 1970, y_max = 2010)
+#' c_plot <- plot_cont_indices(indices = cont_indices, min_year = 1970, max_year = 2010)
 #'
 #' }
 #'
 #' @export
 #'
 plot_cont_indices <- function(indices = NULL,
-                            y_min = NULL,
-                            y_max = NULL)
+                            min_year = NULL,
+                            max_year = NULL)
 {
-  if (!is.null(y_min))
+  if (!is.null(min_year))
   {
-    indices <- indices[which(indices$Year >= y_min), ]
+    indices <- indices[which(indices$Year >= min_year), ]
   }
 
-  if(!is.null(y_max))
+  if(!is.null(max_year))
   {
-    indices <- indices[which(indices$Year <= y_max), ]
+    indices <- indices[which(indices$Year <= max_year), ]
   }
 
   p <- ggplot() +

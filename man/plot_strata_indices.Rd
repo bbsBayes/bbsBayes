@@ -4,15 +4,15 @@
 \alias{plot_strata_indices}
 \title{Generate plots of index trajectories by stratum}
 \usage{
-plot_strata_indices(indices = NULL, y_min = NULL, y_max = NULL)
+plot_strata_indices(indices = NULL, min_year = NULL, max_year = NULL)
 }
 \arguments{
 \item{indices}{Dataframe of yearly indices produced by
 \code{generate_strata_indices}}
 
-\item{y_min}{Minimum year to plot}
+\item{min_year}{Minimum year to plot}
 
-\item{y_max}{Maximum year to plot}
+\item{max_year}{Maximum year to plot}
 }
 \value{
 List of ggplot objects, each entry being a plot
@@ -31,12 +31,12 @@ print(s_plot[[1]])
 # Or access by strata name, noting the underscores in place of special characters
 print(s_plot[["US_FL_31"]])
 
-# You can specify to only plot a subset of years using y_min and y_max
+# You can specify to only plot a subset of years using min_year and max_year
 # Plots indices from 1990 onward
-s_plot <- plot_strata_indices(indices = strata_indices, y_min = 1990)
+s_plot <- plot_strata_indices(indices = strata_indices, min_year = 1990)
 #Plot up indicess up to the year 2000
-s_plot <- plot_strata_indices(indices = strata_indices, y_max = 2000)
+s_plot <- plot_strata_indices(indices = strata_indices, max_year = 2000)
 #Plot indicess between 1970 and 2010
-s_plot <- plot_strata_indices(indices = strata_indices, y_min = 1970, y_max = 2010)
+s_plot <- plot_strata_indices(indices = strata_indices, min_year = 1970, max_year = 2010)
 }
 }

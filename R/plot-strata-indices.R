@@ -4,8 +4,8 @@
 #'
 #' @param indices Dataframe of yearly indices produced by
 #'   \code{generate_strata_indices}
-#' @param y_min Minimum year to plot
-#' @param y_max Maximum year to plot
+#' @param min_year Minimum year to plot
+#' @param max_year Maximum year to plot
 #'
 #' @return List of ggplot objects, each entry being a plot
 #'   of a stratum indices
@@ -24,30 +24,30 @@
 #' # Or access by strata name, noting the underscores in place of special characters
 #' print(s_plot[["US_FL_31"]])
 #'
-#' # You can specify to only plot a subset of years using y_min and y_max
+#' # You can specify to only plot a subset of years using min_year and max_year
 #' # Plots indices from 1990 onward
-#' s_plot <- plot_strata_indices(indices = strata_indices, y_min = 1990)
+#' s_plot <- plot_strata_indices(indices = strata_indices, min_year = 1990)
 #' #Plot up indicess up to the year 2000
-#' s_plot <- plot_strata_indices(indices = strata_indices, y_max = 2000)
+#' s_plot <- plot_strata_indices(indices = strata_indices, max_year = 2000)
 #' #Plot indicess between 1970 and 2010
-#' s_plot <- plot_strata_indices(indices = strata_indices, y_min = 1970, y_max = 2010)
+#' s_plot <- plot_strata_indices(indices = strata_indices, min_year = 1970, max_year = 2010)
 #' }
 #' @export
 #'
 plot_strata_indices <- function(indices = NULL,
-                              y_min = NULL,
-                              y_max = NULL)
+                              min_year = NULL,
+                              max_year = NULL)
 {
   plot_list <- list()
 
-  if (!is.null(y_min))
+  if (!is.null(min_year))
   {
-    indices <- indices[which(indices$Year >= y_min), ]
+    indices <- indices[which(indices$Year >= min_year), ]
   }
 
-  if(!is.null(y_max))
+  if(!is.null(max_year))
   {
-    indices <- indices[which(indices$Year <= y_max), ]
+    indices <- indices[which(indices$Year <= max_year), ]
   }
 
   plot_index <- 1
