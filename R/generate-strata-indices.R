@@ -13,6 +13,8 @@
 #'   \item{Q975}{97.5\% quantile of mean strata-weighted indices}
 #'   \item{Stratum}{Name of the stratum}
 #'
+#' @importFrom stats quantile
+#'
 #' @examples
 #'
 #' \dontrun{
