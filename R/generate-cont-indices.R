@@ -1,6 +1,6 @@
 #' Generate a dataframe of the continental yearly indices
 #'
-#' \code{generate_cont_trend} creates a data frame of the strata-weighed
+#' \code{generate_cont_indices} creates a data frame of the strata-weighed
 #'   continental indices by year. This data frame can then be used to
 #'   generate a population trajectory of the species.
 #'
@@ -18,13 +18,13 @@
 #'
 #' \dontrun{
 #' # After running a JAGS model, use that output to create trend data frame
-#' cont_trend <- generate_cont_trend(jags_mod = mod)
+#' cont_index <- generate_cont_indices(jags_mod = mod)
 #' }
 #'
 #' @export
 #'
 
-generate_cont_trend <- function(jags_mod = NULL)
+generate_cont_indices <- function(jags_mod = NULL)
 {
   data_list <- extract_index_data(jags_mod = jags_mod)
   n <- data_list$n

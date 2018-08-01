@@ -1,6 +1,6 @@
-#' Generate a dataframe of the strata trend
+#' Generate a dataframe of the stratum indices
 #'
-#' \code{generate_strata_trend} creates a data frame of indices by year,
+#' \code{generate_strata_indices} creates a data frame of indices by year,
 #'   factored by each stratum. These indicies can be used to generate
 #'   trajectory plots of the species for each strata.
 #'
@@ -17,13 +17,13 @@
 #'
 #' \dontrun{
 #' # After running a JAGS model, use that output to create trend data frame
-#' strat_trend <- generate_strata_trend(jags_mod = mod)
+#' strat_index <- generate_strata_indices(jags_mod = mod)
 #' }
 #'
 #' @export
 #'
 
-generate_strata_trend <- function(jags_mod = NULL)
+generate_strata_indices <- function(jags_mod = NULL)
 {
   data_list <- extract_index_data(jags_mod = jags_mod)
   n <- data_list$n
