@@ -47,4 +47,7 @@ generate_strata_trends <- function(indices = NULL,
   }
 
   to_return <- as.data.frame(cbind(strata_used, trend))
+  names(to_return) <- c("Stratum", "Trend")
+
+  return(to_return)
 }
