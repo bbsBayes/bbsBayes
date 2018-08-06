@@ -1,5 +1,12 @@
 language: r
 sudo: required
+dist: trusty
+
+addons:
+  apt:
+    packages:
+      - libgdal-dev
+      - libproj-dev
 
 before_install:
   - sudo add-apt-repository ppa:marutter/rrutter -y
@@ -18,3 +25,6 @@ r_packages:
   - progress
   - ggplot2
   - stringr
+  - grDevices
+  - rgdal
+  - sp
