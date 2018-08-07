@@ -43,7 +43,8 @@ generate_strata_trends <- function(indices = NULL,
     new_index <- temp[which(temp$Year == max_year), ]$Index
     old_index <- temp[which(temp$Year == min_year), ]$Index
 
-    trend <- c(trend, (new_index - old_index)/new_index)
+    trend_strata <- 100 * ((new_index/old_index)^(1/(max_year - min_year)) - 1)
+    trend <- c(trend, trend_strata)
   }
 
   to_return <- as.data.frame(cbind(strata_used, trend))
