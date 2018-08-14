@@ -39,10 +39,10 @@ strata_indices <- generate_strata_indices(jags_mod = mod)
 s_plot <- plot_strata_indices(indices = strata_indices)
 
 # s_plot is just a list of ggplot objects, so you can access by index
-print(s_plot[[1]])
+s_plot[[1]]
 
 # Or access by strata name, noting the underscores in place of special characters
-print(s_plot[["US_FL_31"]])
+s_plot[["US_FL_31"]]
 
 # You can specify to only plot a subset of years using min_year and max_year
 # Plots indices from 1990 onward

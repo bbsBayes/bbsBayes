@@ -28,8 +28,8 @@
 #'
 #'
 #' # After generating continental indices, plot them
-#' c_plot <- plot_cont_indices(indices = cont_indices)
-#' print(c_plot)
+#' plot_cont_indices(indices = cont_indices)
+
 #'
 #' # You can specify to only plot a subset of years using min_year and max_year
 #' # Plots indices from 1990 onward
