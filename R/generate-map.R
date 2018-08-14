@@ -18,10 +18,25 @@
 #' @examples
 #'
 #' \dontrun{
-#' # Suppose we stratified our data using "bbs_usgs"
-#' strata_map <- generate_map(trend = generate_strata_trends(indices),
-#'                            stratify_by = "bbs_usgs")
-#'}
+#' # Set stratification type for future use
+#' stratification <- "bcr"
+#'
+#' # Run a JAGS model analysis on a species
+#' stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = stratification)
+#' prepped_data <- prepare_jags_data(strat_data = stratified_data,
+#'                                   species_to_run = "Barn Swallow",
+#'                                   model = "slope")
+#' mod <- run_model(jags_data = prepped_data)
+#'
+#' #Generate the indices for each strata
+#' strata_index <- generate_strata_indices(jags_mod = mod)
+#'
+#' # Get the data frame of trends by strata
+#' trend <- generate_strata_trends(indices = strata_index)
+#'
+#' # Obtain a map of the trends by each strata
+#' map <- generate_map(trend = trend, stratify_by = stratification)
+#' }
 #' @export
 #'
 

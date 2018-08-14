@@ -15,8 +15,20 @@
 #' @examples
 #'
 #' \dontrun{
-#' # After generating continental indicess, plot them
-#' c_plot <- plot_cont_indices(indices = cont_index)
+#'
+#' # Run a JAGS model analysis on a species
+#' stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
+#' prepped_data <- prepare_jags_data(strat_data = stratified_data,
+#'                                   species_to_run = "Barn Swallow",
+#'                                   model = "slope")
+#' mod <- run_model(jags_data = prepped_data)
+#'
+#' #Generate the continental indices weighted by each strata
+#' cont_indices <- generate_cont_indices(jags_mod = mod)
+#'
+#'
+#' # After generating continental indices, plot them
+#' c_plot <- plot_cont_indices(indices = cont_indices)
 #' print(c_plot)
 #'
 #' # You can specify to only plot a subset of years using min_year and max_year

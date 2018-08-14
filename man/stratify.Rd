@@ -41,7 +41,7 @@ data_strat <- stratify(bbs_data = bbs, stratify_by = "bbs_usgs")
 data_strat <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
 
 # Stratify by CWS BBS stratifications
-data_strat <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bbs_usgs")
+data_strat <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bbs_cws")
 
 # Stratify by State/Province/Territory only
 data_strat <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "state")

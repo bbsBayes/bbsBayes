@@ -15,8 +15,18 @@
 #' @examples
 #'
 #' \dontrun{
-#' # After running a JAGS model, use that output to create trend data frame
-#' strat_trend <- generate_strata_trend(indices = indices_data_frame)
+#' # Run a JAGS model analysis on a species
+#' stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
+#' prepped_data <- prepare_jags_data(strat_data = stratified_data,
+#'                                   species_to_run = "Barn Swallow",
+#'                                   model = "slope")
+#' mod <- run_model(jags_data = prepped_data)
+#'
+#' #Generate the indices for each strata
+#' strata_index <- generate_strata_indices(jags_mod = mod)
+#'
+#' # Get the data frame of trends by strata
+#' trend <- generate_strata_trends(indices = strata_index)
 #' }
 #'
 #' @export

@@ -38,7 +38,6 @@ bbs_data <- fetch_bbs_data()
 # option is to save the bbs_data to a file so that you do not
 # have to run fetch_bbs_data() every new session.
 
-bbs_data <- fetch_bbs_data()
 save(bbs_data, file = "bbs_data.RData")
 }
 

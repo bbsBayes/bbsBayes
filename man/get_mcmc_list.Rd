@@ -24,11 +24,15 @@ List containing:
 \examples{
 
 \dontrun{
-  # First generate some samples from a JAGS model
-  jags_mod <- run_model(jags_data = jags_data)
+# Run a JAGS model analysis on a species
+stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
+prepped_data <- prepare_jags_data(strat_data = stratified_data,
+                                  species_to_run = "Barn Swallow",
+                                  model = "slope")
+mod <- run_model(jags_data = prepped_data)
 
-  # Get the posterior samples from that model
-  samples <- get_mcmc_list(jags_mod = jags_mod)
+# Get the posterior samples from that model
+samples <- get_mcmc_list(jags_mod = mod)
 }
 
 }

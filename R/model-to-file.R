@@ -3,7 +3,7 @@
 #' \code{model_to_file} allows you to save any of the preloaded hierarchical
 #'   Bayesian models to a text file.
 #'
-#' @param model Model to be saved
+#' @param model Model to be saved. Options are "slope", "firstdiff", "gam", "gamye"
 #' @param filename File name to create on disk.
 #'
 #' @export

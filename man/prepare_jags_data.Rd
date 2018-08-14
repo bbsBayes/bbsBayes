@@ -65,16 +65,16 @@ List of data to be used in JAGS, including:
 \dontrun{
 # Download BBS data and stratify it
 bbs_data <- fetch_bbs_data()
-stratified_data <- stratify(bbs_data)
+stratified_data <- stratify(bbs_data, stratify_by = "bbs_usgs")
 
 # Prepare the stratified data for use in a JAGS model.
 # This particular instance prepares for the Slope BBS model.
-data_jags <- prepare_jags_data(strat_data = stratified_data,
+data_jags_slope <- prepare_jags_data(strat_data = stratified_data,
                                species_to_run = "Spruce Grouse",
                                model = "slope")
 
 # Prepare data for use the First Difference BBS model.
-data_jags <- prepare_jags_data(strat_data = stratified_data,
+data_jags_firstdiff <- prepare_jags_data(strat_data = stratified_data,
                                species_to_run = "Mallard",
                                model = "firstdiff")
 

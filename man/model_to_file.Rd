@@ -7,7 +7,7 @@
 model_to_file(model = NULL, filename = NULL)
 }
 \arguments{
-\item{model}{Model to be saved}
+\item{model}{Model to be saved. Options are "slope", "firstdiff", "gam", "gamye"}
 
 \item{filename}{File name to create on disk.}
 }

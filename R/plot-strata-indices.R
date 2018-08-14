@@ -17,10 +17,23 @@
 #' @examples
 #'
 #' \dontrun{
+#' # Run a JAGS model analysis on a species
+#' stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
+#' prepped_data <- prepare_jags_data(strat_data = stratified_data,
+#'                                   species_to_run = "Barn Swallow",
+#'                                   model = "slope")
+#' mod <- run_model(jags_data = prepped_data)
+#'
+#' #Generate the indices for each strata
+#' strata_indices <- generate_strata_indices(jags_mod = mod)
+#'
+#'
 #' # After generating strata indices, plot them
 #' s_plot <- plot_strata_indices(indices = strata_indices)
+#'
 #' # s_plot is just a list of ggplot objects, so you can access by index
 #' print(s_plot[[1]])
+#'
 #' # Or access by strata name, noting the underscores in place of special characters
 #' print(s_plot[["US_FL_31"]])
 #'

@@ -31,18 +31,19 @@ NOTE: in order to calculated pWAIC, the model MUST track the parameter
   "lambda". In species that are data-rich, such as Barn Swallow,
   this produces extremely large JAGS objects, and takes up a considerable
   amount of memory when simulating with \code{run_model}
-
-See examples for details.
 }
 \examples{
 \dontrun{
-  # Run a JAGS model, and be sure to track the parameter "lambda"
-  jags_mod <- run_model(jags_data = prepared_data,
-                        parameters_to_save = "lambda")
+# Run a JAGS model analysis on a species
+stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
+prepped_data <- prepare_jags_data(strat_data = stratified_data,
+                                  species_to_run = "Barn Swallow",
+                                  model = "slope")
+mod <- run_model(jags_data = prepped_data)
 
   # Output the pWAIC value
-  p_waic(jags_data = prepared_data,
-         jags_mod = jags_mod)
+  p_waic(jags_data = prepped_data,
+         jags_mod = mod)
 }
 
 }
