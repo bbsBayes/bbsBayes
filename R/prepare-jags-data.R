@@ -68,6 +68,12 @@
 #'                                model = "gam",
 #'                                n_knots = 9)
 #'
+#' # For users that may want to use their own model, you can choose not
+#' # to specify a model, and prepare_jags_model will just prepare the
+#' # minimum amount of data
+#' data_jags <- prepare_jags_data(strat_data = stratified_data,
+#'                                species_to_run = "Barn Swallow"
+#'
 #' # Capitalization and punctuation matter (for now)
 #' # This code will produce an error.
 #' data_jags <- prepare_jags_data(strat_data = stratified_data,
@@ -82,7 +88,7 @@
 
 prepare_jags_data <- function(strat_data,
                             species_to_run,
-                            model,
+                            model = NULL,
                             n_knots = NULL,
                             min_year = NULL,
                             max_year = NULL,
@@ -347,27 +353,29 @@ prepare_jags_data <- function(strat_data,
                    nobservers = n_observers,
                    stratify_by = strat_data$stratify_by,
                    prepped_data = spsp_f)
-
-  if (tolower(model) == "slope")
+  if (!is.null(model))
   {
-    to_return <- c(to_return,
-                   list(fixedyear = median(unique(birds$Year))))
-  }
-
-  if (tolower(model) %in% c("gam", "gamye"))
-  {
-    if (is.null(n_knots))
+    if (tolower(model) == "slope")
     {
-      n_knots <- floor(length(unique((spsp_f$year)))/5)
+      to_return <- c(to_return,
+                     list(fixedyear = median(unique(birds$Year))))
     }
-    knotsX<- seq(yminsc,ymaxsc,length=(n_knots+2))[-c(1,n_knots+2)]
-    X_K<-(abs(outer(seq(yminsc,ymaxsc,length = nyears),knotsX,"-")))^3
-    X_OMEGA_all<-(abs(outer(knotsX,knotsX,"-")))^3
-    X_svd.OMEGA_all<-svd(X_OMEGA_all)
-    X_sqrt.OMEGA_all<-t(X_svd.OMEGA_all$v  %*% (t(X_svd.OMEGA_all$u)*sqrt(X_svd.OMEGA_all$d)))
-    X_basis<-t(solve(X_sqrt.OMEGA_all,t(X_K)))
 
-    to_return <- c(to_return, list(nknots = n_knots, X.basis = X_basis))
+    if (tolower(model) %in% c("gam", "gamye"))
+    {
+      if (is.null(n_knots))
+      {
+        n_knots <- floor(length(unique((spsp_f$year)))/5)
+      }
+      knotsX<- seq(yminsc,ymaxsc,length=(n_knots+2))[-c(1,n_knots+2)]
+      X_K<-(abs(outer(seq(yminsc,ymaxsc,length = nyears),knotsX,"-")))^3
+      X_OMEGA_all<-(abs(outer(knotsX,knotsX,"-")))^3
+      X_svd.OMEGA_all<-svd(X_OMEGA_all)
+      X_sqrt.OMEGA_all<-t(X_svd.OMEGA_all$v  %*% (t(X_svd.OMEGA_all$u)*sqrt(X_svd.OMEGA_all$d)))
+      X_basis<-t(solve(X_sqrt.OMEGA_all,t(X_K)))
+
+      to_return <- c(to_return, list(nknots = n_knots, X.basis = X_basis))
+    }
   }
   if (!isTRUE(quiet)){pb$tick()}
 
