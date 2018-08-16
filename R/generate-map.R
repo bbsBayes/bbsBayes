@@ -55,8 +55,8 @@ generate_map <- function(trend = NULL,
   map@data <- subset(map@data, select = c(Trend))
 
   n_half <- 500
-  col_neg <- colorRampPalette(colors = c("blue", "white"), space = "Lab")(n_half)
-  col_pos <- colorRampPalette(colors = c("white", "red"), space = "Lab")(n_half)
+  col_neg <- colorRampPalette(colors = c("red", "white"), space = "Lab")(n_half)
+  col_pos <- colorRampPalette(colors = c("white", "blue"), space = "Lab")(n_half)
   map_palette <- c(col_neg, col_pos)
 
   return(spplot(map, col.regions = map_palette))
