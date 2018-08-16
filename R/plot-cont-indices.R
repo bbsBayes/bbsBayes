@@ -47,6 +47,15 @@ plot_cont_indices <- function(indices = NULL,
                             min_year = NULL,
                             max_year = NULL)
 {
+  Year <- NULL
+  rm(Year)
+  Index <- NULL
+  rm(Index)
+  Q25 <- NULL
+  rm(Q25)
+  Q975 <- NULL
+  rm(Q975)
+
   if (!is.null(min_year))
   {
     indices <- indices[which(indices$Year >= min_year), ]

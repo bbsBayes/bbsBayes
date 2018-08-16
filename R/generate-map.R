@@ -43,6 +43,9 @@
 generate_map <- function(trend = NULL,
                          stratify_by = NULL)
 {
+  Trend <- NULL
+  rm(Trend)
+
   map <- readOGR(dsn = system.file("maps",
                                    package = "bbsBayes"),
                  layer = maps[[stratify_by]],
