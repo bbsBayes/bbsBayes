@@ -6,6 +6,7 @@
 #'   \code{generate_cont_indices}
 #' @param min_year Minimum year to plot
 #' @param max_year Maximum year to plot
+#' @param species Species name to be added onto the plot
 #'
 #' @return ggplot of continental indices
 #'
@@ -28,16 +29,23 @@
 #'
 #'
 #' # After generating continental indices, plot them
-#' plot_cont_indices(indices = cont_indices)
-
+#' plot_cont_indices(indices = cont_indices, species = "Barn Swallow")
+#'
 #'
 #' # You can specify to only plot a subset of years using min_year and max_year
 #' # Plots indices from 1990 onward
-#' c_plot <- plot_cont_indices(indices = cont_indices, min_year = 1990)
+#' c_plot <- plot_cont_indices(indices = cont_indices,
+#'                             min_year = 1990,
+#'                             species = "Barn Swallow")
 #' #Plot up indicess up to the year 2000
-#' c_plot <- plot_cont_indices(indices = cont_indices, max_year = 2000)
+#' c_plot <- plot_cont_indices(indices = cont_indices,
+#'                             max_year = 2000,
+#'                             species = "Barn Swallow")
 #' #Plot indicess between 1970 and 2010
-#' c_plot <- plot_cont_indices(indices = cont_indices, min_year = 1970, max_year = 2010)
+#' c_plot <- plot_cont_indices(indices = cont_indices,
+#'                             min_year = 1970,
+#'                             max_year = 2010,
+#'                             species = "Barn Swallow")
 #'
 #' }
 #'
@@ -45,7 +53,8 @@
 #'
 plot_cont_indices <- function(indices = NULL,
                             min_year = NULL,
-                            max_year = NULL)
+                            max_year = NULL,
+                            species = "")
 {
   Year <- NULL
   rm(Year)
@@ -71,7 +80,9 @@ plot_cont_indices <- function(indices = NULL,
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
           axis.line = element_line(colour = "black")) +
-    labs(title = paste("Annual indices: Continental"), x = "Year", y = "Index") +
+    labs(title = paste(species, " Annual indices: Continental", sep = ""),
+         x = "Year",
+         y = "Index") +
     geom_line(data = indices, aes(x = Year, y = Index)) +
     geom_ribbon(data = indices, aes(x = Year, ymin = Q25, ymax = Q975), alpha = 0.12)
 

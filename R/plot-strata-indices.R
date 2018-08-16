@@ -6,6 +6,7 @@
 #'   \code{generate_strata_indices}
 #' @param min_year Minimum year to plot
 #' @param max_year Maximum year to plot
+#' @param species Species name to be added onto the plot
 #'
 #' @return List of ggplot objects, each entry being a plot
 #'   of a stratum indices
@@ -29,7 +30,8 @@
 #'
 #'
 #' # After generating strata indices, plot them
-#' s_plot <- plot_strata_indices(indices = strata_indices)
+#' s_plot <- plot_strata_indices(indices = strata_indices,
+#'                               species = "Barn Swallow")
 #'
 #' # s_plot is just a list of ggplot objects, so you can access by index
 #' s_plot[[1]]
@@ -39,17 +41,25 @@
 #'
 #' # You can specify to only plot a subset of years using min_year and max_year
 #' # Plots indices from 1990 onward
-#' s_plot <- plot_strata_indices(indices = strata_indices, min_year = 1990)
-#' #Plot up indicess up to the year 2000
-#' s_plot <- plot_strata_indices(indices = strata_indices, max_year = 2000)
-#' #Plot indicess between 1970 and 2010
-#' s_plot <- plot_strata_indices(indices = strata_indices, min_year = 1970, max_year = 2010)
+#' s_plot <- plot_strata_indices(indices = strata_indices,
+#'                               min_year = 1990,
+#'                               species = "Barn Swallow")
+#' #Plot up indices up to the year 2000
+#' s_plot <- plot_strata_indices(indices = strata_indices,
+#'                               max_year = 2000,
+#'                               species = "Barn Swallow")
+#' #Plot indices between 1970 and 2010
+#' s_plot <- plot_strata_indices(indices = strata_indices,
+#'                               min_year = 1970,
+#'                               max_year = 2010,
+#'                               species = "Barn Swallow")
 #' }
 #' @export
 #'
 plot_strata_indices <- function(indices = NULL,
                               min_year = NULL,
-                              max_year = NULL)
+                              max_year = NULL,
+                              species = "")
 {
   Year <- NULL
   rm(Year)
@@ -84,7 +94,9 @@ plot_strata_indices <- function(indices = NULL,
             panel.grid.minor = element_blank(),
             panel.background = element_blank(),
             axis.line = element_line(colour = "black")) +
-      labs(title = paste("Annual indices for Strata", i), x = "Year", y = "Index") +
+      labs(title = paste(species, " Annual indices for Stratum ", i, sep = ""),
+           x = "Year",
+           y = "Index") +
       geom_line(data = to_plot, aes(x = Year, y = Index)) +
       geom_ribbon(data = to_plot, aes(x = Year, ymin = Q25, ymax = Q975), alpha = 0.12)
     plot_list[[str_replace_all(paste(i),

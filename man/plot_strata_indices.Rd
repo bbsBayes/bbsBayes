@@ -4,7 +4,8 @@
 \alias{plot_strata_indices}
 \title{Generate plots of index trajectories by stratum}
 \usage{
-plot_strata_indices(indices = NULL, min_year = NULL, max_year = NULL)
+plot_strata_indices(indices = NULL, min_year = NULL, max_year = NULL,
+  species = "")
 }
 \arguments{
 \item{indices}{Dataframe of yearly indices produced by
@@ -13,6 +14,8 @@ plot_strata_indices(indices = NULL, min_year = NULL, max_year = NULL)
 \item{min_year}{Minimum year to plot}
 
 \item{max_year}{Maximum year to plot}
+
+\item{species}{Species name to be added onto the plot}
 }
 \value{
 List of ggplot objects, each entry being a plot
@@ -36,7 +39,8 @@ strata_indices <- generate_strata_indices(jags_mod = mod)
 
 
 # After generating strata indices, plot them
-s_plot <- plot_strata_indices(indices = strata_indices)
+s_plot <- plot_strata_indices(indices = strata_indices,
+                              species = "Barn Swallow")
 
 # s_plot is just a list of ggplot objects, so you can access by index
 s_plot[[1]]
@@ -46,10 +50,17 @@ s_plot[["US_FL_31"]]
 
 # You can specify to only plot a subset of years using min_year and max_year
 # Plots indices from 1990 onward
-s_plot <- plot_strata_indices(indices = strata_indices, min_year = 1990)
-#Plot up indicess up to the year 2000
-s_plot <- plot_strata_indices(indices = strata_indices, max_year = 2000)
-#Plot indicess between 1970 and 2010
-s_plot <- plot_strata_indices(indices = strata_indices, min_year = 1970, max_year = 2010)
+s_plot <- plot_strata_indices(indices = strata_indices,
+                              min_year = 1990,
+                              species = "Barn Swallow")
+#Plot up indices up to the year 2000
+s_plot <- plot_strata_indices(indices = strata_indices,
+                              max_year = 2000,
+                              species = "Barn Swallow")
+#Plot indices between 1970 and 2010
+s_plot <- plot_strata_indices(indices = strata_indices,
+                              min_year = 1970,
+                              max_year = 2010,
+                              species = "Barn Swallow")
 }
 }
