@@ -134,17 +134,17 @@ run_model <- function(jags_data = NULL,
     }
   }
 
-  jags_job <- jags(data = jags_data,
-                   inits = inits,
-                   parameters.to.save = parameters_to_save,
-                   model.file = model,
-                   n.chains = n_chains,
-                   n.adapt = n_adapt,
-                   n.burnin = n_burnin,
-                   n.iter = n_iter + n_burnin,
-                   n.thin = n_thin,
-                   parallel = parallel,
-                   verbose = !quiet)
+  jags_job <- jagsUI::jags(data = jags_data,
+                           inits = inits,
+                           parameters.to.save = parameters_to_save,
+                           model.file = model,
+                           n.chains = n_chains,
+                           n.adapt = n_adapt,
+                           n.burnin = n_burnin,
+                           n.iter = n_iter + n_burnin,
+                           n.thin = n_thin,
+                           parallel = parallel,
+                           verbose = !quiet)
 
   jags_job$strat_name <- strata_used
   jags_job$stratify_by <- stratify_by

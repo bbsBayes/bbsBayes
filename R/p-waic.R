@@ -49,7 +49,7 @@ p_waic <- function(jags_data = NULL,
 
   for(i in 1:nrow(bugs))
   {
-    pwaic_v[i] <- var(log(dpois(bugs[i,"count"], jags_mod$sims.list$lambda[,i])))
+    pwaic_v[i] <- stats::var(log(stats::dpois(bugs[i,"count"], jags_mod$sims.list$lambda[,i])))
   }
 
   pwaic_point[,"pwaic_point"] <- pwaic_v

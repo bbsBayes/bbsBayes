@@ -56,8 +56,8 @@ generate_cont_indices <- function(jags_mod = NULL)
   N = apply(n_weight, c(1,3),sum)
 
   n_mean <- apply(N, 2, mean)
-  n_25 <- apply(N, 2, quantile, probs = 0.025)
-  n_975 <- apply(N, 2, quantile, probs = 0.975)
+  n_25 <- apply(N, 2, stats::quantile, probs = 0.025)
+  n_975 <- apply(N, 2, stats::quantile, probs = 0.975)
 
 
   data_summary <- data.frame(Year = seq(y_min:y_max),

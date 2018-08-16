@@ -43,7 +43,7 @@ get_strata_area <- function(strata_type = NULL)
                          "state",
                          "latlong"))
   {
-    return(read.csv(system.file("area-weight", strata[[strata_type]], package = "bbsBayes")))
+    return(utils::read.csv(system.file("area-weight", strata[[strata_type]], package = "bbsBayes")))
   }else
   {
     stop("Not a valid stratification type.")

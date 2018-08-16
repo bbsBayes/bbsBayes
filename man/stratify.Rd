@@ -49,5 +49,4 @@ data_strat <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "state")
 # Stratify by blocks of 1 degree of latitude X 1 degree of longitude
 data_strat <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "latlong")
 }
-
 }

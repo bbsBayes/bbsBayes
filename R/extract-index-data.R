@@ -14,7 +14,7 @@ extract_index_data <- function(jags_mod = NULL)
 {
   # Read area weights
   stratify_by <- jags_mod$stratify_by
-  all_area_weights <- read.csv(system.file("area-weight", strata[[stratify_by]], package = "bbsBayes"))
+  all_area_weights <- utils::read.csv(system.file("area-weight", strata[[stratify_by]], package = "bbsBayes"))
 
   # Extract posterior data and other data from jags_mod
   n <- jags_mod$sims.list$n

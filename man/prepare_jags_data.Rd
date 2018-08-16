@@ -4,7 +4,7 @@
 \alias{prepare_jags_data}
 \title{Transform data to use for JAGS input}
 \usage{
-prepare_jags_data(strat_data, species_to_run, model, n_knots = NULL,
+prepare_jags_data(strat_data, species_to_run, model = NULL, n_knots = NULL,
   min_year = NULL, max_year = NULL, min_n_routes = 3,
   min_max_route_years = 3, min_mean_route_years = 1, strata_rem = NULL,
   quiet = FALSE, ...)
@@ -86,6 +86,12 @@ data_jags <- prepare_jags_data(strat_data = stratified_data,
                                species_to_run = "Barn Swallow",
                                model = "gam",
                                n_knots = 9)
+
+# For users that may want to use their own model, you can choose not
+# to specify a model, and prepare_jags_model will just prepare the
+# minimum amount of data
+data_jags <- prepare_jags_data(strat_data = stratified_data,
+                               species_to_run = "Barn Swallow"
 
 # Capitalization and punctuation matter (for now)
 # This code will produce an error.

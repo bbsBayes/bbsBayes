@@ -61,11 +61,11 @@ fetch_bbs_data <- function(quiet = FALSE)
   ################################################################
   # Bird Count Data
   ################################################################
-  bfiles <- read.csv(system.file("data-import","state-dir.csv",package="bbsBayes"))
+  bfiles <- utils::read.csv(system.file("data-import","state-dir.csv",package="bbsBayes"))
 
   if (!isTRUE(quiet))
   {
-    pb <- progress_bar$new(
+    pb <- progress::progress_bar$new(
       format = "Downloading count data   [:bar] :percent eta: :eta",
       clear = FALSE,
       total = nrow(bfiles) + 2,
@@ -78,8 +78,8 @@ fetch_bbs_data <- function(quiet = FALSE)
     if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
     st <- substring(st1,first = 1,last = nchar(st1)-4)
     temp <- tempfile()
-    download.file(paste0(base_url, "States/", st, ".zip"),temp, quiet = TRUE)
-    data <- read.csv(unz(temp, paste0(st,".csv")),stringsAsFactors = F)
+    utils::download.file(paste0(base_url, "States/", st, ".zip"),temp, quiet = TRUE)
+    data <- utils::read.csv(unz(temp, paste0(st,".csv")),stringsAsFactors = F)
     unlink(temp)
 
     if(st1 == bfiles$File.Name[1])
@@ -100,7 +100,7 @@ fetch_bbs_data <- function(quiet = FALSE)
   ################################################################
   if (!isTRUE(quiet))
   {
-    pb <- progress_bar$new(
+    pb <- progress::progress_bar$new(
       format = "Downloading route data   [:bar] :percent eta: :eta",
       clear = FALSE,
       total = 17,
@@ -109,8 +109,8 @@ fetch_bbs_data <- function(quiet = FALSE)
   }
 
   temp <- tempfile(); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
-  download.file(paste0(base_url,"routes.zip"),temp, quiet = TRUE); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
-  routes <- read.csv(unz(temp, paste0("routes.csv")),stringsAsFactors = F); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
+  utils::download.file(paste0(base_url,"routes.zip"),temp, quiet = TRUE); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
+  routes <- utils::read.csv(unz(temp, paste0("routes.csv")),stringsAsFactors = F); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
   unlink(temp); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
 
   #removes the off-road and water routes, as well as non-random and mini-routes
@@ -122,8 +122,8 @@ fetch_bbs_data <- function(quiet = FALSE)
   ################################################################
 
   temp <- tempfile(); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
-  download.file(paste0(base_url,"Weather.zip"),temp, quiet = TRUE); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
-  weather <- read.csv(unz(temp, paste0("weather.csv")),stringsAsFactors = F); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
+  utils::download.file(paste0(base_url,"Weather.zip"),temp, quiet = TRUE); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
+  weather <- utils::read.csv(unz(temp, paste0("weather.csv")),stringsAsFactors = F); if (!isTRUE(quiet)){if (!isTRUE(quiet)){pb$tick()}}
   unlink(temp); if (!isTRUE(quiet)){pb$tick()}
 
   #removes the off-road and water routes, as well as non-random and mini-routes
@@ -137,7 +137,7 @@ fetch_bbs_data <- function(quiet = FALSE)
   names(route)[which(tolower(names(route)) == "statenum")] = "statenum"; if (!isTRUE(quiet)){pb$tick()}
 
   # Add region and BCR information to route and bird data frames
-  regs <- read.csv(system.file("data-import",
+  regs <- utils::read.csv(system.file("data-import",
                                "regs.csv",
                                package="bbsBayes"),
                    stringsAsFactors = F)
@@ -153,7 +153,7 @@ fetch_bbs_data <- function(quiet = FALSE)
 
   if (!isTRUE(quiet))
   {
-    pb <- progress_bar$new(
+    pb <- progress::progress_bar$new(
       format = "Downloading species data [:bar] :percent eta: :eta",
       clear = FALSE,
       total = 6,
@@ -162,8 +162,8 @@ fetch_bbs_data <- function(quiet = FALSE)
   }
 
   temp <- tempfile(); if (!isTRUE(quiet)){pb$tick()}
-  download.file(paste0(base_url,"SpeciesList.txt"),temp, quiet = TRUE); if (!isTRUE(quiet)){pb$tick()}
-  species <- read.fwf(temp, skip = 9, strip.white = T,
+  utils::download.file(paste0(base_url,"SpeciesList.txt"),temp, quiet = TRUE); if (!isTRUE(quiet)){pb$tick()}
+  species <- utils::read.fwf(temp, skip = 9, strip.white = T,
                       colClasses = c("integer",
                                      "character",
                                      "character",

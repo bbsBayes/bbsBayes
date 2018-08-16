@@ -89,17 +89,18 @@ plot_strata_indices <- function(indices = NULL,
   {
     to_plot <- indices[which(indices$Stratum == i), ]
 
-    p <- ggplot() +
-      theme(panel.grid.major = element_blank(),
-            panel.grid.minor = element_blank(),
-            panel.background = element_blank(),
+    p <- ggplot2::ggplot() +
+      ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.background = ggplot2::element_blank(),
             axis.line = element_line(colour = "black")) +
-      labs(title = paste(species, " Annual indices for Stratum ", i, sep = ""),
+      ggplot2::labs(title = paste(species, " Annual indices for Stratum ", i, sep = ""),
            x = "Year",
            y = "Index") +
-      geom_line(data = to_plot, aes(x = Year, y = Index)) +
-      geom_ribbon(data = to_plot, aes(x = Year, ymin = Q25, ymax = Q975), alpha = 0.12)
-    plot_list[[str_replace_all(paste(i),
+      ggplot2::geom_line(data = to_plot, ggplot2::aes(x = Year, y = Index)) +
+      ggplot2::geom_ribbon(data = to_plot, ggplot2::aes(x = Year, ymin = Q25, ymax = Q975), alpha = 0.12)
+
+    plot_list[[stringr::str_replace_all(paste(i),
                                "[[:punct:]\\s]+",
                                "_")]] <- p
     plot_index <- plot_index + 1

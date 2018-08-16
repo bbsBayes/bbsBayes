@@ -46,8 +46,8 @@ generate_strata_indices <- function(jags_mod = NULL)
   strata_indices <- area_weights$num
 
   n_mean <- apply(n, c(2,3), mean)
-  n_25 <- apply(n, c(2,3), quantile, probs = 0.025)
-  n_975 <- apply(n, c(2,3), quantile, probs = 0.975)
+  n_25 <- apply(n, c(2,3), stats::quantile, probs = 0.025)
+  n_975 <- apply(n, c(2,3), stats::quantile, probs = 0.975)
 
   data_summary <- data.frame(Year = integer(),
                              Index = double(),

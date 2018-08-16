@@ -46,7 +46,7 @@ generate_map <- function(trend = NULL,
   Trend <- NULL
   rm(Trend)
 
-  map <- readOGR(dsn = system.file("maps",
+  map <- rgdal::readOGR(dsn = system.file("maps",
                                    package = "bbsBayes"),
                  layer = maps[[stratify_by]],
                  verbose = FALSE)
@@ -55,9 +55,9 @@ generate_map <- function(trend = NULL,
   map@data <- subset(map@data, select = c(Trend))
 
   n_half <- 500
-  col_neg <- colorRampPalette(colors = c("red", "white"), space = "Lab")(n_half)
-  col_pos <- colorRampPalette(colors = c("white", "blue"), space = "Lab")(n_half)
+  col_neg <- grDevices::colorRampPalette(colors = c("red", "white"), space = "Lab")(n_half)
+  col_pos <- grDevices::colorRampPalette(colors = c("white", "blue"), space = "Lab")(n_half)
   map_palette <- c(col_neg, col_pos)
 
-  return(spplot(map, col.regions = map_palette))
+  return(sp::spplot(map, col.regions = map_palette))
 }

@@ -75,16 +75,16 @@ plot_cont_indices <- function(indices = NULL,
     indices <- indices[which(indices$Year <= max_year), ]
   }
 
-  p <- ggplot() +
-    theme(panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          panel.background = element_blank(),
-          axis.line = element_line(colour = "black")) +
-    labs(title = paste(species, " Annual indices: Continental", sep = ""),
+  p <- ggplot2::ggplot() +
+    ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+          panel.grid.minor = ggplot2::element_blank(),
+          panel.background = ggplot2::element_blank(),
+          axis.line = ggplot2::element_line(colour = "black")) +
+    ggplot2::labs(title = paste(species, " Annual indices: Continental", sep = ""),
          x = "Year",
          y = "Index") +
-    geom_line(data = indices, aes(x = Year, y = Index)) +
-    geom_ribbon(data = indices, aes(x = Year, ymin = Q25, ymax = Q975), alpha = 0.12)
+    ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index)) +
+    ggplot2::geom_ribbon(data = indices, ggplot2::aes(x = Year, ymin = Q25, ymax = Q975), alpha = 0.12)
 
   return(p)
 }

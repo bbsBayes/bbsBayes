@@ -141,7 +141,7 @@ prepare_jags_data <- function(strat_data,
 
   if (!isTRUE(quiet))
   {
-    pb <- progress_bar$new(
+    pb <- progress::progress_bar$new(
       format = "Preparing JAGS data   [:bar] :percent eta: :eta",
       clear = FALSE,
       total = length(unique(spsp.c$strat_name)) + 26,
@@ -358,7 +358,7 @@ prepare_jags_data <- function(strat_data,
     if (tolower(model) == "slope")
     {
       to_return <- c(to_return,
-                     list(fixedyear = median(unique(birds$Year))))
+                     list(fixedyear = stats::median(unique(birds$Year))))
     }
 
     if (tolower(model) %in% c("gam", "gamye"))

@@ -39,8 +39,7 @@
 #' data_strat <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "latlong")
 
 #' }
-#'
-#' @importFrom utils read.csv
+
 #' @importFrom progress progress_bar
 #' @export
 #'
@@ -51,7 +50,7 @@ stratify <- function(bbs_data,
 {
   if (!isTRUE(quiet))
   {
-    pb <- progress_bar$new(
+    pb <- progress::progress_bar$new(
       format = "Stratifying data   [:bar] :percent eta: :eta",
       clear = FALSE,
       total = 7,
