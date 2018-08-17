@@ -352,7 +352,8 @@ prepare_jags_data <- function(strat_data,
                    firstyr = spsp_f$firstyr,
                    nobservers = n_observers,
                    stratify_by = strat_data$stratify_by,
-                   prepped_data = spsp_f)
+                   route = spsp_f$route,
+                   r_year = spsp_f$rYear)
   if (!is.null(model))
   {
     if (tolower(model) == "slope")

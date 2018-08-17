@@ -36,5 +36,14 @@
 
 get_prepared_data <- function(jags_data = NULL)
 {
-  return(jags_data$prepped_data)
+  to_return <- data.frame(Year = jags_data$r_year,
+                          Year_Factored = jags_data$year,
+                          Count = jags_data$count,
+                          Stratum = jags_data$strat_name,
+                          Stratum_Factored = jags_data$strat,
+                          Observer_Factored = jags_data$obser,
+                          Route = jags_data$route,
+                          First_Year = jags_data$firstyr)
+
+  return(to_return)
 }
