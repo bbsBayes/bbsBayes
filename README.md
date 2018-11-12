@@ -9,12 +9,12 @@ bbsBayes is a package to perform hierarchical Bayesian analysis of North America
 
 ## Installation
 
-The most recent alpha release is v0.3.0-alpha.
+The beta version of v1.0.0 is now out!
 ``` r
-# To install v.0.3.0-alpha from Github:
+# To install v.1.0.0-beta from Github:
 install.packages("devtools")
 library(devtools)
-devtools::install_github("BrandonEdwards/bbsBayes", ref = "v0.3.0-alpha")
+devtools::install_github("BrandonEdwards/bbsBayes", ref = "v1.0.0-beta")
 ```
 
 Alternatively, you could install the less-stable development version.
