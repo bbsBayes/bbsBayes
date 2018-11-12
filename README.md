@@ -25,6 +25,73 @@ library(devtools)
 devtools::install_github("BrandonEdwards/bbsBayes")
 ```
 
+## Usage
+
+bbsBayes provides functions for every stage of Breeding Bird Survey data analysis.
+
+### Data Retrieval 
+You can download BBS data by running `fetch_bbs_data` and saving it to a variable. You must agree to the terms and conditions of the data usage before downloading.
+
+``` r
+bbs_data <- fetch_bbs_data()
+```
+
+### Data Preparation
+#### Stratification
+Stratification plays an important role in trend analysis. Use the `stratify()` function on the `bbs_data` you downloaded, and specify how you would like to stratify your data by. Set `stratify_by` by choosing one of the following:
+* bbs_cws -- Political region X Bird Conservation region intersection (CWS method)
+* bbs_usgs -- Political region X Bird Conservation region intersection (USGS method)
+* bcr -- Bird Conservation Region only
+* state -- Political Region only
+* latlong -- Degree blocks (1 degree of latitude X 1 degree of longitude)
+
+``` r
+strat_data <- stratify(bbs_data, stratify_by = "bcr")
+```
+
+#### Jags Data
+JAGS models require the data to be sent as a data frame depending on how the model is set up. `prepare_jags_data` subsets the stratified data based on species and wrangles relevent data to use for JAGS models.
+
+``` r
+jags_data <- prepare_jags_data(strat_data, 
+                               species_to_run = "Spruce Grouse", 
+                               model = "slope")
+```
+
+### MCMC
+Once the data has been prepared for JAGS, the model can be run. The following will run MCMC with default number of iterations.
+
+``` r
+mod <- run_model(jags_data = jags_data)
+```
+
+Alternatively, you can set how many iterations, burn-in steps, or adapt steps to use
+``` r
+mod <- run_model(jags_data = jags_data,
+                 n_burnin = 1000,
+                 n_iter=1000,
+                 n_adapt = 500)
+```
+
+### Model Analysis
+There are a number of tools available to analyse the posterior chain output from the MCMC model. The main metric is annual trend, which can be calculated for each stratum:
+``` r
+strat_indices <- generate_strata_indices(mod)
+strat_trend <- generate_strata_trends(indices = strat_indices)
+```
+
+These trends can be mapped
+``` r
+generate_map(strat_trend, stratify_by = "bcr")
+```
+
+Which produces
+
+<img src="man/figures/map_example.png" />
+
+There are numerous other functions available for analysis of the data.
+
+
 ## Lifecycle
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 
