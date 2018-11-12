@@ -50,7 +50,7 @@ generate_map <- function(trend = NULL,
                                    package = "bbsBayes"),
                  layer = maps[[stratify_by]],
                  verbose = FALSE)
-  map@data <- merge(map@data, trend, by.x = "St_12", by.y = "Stratum", all = T)
+  map@data <- merge(map@data, trend, by.x = "ST_12", by.y = "Stratum", all = T)
   map@data$Trend <- as.numeric(as.character(map@data$Trend))
   map@data <- subset(map@data, select = c(Trend))
 
