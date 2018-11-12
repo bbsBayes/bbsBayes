@@ -111,8 +111,10 @@ run_model <- function(jags_data = NULL,
   stratify_by <- jags_data[["stratify_by"]]
   jags_data[["stratify_by"]] <- NULL
 
-  r_year <- jags_data$prepped_data$rYear
-  jags_data[["prepped_data"]] <- NULL
+  r_year <- jags_data[["r_year"]]
+  jags_data[["r_year"]] <- NULL
+
+  jags_data[["route"]] <- NULL
 
   # The case where the user DOES NOT want to track n
   if (isTRUE(dont_track_n))
