@@ -88,7 +88,7 @@ run_model <- function(jags_data = NULL,
                       n_burnin = 20000,
                       n_thin = 10,
                       n_saved_steps = 2000,
-                      n_iter = ceiling( ( n_saved_steps * n_thin ) / n_chains ),
+                      n_iter = 6667,
                       parallel = FALSE,
                       quiet = FALSE,
                       ...)
