@@ -7,8 +7,8 @@
 run_model(jags_data = NULL, model_file_path = NULL, inits = NULL,
   parameters_to_save = c("n"), dont_track_n = FALSE, n_chains = 3,
   n_adapt = 500, n_burnin = 20000, n_thin = 10,
-  n_saved_steps = 2000, n_iter = ceiling((n_saved_steps *
-  n_thin)/n_chains), parallel = FALSE, quiet = FALSE, ...)
+  n_saved_steps = 2000, n_iter = 6667, parallel = FALSE,
+  quiet = FALSE, ...)
 }
 \arguments{
 \item{jags_data}{List or environment containing the data to model, as output

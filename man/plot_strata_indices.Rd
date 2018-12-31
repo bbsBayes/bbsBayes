@@ -5,7 +5,8 @@
 \title{Generate plots of index trajectories by stratum}
 \usage{
 plot_strata_indices(indices = NULL, min_year = NULL, max_year = NULL,
-  species = "")
+  species = "", title_size = 20, axis_title_size = 18,
+  axis_text_size = 16)
 }
 \arguments{
 \item{indices}{Dataframe of yearly indices produced by
@@ -16,6 +17,12 @@ plot_strata_indices(indices = NULL, min_year = NULL, max_year = NULL,
 \item{max_year}{Maximum year to plot}
 
 \item{species}{Species name to be added onto the plot}
+
+\item{title_size}{Specify font size of plot title. Defaults to 20}
+
+\item{axis_title_size}{Specify font size of axis titles. Defaults to 18}
+
+\item{axis_text_size}{Specify font size of axis text. Defaults to 16}
 }
 \value{
 List of ggplot objects, each entry being a plot

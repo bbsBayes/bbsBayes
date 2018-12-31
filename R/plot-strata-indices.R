@@ -7,12 +7,15 @@
 #' @param min_year Minimum year to plot
 #' @param max_year Maximum year to plot
 #' @param species Species name to be added onto the plot
+#' @param title_size Specify font size of plot title. Defaults to 20
+#' @param axis_title_size Specify font size of axis titles. Defaults to 18
+#' @param axis_text_size Specify font size of axis text. Defaults to 16
 #'
 #' @return List of ggplot objects, each entry being a plot
 #'   of a stratum indices
 #'
 #' @importFrom ggplot2 ggplot theme element_blank element_line
-#' labs geom_line geom_ribbon aes
+#' labs geom_line geom_ribbon aes element_text
 #' @importFrom stringr str_replace_all
 #'
 #' @examples
@@ -59,7 +62,10 @@
 plot_strata_indices <- function(indices = NULL,
                               min_year = NULL,
                               max_year = NULL,
-                              species = "")
+                              species = "",
+                              title_size = 20,
+                              axis_title_size = 18,
+                              axis_text_size = 16)
 {
   Year <- NULL
   rm(Year)
@@ -93,7 +99,10 @@ plot_strata_indices <- function(indices = NULL,
       ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
             panel.grid.minor = ggplot2::element_blank(),
             panel.background = ggplot2::element_blank(),
-            axis.line = element_line(colour = "black")) +
+            axis.line = element_line(colour = "black"),
+            plot.title = ggplot2::element_text(size = title_size),
+            axis.title = ggplot2::element_text(size = axis_title_size),
+            axis.text = ggplot2::element_text(size = axis_text_size)) +
       ggplot2::labs(title = paste(species, " Annual indices for Stratum ", i, sep = ""),
            x = "Year",
            y = "Index") +

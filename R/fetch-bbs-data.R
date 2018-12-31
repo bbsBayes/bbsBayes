@@ -174,7 +174,8 @@ fetch_bbs_data <- function(quiet = FALSE)
                                      "character",
                                      "character"),
                       header = F,
-                      widths = c(6,-1,5,-1,50,-1,50,-1,50,-1,50,-1,50,-1,50,-1,50)); if (!isTRUE(quiet)){pb$tick()}
+                      widths = c(6,-1,5,-1,50,-1,50,-1,50,-1,50,-1,50,-1,50,-1,50),
+                      fileEncoding = "iso-8859-1"); if (!isTRUE(quiet)){pb$tick()}
   unlink(temp); if (!isTRUE(quiet)){pb$tick()}
 
   species <- species[,-c(4,5)]
