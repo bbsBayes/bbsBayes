@@ -8,7 +8,8 @@ stratify(bbs_data, stratify_by = NULL, quiet = FALSE)
 }
 \arguments{
 \item{bbs_data}{Large list of raw BBS data. Can be obtained using
-the \code{fetchBBSdata()} function.}
+the \code{fetch_bbs_data()} function, or by using the \code{fetch_sample_data()}
+if you would just like to use the sample data provided with bbsBayes.}
 
 \item{stratify_by}{String argument of stratification type.
 Options are "state", "bcr", "latlong", "bbs_cws", "bbs_usgs"}

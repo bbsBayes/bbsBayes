@@ -2,6 +2,7 @@
 
 export(extract_index_data)
 export(fetch_bbs_data)
+export(fetch_sample_data)
 export(generate_cont_indices)
 export(generate_cont_trend)
 export(generate_map)
