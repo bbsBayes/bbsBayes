@@ -5,3 +5,6 @@ testdata
 bbsBayes-report.html
 testfile.R
 CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+ISSUES_TEMPLATE.md
+PULL_REQUEST_TEMPLATE.md
