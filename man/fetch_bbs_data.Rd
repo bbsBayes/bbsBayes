@@ -4,10 +4,18 @@
 \alias{fetch_bbs_data}
 \title{Fetch Breeding Bird Survey dataset}
 \usage{
-fetch_bbs_data(quiet = FALSE)
+fetch_bbs_data(level = "state", quiet = FALSE)
 }
 \arguments{
-\item{quiet}{Should progress bars be suppressed?}
+\item{level}{A string, either "state" or "stop", specifying which counts to
+fetch. Defaults to "state", which provides counts beginning in 1966,
+aggregated in five bins, each of which contains cumulative counts from 10 of
+the 50 stops along a route. Specifying "stop" provides stop-level data
+beginning in 1997, which includes counts for each stop along routes
+individually. Note that stop-level data is not currently supported by
+the modeling utilities in bbsBayes.}
+
+\item{quiet}{Logical: should progress bars be suppressed?}
 }
 \value{
 NULL if user does not agree to terms and conditions.
