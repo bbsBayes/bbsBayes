@@ -12,8 +12,9 @@
 #' @return spplot object
 #'
 #' @importFrom rgdal readOGR
-#' @importFrom sp spplot
+#' @importFrom sp spplot sp.polygons
 #' @importFrom grDevices colorRampPalette
+#' @importFrom latticeExtra layer_
 #'
 #' @examples
 #'
@@ -59,5 +60,6 @@ generate_map <- function(trend = NULL,
   col_pos <- grDevices::colorRampPalette(colors = c("white", "blue"), space = "Lab")(n_half)
   map_palette <- c(col_neg, col_pos)
 
-  return(sp::spplot(map, col.regions = map_palette))
+  return(sp::spplot(map, col.regions = map_palette) +
+           latticeExtra::layer_(sp::sp.polygons(map, fill = 'gray90')))
 }

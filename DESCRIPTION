@@ -15,7 +15,8 @@ Imports:
   grDevices,
   rgdal,
   sp, 
-  tools
+  tools,
+  latticeExtra
 Depends: R (>= 2.10)
 SystemRequirements: JAGS (http://mcmc-jags.sourceforge.net)
 URL: https://github.com/BrandonEdwards/bbsBayes
