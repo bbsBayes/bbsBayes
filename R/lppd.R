@@ -55,7 +55,7 @@ lppd <- function(jags_data = NULL,
 
   for(i in 1:nrow(bugs))
   {
-    lppd_v[i] <- log(mean(stats::dpois(bugs[i,"count"], jags_mod$sims.list$lambda[,i])))
+    lppd_v[i] <- log(mean(stats::dpois(bugs[i,"Count"], jags_mod$sims.list$lambda[,i])))
   }
 
   lppd_point[,"lppd_point"] <- lppd_v
