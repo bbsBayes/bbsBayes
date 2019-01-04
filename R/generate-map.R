@@ -13,7 +13,6 @@
 #'
 #' @importFrom rgdal readOGR
 #' @importFrom sp spplot sp.polygons
-#' @importFrom grDevices colorRampPalette
 #' @importFrom latticeExtra layer_
 #'
 #' @examples
@@ -51,14 +50,14 @@ generate_map <- function(trend = NULL,
                                    package = "bbsBayes"),
                  layer = maps[[stratify_by]],
                  verbose = FALSE)
+  breaks <- c(-7, -4, -2, -1, -0.5, 0.5, 1, 2, 4, 7)
   map@data <- merge(map@data, trend, by.x = "ST_12", by.y = "Stratum", all = T)
   map@data$Trend <- as.numeric(as.character(map@data$Trend))
+  map@data$Trend <- cut(map@data$Trend, breaks = c(-Inf, breaks, Inf))
   map@data <- subset(map@data, select = c(Trend))
 
-  n_half <- 500
-  col_neg <- grDevices::colorRampPalette(colors = c("red", "white"), space = "Lab")(n_half)
-  col_pos <- grDevices::colorRampPalette(colors = c("white", "blue"), space = "Lab")(n_half)
-  map_palette <- c(col_neg, col_pos)
+  map_palette <- c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
+                   "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")
 
   return(sp::spplot(map, col.regions = map_palette) +
            latticeExtra::layer_(sp::sp.polygons(map, fill = 'gray90')))
