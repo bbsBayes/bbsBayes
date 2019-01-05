@@ -36,6 +36,12 @@ You can download BBS data by running `fetch_bbs_data` and saving it to a variabl
 bbs_data <- fetch_bbs_data()
 ```
 
+Alternatively, use the sample data provided with the package, which provides full species data for Pine Grosbeak, Wood Thrush, and King Rail.
+
+```r
+bbs_sample <- fetch_sample_data()
+```
+
 ### Data Preparation
 #### Stratification
 Stratification plays an important role in trend analysis. Use the `stratify()` function on the `bbs_data` you downloaded, and specify how you would like to stratify your data by. Set `stratify_by` by choosing one of the following:
@@ -46,7 +52,7 @@ Stratification plays an important role in trend analysis. Use the `stratify()` f
 * latlong -- Degree blocks (1 degree of latitude X 1 degree of longitude)
 
 ``` r
-strat_data <- stratify(bbs_data, stratify_by = "bcr")
+strat_data <- stratify(bbs_data, stratify_by = "state")
 ```
 
 #### Jags Data
@@ -54,12 +60,12 @@ JAGS models require the data to be sent as a data frame depending on how the mod
 
 ``` r
 jags_data <- prepare_jags_data(strat_data, 
-                               species_to_run = "Spruce Grouse", 
+                               species_to_run = "Pine Grosbeak", 
                                model = "slope")
 ```
 
 ### MCMC
-Once the data has been prepared for JAGS, the model can be run. The following will run MCMC with default number of iterations.
+Once the data has been prepared for JAGS, the model can be run. The following will run MCMC with default number of iterations. Note that this step usually takes a long time.
 
 ``` r
 mod <- run_model(jags_data = jags_data)
@@ -80,9 +86,9 @@ strat_indices <- generate_strata_indices(mod)
 strat_trend <- generate_strata_trends(indices = strat_indices)
 ```
 
-These trends can be mapped
+These trends can be plotted on a map
 ``` r
-generate_map(strat_trend, stratify_by = "bcr")
+generate_map(strat_trend, stratify_by = "state")
 ```
 
 Which produces
