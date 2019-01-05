@@ -13,7 +13,6 @@
 #'
 #' @importFrom rgdal readOGR
 #' @importFrom sp spplot sp.polygons
-#' @importFrom latticeExtra layer_
 #'
 #' @examples
 #'
@@ -59,6 +58,5 @@ generate_map <- function(trend = NULL,
   map_palette <- c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
                    "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")
 
-  return(sp::spplot(map, col.regions = map_palette) +
-           latticeExtra::layer_(sp::sp.polygons(map, fill = 'gray90')))
+  return(sp::spplot(map, col.regions = map_palette))
 }
