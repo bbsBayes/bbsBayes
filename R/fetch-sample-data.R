@@ -25,6 +25,21 @@
 #'
 fetch_sample_data <- function()
 {
+  # Print Terms of Use
+  terms <- readChar(system.file("data-terms",
+                                package = "bbsBayes"),
+                    file.info(system.file("data-terms",
+                                          package = "bbsBayes"))$size)
+
+  cat(terms)
+
+  agree <- readline(prompt = "Type \"yes\" (without quotes) to agree: ")
+
+  if (agree != "yes")
+  {
+    return(NULL)
+  }
+
   return(list(bird = bbsBayes::bird_sample,
               route = bbsBayes::route_sample,
               species = bbsBayes::species_sample))
