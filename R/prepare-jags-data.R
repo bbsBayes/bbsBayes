@@ -366,7 +366,7 @@ prepare_jags_data <- function(strat_data,
     {
       if (is.null(n_knots))
       {
-        n_knots <- floor(length(unique((spsp_f$year)))/5)
+        n_knots <- floor(length(unique((spsp_f$year)))/4)
       }
       knotsX<- seq(yminsc,ymaxsc,length=(n_knots+2))[-c(1,n_knots+2)]
       X_K<-(abs(outer(seq(yminsc,ymaxsc,length = nyears),knotsX,"-")))^3
