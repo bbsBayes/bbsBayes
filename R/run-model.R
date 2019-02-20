@@ -24,7 +24,7 @@
 #' @param n_burnin Optional integer specifying the number of iterations
 #'   to burn in the model. Defaults to 20000 per chain.
 #' @param n_thin Optional number of steps to thin or discard.
-#' @param n_iter Optional number of iterations.
+#' @param n_iter Optional number of iterations per chain. Defaults to 10000.
 #' @param n_saved_steps Optional number of steps to save per chain.
 #'   Defaults to 2000.
 #' @param parallel Should each chain be run parallel on separate cores?
@@ -88,7 +88,7 @@ run_model <- function(jags_data = NULL,
                       n_burnin = 20000,
                       n_thin = 10,
                       n_saved_steps = 2000,
-                      n_iter = 6667,
+                      n_iter = 10000,
                       parallel = FALSE,
                       quiet = FALSE,
                       ...)
