@@ -7,7 +7,7 @@
 run_model(jags_data = NULL, model_file_path = NULL, inits = NULL,
   parameters_to_save = c("n"), dont_track_n = FALSE, n_chains = 3,
   n_adapt = 500, n_burnin = 20000, n_thin = 10,
-  n_saved_steps = 2000, n_iter = 6667, parallel = FALSE,
+  n_saved_steps = 2000, n_iter = 10000, parallel = FALSE,
   quiet = FALSE, ...)
 }
 \arguments{
@@ -44,7 +44,7 @@ to burn in the model. Defaults to 20000 per chain.}
 \item{n_saved_steps}{Optional number of steps to save per chain.
 Defaults to 2000.}
 
-\item{n_iter}{Optional number of iterations.}
+\item{n_iter}{Optional number of iterations per chain. Defaults to 10000.}
 
 \item{parallel}{Should each chain be run parallel on separate cores?
 If TRUE, the number of cores used will be the minimum of the
