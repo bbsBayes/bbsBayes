@@ -3,6 +3,10 @@
 [![Build Status](https://travis-ci.org/BrandonEdwards/bbsBayes.svg?branch=master)](https://travis-ci.org/BrandonEdwards/bbsBayes)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/bbsBayes)](https://cran.r-project.org/package=bbsBayes)
 
+## Foreward
+bbsBayes is currently undergoing beta testing. Thus, we expect features and analyses may not work as intended until a stable version 1.0.0 is released. 
+
+Users of this package shoud heed caution in using the beta version for any Breeding Bird Survey analyses. We plan to have a stable version 1.0.0 released to CRAN in early April 2019.
 
 ## Overview
 bbsBayes is a package to perform hierarchical Bayesian analysis of North American Breeding Bird Survey (BBS) data. 'bbsBayes' will run a full model analysis for one or more species that you choose, or you can take more control and specify how the data should be stratified, prepared for JAGS, or modelled. 
