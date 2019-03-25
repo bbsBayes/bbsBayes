@@ -99,6 +99,11 @@ prepare_jags_data <- function(strat_data,
                             quiet = FALSE,
                             ...)
 {
+  if(isFALSE(is.element(model, c("slope", "firstdiff", "gam", "gamye"))))
+  {
+    stop("Invalid model specified"); return(NULL)
+  }
+
   birds <- strat_data$bird_strat
   route <- strat_data$route_strat
   species <- strat_data$species_strat
