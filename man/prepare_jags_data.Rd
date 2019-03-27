@@ -14,8 +14,8 @@ prepare_jags_data(strat_data, species_to_run, model = NULL,
 
 \item{species_to_run}{Character string of the English name of the species to run}
 
-\item{model}{Character strings or vector of character strings of what
-species are wanting to be analysed.}
+\item{model}{Character string of model to be used.
+Options are "slope", "firstdiff", "gam", "gamye.}
 
 \item{n_knots}{Number of knots to be used in GAM function}
 

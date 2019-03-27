@@ -1,12 +1,12 @@
-#' Transform data to use for JAGS input
+#' Wrangle data to use for JAGS input
 #'
-#' \code{prepare_jags_data} transforms stratified data for use as input
-#'   to run JAGS models.
+#' \code{prepare_jags_data} subsets raw BBS data by selected species and
+#'    and wrangles stratified data for use as input to run JAGS models.
 #'
 #' @param strat_data Large list of stratified data returned by \code{stratify()}
 #' @param species_to_run Character string of the English name of the species to run
-#' @param model Character strings or vector of character strings of what
-#'   species are wanting to be analysed.
+#' @param model Character string of model to be used.
+#'   Options are "slope", "firstdiff", "gam", "gamye.
 #' @param n_knots Number of knots to be used in GAM function
 #' @param min_year Minimum year to keep in analysis
 #' @param max_year Maximum year to keep in analysis
