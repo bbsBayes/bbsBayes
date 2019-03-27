@@ -95,10 +95,6 @@ stratify <- function(bbs_data,
     route[which(route$State == "Nova Scotia"), "State"] <- "Nova Scotia Prince Edward Island"
     route[which(route$State == "Prince Edward Island"), "State"] <- "Nova Scotia Prince Edward Island"
     route[which(route$State == "Nova Scotia Prince Edward Island"), "St_Abrev"] <- "NSPE"
-    route[which(route$statenum == 65), "Route"] <- 65
-    bird[which(bird$statenum == 65), "Route"] <- 65
-    route[which(route$statenum == 75), "Route"] <- 75
-    bird[which(bird$statenum == 75), "Route"] <- 75
     route[which(route$St_Abrev == "NSPE"), "statenum"] <- 765
     bird[which(bird$statenum == 65), "statenum"] <- 765
     bird[which(bird$statenum == 75), "statenum"] <- 765
