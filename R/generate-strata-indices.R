@@ -62,7 +62,7 @@ generate_strata_indices <- function(jags_mod = NULL)
                                Index = as.numeric(as.vector(n_mean[i,])),
                                Q25 = as.numeric(as.vector(n_25[i,])),
                                Q975 = as.numeric(as.vector(n_975[i,])),
-                               Stratum = area_weights$region[i])
+                               Stratum = area_weights[which(area_weights$num == i), ]$region)
     strat_summary$Year <- (strat_summary$Year - 1) + min(r_year)
 
     data_summary <- rbind(data_summary, strat_summary)
