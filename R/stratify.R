@@ -49,6 +49,11 @@ stratify <- function(bbs_data,
                      stratify_by = NULL,
                      quiet = FALSE)
 {
+  if(isFALSE(is.element(stratify_by, c("state", "bcr", "latlong", "bbs_cws", "bbs_usgs"))))
+  {
+    stop("Invalid stratification specified"); return(NULL)
+  }
+
   if (!isTRUE(quiet))
   {
     pb <- progress::progress_bar$new(
