@@ -33,6 +33,11 @@
 
 generate_cont_indices <- function(jags_mod = NULL)
 {
+  if (is.null(jags_mod))
+  {
+    stop("No model output supplied to generate_cont_indices()."); return(NULL)
+  }
+
   data_list <- extract_index_data(jags_mod = jags_mod)
   n <- data_list$n
   area_weights <- data_list$area_weights

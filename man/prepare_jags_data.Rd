@@ -4,8 +4,8 @@
 \alias{prepare_jags_data}
 \title{Wrangle data to use for JAGS input}
 \usage{
-prepare_jags_data(strat_data, species_to_run, model = NULL,
-  n_knots = NULL, min_year = NULL, max_year = NULL,
+prepare_jags_data(strat_data = NULL, species_to_run = NULL,
+  model = NULL, n_knots = NULL, min_year = NULL, max_year = NULL,
   min_n_routes = 3, min_max_route_years = 3,
   min_mean_route_years = 1, strata_rem = NULL, quiet = FALSE, ...)
 }

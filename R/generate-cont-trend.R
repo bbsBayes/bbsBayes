@@ -32,6 +32,11 @@ generate_cont_trend <- function(indices = NULL,
                                 min_year = NULL,
                                 max_year = NULL)
 {
+  if (is.null(indices))
+  {
+    stop("No indices supplied to generate_cont_trend()."); return(NULL)
+  }
+
   if (is.null(min_year))
   {
     min_year = min(indices$Year)

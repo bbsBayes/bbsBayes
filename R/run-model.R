@@ -93,6 +93,10 @@ run_model <- function(jags_data = NULL,
                       quiet = FALSE,
                       ...)
 {
+  if (is.null(jags_data))
+  {
+    stop("No data supplied for model."); return(NULL)
+  }
   if (!is.null(model_file_path))
   {
     model <- model_file_path

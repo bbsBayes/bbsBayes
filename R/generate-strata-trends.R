@@ -36,6 +36,11 @@ generate_strata_trends <- function(indices = NULL,
                                    min_year = NULL,
                                    max_year = NULL)
 {
+  if (is.null(indices))
+  {
+    stop("No indices supplied to generate_strata_trends()."); return(NULL)
+  }
+
   strata_used <- as.character(unique(indices$Stratum))
   if (is.null(min_year))
   {

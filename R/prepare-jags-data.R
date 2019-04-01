@@ -86,8 +86,8 @@
 #' }
 #'
 
-prepare_jags_data <- function(strat_data,
-                            species_to_run,
+prepare_jags_data <- function(strat_data = NULL,
+                            species_to_run = NULL,
                             model = NULL,
                             n_knots = NULL,
                             min_year = NULL,
@@ -99,7 +99,19 @@ prepare_jags_data <- function(strat_data,
                             quiet = FALSE,
                             ...)
 {
-  if(isFALSE(is.element(model, c("slope", "firstdiff", "gam", "gamye"))))
+  if (is.null(strat_data))
+  {
+    stop("No data supplied to prepare_jags_data()."); return(NULL)
+  }
+  if (is.null(species_to_run))
+  {
+    stop("No species specified."); return(NULL)
+  }
+  if (is.null(model))
+  {
+    stop("No model specified."); return(NULL)
+  }
+  if (isFALSE(is.element(model, c("slope", "firstdiff", "gam", "gamye"))))
   {
     stop("Invalid model specified"); return(NULL)
   }
