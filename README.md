@@ -15,10 +15,10 @@ bbsBayes is a package to perform hierarchical Bayesian analysis of North America
 
 The updated beta version of v1.0.0 is now out!
 ``` r
-# To install v1.0.0-beta.3 from Github:
+# To install v1.0.0-beta.4 from Github:
 install.packages("devtools")
 library(devtools)
-devtools::install_github("BrandonEdwards/bbsBayes", ref = "v1.0.0-beta.3")
+devtools::install_github("BrandonEdwards/bbsBayes", ref = "v1.0.0-beta.4")
 ```
 
 Alternatively, you could install the less-stable development version.
@@ -40,7 +40,7 @@ You can download BBS data by running `fetch_bbs_data` and saving it to a variabl
 bbs_data <- fetch_bbs_data()
 ```
 
-Alternatively, use the sample data provided with the package, which provides full species data for Pine Grosbeak, Wood Thrush, and King Rail.
+Alternatively, use the sample data provided with the package, which provides full species data for Wood Thrush.
 
 ```r
 bbs_sample <- fetch_sample_data()
@@ -64,7 +64,7 @@ JAGS models require the data to be sent as a data frame depending on how the mod
 
 ``` r
 jags_data <- prepare_jags_data(strat_data, 
-                               species_to_run = "Pine Grosbeak", 
+                               species_to_run = "Wood Thrush", 
                                model = "slope")
 ```
 
