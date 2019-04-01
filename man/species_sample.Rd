@@ -3,7 +3,7 @@
 \docType{data}
 \name{species_sample}
 \alias{species_sample}
-\title{Sample North American bird species list}
+\title{Sample North American bird species list (Wood Thrush only)}
 \format{A data frame with 20 rows and 10 variables:
 \describe{
   \item{seq}{Sequence - USGS use}
@@ -19,8 +19,8 @@
 species_sample
 }
 \description{
-A dataset containing species list of North America in 3 languages
-  NOTE: This is only a random sample of species data, not the full set.
+A dataset containing species list of North America.
+  NOTE: This only contains data for Wood Thrush, not the full data set.
   The full count set is obtained via the function \code{fetch_bbs_data}.
   The data is obtained from the United States Geological Survey and is
   subject to change as new data is added each year. The data should be cited as follows:

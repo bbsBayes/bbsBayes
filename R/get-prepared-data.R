@@ -26,7 +26,7 @@
 #'
 #'     # Prepare the data for a given species
 #'     jags_prep <- prepare_jags_data(strat_data = stratified_data,
-#'                                    species_to_run = "Barn Swallow",
+#'                                    species_to_run = "Wood Thrush",
 #'                                    model = "gam")
 #'
 #'     # Obtain the reassembled data frame for the data sent to JAGS

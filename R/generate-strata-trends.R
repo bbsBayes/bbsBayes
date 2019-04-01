@@ -18,7 +18,7 @@
 #' # Run a JAGS model analysis on a species
 #' stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
 #' prepped_data <- prepare_jags_data(strat_data = stratified_data,
-#'                                   species_to_run = "Barn Swallow",
+#'                                   species_to_run = "Wood Thrush",
 #'                                   model = "slope")
 #' mod <- run_model(jags_data = prepped_data)
 #'

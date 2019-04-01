@@ -2,7 +2,7 @@
 % Please edit documentation in R/prepare-jags-data.R
 \name{prepare_jags_data}
 \alias{prepare_jags_data}
-\title{Transform data to use for JAGS input}
+\title{Wrangle data to use for JAGS input}
 \usage{
 prepare_jags_data(strat_data, species_to_run, model = NULL,
   n_knots = NULL, min_year = NULL, max_year = NULL,
@@ -57,8 +57,8 @@ List of data to be used in JAGS, including:
   \item{X.basis}{Basis function for n smoothing functions, included only with GAM}
 }
 \description{
-\code{prepare_jags_data} transforms stratified data for use as input
-  to run JAGS models.
+\code{prepare_jags_data} subsets raw BBS data by selected species and
+   and wrangles stratified data for use as input to run JAGS models.
 }
 \examples{
 
@@ -83,7 +83,7 @@ data_jags_firstdiff <- prepare_jags_data(strat_data = stratified_data,
 # By default, the number of knots will be equal to the floor
 # of the total unique years for the species / 5
 data_jags <- prepare_jags_data(strat_data = stratified_data,
-                               species_to_run = "Barn Swallow",
+                               species_to_run = "Wood Thrush",
                                model = "gam",
                                n_knots = 9)
 
@@ -91,7 +91,7 @@ data_jags <- prepare_jags_data(strat_data = stratified_data,
 # to specify a model, and prepare_jags_model will just prepare the
 # minimum amount of data
 data_jags <- prepare_jags_data(strat_data = stratified_data,
-                               species_to_run = "Barn Swallow"
+                               species_to_run = "Wood Thrush"
 
 # Capitalization and punctuation matter (for now)
 # This code will produce an error.

@@ -3,7 +3,7 @@
 \docType{data}
 \name{bird_sample}
 \alias{bird_sample}
-\title{Sample point count data per species}
+\title{Sample point count data per species (Wood Thrush only)}
 \format{A data frame with 20 rows and 15 variables:
 \describe{
   \item{statenum}{Numerical representation of state or province}
@@ -27,7 +27,7 @@ bird_sample
 }
 \description{
 A sample dataset containing 10-stop counts of each bird species seen per route per year.
-  NOTE: This is only a random sample of count data, not the full set.
+  NOTE: This only contains data for Wood Thrush, not the full data set.
   The full count set is obtained via the function \code{fetch_bbs_data}.
   The data is obtained from the United States Geological Survey and is
   subject to change as new data is added each year. The data should be cited as follows:

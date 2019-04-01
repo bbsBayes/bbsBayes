@@ -1,7 +1,7 @@
-#' Sample point count data per species
+#' Sample point count data per species (Wood Thrush only)
 #'
 #' A sample dataset containing 10-stop counts of each bird species seen per route per year.
-#'   NOTE: This is only a random sample of count data, not the full set.
+#'   NOTE: This only contains data for Wood Thrush, not the full data set.
 #'   The full count set is obtained via the function \code{fetch_bbs_data}.
 #'   The data is obtained from the United States Geological Survey and is
 #'   subject to change as new data is added each year. The data should be cited as follows:
@@ -31,10 +31,10 @@
 #'
 "bird_sample"
 
-#' Sample route data per year run
+#' Sample route data per year run (Wood Thrush only)
 #'
 #' A dataset containing data for each route run per year.
-#'   NOTE: This is only a random sample of route data, not the full set.
+#'   NOTE: This only contains data for Wood Thrush, not the full data set.
 #'   The full count set is obtained via the function \code{fetch_bbs_data}.
 #'   The data is obtained from the United States Geological Survey and is
 #'   subject to change as new data is added each year. The data should be cited as follows:
@@ -81,10 +81,10 @@
 #'
 "route_sample"
 
-#' Sample North American bird species list
+#' Sample North American bird species list (Wood Thrush only)
 #'
-#' A dataset containing species list of North America in 3 languages
-#'   NOTE: This is only a random sample of species data, not the full set.
+#' A dataset containing species list of North America.
+#'   NOTE: This only contains data for Wood Thrush, not the full data set.
 #'   The full count set is obtained via the function \code{fetch_bbs_data}.
 #'   The data is obtained from the United States Geological Survey and is
 #'   subject to change as new data is added each year. The data should be cited as follows:

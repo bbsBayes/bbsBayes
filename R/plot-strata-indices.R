@@ -24,7 +24,7 @@
 #' # Run a JAGS model analysis on a species
 #' stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
 #' prepped_data <- prepare_jags_data(strat_data = stratified_data,
-#'                                   species_to_run = "Barn Swallow",
+#'                                   species_to_run = "Wood Thrush",
 #'                                   model = "slope")
 #' mod <- run_model(jags_data = prepped_data)
 #'
@@ -34,7 +34,7 @@
 #'
 #' # After generating strata indices, plot them
 #' s_plot <- plot_strata_indices(indices = strata_indices,
-#'                               species = "Barn Swallow")
+#'                               species = "Wood Thrush")
 #'
 #' # s_plot is just a list of ggplot objects, so you can access by index
 #' s_plot[[1]]
@@ -46,16 +46,16 @@
 #' # Plots indices from 1990 onward
 #' s_plot <- plot_strata_indices(indices = strata_indices,
 #'                               min_year = 1990,
-#'                               species = "Barn Swallow")
+#'                               species = "Wood Thrush")
 #' #Plot up indices up to the year 2000
 #' s_plot <- plot_strata_indices(indices = strata_indices,
 #'                               max_year = 2000,
-#'                               species = "Barn Swallow")
+#'                               species = "Wood Thrush")
 #' #Plot indices between 1970 and 2010
 #' s_plot <- plot_strata_indices(indices = strata_indices,
 #'                               min_year = 1970,
 #'                               max_year = 2010,
-#'                               species = "Barn Swallow")
+#'                               species = "Wood Thrush")
 #' }
 #' @export
 #'

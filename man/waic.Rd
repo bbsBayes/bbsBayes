@@ -22,7 +22,7 @@ Double precision numerical value
 }
 \details{
 NOTE: in order to calculated WAIC, the model MUST track the parameter
-  "lambda". In species that are data-rich, such as Barn Swallow,
+  "lambda". In species that are data-rich, such as Wood Thrush,
   this produces extremely large JAGS objects, and takes up a considerable
   amount of memory when simulating with \code{run_model}
 
@@ -34,7 +34,7 @@ See examples for details.
 # Run a JAGS model analysis on a species
 stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
 prepped_data <- prepare_jags_data(strat_data = stratified_data,
-                                  species_to_run = "Barn Swallow",
+                                  species_to_run = "Wood Thrush",
                                   model = "slope")
 mod <- run_model(jags_data = prepped_data)
 

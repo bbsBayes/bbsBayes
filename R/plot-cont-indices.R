@@ -23,7 +23,7 @@
 #' # Run a JAGS model analysis on a species
 #' stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
 #' prepped_data <- prepare_jags_data(strat_data = stratified_data,
-#'                                   species_to_run = "Barn Swallow",
+#'                                   species_to_run = "Wood Thrush",
 #'                                   model = "slope")
 #' mod <- run_model(jags_data = prepped_data)
 #'
@@ -32,23 +32,23 @@
 #'
 #'
 #' # After generating continental indices, plot them
-#' plot_cont_indices(indices = cont_indices, species = "Barn Swallow")
+#' plot_cont_indices(indices = cont_indices, species = "Wood Thrush")
 #'
 #'
 #' # You can specify to only plot a subset of years using min_year and max_year
 #' # Plots indices from 1990 onward
 #' c_plot <- plot_cont_indices(indices = cont_indices,
 #'                             min_year = 1990,
-#'                             species = "Barn Swallow")
+#'                             species = "Wood Thrush")
 #' #Plot up indicess up to the year 2000
 #' c_plot <- plot_cont_indices(indices = cont_indices,
 #'                             max_year = 2000,
-#'                             species = "Barn Swallow")
+#'                             species = "Wood Thrush")
 #' #Plot indicess between 1970 and 2010
 #' c_plot <- plot_cont_indices(indices = cont_indices,
 #'                             min_year = 1970,
 #'                             max_year = 2010,
-#'                             species = "Barn Swallow")
+#'                             species = "Wood Thrush")
 #'
 #' }
 #'

@@ -64,7 +64,7 @@
 #' # By default, the number of knots will be equal to the floor
 #' # of the total unique years for the species / 5
 #' data_jags <- prepare_jags_data(strat_data = stratified_data,
-#'                                species_to_run = "Barn Swallow",
+#'                                species_to_run = "Wood Thrush",
 #'                                model = "gam",
 #'                                n_knots = 9)
 #'
@@ -72,7 +72,7 @@
 #' # to specify a model, and prepare_jags_model will just prepare the
 #' # minimum amount of data
 #' data_jags <- prepare_jags_data(strat_data = stratified_data,
-#'                                species_to_run = "Barn Swallow"
+#'                                species_to_run = "Wood Thrush"
 #'
 #' # Capitalization and punctuation matter (for now)
 #' # This code will produce an error.

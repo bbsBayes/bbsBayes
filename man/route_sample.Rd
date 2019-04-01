@@ -3,7 +3,7 @@
 \docType{data}
 \name{route_sample}
 \alias{route_sample}
-\title{Sample route data per year run}
+\title{Sample route data per year run (Wood Thrush only)}
 \format{A data frame with 20 rows and 32 variables:
 \describe{
   \item{countrynum}{Numerical representation of the country}
@@ -44,7 +44,7 @@ route_sample
 }
 \description{
 A dataset containing data for each route run per year.
-  NOTE: This is only a random sample of route data, not the full set.
+  NOTE: This only contains data for Wood Thrush, not the full data set.
   The full count set is obtained via the function \code{fetch_bbs_data}.
   The data is obtained from the United States Geological Survey and is
   subject to change as new data is added each year. The data should be cited as follows:
