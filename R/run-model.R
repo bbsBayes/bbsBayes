@@ -12,10 +12,9 @@
 #'   initial values.
 #' @param parameters_to_save Character vector of parameters to monitor in JAGS. Defaults
 #'   to just monitoring "n"
-#' @param dont_track_n Force \code{run_model} to not track "n".
-#'   By default, the parameter "n" will always be tracked, even if the user
+#' @param track_n By default, the parameter "n" will always be tracked, even if the user
 #'   forgets to specify it. However, if the user is positive they do not want
-#'   to track "n", this parameter can be be set to \code{TRUE}. NOTE: you will
+#'   to track "n", this parameter can be be set to \code{FALSE}. NOTE: you will
 #'   not be able to generate annual indices if "n" is not tracked.
 #' @param n_chains Optional number of chains to run. Defaults to 3.
 #' @param n_adapt Optional integer specifying the number of steps to
@@ -71,18 +70,18 @@
 #' #  it to be tracked. This ensures that trends can always be calculated in
 #' #  case the user forgets to specify "n" if they went to specify other
 #' #  variables to track. If, however, you are absolutely sure you do not
-#' #  want to track "n", you can set the parameter "dont_track_n" to TRUE
+#' #  want to track "n", you can set the parameter "track_n" to FALSE
 #'
 #' jags_mod <- run_model(jags_data = data_jags,
 #'                       parameters_to_save = ("strata", "beta"),
-#'                       dont_track_n = TRUE)
+#'                       track_n = FALSE)
 #'}
 #'
 run_model <- function(jags_data = NULL,
                       model_file_path = NULL,
                       inits = NULL,
                       parameters_to_save = c("n"),
-                      dont_track_n = FALSE,
+                      track_n = TRUE,
                       n_chains = 3,
                       n_adapt = 500,
                       n_burnin = 20000,
@@ -121,7 +120,7 @@ run_model <- function(jags_data = NULL,
   jags_data[["route"]] <- NULL
 
   # The case where the user DOES NOT want to track n
-  if (isTRUE(dont_track_n))
+  if (isFALSE(track_n))
   {
     # remove n from the list of parameters to save if it exists
     if ("n" %in% parameters_to_save)
@@ -131,7 +130,7 @@ run_model <- function(jags_data = NULL,
   }
 
   # The case where the user DOES want to track n
-  if (!isTRUE(dont_track_n))
+  if (isTRUE(track_n))
   {
     # Add n to the list of parameters to save if it does not yet exist
     if (!("n" %in% parameters_to_save))
