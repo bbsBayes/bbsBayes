@@ -9,8 +9,8 @@
 #' @return Data frame of 4 variables:
 #'   \item{Year}{Year of particular index}
 #'   \item{Index}{Strata-weighted count index}
-#'   \item{Q25}{2.5\% quantile of mean strata-weighted indices}
-#'   \item{Q975}{97.5\% quantile of mean strata-weighted indices}
+#'   \item{Q25}{2.5\% quantile of strata-weighted indices}
+#'   \item{Q975}{97.5\% quantile of strata-weighted indices}
 #'
 #' @importFrom stats quantile
 #'
@@ -60,13 +60,13 @@ generate_cont_indices <- function(jags_mod = NULL)
 
   N = apply(n_weight, c(1,3),sum)
 
-  n_mean <- apply(N, 2, mean)
+  n_median <- apply(N, 2, median)
   n_25 <- apply(N, 2, stats::quantile, probs = 0.025)
   n_975 <- apply(N, 2, stats::quantile, probs = 0.975)
 
 
   data_summary <- data.frame(Year = seq(y_min:y_max),
-                             Index = n_mean,
+                             Index = n_median,
                              Q25 = n_25,
                              Q975 = n_975)
   data_summary$Year <- (data_summary$Year - 1) + min(r_year)

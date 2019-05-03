@@ -9,8 +9,8 @@
 #' @return Data frame of 4 variables:
 #'   \item{Year}{Year of particular index}
 #'   \item{Index}{Strata-weighted count index}
-#'   \item{Q25}{2.5\% quantile of mean strata-weighted indices}
-#'   \item{Q975}{97.5\% quantile of mean strata-weighted indices}
+#'   \item{Q25}{2.5\% quantile of strata-weighted indices}
+#'   \item{Q975}{97.5\% quantile of strata-weighted indices}
 #'   \item{Stratum}{Name of the stratum}
 #'
 #' @importFrom stats quantile
@@ -50,7 +50,7 @@ generate_strata_indices <- function(jags_mod = NULL)
   n_strata <- dim(n)[2]
   strata_indices <- area_weights$num
 
-  n_mean <- apply(n, c(2,3), mean)
+  n_median <- apply(n, c(2,3), median)
   n_25 <- apply(n, c(2,3), stats::quantile, probs = 0.025)
   n_975 <- apply(n, c(2,3), stats::quantile, probs = 0.975)
 
@@ -64,7 +64,7 @@ generate_strata_indices <- function(jags_mod = NULL)
   for (i in strata_indices)
   {
     strat_summary <- data.frame(Year = seq(y_min:y_max),
-                               Index = as.numeric(as.vector(n_mean[i,])),
+                               Index = as.numeric(as.vector(n_median[i,])),
                                Q25 = as.numeric(as.vector(n_25[i,])),
                                Q975 = as.numeric(as.vector(n_975[i,])),
                                Stratum = area_weights[which(area_weights$num == i), ]$region)
