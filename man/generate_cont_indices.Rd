@@ -13,8 +13,8 @@ generate_cont_indices(jags_mod = NULL)
 Data frame of 4 variables:
   \item{Year}{Year of particular index}
   \item{Index}{Strata-weighted count index}
-  \item{Q25}{2.5\% quantile of mean strata-weighted indices}
-  \item{Q975}{97.5\% quantile of mean strata-weighted indices}
+  \item{Q25}{2.5\% quantile of strata-weighted indices}
+  \item{Q975}{97.5\% quantile of strata-weighted indices}
 }
 \description{
 \code{generate_cont_indices} creates a data frame of the strata-weighed

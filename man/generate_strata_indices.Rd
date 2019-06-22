@@ -13,8 +13,8 @@ generate_strata_indices(jags_mod = NULL)
 Data frame of 4 variables:
   \item{Year}{Year of particular index}
   \item{Index}{Strata-weighted count index}
-  \item{Q25}{2.5\% quantile of mean strata-weighted indices}
-  \item{Q975}{97.5\% quantile of mean strata-weighted indices}
+  \item{Q25}{2.5\% quantile of strata-weighted indices}
+  \item{Q975}{97.5\% quantile of strata-weighted indices}
   \item{Stratum}{Name of the stratum}
 }
 \description{

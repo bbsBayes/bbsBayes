@@ -5,7 +5,7 @@
 \title{Run JAGS model for prepared species data}
 \usage{
 run_model(jags_data = NULL, model_file_path = NULL, inits = NULL,
-  parameters_to_save = c("n"), dont_track_n = FALSE, n_chains = 3,
+  parameters_to_save = c("n"), track_n = TRUE, n_chains = 3,
   n_adapt = 500, n_burnin = 20000, n_thin = 10,
   n_saved_steps = 2000, n_iter = 10000, parallel = FALSE,
   quiet = FALSE, ...)
@@ -24,10 +24,9 @@ initial values.}
 \item{parameters_to_save}{Character vector of parameters to monitor in JAGS. Defaults
 to just monitoring "n"}
 
-\item{dont_track_n}{Force \code{run_model} to not track "n".
-By default, the parameter "n" will always be tracked, even if the user
+\item{track_n}{By default, the parameter "n" will always be tracked, even if the user
 forgets to specify it. However, if the user is positive they do not want
-to track "n", this parameter can be be set to \code{TRUE}. NOTE: you will
+to track "n", this parameter can be be set to \code{FALSE}. NOTE: you will
 not be able to generate annual indices if "n" is not tracked.}
 
 \item{n_chains}{Optional number of chains to run. Defaults to 3.}
@@ -95,11 +94,11 @@ jags_mod <- run_model(jags_data = data_jags,
 #  it to be tracked. This ensures that trends can always be calculated in
 #  case the user forgets to specify "n" if they went to specify other
 #  variables to track. If, however, you are absolutely sure you do not
-#  want to track "n", you can set the parameter "dont_track_n" to TRUE
+#  want to track "n", you can set the parameter "track_n" to FALSE
 
 jags_mod <- run_model(jags_data = data_jags,
                       parameters_to_save = ("strata", "beta"),
-                      dont_track_n = TRUE)
+                      track_n = FALSE)
 }
 
 }
