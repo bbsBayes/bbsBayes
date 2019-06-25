@@ -4,21 +4,17 @@
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/bbsBayes)](https://cran.r-project.org/package=bbsBayes)
 [![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 
-## Foreward
-bbsBayes v1.0.0 has been released! Functionally, the package is ready to roll. The developers, however, are currently investigating an issue that is leading to some trends that are inconsistent with published USGS and CWS trends. So for now, bbsBayes will be only released on Github. However, we are planning a CRAN release early-mid April 2019 once this issue has been resolved. Thanks for your patience, and enjoy using bbsBayes!
-
 ## Overview
 bbsBayes is a package to perform hierarchical Bayesian analysis of North American Breeding Bird Survey (BBS) data. 'bbsBayes' will run a full model analysis for one or more species that you choose, or you can take more control and specify how the data should be stratified, prepared for JAGS, or modelled. 
 
 ## Installation
 
-v1.0.0 of bbsBayes is now out! We expect a CRAN release shortly, but for now
-you can install from Github using the following:
+We expect a CRAN release shortly, but for now you can install from Github using the following:
 ``` r
-# To install v1.0.0 from Github:
+# To install v1.0.1 from Github:
 install.packages("devtools")
 library(devtools)
-devtools::install_github("BrandonEdwards/bbsBayes", ref = "v1.0.0")
+devtools::install_github("BrandonEdwards/bbsBayes", ref = "v1.0.1")
 ```
 
 Alternatively, you could install the less-stable development version.
