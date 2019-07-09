@@ -5,7 +5,7 @@
 \title{Stratify raw Breeding Bird Survey data}
 \usage{
 stratify(by = NULL, sample_data = FALSE, bbs_data = NULL,
-  quiet = FALSE)
+  quiet = FALSE, stratify_by = NULL)
 }
 \arguments{
 \item{by}{String argument of stratification type.

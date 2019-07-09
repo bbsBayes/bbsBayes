@@ -48,8 +48,15 @@
 stratify <- function(by = NULL,
                      sample_data = FALSE,
                      bbs_data = NULL,
-                     quiet = FALSE)
+                     quiet = FALSE,
+                     stratify_by = NULL)
 {
+  if (isFALSE(is.null(stratify_by)))
+  {
+    message("Argument \"stratify_by\" has been deprecated in favour of \"by\"")
+    by <- stratify_by
+  }
+
   if(isFALSE(is.element(by, c("state", "bcr", "latlong", "bbs_cws", "bbs_usgs"))))
   {
     stop("Invalid stratification specified"); return(NULL)
