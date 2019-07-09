@@ -4,7 +4,7 @@
 \alias{fetch_bbs_data}
 \title{Fetch Breeding Bird Survey dataset}
 \usage{
-fetch_bbs_data(level = "state", quiet = FALSE)
+fetch_bbs_data(level = "state", quiet = FALSE, force = FALSE)
 }
 \arguments{
 \item{level}{A string, either "state" or "stop", specifying which counts to
@@ -15,38 +15,16 @@ beginning in 1997, which includes counts for each stop along routes
 individually. Note that stop-level data is not currently supported by
 the modeling utilities in bbsBayes.}
 
-\item{quiet}{Logical: should progress bars be suppressed?}
-}
-\value{
-NULL if user does not agree to terms and conditions.
-  Otherwise: Large list (3 elements) consisting of:
-\item{bird}{Data frame of bird point count data per route, per year}
-\item{route}{Data frame of yearly route data}
-\item{species}{List of North American bird species}
+\item{quiet}{Logical: should progress bars be suppressed? Defaults to FALSE}
+
+\item{force}{Logical: if BBS data already exists on computer, should it be overwritten? Defaults to FALSE}
 }
 \description{
 \code{fetch_bbs_data} uses File Transfer Protocol (FTP) to fetch Breeding Bird
  Survey data from the United States Geological Survey (USGS) FTP site. This
  is the raw data that is uploaded to the site before any analyses are performed.
+ A package-specific directory is created on the user's computer and the BBS
+ data is saved to that directory for use by other functions.
  Before downloading any data, the user must thoroughly read through the terms
  and conditions of the user of the data and type the word "yes" to agree.
-}
-\examples{
-
-\dontrun{
-
-# Be sure to assign the output of fetch_bbs_data() to a variable.
-# This function downloads a lot of data, and if the output is not
-# captured in a variable, R attempts to dump it into the console
-# which tends to get highly bogged down.
-
-bbs_data <- fetch_bbs_data()
-
-# USGS updates their data up to twice a year, so one potential
-# option is to save the bbs_data to a file so that you do not
-# have to run fetch_bbs_data() every new session.
-
-save(bbs_data, file = "bbs_data.RData")
-}
-
 }

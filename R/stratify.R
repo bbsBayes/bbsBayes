@@ -4,54 +4,68 @@
 #'   based on its geographic location and the stratification
 #'   as specified by the user.
 #'
-#' @param bbs_data Large list of raw BBS data. Can be obtained using
-#'   the \code{fetch_bbs_data()} function, or by using the \code{fetch_sample_data()}
-#'   if you would just like to use the sample data provided with bbsBayes.
-#' @param stratify_by String argument of stratification type.
+#' @param by String argument of stratification type.
 #'   Options are "state", "bcr", "latlong", "bbs_cws", "bbs_usgs"
+#' @param sample_data Should just sample data (just Wood Thrush) be used?
+#'   Defaults to FALSE
 #' @param quiet Should progress bars be suppressed?
+#' @param bbs_data Raw BBS data saved as a list of 3 data frames.
+#'   Not necessary if you have already run \code{fetch_bbs_data}
 #'
 #' @return Large list (3 elements) consisting of:
 #'   \item{bird_strat}{Dataframe of stratified bird data}
 #'   \item{route_strat}{Dataframe of stratified route data}
 #'   \item{species_strat}{Dataframe of stratified species data}
-#'   \item{stratify_by}{Argument used for stratification}
+#'   \item{by}{Argument used for stratification}
 #'
 #' @examples
 #'
 #' \dontrun{
 #'
 #' # Download BBS data and stratify by USGS BBS stratifications.
-#' bbs <- fetch_bbs_data()
-#' data_strat <- stratify(bbs_data = bbs, stratify_by = "bbs_usgs")
+#' fetch_bbs_data()
+#' data_strat <- stratify(by = "bbs_usgs")
 #'
 #' # Stratify by Bird Conservation Regions only
-#' # If you don't need the raw BBS data, you can call fetch_bbs_data()
-#' #   directly in the stratify command.
-#' data_strat <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
+#' data_strat <- stratify(by = "bcr")
 #'
 #' # Stratify by CWS BBS stratifications
-#' data_strat <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bbs_cws")
+#' data_strat <- stratify(by = "bbs_cws")
 #'
 #' # Stratify by State/Province/Territory only
-#' data_strat <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "state")
+#' data_strat <- stratify(by = "state")
 #'
 #' # Stratify by blocks of 1 degree of latitude X 1 degree of longitude
-#' data_strat <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "latlong")
+#' data_strat <- stratify(by = "latlong")
 
 #' }
 
 #' @importFrom progress progress_bar
+#' @importFrom rappdirs app_dir
 #' @export
 #'
 
-stratify <- function(bbs_data,
-                     stratify_by = NULL,
+stratify <- function(by = NULL,
+                     sample_data = FALSE,
+                     bbs_data = NULL,
                      quiet = FALSE)
 {
-  if(isFALSE(is.element(stratify_by, c("state", "bcr", "latlong", "bbs_cws", "bbs_usgs"))))
+  if(isFALSE(is.element(by, c("state", "bcr", "latlong", "bbs_cws", "bbs_usgs"))))
   {
     stop("Invalid stratification specified"); return(NULL)
+  }
+
+  bbs_dir <- app_dir(appname = "bbsBayes")
+
+  if (isTRUE(sample_data))
+  {
+    bbs_data <- load_sample_data()
+  } else if (is.null(bbs_data))
+  {
+    if(isFALSE(file.exists(paste0(bbs_dir$data(), "/bbs_raw_data.RData"))))
+    {
+      stop("No BBS data downloaded. Please use fetch_bbs_data() first.")
+    }
   }
 
   if (!isTRUE(quiet))
@@ -59,35 +73,41 @@ stratify <- function(bbs_data,
     pb <- progress::progress_bar$new(
       format = "Stratifying data   [:bar] :percent eta: :eta",
       clear = FALSE,
-      total = 7,
+      total = 8,
       width = 80)
     pb$tick(0)
   }
 
+  if (isFALSE(sample_data))
+  {
+    load(file = paste0(bbs_dir$data(), "/bbs_raw_data.RData"))
+  }
+  if (!isTRUE(quiet)){pb$tick()}
+
   bird <- bbs_data$bird; if (!isTRUE(quiet)){pb$tick()}
   route <- bbs_data$route; if (!isTRUE(quiet)){pb$tick()}
 
-  if (stratify_by == "bbs_usgs")
+  if (by == "bbs_usgs")
   {
     route[,"strat_name"] <- paste(route[,"Country"],
                                   route[,"St_Abrev"],
                                   route[,"BCR"],
                                   sep = "-")
-  }else if (stratify_by == "state")
+  }else if (by == "state")
   {
     route[,"strat_name"] <- paste(route[,"St_Abrev"],
                                   sep = "")
-  }else if (stratify_by == "bcr")
+  }else if (by == "bcr")
   {
     route[,"strat_name"] <- paste("BCR",
                                   route[,"BCR"],
                                   sep = "")
-  }else if (stratify_by == "latlong")
+  }else if (by == "latlong")
   {
     route[,"strat_name"] <- paste(trunc(route[,"Latitude"]),
                                   trunc(route[,"Longitude"]),
                                   sep = "_")
-  }else if (stratify_by == "bbs_cws")
+  }else if (by == "bbs_cws")
   {
     # Combine all BCR 7
     route[which(route$BCR == 7),"St_Abrev"] <- "BCR7"
@@ -121,5 +141,5 @@ stratify <- function(bbs_data,
   return(list(bird_strat = bird,
               route_strat = route,
               species_strat = bbs_data$species,
-              stratify_by = stratify_by))
+              stratify_by = by))
 }

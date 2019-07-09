@@ -11,10 +11,10 @@ bbsBayes is a package to perform hierarchical Bayesian analysis of North America
 
 We expect a CRAN release shortly, but for now you can install from Github using the following:
 ``` r
-# To install v1.0.1 from Github:
+# To install v1.1.0 from Github:
 install.packages("devtools")
 library(devtools)
-devtools::install_github("BrandonEdwards/bbsBayes", ref = "v1.0.1")
+devtools::install_github("BrandonEdwards/bbsBayes", ref = "v1.1.0")
 ```
 
 Alternatively, you could install the less-stable development version.
@@ -30,10 +30,11 @@ devtools::install_github("BrandonEdwards/bbsBayes")
 bbsBayes provides functions for every stage of Breeding Bird Survey data analysis.
 
 ### Data Retrieval 
-You can download BBS data by running `fetch_bbs_data` and saving it to a variable. You must agree to the terms and conditions of the data usage before downloading.
+You can download BBS data by running `fetch_bbs_data`. This will save it to a
+package-specific directory on your computer. You must agree to the terms and conditions of the data usage before downloading.
 
 ``` r
-bbs_data <- fetch_bbs_data()
+fetch_bbs_data()
 ```
 
 Alternatively, use the sample data provided with the package, which provides full species data for Wood Thrush.
@@ -44,7 +45,7 @@ bbs_sample <- fetch_sample_data()
 
 ### Data Preparation
 #### Stratification
-Stratification plays an important role in trend analysis. Use the `stratify()` function on the `bbs_data` you downloaded, and specify how you would like to stratify your data by. Set `stratify_by` by choosing one of the following:
+Stratification plays an important role in trend analysis. Use the `stratify()` function for this job. Set the argument `by` to stratify by the following options:
 * bbs_cws -- Political region X Bird Conservation region intersection (CWS method)
 * bbs_usgs -- Political region X Bird Conservation region intersection (USGS method)
 * bcr -- Bird Conservation Region only
@@ -52,7 +53,7 @@ Stratification plays an important role in trend analysis. Use the `stratify()` f
 * latlong -- Degree blocks (1 degree of latitude X 1 degree of longitude)
 
 ``` r
-strat_data <- stratify(bbs_data, stratify_by = "state")
+strat_data <- stratify(by = "bbs_cws")
 ```
 
 #### Jags Data
@@ -88,11 +89,25 @@ strat_trend <- generate_strata_trends(indices = strat_indices)
 
 These trends can be plotted on a map
 ``` r
-generate_map(strat_trend, stratify_by = "state")
+generate_map(strat_trend, stratify_by = "bbs_cws")
 ```
 
 Which produces
 
-<img src="man/figures/map_example.png" />
+<img src="man/figures/WOTH-map.png" />
+
+You can also generate continent-wide indices:
+```r
+cont_indices <- generate_cont_indices(mod)
+```
+
+Which can then be plotted using
+```
+plot_cont_indices(indices = cont_indices)
+```
+
+Which produces
+
+<img src = "man/figures/WOTH-cont-index.png" />
 
 There are numerous other functions available for analysis of the data.

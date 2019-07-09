@@ -3,6 +3,8 @@
 #' \code{fetch_bbs_data} uses File Transfer Protocol (FTP) to fetch Breeding Bird
 #'  Survey data from the United States Geological Survey (USGS) FTP site. This
 #'  is the raw data that is uploaded to the site before any analyses are performed.
+#'  A package-specific directory is created on the user's computer and the BBS
+#'  data is saved to that directory for use by other functions.
 #'  Before downloading any data, the user must thoroughly read through the terms
 #'  and conditions of the user of the data and type the word "yes" to agree.
 #'
@@ -13,38 +15,24 @@
 #' beginning in 1997, which includes counts for each stop along routes
 #' individually. Note that stop-level data is not currently supported by
 #' the modeling utilities in bbsBayes.
-#' @param quiet Logical: should progress bars be suppressed?
+#' @param quiet Logical: should progress bars be suppressed? Defaults to FALSE
+#' @param force Logical: if BBS data already exists on computer, should it be overwritten? Defaults to FALSE
 #'
-#' @return NULL if user does not agree to terms and conditions.
-#'   Otherwise: Large list (3 elements) consisting of:
-#' \item{bird}{Data frame of bird point count data per route, per year}
-#' \item{route}{Data frame of yearly route data}
-#' \item{species}{List of North American bird species}
+#'
 #'
 #' @importFrom utils download.file read.csv read.fwf
 #' @importFrom progress progress_bar
+#' @importFrom rappdirs app_dir
+#'
 #' @export
 #'
-#' @examples
 #'
-#' \dontrun{
-#'
-#' # Be sure to assign the output of fetch_bbs_data() to a variable.
-#' # This function downloads a lot of data, and if the output is not
-#' # captured in a variable, R attempts to dump it into the console
-#' # which tends to get highly bogged down.
-#'
-#' bbs_data <- fetch_bbs_data()
-#'
-#' # USGS updates their data up to twice a year, so one potential
-#' # option is to save the bbs_data to a file so that you do not
-#' # have to run fetch_bbs_data() every new session.
-#'
-#' save(bbs_data, file = "bbs_data.RData")
-#' }
-#'
-fetch_bbs_data <- function(level = "state", quiet = FALSE)
+fetch_bbs_data <- function(level = "state", quiet = FALSE, force = FALSE)
 {
+  if (!level %in% c('state', 'stop')) {
+    stop("Invalid level argument: level must be one of 'state' or 'stop'.")
+  }
+
   stopifnot(is.logical(quiet))
 
   # Print Terms of Use
@@ -62,6 +50,22 @@ fetch_bbs_data <- function(level = "state", quiet = FALSE)
     return(NULL)
   }
 
+  bbs_dir <- app_dir(appname = "bbsBayes")
+
+  if (isFALSE(file.exists(bbs_dir$data())))
+  {
+    message(paste0("Creating data directory at ", bbs_dir$data()))
+    dir.create(bbs_dir$data(), recursive = TRUE)
+  }else
+  {
+    if (file.exists(paste0(bbs_dir$data(), "/bbs_raw_data.RData")) &
+        isFALSE(force))
+    {
+      warning("BBS data file already exists. Use \"force = TRUE\" to overwrite.")
+      return()
+    }
+  }
+
   bird <- get_counts(level = level, quiet = quiet)
 
   ################################################################
@@ -70,10 +74,10 @@ fetch_bbs_data <- function(level = "state", quiet = FALSE)
   if (!isTRUE(quiet))
   {
     pb <- progress::progress_bar$new(
-      format = "Downloading route data   [:bar] :percent eta: :eta",
+      format = "Downloading route data (Task 2/3)\n[:bar] :percent eta: :eta",
       clear = FALSE,
       total = 9,
-      width = 80)
+      width = 100)
     pb$tick(0)
   }
 
@@ -134,10 +138,10 @@ fetch_bbs_data <- function(level = "state", quiet = FALSE)
   if (!isTRUE(quiet))
   {
     pb <- progress::progress_bar$new(
-      format = "Downloading species data [:bar] :percent eta: :eta",
+      format = "Downloading species data (Task 3/3)\n[:bar] :percent eta: :eta",
       clear = FALSE,
       total = 4,
-      width = 80)
+      width = 100)
     pb$tick(0)
   }
 
@@ -168,16 +172,17 @@ fetch_bbs_data <- function(level = "state", quiet = FALSE)
   species[, "sp.bbs"] <- as.integer(as.character(species[, "aou"]))
   tick(pb, quiet)
 
-  return(list(bird = bird,
-              route = route,
-              species = species))
+  bbs_data <- list(bird = bird,
+                   route = route,
+                   species = species)
+
+  message(paste0("Saving BBS data to ", bbs_dir$data()))
+  save(bbs_data, file = paste0(bbs_dir$data(), "/bbs_raw_data.RData"))
+
 }
 
 
 get_counts <- function(level, quiet) {
-  if (!level %in% c('state', 'stop')) {
-    stop("Invalid level argument: level must be one of 'state' or 'stop'.")
-  }
   if (level == "state") {
     count_ftp_subdir <- "States/"
   }
@@ -193,10 +198,10 @@ get_counts <- function(level, quiet) {
 
   if (!isTRUE(quiet)) {
     pb <- progress::progress_bar$new(
-      format = "Downloading count data   [:bar] :percent eta: :eta",
+      format = "Downloading count data (Task 1/3)\n[:bar] :percent eta: :eta",
       clear = FALSE,
       total = nrow(bird_count_filenames) + 1,
-      width = 80)
+      width = 100)
     pb$tick(0)
   }
 

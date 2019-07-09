@@ -4,15 +4,18 @@
 \alias{stratify}
 \title{Stratify raw Breeding Bird Survey data}
 \usage{
-stratify(bbs_data, stratify_by = NULL, quiet = FALSE)
+stratify(by = NULL, sample_data = FALSE, bbs_data = NULL,
+  quiet = FALSE)
 }
 \arguments{
-\item{bbs_data}{Large list of raw BBS data. Can be obtained using
-the \code{fetch_bbs_data()} function, or by using the \code{fetch_sample_data()}
-if you would just like to use the sample data provided with bbsBayes.}
-
-\item{stratify_by}{String argument of stratification type.
+\item{by}{String argument of stratification type.
 Options are "state", "bcr", "latlong", "bbs_cws", "bbs_usgs"}
+
+\item{sample_data}{Should just sample data (just Wood Thrush) be used?
+Defaults to FALSE}
+
+\item{bbs_data}{Raw BBS data saved as a list of 3 data frames.
+Not necessary if you have already run \code{fetch_bbs_data}}
 
 \item{quiet}{Should progress bars be suppressed?}
 }
@@ -21,7 +24,7 @@ Large list (3 elements) consisting of:
   \item{bird_strat}{Dataframe of stratified bird data}
   \item{route_strat}{Dataframe of stratified route data}
   \item{species_strat}{Dataframe of stratified species data}
-  \item{stratify_by}{Argument used for stratification}
+  \item{by}{Argument used for stratification}
 }
 \description{
 Assigns each bird count data point and each route a strata
@@ -33,21 +36,19 @@ Assigns each bird count data point and each route a strata
 \dontrun{
 
 # Download BBS data and stratify by USGS BBS stratifications.
-bbs <- fetch_bbs_data()
-data_strat <- stratify(bbs_data = bbs, stratify_by = "bbs_usgs")
+fetch_bbs_data()
+data_strat <- stratify(by = "bbs_usgs")
 
 # Stratify by Bird Conservation Regions only
-# If you don't need the raw BBS data, you can call fetch_bbs_data()
-#   directly in the stratify command.
-data_strat <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
+data_strat <- stratify(by = "bcr")
 
 # Stratify by CWS BBS stratifications
-data_strat <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bbs_cws")
+data_strat <- stratify(by = "bbs_cws")
 
 # Stratify by State/Province/Territory only
-data_strat <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "state")
+data_strat <- stratify(by = "state")
 
 # Stratify by blocks of 1 degree of latitude X 1 degree of longitude
-data_strat <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "latlong")
+data_strat <- stratify(by = "latlong")
 }
 }
