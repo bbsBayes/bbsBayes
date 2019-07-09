@@ -19,7 +19,7 @@ Imports:
   latticeExtra,
   rappdirs
 Depends: R (>= 2.10)
-SystemRequirements: JAGS 4.2.0 (https://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/)
+SystemRequirements: JAGS 4.3.0 (https://sourceforge.net/projects/mcmc-jags/)
 URL: https://github.com/BrandonEdwards/bbsBayes
 NeedsCompilation: no
 Description: A package to perform hierarchical Bayesian analysis of North
