@@ -15,6 +15,9 @@
 #'
 load_bbs_data <- function()
 {
+  bbs_data <- NULL
+  rm(bbs_data)
+
   bbs_dir <- app_dir(appname = "bbsBayes")
 
   if(isFALSE(file.exists(paste0(bbs_dir$data(), "/bbs_raw_data.RData"))))

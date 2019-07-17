@@ -18,6 +18,8 @@ Defaults to FALSE}
 Not necessary if you have already run \code{fetch_bbs_data}}
 
 \item{quiet}{Should progress bars be suppressed?}
+
+\item{stratify_by}{Deprecated in favour of 'by'}
 }
 \value{
 Large list (3 elements) consisting of:

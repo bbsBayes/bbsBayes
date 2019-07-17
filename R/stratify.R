@@ -11,6 +11,7 @@
 #' @param quiet Should progress bars be suppressed?
 #' @param bbs_data Raw BBS data saved as a list of 3 data frames.
 #'   Not necessary if you have already run \code{fetch_bbs_data}
+#' @param stratify_by Deprecated in favour of 'by'
 #'
 #' @return Large list (3 elements) consisting of:
 #'   \item{bird_strat}{Dataframe of stratified bird data}
