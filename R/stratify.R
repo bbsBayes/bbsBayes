@@ -85,7 +85,7 @@ stratify <- function(by = NULL,
     pb$tick(0)
   }
 
-  if (isFALSE(sample_data))
+  if (isFALSE(sample_data) & is.null(bbs_data))
   {
     load(file = paste0(bbs_dir$data(), "/bbs_raw_data.RData"))
   }
