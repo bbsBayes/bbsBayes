@@ -25,6 +25,7 @@ get_final_values <- function(model = NULL)
                                                         i,
                                                         "$state()[[1]])"))))
     }
+    return(to_return)
   }else{
     return(as.list(model$model$state()))
   }
