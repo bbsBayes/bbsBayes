@@ -148,7 +148,7 @@ fetch_bbs_data <- function(level = "state", quiet = FALSE, force = FALSE)
   temp <- tempfile()
   utils::download.file(paste0(base_url(), "SpeciesList.txt"), temp, quiet = TRUE)
   tick(pb, quiet)
-  species <- utils::read.fwf(temp, skip = 9, strip.white = TRUE, header = FALSE,
+  species <- utils::read.fwf(temp, skip = 10, strip.white = TRUE, header = FALSE,
                              colClasses = c("integer",
                                             "character",
                                             "character",
