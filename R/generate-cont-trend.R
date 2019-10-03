@@ -50,21 +50,21 @@ generate_cont_trend <- function(indices = NULL,
   }
 
 
-  data_summary <- data.frame(Start_year = integer(),
-                             End_year = integer(),
-                             Stratum = character(),
-                             stringsAsFactors = FALSE)
 
   ch = n[,max_year]/n[,min_year]
   tr = 100*((ch^(1/(max_year-min_year)))-1)
 
   trend <- data.frame(Start_year = (indices$startyear+min_year)-1,
                               End_year = (indices$startyear+max_year)-1,
-                              Stratum = "Continental",
-                      Trend = median(tr))
-  trend[,paste0("Trend_Q",quantiles)] <- quantile(tr,quantiles,names = F)
+                      Region = "Continental",
+                      Trend = median(tr),
+                      stringsAsFactors = F)
+  for(qq in quantiles){
+  trend[,paste0("Trend_Q",qq)] <- quantile(tr,qq,names = F)
+  }
   trend[,"Percent_Change"] <- median(ch)
-  trend[,paste0("Percent_Change_Q",quantiles)] <- 100*(quantile(ch,quantiles,names = F)-1)
-
+  for(qq in quantiles){
+    trend[,paste0("Percent_Change_Q",qq)] <- 100*(quantile(ch,qq,names = F)-1)
+}
   return(trend)
 }

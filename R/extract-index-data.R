@@ -27,10 +27,13 @@ extract_index_data <- function(jags_mod = NULL)
   }
   y_min <- bugs_data$ymin
   y_max <- bugs_data$ymax
+  strat_list = unique(data.frame(strat_name = bugs_data&stratum,
+                          strat = bugs_data$strat))
+  strat_list = strat_list[order(strat_list$strat),]
 
   # Subset area weights based on strata used and ensure same order as JAGS
-  strata_used <- unique(jags_mod$strat_name)
-  strata_num <- as.numeric(as.factor(strata_used))
+  strata_used <- strat_list$strat_name
+  strata_num <- strat_list$strat
   area_weights <- all_area_weights[which(all_area_weights$region %in% strata_used), ]
   area_weights <- area_weights[ order(match(area_weights$region, strata_used)),]
   area_weights$num <- strata_num
