@@ -33,7 +33,7 @@
 #'   \item{year}{Vector of years for each count}
 #'   \item{firstyr}{Vector of indicator variables as to whether an observer was a first year}
 #'   \item{nobservers}{Total number of observers}
-#'   \item{fixedyear}{Median of all years, included only with slope model}
+#'   \item{fixedyear}{Median of all years (ymin:ymax), included only with slope model}
 #'   \item{nknots}{Number of knots to use for smooting functions, included only with GAM}
 #'   \item{X.basis}{Basis function for n smoothing functions, included only with GAM}
 #'
@@ -376,7 +376,7 @@ prepare_jags_data <- function(strat_data = NULL,
     if (tolower(model) == "slope")
     {
       to_return <- c(to_return,
-                     list(fixedyear = stats::median(unique(birds$Year))))
+                     list(fixedyear = stats::median(unique(spsp_f$year))))
     }
 
     if (tolower(model) %in% c("gam", "gamye"))
