@@ -27,7 +27,7 @@ extract_index_data <- function(jags_mod = NULL)
   }
   y_min <- bugs_data$ymin
   y_max <- bugs_data$ymax
-  strat_list = unique(data.frame(strat_name = bugs_data$strat_name,
+  strat_list = unique(data.frame(strat_name = jags_mod$strat_name,
                           strat = bugs_data$strat))
   strat_list = strat_list[order(strat_list$strat),]
 
