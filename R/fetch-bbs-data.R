@@ -224,6 +224,12 @@ get_counts <- function(level, quiet) {
     tick(pb, quiet)
   }
 
+  # The "StateNum" column is inconsistently named - fix it to be consistent
+  bird <- lapply(bird, function(x){
+    names(x) <- ifelse(names(x) == "statenum", "StateNum", names(x))
+    x
+  })
+
   bird <- do.call(rbind, bird)
 
   # column case conventions differ for state vs. stop level data, so we set:
