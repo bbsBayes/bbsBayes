@@ -57,9 +57,9 @@ generate_strata_trends <- function(indices = NULL,
 
 
 
-  trend <- data.frame(Start_year = (indices$startyear+min_year)-1,
-                      End_year = (indices$startyear+max_year)-1,
-                      Region = "Continental",
+  trend <- data.frame(Start_year = integer(),
+                      End_year = integer(),
+                      Region = character(),
                       Trend = double(),
                       stringsAsFactors = F)
   for(qq in quantiles){
