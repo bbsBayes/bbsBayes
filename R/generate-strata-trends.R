@@ -87,7 +87,7 @@ generate_strata_trends <- function(indices = NULL,
     for(qq in quantiles){
       trend_strata[,paste0("Trend_Q",qq)] <- quantile(tr,qq,names = F)
     }
-    trend_strata[,"Percent_Change"] <- median(ch)
+    trend_strata[,"Percent_Change"] <- 100*(median(ch)-1)
     for(qq in quantiles){
       trend_strata[,paste0("Percent_Change_Q",qq)] <- 100*(quantile(ch,qq,names = F)-1)
     }
