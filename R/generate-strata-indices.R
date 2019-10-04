@@ -77,7 +77,7 @@ generate_strata_indices <- function(jags_mod = NULL,
                                Region = area_weights[which(area_weights$num == i), ]$region)
     strat_summary$Year <- (strat_summary$Year - 1) + min(r_year)
     for(qq in quantiles){
-      strat_summary[,paste0("Index_q_",qq)] <- apply(n,c(2,3),stats::quantile,probs = qq)
+      strat_summary[,paste0("Index_q_",qq)] <- apply(n[,i,],2,stats::quantile,probs = qq)
     }
 
     data_summary <- rbind(data_summary, strat_summary)
