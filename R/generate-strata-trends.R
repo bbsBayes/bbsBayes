@@ -91,7 +91,7 @@ generate_strata_trends <- function(indices = NULL,
       trend_strata[,paste0("Percent_Change_Q",qq)] <- 100*(quantile(ch,qq,names = F)-1)
     }
 
-    trend <- c(trend, trend_strata)
+    trend <- rbind(trend, trend_strata)
   }
 
 
