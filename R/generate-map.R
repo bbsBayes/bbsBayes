@@ -51,7 +51,7 @@ generate_map <- function(trend = NULL,
                  verbose = FALSE)
   breaks <- c(-7, -4, -2, -1, -0.5, 0.5, 1, 2, 4, 7)
   map@data$row_num <- 1:nrow(map@data)
-  map@data <- merge(map@data, trend, by.x = "ST_12", by.y = "Stratum", all = T)
+  map@data <- merge(map@data, trend, by.x = "ST_12", by.y = "Region", all = T)
   map@data <- map@data[order(map@data$row_num), ]
   map@data$Trend <- as.numeric(as.character(map@data$Trend))
   map@data$Trend <- cut(map@data$Trend, breaks = c(-Inf, breaks, Inf))
