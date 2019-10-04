@@ -45,6 +45,7 @@ generate_strata_trends <- function(indices = NULL,
   n = indices$samples
 
   strata_indices <- indices$area_weights$num
+  area_weights <- indices$area_weights
   if (is.null(min_year))
   {
     min_year = indices$y_min
@@ -80,7 +81,7 @@ generate_strata_trends <- function(indices = NULL,
 
     trend_strata <- data.frame(Start_year = (indices$startyear+min_year)-1,
                         End_year = (indices$startyear+max_year)-1,
-                        Region = i,
+                        Region = area_weights[which(area_weights$num == i), ]$region,
                         Trend = median(tr),
                         stringsAsFactors = F)
     for(qq in quantiles){
