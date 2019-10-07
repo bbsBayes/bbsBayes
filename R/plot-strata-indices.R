@@ -104,6 +104,10 @@ plot_strata_indices <- function(indices_list = NULL,
     indices <- indices[which(indices$Year <= max_year), ]
   }
 
+  mny = min(indices$Year)
+  mxy = max(indices$Year)
+  yys = pretty(seq(mny, mxy))
+  yys = c(yys[-length(yys)],mxy)
 
 
   plot_index <- 1
@@ -129,7 +133,7 @@ plot_strata_indices <- function(indices_list = NULL,
       ggplot2::geom_point(data = to_plot,ggplot2::aes(x = Year,y = obs_mean),colour = grey(0.6))+
       ggplot2::geom_line(data = to_plot, ggplot2::aes(x = Year, y = Index)) +
       ggplot2::geom_ribbon(data = to_plot, ggplot2::aes(x = Year, ymin = lci, ymax = uci), alpha = 0.12)+
-      scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))+
+      scale_x_continuous(breaks = yys)+
       scale_y_continuous(limits = c(0,NA))
 
     }else{
@@ -147,7 +151,7 @@ plot_strata_indices <- function(indices_list = NULL,
                       y = "Index") +
         ggplot2::geom_line(data = to_plot, ggplot2::aes(x = Year, y = Index)) +
         ggplot2::geom_ribbon(data = to_plot, ggplot2::aes(x = Year, ymin = lci, ymax = uci), alpha = 0.12)+
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))+
+        scale_x_continuous(breaks = yys)+
         scale_y_continuous(limits = c(0,NA))
 
 
