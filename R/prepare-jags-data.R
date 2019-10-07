@@ -36,7 +36,6 @@
 #'   \item{fixedyear}{Median of all years (ymin:ymax), included only with slope model}
 #'   \item{nknots}{Number of knots to use for smooting functions, included only with GAM}
 #'   \item{X.basis}{Basis function for n smoothing functions, included only with GAM}
-#'   \item{full_data_frame}{complete data frame of merged original route, species, and weather data, only for advanced use such as linking back to an independent analyis using the BBS data}
 #'
 #' @importFrom stats median
 #' @importFrom progress progress_bar
@@ -98,7 +97,6 @@ prepare_jags_data <- function(strat_data = NULL,
                             min_mean_route_years = 1,
                             strata_rem = NULL,
                             quiet = FALSE,
-                            full_data_export = F,
                             ...)
 {
   if (is.null(strat_data))
@@ -398,9 +396,7 @@ prepare_jags_data <- function(strat_data = NULL,
     }
   }
   if (!isTRUE(quiet)){pb$tick()}
-if(full_data_export){
-  to_return <- c(to_return,list(full_data_frame = spsp_f))
-}
+
   return(to_return)
 }
 
