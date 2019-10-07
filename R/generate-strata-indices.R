@@ -13,6 +13,7 @@
 #'   \item{Region}{Region name}
 #'   \item{Index}{Strata-weighted count index}
 #'   \item{additional columns for each of the values in quantiles}{quantiles of the posterior distribution}
+#'
 #'   \item{samples}{array of all samples from the posterior distribution}
 #'   \item{area-weights}{data frame of the strata names and area weights used to calculate the continental estimates}
 #'   \item{y_min}{first year used in the model, scale 1:length of time-series}
@@ -53,6 +54,10 @@ generate_strata_indices <- function(jags_mod = NULL,
   y_max = data_list$y_max
   r_year = data_list$r_year
 
+  raw = data.frame(year = data_list$year,
+                   count = data_list$count,
+                   strat = data_list$strat)
+
   n_samples <- dim(n)[1]
   n_strata <- dim(n)[2]
   n_years <- dim(n)[3]
@@ -72,6 +77,12 @@ generate_strata_indices <- function(jags_mod = NULL,
 
   for (i in strata_indices)
   {
+    rawst = raw[which(raw$strat == i),c("year","count")]
+    yrs = data.frame(year = c(y_min:y_max))
+    rawst = merge(rawst,yrs,by = "year",all = T)
+    rawst = rawst[order(rawst$year),]
+
+
     strat_summary <- data.frame(Year = seq(y_min:y_max),
                                Index = as.numeric(as.vector(n_median[i,])),
                                Region = area_weights[which(area_weights$num == i), ]$region)
@@ -79,6 +90,7 @@ generate_strata_indices <- function(jags_mod = NULL,
     for(qq in quantiles){
       strat_summary[,paste0("Index_q_",qq)] <- apply(n[,i,],2,stats::quantile,probs = qq)
     }
+    strat_summary$obs_mean = as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = mean,na.rm = T))
 
     data_summary <- rbind(data_summary, strat_summary)
   }

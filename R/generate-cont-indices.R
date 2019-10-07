@@ -53,9 +53,32 @@ generate_cont_indices <- function(jags_mod = NULL,
   y_max = data_list$y_max
   r_year = data_list$r_year
 
+  raw = data.frame(year = data_list$year,
+                   count = data_list$count,
+                   strat = data_list$strat)
+
   n_samples <- dim(n)[1]
   n_strata <- dim(n)[2]
   n_weight <- n
+
+  obs_df = data.frame(year = integer(),
+                      strat = integer(),
+                      obs_mean = double())
+  for (j in 1:n_strata)
+  {
+  rawst <- raw[which(raw$strat == j),c("year","count")]
+  yrs <- data.frame(year = c(y_min:y_max))
+  rawst <- merge(rawst,yrs,by = "year",all = T)
+  rawst <- rawst[order(rawst$year),]
+
+  o_mns <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = mean,na.rm = T))
+
+  obs_df_t <- data.frame(year = c(y_min:y_max),
+                        strat = j,
+                        obs_mean = o_mns*(area_weights$area_sq_km[which(area_weights$num == j)])/ sum(area_weights$area_sq_km))
+
+    obs_df <- rbind(obs_df,obs_df_t)
+  }
 
   # Weight each sampled n
   for (i in 1:n_samples)
@@ -78,6 +101,8 @@ generate_cont_indices <- function(jags_mod = NULL,
   }
 
   data_summary$Year <- (data_summary$Year - 1) + min(r_year)
+  data_summary$obs_mean <- as.numeric(by(obs_df[,3],INDICES = obs_df[,1],FUN = mean,na.rm = T))
+
 
   return(list(data_summary = data_summary,
          samples = N,
