@@ -78,7 +78,7 @@ generate_cont_indices <- function(jags_mod = NULL,
 
   obs_df_t <- data.frame(year = c(y_min:y_max),
                         strat = j,
-                        obs_mean = o_mns*((area_weights$area_sq_km[which(area_weights$num == j)])/ sum(area_weights$area_sq_km)))*(non_zero_weight[j])
+                        obs_mean = o_mns*((area_weights$area_sq_km[which(area_weights$num == j)])/ sum(area_weights$area_sq_km))*(non_zero_weight[j]))
 
     obs_df <- rbind(obs_df,obs_df_t)
   }
