@@ -11,7 +11,7 @@
 #' @param title_size Specify font size of plot title. Defaults to 20
 #' @param axis_title_size Specify font size of axis titles. Defaults to 18
 #' @param axis_text_size Specify font size of axis text. Defaults to 16
-#' @param add_observed_means Should the plot include points indicated the observed mean counts. Defaults to FALSE
+#' @param add_observed_means Should the plot include points indicated the observed mean counts. Defaults to FALSE.  Note: scale of observed means and annual indices may not match due to imbalanced sampling among strata
 #'
 #' @return ggplot of continental indices
 #'
@@ -70,10 +70,7 @@ plot_cont_indices <- function(indices_list = NULL,
   rm(Year)
   Index <- NULL
   rm(Index)
-  Q25 <- NULL
-  rm(Q25)
-  Q975 <- NULL
-  rm(Q975)
+
 
   indices = indices_list$data_summary
 
@@ -98,20 +95,8 @@ plot_cont_indices <- function(indices_list = NULL,
   }
 
   if(add_observed_means){
-  p <- ggplot2::ggplot() +
-    ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
-          panel.grid.minor = ggplot2::element_blank(),
-          panel.background = ggplot2::element_blank(),
-          axis.line = ggplot2::element_line(colour = "black"),
-          plot.title = ggplot2::element_text(size = title_size),
-          axis.title = ggplot2::element_text(size = axis_title_size),
-          axis.text = ggplot2::element_text(size = axis_text_size)) +
-    ggplot2::labs(title = paste(species, " Annual indices: Continental", sep = ""),
-         x = "Year",
-         y = "Index") +
-    ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index)) +
-    ggplot2::geom_ribbon(data = indices, ggplot2::aes(x = Year, ymin = lci, ymax = uci), alpha = 0.12)
-  }else{
+
+
     p <- ggplot2::ggplot() +
       ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
                      panel.grid.minor = ggplot2::element_blank(),
@@ -123,11 +108,25 @@ plot_cont_indices <- function(indices_list = NULL,
       ggplot2::labs(title = paste(species, " Annual indices: Continental", sep = ""),
                     x = "Year",
                     y = "Index",
-                    subtitle = paste("Note: scale of observed means and annual indices will not neccessarily match due to imbalanced sampling among strata")) +
-      ggplot2::geom_point(data = indices,ggplot2::aes(x = year,y = obs_mean))+
+                    subtitle = paste("Note: scale of observed means and annual indices may not match")) +
+      ggplot2::geom_point(data = indices,ggplot2::aes(x = Year,y = obs_mean),colour = grey(0.6))+
       ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index)) +
       ggplot2::geom_ribbon(data = indices, ggplot2::aes(x = Year, ymin = lci, ymax = uci), alpha = 0.12)
 
-}
+  }else{
+    p <- ggplot2::ggplot() +
+      ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+                     panel.grid.minor = ggplot2::element_blank(),
+                     panel.background = ggplot2::element_blank(),
+                     axis.line = ggplot2::element_line(colour = "black"),
+                     plot.title = ggplot2::element_text(size = title_size),
+                     axis.title = ggplot2::element_text(size = axis_title_size),
+                     axis.text = ggplot2::element_text(size = axis_text_size)) +
+      ggplot2::labs(title = paste(species, " Annual indices: Continental", sep = ""),
+                    x = "Year",
+                    y = "Index") +
+      ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index)) +
+      ggplot2::geom_ribbon(data = indices, ggplot2::aes(x = Year, ymin = lci, ymax = uci), alpha = 0.12)
+    }
   return(p)
 }

@@ -102,8 +102,8 @@ generate_cont_indices <- function(jags_mod = NULL,
   data_summary[,paste0("Index_q_",qq)] <- apply(N,2,stats::quantile,probs = qq)
   }
 
-  data_summary$Year <- (data_summary$Year - 1) + min(r_year)
-  data_summary$obs_mean <- as.numeric(by(obs_df[,3],INDICES = obs_df[,1],FUN = mean,na.rm = T))
+  data_summary$Year <- as.integer((data_summary$Year - 1) + min(r_year))
+  data_summary$obs_mean <- as.numeric(by(obs_df[,3],INDICES = obs_df[,1],FUN = sum,na.rm = T))
 
 
   return(list(data_summary = data_summary,

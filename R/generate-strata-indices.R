@@ -96,6 +96,7 @@ generate_strata_indices <- function(jags_mod = NULL,
     data_summary <- rbind(data_summary, strat_summary)
   }
 
+  data_summary$Year = as.integer(data_summary$Year)
   return(list(data_summary = data_summary,
               samples = n,
               area_weights = area_weights,
