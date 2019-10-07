@@ -2,8 +2,9 @@
 #'
 #' Generates the trajectory plot of continental indices.
 #'
-#' @param indices Dataframe of yearly indices produced by
+#' @param indices_list List of indices of annual abundance and other results produced by
 #'   \code{generate_cont_indices}
+#' @param ci_width quantile to define the width of the plotted credible interval. Defaults to 0.95, lower = 0.025 and upper = 0.975
 #' @param min_year Minimum year to plot
 #' @param max_year Maximum year to plot
 #' @param species Species name to be added onto the plot
@@ -54,7 +55,8 @@
 #'
 #' @export
 #'
-plot_cont_indices <- function(indices = NULL,
+plot_cont_indices <- function(indices_list = NULL,
+                              ci_width = 0.95,
                             min_year = NULL,
                             max_year = NULL,
                             species = "",
@@ -70,6 +72,18 @@ plot_cont_indices <- function(indices = NULL,
   rm(Q25)
   Q975 <- NULL
   rm(Q975)
+
+  indices = indices_list$data_summary
+
+  lq = (1-ci_width)/2
+  uq = ci_width+lq
+  lqc = paste0("Index_q_",lq)
+  uqc = paste0("Index_q_",uq)
+
+
+  indices$lci = indices[,lqc]
+  indices$uci = indices[,uqc]
+
 
   if (!is.null(min_year))
   {
@@ -93,7 +107,7 @@ plot_cont_indices <- function(indices = NULL,
          x = "Year",
          y = "Index") +
     ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index)) +
-    ggplot2::geom_ribbon(data = indices, ggplot2::aes(x = Year, ymin = Q25, ymax = Q975), alpha = 0.12)
+    ggplot2::geom_ribbon(data = indices, ggplot2::aes(x = Year, ymin = lci, ymax = uci), alpha = 0.12)
 
   return(p)
 }

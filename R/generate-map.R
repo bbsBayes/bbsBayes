@@ -45,6 +45,16 @@ generate_map <- function(trend = NULL,
   Trend <- NULL
   rm(Trend)
 
+  if (is.null(stratify_by))
+  {
+    stop("Argument stratify_by is empty."); return(NULL)
+  }
+
+  if (is.null(trend))
+  {
+    stop("Argument trend is empty."); return(NULL)
+  }
+
   map <- rgdal::readOGR(dsn = system.file("maps",
                                    package = "bbsBayes"),
                  layer = maps[[stratify_by]],
