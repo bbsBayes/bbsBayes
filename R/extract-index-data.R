@@ -43,5 +43,6 @@ extract_index_data <- function(jags_mod = NULL)
               area_weights = area_weights,
               y_min = y_min,
               y_max = y_max,
-              r_year = jags_mod$r_year))
+              r_year = jags_mod$r_year,
+              bugs_data = bugs_data))
 }

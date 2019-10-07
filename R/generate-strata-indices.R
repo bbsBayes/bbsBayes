@@ -53,10 +53,11 @@ generate_strata_indices <- function(jags_mod = NULL,
   y_min = data_list$y_min
   y_max = data_list$y_max
   r_year = data_list$r_year
+  bugs_data = data_list$bugs_data
 
-  raw = data.frame(year = data_list$year,
-                   count = data_list$count,
-                   strat = data_list$strat)
+  raw = data.frame(year = bugs_data$year,
+                   count = bugs_data$count,
+                   strat = bugs_data$strat)
 
   n_samples <- dim(n)[1]
   n_strata <- dim(n)[2]
