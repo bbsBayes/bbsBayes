@@ -59,6 +59,8 @@ generate_strata_indices <- function(jags_mod = NULL,
                    count = bugs_data$count,
                    strat = bugs_data$strat)
 
+  non_zero_weight = bugs_data$nonzeroweight
+
   n_samples <- dim(n)[1]
   n_strata <- dim(n)[2]
   n_years <- dim(n)[3]
@@ -91,7 +93,7 @@ generate_strata_indices <- function(jags_mod = NULL,
     for(qq in quantiles){
       strat_summary[,paste0("Index_q_",qq)] <- apply(n[,i,],2,stats::quantile,probs = qq)
     }
-    strat_summary$obs_mean = as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = mean,na.rm = T))
+    strat_summary$obs_mean = non_zero_weight[i]*as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = mean,na.rm = T))
 
     data_summary <- rbind(data_summary, strat_summary)
   }

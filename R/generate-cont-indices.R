@@ -58,6 +58,7 @@ generate_cont_indices <- function(jags_mod = NULL,
   raw = data.frame(year = bugs_data$year,
                    count = bugs_data$count,
                    strat = bugs_data$strat)
+  non_zero_weight = bugs_data$nonzeroweight
 
   n_samples <- dim(n)[1]
   n_strata <- dim(n)[2]
@@ -77,7 +78,7 @@ generate_cont_indices <- function(jags_mod = NULL,
 
   obs_df_t <- data.frame(year = c(y_min:y_max),
                         strat = j,
-                        obs_mean = o_mns*(area_weights$area_sq_km[which(area_weights$num == j)])/ sum(area_weights$area_sq_km))
+                        obs_mean = o_mns*((area_weights$area_sq_km[which(area_weights$num == j)])/ sum(area_weights$area_sq_km)))*(non_zero_weight[j])
 
     obs_df <- rbind(obs_df,obs_df_t)
   }
