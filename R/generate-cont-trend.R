@@ -6,6 +6,7 @@
 #' @param min_year Minimum year to calculate trends from
 #' @param max_year Maximum year to calculate trends to
 #' @param quantiles vector of quantiles to be sampled from the posterior distribution Defaults to c(0.025,0.05,0.25,0.5,0.75,0.95,0.975)
+#' @param slope Logical, if TRUE, calculates an alternative trend metric, the slope of a log-linear regression through the annual indices. Default FALSE
 #'
 #' @return Numeric percentage of trend
 #'
@@ -32,7 +33,8 @@
 generate_cont_trend <- function(indices = NULL,
                                 min_year = NULL,
                                 max_year = NULL,
-                                quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975))
+                                quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),
+                                slope = FALSE)
 {
   if (is.null(indices))
   {
@@ -49,7 +51,14 @@ generate_cont_trend <- function(indices = NULL,
     max_year = indices$y_max
   }
 
+if(slope){
 
+    wy = c(min_year:max_year)
+    ne = log(n[,wy])
+    m = t(apply(ne,1,FUN = function(x) lm(x~wy)$coef)) #t(apply(x, 2, function(x.col) lm(y~x.col)$coef))
+  sl.t = as.vector((exp(m[,"wy"])-1)*100)
+
+}
 
   ch = n[,max_year]/n[,min_year]
   tr = 100*((ch^(1/(max_year-min_year)))-1)
@@ -65,6 +74,14 @@ generate_cont_trend <- function(indices = NULL,
   trend[,"Percent_Change"] <- median(ch)
   for(qq in quantiles){
     trend[,paste0("Percent_Change_Q",qq)] <- 100*(quantile(ch,qq,names = F)-1)
-}
+  }
+
+  if(slope){
+  trend[,"Slope_Trend"] <- median(sl.t)
+  for(qq in quantiles){
+    trend[,paste0("Slope_Trend_Q",qq)] <- quantile(sl.t,qq,names = F)
+  }
+  }
+
   return(trend)
 }
