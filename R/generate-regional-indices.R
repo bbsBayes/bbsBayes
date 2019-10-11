@@ -49,6 +49,7 @@ generate_regional_indices <- function(jags_mod = NULL,
   }
 
   data_list <- extract_index_data(jags_mod = jags_mod)
+  stratify_by = jags_mod$stratify_by
   n <- data_list$n
   area_weights <- data_list$area_weights
   y_min = data_list$y_min
@@ -65,9 +66,10 @@ generate_regional_indices <- function(jags_mod = NULL,
   n_samples <- dim(n)[1]
 
 
-  #region_names <- utils::read.csv(system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = F)
-  region_names <- read.csv(paste0("C:/Users/smithac/Documents/GitHub/temp/composite-regions/stratcan.csv"),stringsAsFactors = F)
+  region_names <- utils::read.csv(system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = F)
+  #region_names <- read.csv(paste0("C:/Users/smithac/Documents/GitHub/temp/composite-regions/stratcan.csv"),stringsAsFactors = F)
   region_names$region = factor(region_names$region,levels = levels(area_weights$region))
+
 
   data_summary <- data.frame(Year = integer(),
                               Region = character(),
@@ -124,6 +126,7 @@ obs_df = data.frame(year = integer(),
     nrts <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = length))
     nnzero <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = function(x){length(which(x>0))}))
     if(sum(nnzero[1:5]) < 1){st_rem <- c(st_rem,as.character(area_weights[which(area_weights$num == j),"region"]))
+    if(length(strata_sel) == 1){break}
     next} #if no observations of the species in the first 5 years, then remove the strata from trend summaries
     obs_df_t <- data.frame(year = c(y_min:y_max),
                            strat = j,
@@ -133,10 +136,13 @@ obs_df = data.frame(year = integer(),
 
     obs_df <- rbind(obs_df,obs_df_t)
   }
+
+
 if(!is.null(st_rem)){
   strata_sel = strata_sel[-which(strata_sel %in% area_weights[which(area_weights$region %in% st_rem),"num"])]
 }
 
+if(length(strata_sel)<1){next}
 
 n_weight <- n
   # Weight each sampled n
