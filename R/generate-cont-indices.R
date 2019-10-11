@@ -112,5 +112,6 @@ generate_cont_indices <- function(jags_mod = NULL,
          area_weights = area_weights,
          y_min = y_min,
          y_max = y_max,
-         startyear = min(r_year)))
+         startyear = min(r_year),
+         raw_data = raw))
 }

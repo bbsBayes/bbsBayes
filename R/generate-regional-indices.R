@@ -195,5 +195,6 @@ n_weight <- n_weight[,strata_sel,]
               y_min = y_min,
               y_max = y_max,
               startyear = min(r_year),
-              regions = regions))
+              regions = regions,
+              raw_data = raw))
 }
