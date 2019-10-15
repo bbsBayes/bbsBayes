@@ -155,5 +155,18 @@ run_model <- function(jags_data = NULL,
   jags_job$stratify_by <- stratify_by
   jags_job$r_year <- r_year
 
+  #### check the Rhat values for convergence failure
+  #### if there are failures, then throw a warning
+  #### alternatively, incoporate a logical option to automatically continue running the model until some minimum convergence criterion is met
+  rhat_check = r_hat(jags_job,
+                     threshold = 1.1)
+  if(nrow(rhat_check) > (length(parameters_to_save)*0.05)){
+    failed = paste(rhat_check$Parameter,collapse = " ; ")
+    nfail = nrow(rhat_check)
+   warning(paste("Warning",nfail,"parameters did not converged. Consider re-running with a longer burn-in."))
+
+    warning(paste("Convergence failure on the following parameters:",failed))
+  }
+
   return(jags_job)
 }
