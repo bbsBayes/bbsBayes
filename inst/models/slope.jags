@@ -3,9 +3,8 @@ model
 	#### counts and overdispersion effects  ###### Link-Sauer model with nested observer-route effect
 	for( k in 1 : ncounts )
 	{
-		Elambdas[k] <- beta[strat[k]] * (year[k] - fixedyear) + eta*firstyr[k] + obs[strat[k],obser[k]] + strata[strat[k]] + yeareffect[year[k],strat[k]]
-		Elambda[k] ~ dnorm(Elambdas[k], taunoise)
-		log(lambda[k]) <- Elambda[k]
+		log(lambda[k]) <- beta[strat[k]] * (year[k] - fixedyear) + eta*firstyr[k] + obs[strat[k],obser[k]] + strata[strat[k]] + yeareffect[year[k],strat[k]] + noise[k]
+		noise[k] ~ dnorm(0, taunoise)
 
 		count[k] ~ dpois(lambda[k])
 		#----------------------------------#
@@ -47,8 +46,10 @@ model
 
 		#### end observer effects  ######
 
-		beta[s] ~ dnorm(BETA,taubeta)
-		strata[s] ~ dnorm(STRATA,taustrata)
+		beta.p[s] ~ dnorm(0,taubeta)
+		beta[s] <- BETA + beta.p[s]
+		strata.p[s] ~ dnorm(0,taustrata)
+		strata[s] <- STRATA + strata.p[s]
 		sdyear[s] <- 1/pow(tauyear[s],0.5)
 		tauyear[s] ~ dgamma(0.001,0.001) #
 
