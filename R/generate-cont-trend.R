@@ -10,6 +10,8 @@
 #'
 #' @return Numeric percentage of trend
 #'
+#' @importFrom stats lm
+#'
 #' @examples
 #'
 #' \dontrun{
@@ -55,7 +57,7 @@ if(slope){
 
     wy = c(min_year:max_year)
     ne = log(n[,wy])
-    m = t(apply(ne,1,FUN = function(x) lm(x~wy)$coef)) #t(apply(x, 2, function(x.col) lm(y~x.col)$coef))
+    m = t(apply(ne,1,FUN = function(x) stats::lm(x~wy)$coef)) #t(apply(x, 2, function(x.col) lm(y~x.col)$coef))
   sl.t = as.vector((exp(m[,"wy"])-1)*100)
 
 }
