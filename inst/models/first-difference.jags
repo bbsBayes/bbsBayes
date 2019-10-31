@@ -2,9 +2,8 @@ model
 {
 	for( k in 1 : ncounts )
 	{
-		Elambdas[k] <-  obs[strat[k],obser[k]] + eta*firstyr[k] + strata[strat[k]] + yeareffect[strat[k],year[k]]
-		Elambda[k] ~ dnorm(Elambdas[k], taunoise)
-		log(lambda[k]) <- Elambda[k]
+		log(lambda[k]) <-  obs[strat[k],obser[k]] + eta*firstyr[k] + strata[strat[k]] + yeareffect[strat[k],year[k]] +noise[k]
+		noise[k] ~ dnorm(0, taunoise)
 
 		count[k] ~ dpois(lambda[k])
 		#----------------------------------#
@@ -59,7 +58,8 @@ model
 
 		### stratum-level priors
 
-		strata[s] ~ dnorm(STRATA,taustrata)
+		strata.p[s] ~ dnorm(0,taustrata)
+		strata[s] <- STRATA + strata.p[s]
 		#tauyear[s] <- 1/pow(sdyear[s],2)
 		#sdyear[s] ~ dunif(0.00001,5)
 		expstrata[s] <- exp(strata[s])

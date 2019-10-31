@@ -4,13 +4,15 @@
 \alias{plot_cont_indices}
 \title{Generate continental plot of index trajectories.}
 \usage{
-plot_cont_indices(indices = NULL, min_year = NULL, max_year = NULL,
-  species = "", title_size = 20, axis_title_size = 18,
-  axis_text_size = 16)
+plot_cont_indices(indices_list = NULL, ci_width = 0.95,
+  min_year = NULL, max_year = NULL, species = "", title_size = 20,
+  axis_title_size = 18, axis_text_size = 16, add_observed_means = F)
 }
 \arguments{
-\item{indices}{Dataframe of yearly indices produced by
+\item{indices_list}{List of indices of annual abundance and other results produced by
 \code{generate_cont_indices}}
+
+\item{ci_width}{quantile to define the width of the plotted credible interval. Defaults to 0.95, lower = 0.025 and upper = 0.975}
 
 \item{min_year}{Minimum year to plot}
 
@@ -23,6 +25,8 @@ plot_cont_indices(indices = NULL, min_year = NULL, max_year = NULL,
 \item{axis_title_size}{Specify font size of axis titles. Defaults to 18}
 
 \item{axis_text_size}{Specify font size of axis text. Defaults to 16}
+
+\item{add_observed_means}{Should the plot include points indicated the observed mean counts. Defaults to FALSE.  Note: scale of observed means and annual indices may not match due to imbalanced sampling among strata}
 }
 \value{
 ggplot of continental indices

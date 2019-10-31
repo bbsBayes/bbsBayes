@@ -7,7 +7,8 @@
 #'
 #' @param trend Dataframe of strata trends produced by
 #'   \code{generate_strata_trends}
-#' @param stratify_by How was the data stratified?
+#' @param stratify_by How were the data stratified?
+#' @param slope Logical, if TRUE, maps values of the alternative trend metric if slope = T was used in \code{generate_strata_trends}, the slope of a log-linear regression through the annual indices. Default FALSE.
 #'
 #' @return spplot object
 #'
@@ -40,10 +41,21 @@
 #'
 
 generate_map <- function(trend = NULL,
-                         stratify_by = NULL)
+                         stratify_by = NULL,
+                         slope = FALSE)
 {
   Trend <- NULL
   rm(Trend)
+
+  if (is.null(stratify_by))
+  {
+    stop("Argument stratify_by is empty."); return(NULL)
+  }
+
+  if (is.null(trend))
+  {
+    stop("Argument trend is empty."); return(NULL)
+  }
 
   map <- rgdal::readOGR(dsn = system.file("maps",
                                    package = "bbsBayes"),
@@ -51,9 +63,13 @@ generate_map <- function(trend = NULL,
                  verbose = FALSE)
   breaks <- c(-7, -4, -2, -1, -0.5, 0.5, 1, 2, 4, 7)
   map@data$row_num <- 1:nrow(map@data)
-  map@data <- merge(map@data, trend, by.x = "ST_12", by.y = "Stratum", all = T)
+  map@data <- merge(map@data, trend, by.x = "ST_12", by.y = "Region", all = T)
   map@data <- map@data[order(map@data$row_num), ]
+  if(slope){
+    map@data$Trend <- as.numeric(as.character(map@data$Slope_Trend))
+  }else{
   map@data$Trend <- as.numeric(as.character(map@data$Trend))
+  }
   map@data$Trend <- cut(map@data$Trend, breaks = c(-Inf, breaks, Inf))
   map@data <- subset(map@data, select = c(Trend))
 
