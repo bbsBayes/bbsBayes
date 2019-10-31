@@ -39,12 +39,6 @@ package-specific directory on your computer. You must agree to the terms and con
 fetch_bbs_data()
 ```
 
-Alternatively, use the sample data provided with the package, which provides full species data for Wood Thrush.
-
-```r
-bbs_sample <- fetch_sample_data()
-```
-
 ### Data Preparation
 #### Stratification
 Stratification plays an important role in trend analysis. Use the `stratify()` function for this job. Set the argument `by` to stratify by the following options:
