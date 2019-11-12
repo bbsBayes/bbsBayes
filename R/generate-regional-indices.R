@@ -50,9 +50,9 @@ generate_regional_indices <- function(jags_mod = NULL,
     stop("No model output supplied to generate_regional_indices()."); return(NULL)
   }
 
-  data_list <- extract_index_data(jags_mod = jags_mod,alt_n = alternate_n)
-  n <- data_list$n
+  data_list <- extract_index_data(jags_mod = jags_mod)
   stratify_by = jags_mod$stratify_by
+  n <- data_list[[alternate_n]]
   area_weights <- data_list$area_weights
   y_min = data_list$y_min
   y_max = data_list$y_max
