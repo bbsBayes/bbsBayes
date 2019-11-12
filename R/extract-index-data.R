@@ -10,14 +10,14 @@
 #' @export
 #'
 
-extract_index_data <- function(jags_mod = NULL)
+extract_index_data <- function(jags_mod = NULL,alt_n = "n")
 {
   # Read area weights
   stratify_by <- jags_mod$stratify_by
   all_area_weights <- utils::read.csv(system.file("area-weight", strata[[stratify_by]], package = "bbsBayes"))
 
   # Extract posterior data and other data from jags_mod
-  n <- jags_mod$sims.list$n
+  n <- jags_mod$sims.list[[alt_n]]
   if (isTRUE(jags_mod$parallel))
   {
     bugs_data <- jags_mod$model$cluster1$data()
