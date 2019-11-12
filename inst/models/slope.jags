@@ -104,6 +104,7 @@ model
 
 			mn[i,t] <- mean(no[i,t,1 : nobservers[i]])
 			n[i,t] <- nonzeroweight[i]*(mn[i,t]*sdn)
+			n2[i,t] <- nonzeroweight[i]*exp(strata[i] + beta[i]*(t-fixedyear) + yeareffect[t,i] + 0.5*sdnoise*sdnoise+ 0.5*sdobs*sdobs)
 		}
 	}
 

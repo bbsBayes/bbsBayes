@@ -77,13 +77,7 @@ model
 		#-------------------------------------------------#
 	}
 
-	#for( i in 1 : nstrata )
-	#{
-	#	for( t in ymin : ymax )
-	#	{
-	#		n[i,t] <- nonzeroweight[i]*exp(yeareffect[i,t] + 0.5*sdnoise*sdnoise+ 0.5*sdobs*sdobs)
-	#	}
-	#}
+
 
 	#### summary statistics  ######
 	sdn <- exp(0.5*sdnoise*sdnoise)
@@ -99,6 +93,7 @@ model
 
 			mn[i,t] <- mean(no[i,t,1 : nobservers[i]])
 			n[i,t] <- nonzeroweight[i]*(mn[i,t]*sdn)
+				n2[i,t] <- nonzeroweight[i]*exp(yeareffect[i,t] + 0.5*sdnoise*sdnoise+ 0.5*sdobs*sdobs) #n2 is an alternative approach to calculating annual indices
 		}
 	}
 
