@@ -49,8 +49,8 @@ generate_cont_indices <- function(jags_mod = NULL,
   }
 
 
-  data_list <- extract_index_data(jags_mod = jags_mod)
-  n <- data_list[[alternate_n]]
+  data_list <- extract_index_data(jags_mod = jags_mod,alt_n = alternate_n)
+  n <- data_list$n
   area_weights <- data_list$area_weights
   y_min = data_list$y_min
   y_max = data_list$y_max
