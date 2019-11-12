@@ -18,8 +18,10 @@
 #'   not be able to generate annual indices if "n" is not tracked.
 #' @param n_chains Optional number of chains to run. Defaults to 3.
 #' @param n_adapt Optional integer specifying the number of steps to
-#'   adapt the JAGS model. It is recommended to do a minimum of 100,
-#'   \code{run-model} will default to 500.
+#'   adapt the JAGS model.  The default is \code{NULL}, which will result in
+#'   the function running groups of 100 adaptation iterations (to amax of 10,000)
+#'   until JAGS reports adaptation is sufficient. If you set it manually,
+#'   1000 is the recommended minimum value.
 #' @param n_burnin Optional integer specifying the number of iterations
 #'   to burn in the model. Defaults to 20000 per chain.
 #' @param n_thin Optional number of steps to thin or discard.
@@ -83,7 +85,7 @@ run_model <- function(jags_data = NULL,
                       parameters_to_save = c("n"),
                       track_n = TRUE,
                       n_chains = 3,
-                      n_adapt = 500,
+                      n_adapt = NULL,
                       n_burnin = 20000,
                       n_thin = 10,
                       n_saved_steps = 2000,

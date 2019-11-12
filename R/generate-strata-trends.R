@@ -14,6 +14,8 @@
 #'   \item{Stratum}{Name of the stratum}
 #'   \item{Trend}{Percent change from the minimum year to maximum year}
 #'
+#'
+#' @importFrom stats lm
 #' @examples
 #'
 #' \dontrun{
@@ -81,7 +83,7 @@ generate_strata_trends <- function(indices = NULL,
 
       wy = c(min_year:max_year)
       ne = log(n[,i,wy])
-      m = t(apply(ne,1,FUN = function(x) lm(x~wy)$coef)) #t(apply(x, 2, function(x.col) lm(y~x.col)$coef))
+      m = t(apply(ne,1,FUN = function(x) stats::lm(x~wy)$coef)) #t(apply(x, 2, function(x.col) lm(y~x.col)$coef))
       sl.t = as.vector((exp(m[,"wy"])-1)*100)
 
     }

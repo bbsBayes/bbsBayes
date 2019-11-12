@@ -2,9 +2,8 @@ model
 {  #### counts and overdispersion effects  ###### Hierarchical GAM model first applied to BBS data in 2017 testing
 	for( k in 1 : ncounts )
 	{
-		Elambdas[k] <- obs[strat[k],obser[k]] + eta*firstyr[k] + strata[strat[k]] + yeareffect[year[k],strat[k]]
-		Elambda[k] ~ dnorm(Elambdas[k], taunoise)
-		log(lambda[k]) <- Elambda[k]
+		log(lambda[k]) <- obs[strat[k],obser[k]] + eta*firstyr[k] + strata[strat[k]] + yeareffect[year[k],strat[k]] + noise[k]
+		noise[k] ~ dnorm(0, taunoise)
 
 		count[k] ~ dpois(lambda[k])
 		#----------------------------------#
@@ -69,7 +68,8 @@ model
 
 		### stratum-level priors
 
-		strata[s] ~ dnorm(STRATA,taustrata)
+		strata.p[s] ~ dnorm(0,taustrata)
+		strata[s] <- STRATA + strata.p[s]
 		sdyear[s] <- 1/pow(tauyear[s],0.5)
 		tauyear[s] ~ dgamma(0.001,0.001) #
 		#tauyear[s] <- 1/pow(sdyear[s],2)
@@ -104,8 +104,8 @@ model
 
 		for(k in 1:nstrata)
 		{
-			beta.X[k,j] ~ dnorm(B.X[j],taubeta)
-
+			beta.X.p[k,j] ~ dnorm(0,taubeta)
+      beta.X[k,j] <- B.X[j]+beta.X.p[k,j]
 
 			for ( i in ymin : ymax )
 			{
