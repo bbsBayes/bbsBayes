@@ -4,13 +4,15 @@
 \alias{generate_map}
 \title{Generate a map of trends by strata.}
 \usage{
-generate_map(trend = NULL, stratify_by = NULL)
+generate_map(trend = NULL, stratify_by = NULL, slope = FALSE)
 }
 \arguments{
 \item{trend}{Dataframe of strata trends produced by
 \code{generate_strata_trends}}
 
-\item{stratify_by}{How was the data stratified?}
+\item{stratify_by}{How were the data stratified?}
+
+\item{slope}{Logical, if TRUE, maps values of the alternative trend metric if slope = T was used in \code{generate_strata_trends}, the slope of a log-linear regression through the annual indices. Default FALSE.}
 }
 \value{
 spplot object

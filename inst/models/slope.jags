@@ -82,13 +82,7 @@ model
 
 	sdbeta <- 1/pow(taubeta,0.5)#
 
-	#for( i in 1 : nstrata )
-	#{
-	#	for( t in ymin : ymax )
-	#	{
-	#		n[i,t] <- nonzeroweight[i]*exp(strata[i] + beta[i]*(t-fixedyear) + yeareffect[t,i] + 0.5*sdnoise*sdnoise+ 0.5*sdobs*sdobs)
-	#	}
-	#}
+
 
 	#### summary statistics  ######
 	sdn <- exp(0.5*sdnoise*sdnoise)

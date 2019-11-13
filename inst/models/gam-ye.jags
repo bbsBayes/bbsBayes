@@ -40,9 +40,9 @@ model
 	sdnoise <- 1 / pow(taunoise, 0.5)
 	#taunoise <- 1/pow(sdnoise,2)#~ dgamma(0.001,0.001) # alternative priors
 	#sdnoise ~ dunif(0.00001,5)#<- 1 / pow(taunoise, 0.5)
-	mulogtauobs ~ dnorm(0,2)#3.33) #informative prior that reduces the chance of very large values of sdobs
+	#mulogtauobs ~ dnorm(0,2)#3.33) #informative prior that reduces the chance of very large values of sdobs
 	#mulogtauobs ~ dnorm(0.0,1.0E-6) #alternative less informative prior
-	taulogtauobs ~ dgamma(2,0.2) #informative prior that reduces the chance of very large values of sdobs
+	#taulogtauobs ~ dgamma(2,0.2) #informative prior that reduces the chance of very large values of sdobs
 	mulogtauyy ~ dnorm(0.0,1.0E-6)
 	taulogtauyy ~ dgamma(2,0.2)
 	eta ~ dnorm( 0.0,1.0E-6)
@@ -53,6 +53,9 @@ model
 
 	taustrata ~ dgamma(0.001,0.0001) #<- 1/pow(sdbeta,2)#
 	sdstrata <- 1/pow(taubeta,0.5)#~ dunif(0.001,10)
+
+  sdobs <- 1/pow(tauobs, 0.5)
+  tauobs ~ dgamma(0.001,0.0001)
 
 #	log(tauobs) <- logtauobs
 #	logtauobs ~ dnorm(mulogtauobs, taulogtauobs)
@@ -69,7 +72,7 @@ model
 		}
 		#log(tauobs[s]) <- logtauobs[s]
 		#logtauobs[s] ~ dnorm(mulogtauobs,taulogtauobs)
-		sdobs[s] <- 1 / pow(tauobs, 0.5)
+		#sdobs[s] <- 1 / pow(tauobs, 0.5)
 		#### end observer effects  ######
 
 
