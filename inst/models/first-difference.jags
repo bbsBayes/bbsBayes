@@ -31,6 +31,8 @@ model
 	taustrata ~ dgamma(0.001,0.0001) #<- 1/pow(sdbeta,2)#
 	sdstrata <- 1/pow(taubeta,0.5)#~ dunif(0.001,10)
 	taubeta ~ dgamma(1,0.0001) #
+	mulogtauyear ~ dnorm(0.0,1.0E-3)
+	taulogtauyear ~ dgamma(2,0.2)
 
 
 
@@ -51,9 +53,9 @@ model
 
 		#### end observer effects  ######
 
-		sdyear[s] <- 1/pow(tauyear[s],0.5)
+
 		sdyear.eps[s] <- 1/pow(tauyear.eps[s],0.5)
-		tauyear[s] ~ dgamma(0.001,0.001)
+		#tauyear[s] ~ dgamma(0.001,0.001)
 		tauyear.eps[s] <- tauyear[s]*0.0001
 
 		### stratum-level priors
@@ -73,6 +75,13 @@ model
 		{
 			yeareffect[s,j] ~ dnorm(yeareffect[s,j-1],tauyear[s])
 		}
+
+
+		log(tauyear[s]) <- logtauyear[s]
+		logtauyear[s] ~ dnorm(mulogtauyear,taulogtauyear)
+		sdyear[s] <- 1/pow(tauyear[s],0.5)
+
+
 
 		#-------------------------------------------------#
 	}

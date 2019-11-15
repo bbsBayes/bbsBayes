@@ -30,6 +30,8 @@ model
 	STRATA ~ dnorm( 0.0,0.01)
 	taustrata ~ dgamma(0.001,0.0001) #<- 1/pow(sdbeta,2)#
 	sdstrata <- 1/pow(taubeta,0.5)#~ dunif(0.001,10)
+	mulogtauyear ~ dnorm(0.0,1.0E-3)
+	taulogtauyear ~ dgamma(2,0.2)
 
 	#---------------------------------------------------------#
 
@@ -50,10 +52,16 @@ model
 		beta[s] <- BETA + beta.p[s]
 		strata.p[s] ~ dnorm(0,taustrata)
 		strata[s] <- STRATA + strata.p[s]
-		sdyear[s] <- 1/pow(tauyear[s],0.5)
-		tauyear[s] ~ dgamma(0.001,0.001) #
+		#sdyear[s] <- 1/pow(tauyear[s],0.5)
+		#tauyear[s] ~ dgamma(0.001,0.001) #
 
 		#### stratum specific year effects  ######
+
+
+		log(tauyear[s]) <- logtauyear[s]
+		logtauyear[s] ~ dnorm(mulogtauyear,taulogtauyear)
+		sdyear[s] <- 1/pow(tauyear[s],0.5)
+
 		for( y in ymin : ymax )
 		{
 			yeareffect[y,s] ~ dnorm( 0.0, tauyear[s])
