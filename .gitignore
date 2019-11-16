@@ -6,4 +6,4 @@ output/*
 testdata
 testfile.R
 *.html
-CAWA.RData
+jags_mod_full.RData
