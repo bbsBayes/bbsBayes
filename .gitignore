@@ -6,3 +6,5 @@ output/*
 testdata
 testfile.R
 *.html
+jags_mod_full.RData
+temp.RData
