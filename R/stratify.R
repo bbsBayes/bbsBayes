@@ -60,7 +60,7 @@ stratify <- function(by = NULL,
 
   if(isFALSE(is.element(by, c("state", "bcr", "latlong", "bbs_cws", "bbs_usgs"))))
   {
-    stop("Invalid stratification specified"); return(NULL)
+    stop("Invalid stratification specified, choose one of state, bcr, latlong, bbs_cws, or bbs_usgs"); return(NULL)
   }
 
   bbs_dir <- app_dir(appname = "bbsBayes")
