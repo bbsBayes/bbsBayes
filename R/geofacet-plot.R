@@ -79,7 +79,6 @@ geofacet_plot <- function(indices_list = NULL,
   facets <- utils::read.csv(system.file("geofacet-grids", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = F)
 
   indices = indices_list$data_summary
-
   lq = (1-ci_width)/2
   uq = ci_width+lq
   lqc = paste0("Index_q_",lq)
@@ -92,54 +91,226 @@ geofacet_plot <- function(indices_list = NULL,
 
   mny = min(indices$Year)
   mxy = max(indices$Year)
-  yys = pretty(seq(mny, mxy))
-  yys = c(yys[-length(yys)],mxy)
+  yys = seq(mny,mxy,length.out = 3)
 
 
+  uplim = max(indices$Index)
+
+  if(multiple){
+
+     #
+     # indices$code = indices$Region
+     #
 
   if(!is.null(trends)){
 
 
   breaks <- c(-7, -4, -2, -1, -0.5, 0.5, 1, 2, 4, 7)
-  # map@data$row_num <- 1:nrow(map@data)
-  # map@data <- merge(map@data, trend, by.x = "ST_12", by.y = "Region", all = T)
-  # map@data <- map@data[order(map@data$row_num), ]
+
   if(slope){
-    trends$Trend <- as.numeric(as.character(trends$Slope_Trend))
-  }else{
-    trends$Trend <- as.numeric(as.character(trends$Trend))
+    trends$Trend <- trends$Slope_Trend
   }
-  trends$Trend <- cut(map@data$Trend, breaks = c(-Inf, breaks, Inf))
-  #map@data <- subset(map@data, select = c(Trend))
+  trends$Trendcat <- cut(trends$Trend, breaks = c(-Inf, breaks, Inf))
 
   map_palette <- c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
                    "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")
 
-  }
+  colrfunc <- function(x){map_palette[1:x]}
+  indices <- merge(indices,trends[,c("Region","Trend","Trendcat")],by = "Region")
+
   if(add_observed_means){
+    ptraj <- ggplot2::ggplot(data = indices) +
+      ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+                     panel.grid.minor = ggplot2::element_blank(),
+                     panel.background = ggplot2::element_blank(),
+                     axis.text = ggplot2::element_text(colour = grey(0.2)),
+                     strip.background = ggplot2::element_rect(fill = grey(0.97)),#strcol #, colour = grey(0.9), size = NULL, linetype = NULL, color = NULL, inherit.blank = FALSE
+                     #axis.line = element_line(colour = "black"),
+                     legend.position = "none") +
+      ggplot2::labs(title = paste(species,"trajectories within Provinces and States"), x = "", y = "Annual indices") +
 
-  ptraj <- ggplot2::ggplot(data = indices) +
-    ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
-          panel.grid.minor = ggplot2::element_blank(),
-          panel.background = ggplot2::element_blank(),
-          axis.text = ggplot2::element_text(colour = grey(0.2)),
-          strip.background = ggplot2::element_rect(fill = grey(0.97)),#strcol #, colour = grey(0.9), size = NULL, linetype = NULL, color = NULL, inherit.blank = FALSE
-          #axis.line = element_line(colour = "black"),
-          legend.position = "none") +
-    ggplot2::labs(title = paste(species,"trajectories within Provinces and States"), x = "Year", y = "Annual indices") +
+      ggplot2::geom_point(data = indices,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6),size = 0.5, alpha = 0.2)+
+      ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index,colour = Trendcat)) +
+      ggplot2::geom_ribbon(data = indices, ggplot2::aes(x = Year, ymin = lci, ymax = uci,fill = Trendcat), alpha = 0.2)+
+      ggplot2::scale_x_continuous(breaks = yys)+
+      ggplot2::coord_cartesian(ylim = c(0,uplim))+
+      ggplot2::scale_colour_manual(values = map_palette, aesthetics = c("colour","fill"))+
+      geofacet::facet_geo(facets = ~ code,grid = facets,label = "code")
 
-    ggplot2::geom_point(data = to_plot,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6))+
-    ggplot2::geom_line(data = to_plot, ggplot2::aes(x = Year, y = Index)) +
-    ggplot2::geom_ribbon(data = to_plot, ggplot2::aes(x = Year, ymin = lci, ymax = uci), alpha = 0.12)+
-    ggplot2::scale_x_continuous(breaks = yys)+
-    ggplot2::scale_y_continuous(limits = c(0,NA))+
-  geofacet::facet_geo(facets = ~ prst,grid = facets,scales = "free_y", label = "code")
-  #geom_text_repel(data = labsbcr, aes(x = year, y = index,label = BCR),size = 2)
   }else{
+    ptraj <- ggplot2::ggplot(data = indices) +
+      ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+                     panel.grid.minor = ggplot2::element_blank(),
+                     panel.background = ggplot2::element_blank(),
+                     axis.text = ggplot2::element_text(colour = grey(0.2)),
+                     strip.background = ggplot2::element_rect(fill = grey(0.97)),#strcol #, colour = grey(0.9), size = NULL, linetype = NULL, color = NULL, inherit.blank = FALSE
+                     #axis.line = element_line(colour = "black"),
+                     legend.position = "none") +
+      ggplot2::labs(title = paste(species,"trajectories within Provinces and States"), x = "", y = "Annual indices") +
+
+      #ggplot2::geom_point(data = indices,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6),size = 0.5, alpha = 0.2)+
+      ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index),) +
+      ggplot2::geom_ribbon(data = indices, ggplot2::aes(x = Year, ymin = lci, ymax = uci), alpha = 0.12)+
+      ggplot2::scale_x_continuous(breaks = yys)+
+      ggplot2::coord_cartesian(ylim = c(0,uplim))+
+      geofacet::facet_geo(facets = ~ code,grid = facets,label = "code")
+    #geom_text_repel(data = labsbcr, aes(x = year, y = index,label = BCR),size = 2)
+
+  }
+
+
+
+  }else{
+  if(add_observed_means){
+    ptraj <- ggplot2::ggplot(data = indices) +
+      ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+                     panel.grid.minor = ggplot2::element_blank(),
+                     panel.background = ggplot2::element_blank(),
+                     axis.text = ggplot2::element_text(colour = grey(0.2)),
+                     strip.background = ggplot2::element_rect(fill = grey(0.97)),#strcol #, colour = grey(0.9), size = NULL, linetype = NULL, color = NULL, inherit.blank = FALSE
+                     #axis.line = element_line(colour = "black"),
+                     legend.position = "none") +
+      ggplot2::labs(title = paste(species,"trajectories within Provinces and States"), x = "", y = "Annual indices") +
+
+      ggplot2::geom_point(data = indices,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6),size = 0.5, alpha = 0.2)+
+      ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index),) +
+      ggplot2::geom_ribbon(data = indices, ggplot2::aes(x = Year, ymin = lci, ymax = uci), alpha = 0.12)+
+      ggplot2::scale_x_continuous(breaks = yys)+
+      ggplot2::coord_cartesian(ylim = c(0,uplim))+
+      geofacet::facet_geo(facets = ~ code,grid = facets,label = "code")
+
+  }else{
+    ptraj <- ggplot2::ggplot(data = indices) +
+      ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+                     panel.grid.minor = ggplot2::element_blank(),
+                     panel.background = ggplot2::element_blank(),
+                     axis.text = ggplot2::element_text(colour = grey(0.2)),
+                     strip.background = ggplot2::element_rect(fill = grey(0.97)),#strcol #, colour = grey(0.9), size = NULL, linetype = NULL, color = NULL, inherit.blank = FALSE
+                     #axis.line = element_line(colour = "black"),
+                     legend.position = "none") +
+      ggplot2::labs(title = paste(species,"trajectories within Provinces and States"), x = "", y = "Annual indices") +
+
+      #ggplot2::geom_point(data = indices,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6),size = 0.5, alpha = 0.2)+
+      ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index),) +
+      ggplot2::geom_ribbon(data = indices, ggplot2::aes(x = Year, ymin = lci, ymax = uci), alpha = 0.12)+
+      ggplot2::scale_x_continuous(breaks = yys)+
+      ggplot2::coord_cartesian(ylim = c(0,uplim))+
+      geofacet::facet_geo(facets = ~ code,grid = facets,label = "code")
+    #geom_text_repel(data = labsbcr, aes(x = year, y = index,label = BCR),size = 2)
 
 }
+}
 
-    return(ptraj)
+  }else{
+
+    indices$code = indices$Region
+
+
+    if(!is.null(trends)){
+
+      trends$code = trends$Region
+      breaks <- c(-7, -4, -2, -1, -0.5, 0.5, 1, 2, 4, 7)
+
+      if(slope){
+        trends$Trend <- trends$Slope_Trend
+      }
+      trends$Trendcat <- cut(trends$Trend, breaks = c(-Inf, breaks, Inf))
+
+      map_palette <- c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
+                       "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")
+
+      indices <- merge(indices,trends[,c("Region","Trend","Trendcat")],by = "Region")
+      trlabs = indices[which(indices$Year == yys[2]),]
+      trlabs$Trend = paste(signif(round(trlabs$Trend,1),2),"%/yr")
+
+      if(add_observed_means){
+        ptraj <- ggplot2::ggplot(data = indices) +
+          ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+                         panel.grid.minor = ggplot2::element_blank(),
+                         panel.background = ggplot2::element_blank(),
+                         axis.text = ggplot2::element_text(colour = grey(0.2)),
+                         strip.background = ggplot2::element_rect(fill = grey(0.97)),#strcol #, colour = grey(0.9), size = NULL, linetype = NULL, color = NULL, inherit.blank = FALSE
+                         #axis.line = element_line(colour = "black"),
+                         legend.position = "none") +
+          ggplot2::labs(title = paste(species,"trajectories within Provinces and States"), x = "", y = "Annual indices") +
+
+          ggplot2::geom_point(data = indices,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6),size = 0.5, alpha = 0.2)+
+          ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index,colour = Trendcat)) +
+          ggplot2::geom_ribbon(data = indices, ggplot2::aes(x = Year, ymin = lci, ymax = uci,fill = Trendcat), alpha = 0.2)+
+          ggplot2::scale_x_continuous(breaks = yys)+
+          ggplot2::coord_cartesian(ylim = c(0,uplim))+
+          ggplot2::scale_colour_manual(values = map_palette, aesthetics = c("colour","fill"))+
+          ggrepel::geom_text_repel(data = trlabs, mapping = ggplot2::aes(x = Year,y = uci,label = Trend,colour = Trendcat), size = 3,nudge_y = 0.2*uplim,segment.alpha = 0.1)+
+          geofacet::facet_geo(facets = ~ code,grid = facets,label = "code")
+
+      }else{
+        ptraj <- ggplot2::ggplot(data = indices) +
+          ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+                         panel.grid.minor = ggplot2::element_blank(),
+                         panel.background = ggplot2::element_blank(),
+                         axis.text = ggplot2::element_text(colour = grey(0.2)),
+                         strip.background = ggplot2::element_rect(fill = grey(0.97)),#strcol #, colour = grey(0.9), size = NULL, linetype = NULL, color = NULL, inherit.blank = FALSE
+                         #axis.line = element_line(colour = "black"),
+                         legend.position = "none") +
+          ggplot2::labs(title = paste(species,"trajectories within Provinces and States"), x = "", y = "Annual indices") +
+
+          #ggplot2::geom_point(data = indices,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6),size = 0.5, alpha = 0.2)+
+          ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index,colour = Trendcat)) +
+          ggplot2::geom_ribbon(data = indices, ggplot2::aes(x = Year, ymin = lci, ymax = uci,fill = Trendcat), alpha = 0.2)+
+          ggplot2::scale_x_continuous(breaks = yys)+
+          ggplot2::coord_cartesian(ylim = c(0,uplim))+
+          ggplot2::scale_colour_manual(values = map_palette, aesthetics = c("colour","fill"))+
+          ggrepel::geom_text_repel(data = trlabs, mapping = ggplot2::aes(x = Year,y = uci,label = Trend,colour = Trendcat), size = 3,nudge_y = 0.2*uplim,segment.alpha = 0.1)+
+          geofacet::facet_geo(facets = ~ code,grid = facets,label = "code")
+
+      }
+
+
+
+    }else{
+      if(add_observed_means){
+        ptraj <- ggplot2::ggplot(data = indices) +
+          ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+                         panel.grid.minor = ggplot2::element_blank(),
+                         panel.background = ggplot2::element_blank(),
+                         axis.text = ggplot2::element_text(colour = grey(0.2)),
+                         strip.background = ggplot2::element_rect(fill = grey(0.97)),#strcol #, colour = grey(0.9), size = NULL, linetype = NULL, color = NULL, inherit.blank = FALSE
+                         #axis.line = element_line(colour = "black"),
+                         legend.position = "none") +
+          ggplot2::labs(title = paste(species,"trajectories within Provinces and States"), x = "", y = "Annual indices") +
+
+          ggplot2::geom_point(data = indices,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6),size = 0.5, alpha = 0.2)+
+          ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index),) +
+          ggplot2::geom_ribbon(data = indices, ggplot2::aes(x = Year, ymin = lci, ymax = uci), alpha = 0.12)+
+          ggplot2::scale_x_continuous(breaks = yys)+
+          ggplot2::coord_cartesian(ylim = c(0,uplim))+
+          geofacet::facet_geo(facets = ~ code,grid = facets,label = "code")
+
+      }else{
+        ptraj <- ggplot2::ggplot(data = indices) +
+          ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+                         panel.grid.minor = ggplot2::element_blank(),
+                         panel.background = ggplot2::element_blank(),
+                         axis.text = ggplot2::element_text(colour = grey(0.2)),
+                         strip.background = ggplot2::element_rect(fill = grey(0.97)),#strcol #, colour = grey(0.9), size = NULL, linetype = NULL, color = NULL, inherit.blank = FALSE
+                         #axis.line = element_line(colour = "black"),
+                         legend.position = "none") +
+          ggplot2::labs(title = paste(species,"trajectories within Provinces and States"), x = "", y = "Annual indices") +
+
+          #ggplot2::geom_point(data = indices,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6),size = 0.5, alpha = 0.2)+
+          ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index),) +
+          ggplot2::geom_ribbon(data = indices, ggplot2::aes(x = Year, ymin = lci, ymax = uci), alpha = 0.12)+
+          ggplot2::scale_x_continuous(breaks = yys)+
+          ggplot2::coord_cartesian(ylim = c(0,uplim))+
+          geofacet::facet_geo(facets = ~ code,grid = facets,label = "code")
+        #geom_text_repel(data = labsbcr, aes(x = year, y = index,label = BCR),size = 2)
+
+      }
+    }
+
+  }
+
+     return(ptraj)
 
 }#end function
 
