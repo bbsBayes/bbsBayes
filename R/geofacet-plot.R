@@ -328,39 +328,5 @@ geofacet_plot <- function(indices_list = NULL,
 
 
 
-# indt$prst = gsub(str_extract(indt$stratcode,"-(.*)-"),pattern = "-",replacement = "",fixed = T)
-# indt$prst = as.character(factor(indt$prst,levels = unique(stprovfacet$code)))
-indt = tpout
-indt$state = toTitleCase(tolower(indt$state))
-indt$prst = as.character(factor(indt$state,levels = unique(stprovfacet$name)))
-labsbcr = indt[which(indt$year == max(indt$year,na.rm = T)),]
-
-cols = function(x){
-  cl = "stable"
-  if(x > 1){cl = "inc"}
-  if(x < 0.5 & x > 0.25){cl = "dec"}
-  if(x < 0.25){cl = "Ldec"}
-
-  return(cl)
-}
-
-for(pp in labsbcr$region){
-  indt[which(indt$region == pp),"col"] = cols(labsbcr[which(labsbcr$region == pp),"index"])
-}
-
-
-
-pdf(file = paste0(outdir,"Grassland indicator geofacet plot by stratum.pdf"),
-    height = 8.5,width = 11)
-print(ptraj)
-dev.off()
-# for(p in stprovfacet$code)){
-#
-# }#p
-
-
-
-
-
 
 
