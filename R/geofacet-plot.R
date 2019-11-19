@@ -104,6 +104,8 @@ geofacet_plot <- function(indices_list = NULL,
      #
 
 
+
+
   }else{
 
     indices$code = indices$Region
