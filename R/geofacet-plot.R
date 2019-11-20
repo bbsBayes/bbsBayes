@@ -85,6 +85,10 @@ geofacet_plot <- function(indices_list = NULL,
   lqc = paste0("Index_q_",lq)
   uqc = paste0("Index_q_",uq)
 
+  if (any(grepl(pattern = lqc,x = names(indices))) == FALSE | any(grepl(pattern = uqc,x = names(indices))) == FALSE )
+  {
+    stop("Desired quantiles are not included in the indices_list object. Re-run generate_x_indices() funtion with desired quantiles."); return(NULL)
+  }
 
   indices$lci = indices[,lqc]
   indices$uci = indices[,uqc]
@@ -102,6 +106,76 @@ geofacet_plot <- function(indices_list = NULL,
      #
      # indices$code = indices$Region
      #
+
+    region_names <- utils::read.csv(system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = F)
+    #region_names <- read.csv(paste0("C:/Users/smithac/Documents/GitHub/temp/composite-regions/stratcan.csv"),stringsAsFactors = F)
+ #   region_names$region = factor(region_names$region,levels = levels(area_weights$region))
+
+    indices = merge(indices,region_names[,c("prov_state","region","bcr")],by.x = "Region",by.y = "region")
+    indices$code = indices$prov_state
+
+    map_palette <- c("#313695")
+
+    if(!is.null(trends)){
+
+      trends = merge(trends,region_names[,c("prov_state","region","bcr")],by.x = "Region",by.y = "region")
+      trends$code = trends$prov_state
+
+      breaks <- c(-7, -4, -2, -1, -0.5, 0.5, 1, 2, 4, 7)
+
+      if(slope){
+        trends$Trend <- trends$Slope_Trend
+      }
+      trends$Trendcat <- cut(trends$Trend, breaks = c(-Inf, breaks, Inf),ordered_result = T)
+
+      map_palette <- c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
+                       "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")
+      names(map_palette) <- levels(trends$Trendcat)
+      indices <- merge(indices,trends[,c("Region","Trend","Trendcat")],by = "Region")
+      indices = indices[order(indices$Region,indices$Year),]
+
+      trlabs = indices[which(indices$Year == yys[2]),]
+      trlabs$Trend = paste0(signif(round(trlabs$Trend,1),2)," BCR",trlabs$bcr)
+
+
+    }else{
+
+      indices$Trendcat = factor(rep("#313695",nrow(indices),levels = map_palette))
+    }
+
+
+    ptraj <- ggplot2::ggplot(data = indices) +
+      ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+                     panel.grid.minor = ggplot2::element_blank(),
+                     panel.background = ggplot2::element_blank(),
+                     axis.text = ggplot2::element_text(colour = grey(0.2)),
+                     strip.background = ggplot2::element_rect(fill = grDevices::grey(0.97)),#strcol #, colour = grey(0.9), size = NULL, linetype = NULL, color = NULL, inherit.blank = FALSE
+                     #axis.line = element_line(colour = "black"),
+                     legend.position = "none") +
+      ggplot2::labs(title = paste(species,"trajectories within Provinces and States"), x = "", y = "Annual indices") +
+
+      ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index,group = Region),colour = grDevices::grey(0.6)) +
+      #        ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index,colour = Trendcat)) +
+      ggplot2::geom_ribbon(data = indices, ggplot2::aes(x = Year, ymin = lci, ymax = uci,fill = Trendcat,group = Region), alpha = alpha_ribbon)+
+      ggplot2::scale_x_continuous(breaks = yys)+
+      ggplot2::coord_cartesian(ylim = c(0,uplim))+
+      ggplot2::scale_colour_manual(values = map_palette, aesthetics = c("colour","fill"))
+
+
+    if(add_observed_means){
+      ptraj <- ptraj+
+        ggplot2::geom_point(data = indices,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6),size = 0.5, alpha = alpha_ribbon)
+    }
+
+    if(!is.null(trends)){
+      ptraj <- ptraj+
+        #ggrepel::geom_text_repel(data = trlabs, mapping = ggplot2::aes(x = Year,y = uci,label = Trend,colour = Trendcat), size = 3,nudge_y = 0.2*uplim,segment.alpha = 0.1)
+        ggrepel::geom_text_repel(data = trlabs, mapping = ggplot2::aes(x = Year,y = uci,label = Trend),colour = grDevices::grey(0.6), size = 2,nudge_y = 0.2*uplim,segment.alpha = 0.1)
+    }
+
+
+    ptraj <- ptraj+geofacet::facet_geo(facets = ~ code,grid = facets,label = "code")
+
 
 
 
