@@ -376,7 +376,7 @@ prepare_jags_data <- function(strat_data = NULL,
     if (tolower(model) == "slope")
     {
       to_return <- c(to_return,
-                     list(fixedyear = stats::median(unique(spsp_f$year))))
+                     list(fixedyear = stats::floor(median(unique(spsp_f$year)))))
     }
 
     if (tolower(model) %in% c("gam", "gamye"))
