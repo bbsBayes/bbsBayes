@@ -1,0 +1,62 @@
+row,col,code,name
+1,1,AK,Alaska
+1,2,YT,Yukon
+1,3,NT,Northwest Territories
+1,5,BCR7,Bcr7
+1,9,NB,New Brunswick
+1,10,NSPE,Nova Scotia Prince Edward Island
+1,11,NL,Newfoundland and Labrador
+2,2,BC,British Columbia
+2,3,AB,Alberta
+2,4,SK,Saskatchewan
+2,5,MB,Manitoba
+2,8,QC,Quebec
+2,11,ME,Maine
+2,10,NH,New Hampshire
+2,9,VT,Vermont
+2,7,ON,Ontario
+3,6,MI,Michigan
+3,11,MA,Massachusetts
+3,8,NY,New York
+3,5,MN,Minnesota
+3,2,MT,Montana
+3,3,ND,North Dakota
+3,1,WA,Washington
+3,10,RI,Rhode Island
+3,9,CT,Connecticut
+3,4,SD,South Dakota
+4,2,ID,Idaho
+4,8,PA,Pennsylvania
+4,7,OH,Ohio
+4,6,WI,Wisconsin
+4,4,IA,Iowa
+4,3,WY,Wyoming
+4,1,OR,Oregon
+4,10,NJ,New Jersey
+4,9,MD,Maryland
+4,5,IL,Illinois
+5,2,UT,Utah
+5,6,IN,Indiana
+5,9,VA,Virginia
+5,8,WV,West Virginia
+5,7,KY,Kentucky
+5,4,NE,Nebraska
+5,3,CO,Colorado
+5,10,DE,Delaware
+5,1,NV,Nevada
+5,5,MO,Missouri
+6,1,CA,California
+6,2,AZ,Arizona
+6,9,SC,South Carolina
+6,10,NC,North Carolina
+6,7,TN,Tennessee
+6,4,KS,Kansas
+6,5,AR,Arkansas
+6,8,AL,Alabama
+6,3,OK,Oklahoma
+6,6,MS,Mississippi
+7,2,NM,New Mexico
+7,5,LA,Louisiana
+7,9,GA,Georgia
+7,3,TX,Texas
+8,10,FL,Florida
