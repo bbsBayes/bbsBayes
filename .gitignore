@@ -8,3 +8,6 @@ testfile.R
 *.html
 jags_mod_full.RData
 temp.RData
+jags_mod_full_gam.RData
+temp.geofacet.pdf
+
