@@ -119,8 +119,8 @@ stratify <- function(by = NULL,
   {
     # Combine all BCR 7
     route[which(route$BCR == 7),"St_Abrev"] <- "BCR7"
-    route[which(route$BCR == 7), "Route"] <- 7
-    bird[which(bird$BCR == 7), "Route"] <- 7
+    route[which(route$BCR == 7), "Route"] <- route[which(route$BCR == 7), "Route"]+route[which(route$BCR == 7), "statenum"]
+    bird[which(bird$BCR == 7), "Route"] <- bird[which(bird$BCR == 7), "Route"]+bird[which(bird$BCR == 7), "statenum"]
     route[which(route$BCR == 7), "statenum"] <- 777
     bird[which(bird$BCR == 7), "statenum"] <- 777
 
