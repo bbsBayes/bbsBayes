@@ -19,7 +19,7 @@ generate_regional_indices(jags_mod = NULL, quantiles = c(0.025, 0.05,
 
 \item{startyear}{Optional first year for which to calculate the annual indices if a trajectory for only the more recent portion of the time series is desired. This is probably most relevant if max_backcast is set and so trajectories for different time-periods could include a different subset of strata (i.e., strata removed)}
 
-\item{max_backcast}{an integer indicating the maximum number of years to backcast the stratum-level estimates before the first year in which the species was observed on any route in that stratum. Default is 5. If the observed data in a given stratum do not include at least one non-zero observation of the species between \item{startyear} and the end of the time series, the stratum is dropped from the relevant regional summary. Optionally this can be set to NULL to ignore any backcasting limit (i.e., to generate annual indices for the entire time series, regardless of when the species was first observed)}
+\item{max_backcast}{an integer indicating the maximum number of years to backcast the stratum-level estimates before the first year in which the species was observed on any route in that stratum. Default is 5. If the observed data in a given stratum do not include at least one non-zero observation of the species between startyear and the end of the time series, the stratum is dropped from the relevant regional summary. Optionally this can be set to NULL to ignore any backcasting limit (i.e., to generate annual indices for the entire time series, regardless of when the species was first observed)}
 }
 \value{
 List of 6 objects:

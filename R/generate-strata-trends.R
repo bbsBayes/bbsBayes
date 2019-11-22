@@ -82,11 +82,23 @@ generate_strata_trends <- function(indices = NULL,
     if(slope){
 
       wy = c(min_year:max_year)
-      ne = log(n[,i,wy])
-      m = t(apply(ne,1,FUN = function(x) stats::lm(x~wy)$coef)) #t(apply(x, 2, function(x.col) lm(y~x.col)$coef))
-      sl.t = as.vector((exp(m[,"wy"])-1)*100)
 
-    }
+      bsl = function(i){
+        n = length(wy)
+        sy = sum(i)
+        sx = sum(wy)
+        ssx = sum(wy^2)
+        sxy = sum(i*wy)
+        b = (n*sxy - sx*sy)/(n*ssx - sx^2)
+        return(b)
+      }
+
+     ne = log(n[,i,wy])
+      m =  t(apply(ne,1,FUN = bsl))
+
+      sl.t = as.vector((exp(m)-1)*100)
+
+     }
 
 
     ch = n[,i,max_year]/n[,i,min_year]

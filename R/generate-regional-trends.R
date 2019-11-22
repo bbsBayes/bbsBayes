@@ -31,10 +31,12 @@
 #'
 
 generate_regional_trends <- function(indices = NULL,
-                                min_year = NULL,
-                                max_year = NULL,
+                                Min_year = NULL,
+                                Max_year = NULL,
                                 quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),
-                                slope = FALSE)
+                                slope = FALSE,
+                                prob_decrease = NULL,
+                                prob_increase = NULL)
 {
   if (is.null(indices))
   {
@@ -42,14 +44,26 @@ generate_regional_trends <- function(indices = NULL,
   }
   n_all = indices$samples
 
-  if (is.null(min_year))
+  if (is.null(Min_year))
   {
     min_year = indices$y_min
+    Min_year <- indices$startyear
+    minyn <- 1
+  }else{
+    min_year <- indices$y_min + (Min_year-indices$startyear)
+    minyn <- 1 + (Min_year-indices$startyear)
   }
-  if (is.null(max_year))
+  if (is.null(Max_year))
   {
     max_year = indices$y_max
+    Max_year = indices$startyear+(max_year - indices$y_min)
+    maxyn <- 1+(indices$y_max-indices$y_min)
+  }else{
+    max_year <- indices$y_min + (Max_year-indices$startyear)
+    maxyn <- 1+(Max_year-indices$startyear)
   }
+
+
 regions = indices$regions
 area_weights <- indices$area_weights
 
@@ -88,23 +102,33 @@ w_summary_rows = which(dsum$Region == reg & dsum$Region_type == rr)
 
 reg_alt = unique(dsum[w_summary_rows,"Region_alt"])
 st_inc = unique(dsum[w_summary_rows,"Strata_included"])
-
+nstr = length(st_inc)
 st_exc = unique(dsum[w_summary_rows,"Strata_excluded"])
 
   if(slope){
 
-    wy = c(min_year:max_year)
+    bsl = function(i){
+      n = length(wy)
+      sy = sum(i)
+      sx = sum(wy)
+      ssx = sum(wy^2)
+      sxy = sum(i*wy)
+      b = (n*sxy - sx*sy)/(n*ssx - sx^2)
+      return(b)
+    }
+    wy = c(minyn:maxyn)
     ne = log(n[,wy])
-    m = t(apply(ne,1,FUN = function(x) lm(x~wy)$coef)) #t(apply(x, 2, function(x.col) lm(y~x.col)$coef))
-    sl.t = as.vector((exp(m[,"wy"])-1)*100)
+    m =  t(apply(ne,1,FUN = bsl))
+
+    sl.t = as.vector((exp(m)-1)*100)
 
   }
 
-  ch = n[,max_year]/n[,min_year]
-  tr = 100*((ch^(1/(max_year-min_year)))-1)
+  ch = n[,maxyn]/n[,minyn]
+  tr = 100*((ch^(1/(maxyn-minyn)))-1)
 
-  trendt <- data.frame(Start_year = (indices$startyear+min_year)-1,
-                      End_year = (indices$startyear+max_year)-1,
+  trendt <- data.frame(Start_year = (indices$startyear+minyn)-1,
+                      End_year = (indices$startyear+maxyn)-1,
                       Region = reg,
                       Region_alt = reg_alt,
                       Region_type = rr,
@@ -115,17 +139,47 @@ st_exc = unique(dsum[w_summary_rows,"Strata_excluded"])
   for(qq in quantiles){
     trendt[,paste0("Trend_Q",qq)] <- quantile(tr,qq,names = F)
   }
-  trendt[,"Percent_Change"] <- median(ch)
+
+  ### estimated %change
+  trendt[,"Percent_Change"] <- 100*(median(ch)-1)
   for(qq in quantiles){
     trendt[,paste0("Percent_Change_Q",qq)] <- 100*(quantile(ch,qq,names = F)-1)
   }
 
+  ### optional slope based trends
   if(slope){
     trendt[,"Slope_Trend"] <- median(sl.t)
     for(qq in quantiles){
       trendt[,paste0("Slope_Trend_Q",qq)] <- quantile(sl.t,qq,names = F)
     }
   }
+
+  #### model conditional probabilities of population change during trend period
+  if(!is.null(prob_decrease)){
+    pch = 100*(ch-1)
+for(pp in prob_decrease){
+  trendt[,paste0("prob_decrease > ",pp," percent")] <- length(pch[which(pch < (-1*pp))])/length(pch)
+}
+  }
+  if(!is.null(prob_increase)){
+    pch = 100*(ch-1)
+    for(pp in prob_increase){
+      trendt[,paste0("prob_increase > ",pp," percent")] <- length(pch[which(pch > (pp))])/length(pch)
+    }
+  }
+
+
+  ###### reliability criteria
+  trendt[,"Relative Abundance"] <- mean(dsum[w_summary_rows,"Index"])
+  trendt[,"Observed Relative Abundance"] <- mean(dsum[w_summary_rows,"obs_mean"])
+  trendt[,"Number of strata"] <- nstr
+  q1 = quantiles[1]
+  q2 = quantiles[length(quantiles)]
+  trendt[,paste("Width of",(q2-q1)*100,"percent Credible Interval")] <- trendt[,paste0("Trend_Q",q2)]-trendt[,paste0("Trend_Q",q1)]
+if(slope){
+  trendt[,paste("Width of",(q2-q1)*100,"percent Credible Interval Slope")] <- trendt[,paste0("Slope_Trend_Q",q2)]-trendt[,paste0("Slope_Trend_Q",q1)]
+}
+
 
   trend = rbind(trend,trendt)
   }
