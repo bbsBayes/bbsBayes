@@ -98,25 +98,20 @@ model
 	tauX~dgamma(1.0E-2,1.0E-4) #alternate prior, original from Cainiceanu et al. second gamma parameter == 0.0001 << (abs(mean(B.X[]))^2)/2, mean(B.X[]) ~ 0.2
 	#tauX <- 1/pow(sdX,2) # prior on precision of gam hyperparameters
 	sdX <- 1/(pow(tauX,0.5)) # ~ dunif(0,5)
-	taubeta <- 1/pow(sdbeta,2) # prior on precision of gam coefficients(
-	sdbeta ~ dunif(0,5)
+	taubeta ~dgamma(1.0E-2,1.0E-4) # prior on precision of gam coefficients(
+	sdbeta <- 1/(pow(taubeta,0.5))
 
 	for(j in 1:nknots)
 	{
 		# Computation of GAM components
 		B.X[j] ~ dnorm(0,tauX)
 
-		################################################
-		#alternate strategy for the beta.X - avoiding extreme values
-		#          beta.X.tmp[j] ~ dnorm(0,tauX)    #I(-10,10)
-		#
-		#         beta.X[j] <- max(min(beta.X.tmp[j],10),-10)
-		################################################
-
 		for(k in 1:nstrata)
 		{
-			beta.X.p[k,j] ~ dnorm(0,taubeta)
-      beta.X[k,j] <- B.X[j]+beta.X.p[k,j]
+			#beta.X.p[k,j] ~ dnorm(0,taubeta) #alternative non-centered parameterization
+      #beta.X[k,j] <- B.X[j]+beta.X.p[k,j]
+      beta.X[k,j] ~ dnorm(B.X[j],taubeta)
+
 
 			for ( i in ymin : ymax )
 			{

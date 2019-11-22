@@ -69,7 +69,12 @@ generate_regional_indices <- function(jags_mod = NULL,
     warning("No original data object supplied to generate_regional_indices(). Number of routes will not be calculated")
   }
 
-  data_list <- extract_index_data(jags_mod = jags_mod,alt_n = alternate_n)
+  if(!is.null(jags_data)){
+  data_list <- extract_index_data(jags_mod = jags_mod,alt_n = alternate_n,jags_data = jags_data)
+  }else{
+    data_list <- extract_index_data(jags_mod = jags_mod,alt_n = alternate_n)
+
+  }
   n <- data_list$n
   stratify_by <- jags_mod$stratify_by
  original_data = data_list$original_data
@@ -111,7 +116,7 @@ generate_regional_indices <- function(jags_mod = NULL,
 
   raw = rawall[which(rawall$year >= y_min),]
 
-  original_data <- original_data[which(original_data$Year_Factored >= ymin),]
+  original_data <- original_data[which(original_data$Year_Factored >= y_min),]
   nrts_total_by_strat <- tapply(original_data$Route,original_data$Stratum_Factored,FUN = function(x){length(unique(x))})
   non_zero_weight = bugs_data$nonzeroweight
 
