@@ -7,33 +7,34 @@
 #' @param Max_year Maximum year to calculate trends to (e.g., 2018). Default is NULL, in which case the trend is calculated up to the last year of the time-series of the supplied annual_indices file
 #' @param quantiles vector of quantiles to be sampled from the posterior distribution Defaults to c(0.025,0.05,0.25,0.5,0.75,0.95,0.975)
 #' @param slope Logical, if TRUE, calculates an alternative trend metric, the slope of a log-linear regression through the annual indices. Default FALSE
-#' @param prob_decrease Optional vector of percent-change values to calculate the posterior probabilities that the population has decreased by at least this much (e.g., prob_decrease = c(50) would result in a calculation of the probability that the population has decreased by > 50% over the period of the trend. Default is NULL, in which case no probability of decrease is calculated.
-#' @param prob_increase Optional vector of percent-change values to calculate the posterior probabilities that the population has increased by at least this much (e.g., prob_increase = c(100) would result in a calculation of the probability that the population has incrased by > 100%, i.e., doubled, over the period of the trend. Default is NULL, in which case no probability of increase is calculated.
+#' @param prob_decrease Optional vector of percent-change values to calculate the posterior probabilities that the population has decreased by at least this much (e.g., prob_decrease = c(50) would result in a calculation of the probability that the population has decreased by more than 50 percent over the period of the trend, i.e., less than half the population remains. Default is NULL, in which case no probability of decrease is calculated.
+#' @param prob_increase Optional vector of percent-change values to calculate the posterior probabilities that the population has increased by at least this much (e.g., prob_increase = c(100) would result in a calculation of the probability that the population has incrased by more than 100 percent, i.e., doubled, over the period of the trend. Default is NULL, in which case no probability of increase is calculated.
 #'
 #' @return Dataframe with one row for each region included in indices object, and columns including:
-#'  \item{Start_year}{first year of the trend}
-#'  \item{End_year}{last year of the trend}
-#'  \item{Region}{short name of the region}
-#'  \item{Region_alt}{Long name for region}
-#'  \item{Region_type}{Type of region including "continental", "national","Province/State","BCR", or "stratum"}
-#'  \item{Strata_included}{Strata included in the trend and annual index calculations}
-#'  \item{Strata_excluded}{Strata excluded from the trend and annual index calculations because they have no observations of the species in the first part of the time series}
-#'  \item{Trend}{Estimated mean annual percent change over the trend time-period (i.e., Start_year - End_year), according to an endpoint comparison of annual index in Start_year and the annual index in End_year}
-#'  \item{Trend_Q_quantiles}{quantiles of the posterior distribution of Trend estimates, matching levels included in the quantiles argument}
-#'  \item{Percent_Change}{Estimated total percent change over the trend time-period}
-#'  \item{Percent_Change_Q_quantiles}{quantiles of the posterior distribution of Percent Change estimates, matching levels included in the quantiles argument}
-#'  \item{Slope_Trend}{Estimated mean annual percent change over the trend time-period, according to the slope of a linear regression through the log-transformed annual indices}
-#'  \item{Slope_Trend_Q_quantiles}{quantiles of the posterior distribution of Percent Change estimates, matching levels included in the quantiles argument}
-#'  \item{prob_decrease_X_percent}{proportion of the posterior distribution of Percent_Change that is below the percentage values supplied in prob_decrease}
-#'  \item{prob_increase_X_percent}{proportion of the posterior distribution of Percent_Change that is above the percentage values supplied in prob_increase}
-#'  \item{Relative_Abundance}{Mean of the annual index values across all years. An estimate of the average relative abundance of the species in the region. Can be interepreted as the predicted average count of the species in an average year on an average route by an average observer, for the years, routes, and observers in the existing data}
-#'  \item{Observed_Relative_Abundance}{Mean of the observed annual counts of birds across all routes and all years. An alternative estimate of the average relative abundance of the species in the region. For composite regions (i.e., anything other than stratum-level estimates) this average count is calculated as an area-weighted average across all strata included}
-#'  \item{Number_of_Strata}{The number of strata included in the region}
-#'  \item{Width_of_X_percent_Credible_Interval}{Width (in percent/year) of the credible interval on the Trend calculation. Calculated for the widest credible interval requested in quantiles argument. Default is 95 percent CI (i.e., Trend_Q0.975 - Trend_Q0.025)}
-#'  \item{Width_of_X_percent_Credible_Interval_Slope}{Width (in percent/year) of the credible interval on the Trend calculation for the slope-based trend. Calculated for the widest credible interval requested in quantiles argument. Default is 95 percent CI (i.e., Slope_Trend_Q0.975 - Slope_Trend_Q0.025)}
-#'  \item{Number_of_Routes}{The number of unique BBS routes included in the trend calculation for this region and species}
-#'  \item{Mean_Number_of_Routes}{The average number of BBS routes across years contributing data for this region and species}
+#'   \item{Start_year}{first year of the trend}
+#'   \item{End_year}{last year of the trend}
+#'   \item{Region}{short name of the region}
+#'   \item{Region_alt}{Long name for region}
+#'   \item{Region_type}{Type of region including "continental", "national","Province/State","BCR", or "stratum"}
+#'   \item{Strata_included}{Strata included in the trend and annual index calculations}
+#'   \item{Strata_excluded}{Strata excluded from the trend and annual index calculations because they have no observations of the species in the first part of the time series}
+#'   \item{Trend}{Estimated mean annual percent change over the trend time-period (i.e., Start_year - End_year), according to an endpoint comparison of annual index in Start_year and the annual index in End_year}
+#'   \item{Trend_Q_quantiles}{quantiles of the posterior distribution of Trend estimates, matching levels included in the quantiles argument}
+#'   \item{Percent_Change}{Estimated total percent change over the trend time-period}
+#'   \item{Percent_Change_Q_quantiles}{quantiles of the posterior distribution of Percent Change estimates, matching levels included in the quantiles argument}
+#'   \item{Slope_Trend}{Estimated mean annual percent change over the trend time-period, according to the slope of a linear regression through the log-transformed annual indices}
+#'   \item{Slope_Trend_Q_quantiles}{quantiles of the posterior distribution of Percent Change estimates, matching levels included in the quantiles argument}
+#'   \item{prob_decrease_X_percent}{proportion of the posterior distribution of Percent_Change that is below the percentage values supplied in prob_decrease}
+#'   \item{prob_increase_X_percent}{proportion of the posterior distribution of Percent_Change that is above the percentage values supplied in prob_increase}
+#'   \item{Relative_Abundance}{Mean of the annual index values across all years. An estimate of the average relative abundance of the species in the region. Can be interepreted as the predicted average count of the species in an average year on an average route by an average observer, for the years, routes, and observers in the existing data}
+#'   \item{Observed_Relative_Abundance}{Mean of the observed annual counts of birds across all routes and all years. An alternative estimate of the average relative abundance of the species in the region. For composite regions (i.e., anything other than stratum-level estimates) this average count is calculated as an area-weighted average across all strata included}
+#'   \item{Number_of_Strata}{The number of strata included in the region}
+#'   \item{Width_of_X_percent_Credible_Interval}{Width (in percent/year) of the credible interval on the Trend calculation. Calculated for the widest credible interval requested in quantiles argument. Default is 95 percent CI (i.e., Trend_Q0.975 - Trend_Q0.025)}
+#'   \item{Width_of_X_percent_Credible_Interval_Slope}{Width (in percent/year) of the credible interval on the Trend calculation for the slope-based trend. Calculated for the widest credible interval requested in quantiles argument. Default is 95 percent CI (i.e., Slope_Trend_Q0.975 - Slope_Trend_Q0.025)}
+#'   \item{Number_of_Routes}{The number of unique BBS routes included in the trend calculation for this region and species}
+#'   \item{Mean_Number_of_Routes}{The average number of BBS routes across years contributing data for this region and species}
 #'
+#' @importFrom stats quantile
 #'
 #' @examples
 #'
@@ -162,20 +163,20 @@ st_exc = unique(dsum[w_summary_rows,"Strata_excluded"])
                       Trend = median(tr),
                       stringsAsFactors = F)
   for(qq in quantiles){
-    trendt[,paste0("Trend_Q",qq)] <- quantile(tr,qq,names = F)
+    trendt[,paste0("Trend_Q",qq)] <- stats::quantile(tr,qq,names = F)
   }
 
   ### estimated %change
   trendt[,"Percent_Change"] <- 100*(median(ch)-1)
   for(qq in quantiles){
-    trendt[,paste0("Percent_Change_Q",qq)] <- 100*(quantile(ch,qq,names = F)-1)
+    trendt[,paste0("Percent_Change_Q",qq)] <- 100*(stats::quantile(ch,qq,names = F)-1)
   }
 
   ### optional slope based trends
   if(slope){
     trendt[,"Slope_Trend"] <- median(sl.t)
     for(qq in quantiles){
-      trendt[,paste0("Slope_Trend_Q",qq)] <- quantile(sl.t,qq,names = F)
+      trendt[,paste0("Slope_Trend_Q",qq)] <- stats::quantile(sl.t,qq,names = F)
     }
   }
 
