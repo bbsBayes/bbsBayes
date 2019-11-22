@@ -4,13 +4,15 @@
 \alias{plot_cont_indices}
 \title{Generate continental plot of index trajectories.}
 \usage{
-plot_cont_indices(indices_list = NULL, ci_width = 0.95,
+plot_cont_indices(indices_list = NULL, select = F, ci_width = 0.95,
   min_year = NULL, max_year = NULL, species = "", title_size = 20,
   axis_title_size = 18, axis_text_size = 16, add_observed_means = F)
 }
 \arguments{
 \item{indices_list}{List of indices of annual abundance and other results produced by
 \code{generate_cont_indices}}
+
+\item{select}{logical flag to indicate if the continental data need to be selected out of an indices_list object that includes stratum, national, or other region-types. Default is FALSE}
 
 \item{ci_width}{quantile to define the width of the plotted credible interval. Defaults to 0.95, lower = 0.025 and upper = 0.975}
 

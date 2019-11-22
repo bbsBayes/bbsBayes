@@ -4,11 +4,14 @@
 \alias{generate_map}
 \title{Generate a map of trends by strata.}
 \usage{
-generate_map(trend = NULL, stratify_by = NULL, slope = FALSE)
+generate_map(trend = NULL, select = F, stratify_by = NULL,
+  slope = FALSE)
 }
 \arguments{
 \item{trend}{Dataframe of strata trends produced by
-\code{generate_strata_trends}}
+\code{generate_strata_trends} or \code{generate_regional_trends(..., regions = "stratum")}}
+
+\item{select}{logical flag to indicate if the stratum data need to be selected out of an trends object that includes continental, national, or other region-types. Default is FALSE}
 
 \item{stratify_by}{How were the data stratified?}
 

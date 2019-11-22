@@ -4,13 +4,15 @@
 \alias{geofacet_plot}
 \title{Generate a geofacet plot of population trajectories by province/state}
 \usage{
-geofacet_plot(indices_list = NULL, stratify_by = NULL,
+geofacet_plot(indices_list = NULL, select = F, stratify_by = NULL,
   ci_width = 0.95, multiple = FALSE, trends = NULL, slope = FALSE,
   add_observed_means = FALSE, species = "")
 }
 \arguments{
 \item{indices_list}{Dataframe of strata or state/province indices produced by
 \code{generate_strata_indices} or \code{generate_regional_indices}}
+
+\item{select}{logical flag to indicate if the continental data need to be selected out of an indices_list object that includes stratum, national, or other region-types. Default is FALSE}
 
 \item{stratify_by}{How were the data stratified?}
 

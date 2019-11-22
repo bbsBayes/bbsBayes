@@ -10,7 +10,7 @@
 #' @export
 #'
 
-extract_index_data <- function(jags_mod = NULL,alt_n = "n")
+extract_index_data <- function(jags_mod = NULL,alt_n = "n",jags_data = NULL)
 {
   # Read area weights
   stratify_by <- jags_mod$stratify_by
@@ -39,10 +39,16 @@ extract_index_data <- function(jags_mod = NULL,alt_n = "n")
   area_weights <- area_weights[ order(match(area_weights$region, strata_used)),]
   area_weights$num <- strata_num
 
+  if(!is.null(jags_data)){
+    original_data = get_prepared_data(jags_data = jags_data)
+  }else{
+    original_data = NULL
+  }
   return(list(n = n,
               area_weights = area_weights,
               y_min = y_min,
               y_max = y_max,
               r_year = jags_mod$r_year,
-              bugs_data = bugs_data))
+              bugs_data = bugs_data,
+              original_data = original_data))
 }

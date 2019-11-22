@@ -13,7 +13,7 @@ generate_regional_indices(jags_mod = NULL, quantiles = c(0.025, 0.05,
 
 \item{quantiles}{vector of quantiles to be sampled from the posterior distribution Defaults to c(0.025,0.05,0.25,0.5,0.75,0.95,0.975)}
 
-\item{regions}{vector selcting regional compilation(s) to calculate. Default is "continental","stratum", options include national", "prov_state", or "bcr", for the stratifications that include areas that align with those regions.}
+\item{regions}{vector selcting regional compilation(s) to calculate. Default is "continental","stratum", options also include "national", "prov_state", or "bcr", for the stratifications that include areas that align with those regions.}
 
 \item{alternate_n}{text string indicating the name of the alternative approach to calculating an annual index, Default is "n"}
 
