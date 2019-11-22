@@ -5,6 +5,7 @@
 #' @param indices_list List of indices of annual abundance and other results produced by
 #'   \code{generate_cont_indices}
 #' @param ci_width quantile to define the width of the plotted credible interval. Defaults to 0.95, lower = 0.025 and upper = 0.975
+#' @param select logical flag to indicate if the continental data need to be selected out of an indices_list object that includes stratum, national, or other region-types. Default is FALSE
 #' @param min_year Minimum year to plot
 #' @param max_year Maximum year to plot
 #' @param species Species name to be added onto the plot
@@ -58,6 +59,7 @@
 #' @export
 #'
 plot_cont_indices <- function(indices_list = NULL,
+                              select = F,
                               ci_width = 0.95,
                             min_year = NULL,
                             max_year = NULL,
@@ -74,6 +76,10 @@ plot_cont_indices <- function(indices_list = NULL,
 
 
   indices = indices_list$data_summary
+
+  if(select){
+  indices = indices[which(indices$Region_Type == "continental"),]
+}
 
   lq = (1-ci_width)/2
   uq = ci_width+lq

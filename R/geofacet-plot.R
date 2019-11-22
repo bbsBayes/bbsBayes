@@ -9,6 +9,7 @@
 #'
 #' @param indices_list Dataframe of strata or state/province indices produced by
 #'   \code{generate_strata_indices} or \code{generate_regional_indices}
+#' @param select logical flag to indicate if the continental data need to be selected out of an indices_list object that includes stratum, national, or other region-types. Default is FALSE
 #' @param stratify_by How were the data stratified?
 #' @param multiple Logical, if TRUE, multiple strata-level trajectories are plotted within each prov/state facet
 #' @param trends Optional dataframe of matching strata or state/province trends produced by
@@ -57,6 +58,7 @@
 
 
 geofacet_plot <- function(indices_list = NULL,
+                          select = F,
                           stratify_by = NULL,
                           ci_width = 0.95,
                           multiple = FALSE,
@@ -80,6 +82,14 @@ geofacet_plot <- function(indices_list = NULL,
   facets <- utils::read.csv(system.file("geofacet-grids", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = F)
 
   indices = indices_list$data_summary
+  if(select){
+    if(multiple){
+    indices <- indices[which(indices$Region_type == "stratum"),]
+    }else{
+      indices <- indices[which(indices$Region_type == "prov_state"),]
+    }
+    }
+
   lq = (1-ci_width)/2
   uq = ci_width+lq
   lqc = paste0("Index_q_",lq)
