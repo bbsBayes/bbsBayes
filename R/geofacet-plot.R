@@ -173,18 +173,19 @@ geofacet_plot <- function(indices_list = NULL,
 
 
     if(add_observed_means){
-      ptraj <- ptraj+
-        ggplot2::geom_point(data = indices,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6),size = 0.5, alpha = alpha_ribbon)
+      ptraj+
+        ggplot2::geom_point(data = indices,ggplot2::aes(x = Year,y = obs_mean,group = Region),colour = grDevices::grey(0.6),size = 0.5, alpha = alpha_ribbon)
     }
 
     if(!is.null(trends)){
-      ptraj <- ptraj+
+      ptraj+
         #ggrepel::geom_text_repel(data = trlabs, mapping = ggplot2::aes(x = Year,y = uci,label = Trend,colour = Trendcat), size = 3,nudge_y = 0.2*uplim,segment.alpha = 0.1)
-        ggrepel::geom_text_repel(data = trlabs, mapping = ggplot2::aes(x = Year,y = uci,label = Trend),colour = grDevices::grey(0.6), size = 2,nudge_y = 0.2*uplim,segment.alpha = 0.1)
+        ggrepel::geom_text_repel(data = trlabs, mapping = ggplot2::aes(x = Year,y = uci,label = Trend,group = Region),colour = grDevices::grey(0.6), size = 2,nudge_y = 0.2*uplim,segment.alpha = 0.1)
     }
 
 
-    ptraj <- ptraj+geofacet::facet_geo(facets = ~ code,grid = facets,label = "code")
+    ptraj2 <- ptraj+
+      geofacet::facet_geo(facets = ~ code,grid = facets,label = "code")
 
 
 
@@ -229,7 +230,6 @@ geofacet_plot <- function(indices_list = NULL,
                        #axis.line = element_line(colour = "black"),
                        legend.position = "none") +
         ggplot2::labs(title = paste(species,"trajectories within Provinces and States"), x = "", y = "Annual indices") +
-
         ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index),colour = grDevices::grey(0.6)) +
 #        ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index,colour = Trendcat)) +
         ggplot2::geom_ribbon(data = indices, ggplot2::aes(x = Year, ymin = lci, ymax = uci,fill = Trendcat), alpha = alpha_ribbon)+
@@ -239,25 +239,24 @@ geofacet_plot <- function(indices_list = NULL,
 
 
        if(add_observed_means){
-        ptraj <- ptraj+
+        ptraj+
           ggplot2::geom_point(data = indices,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6),size = 0.5, alpha = alpha_ribbon)
       }
 
       if(!is.null(trends)){
-        ptraj <- ptraj+
+        ptraj+
           #ggrepel::geom_text_repel(data = trlabs, mapping = ggplot2::aes(x = Year,y = uci,label = Trend,colour = Trendcat), size = 3,nudge_y = 0.2*uplim,segment.alpha = 0.1)
         ggrepel::geom_text_repel(data = trlabs, mapping = ggplot2::aes(x = Year,y = uci,label = Trend),colour = grDevices::grey(0.6), size = 2,nudge_y = 0.2*uplim,segment.alpha = 0.1)
       }
-
-
-        ptraj <- ptraj+geofacet::facet_geo(facets = ~ code,grid = facets,label = "code")
+       ptraj2 <- ptraj+
+          geofacet::facet_geo(facets = ~ code,grid = facets,label = "code")
 
 
 
 
   }
 
-     return(ptraj)
+     return(ptraj2)
 
 }#end function
 
