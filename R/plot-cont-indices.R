@@ -117,10 +117,9 @@ plot_cont_indices <- function(indices_list = NULL,
                      plot.title = ggplot2::element_text(size = title_size),
                      axis.title = ggplot2::element_text(size = axis_title_size),
                      axis.text = ggplot2::element_text(size = axis_text_size)) +
-      ggplot2::labs(title = paste(species, " Annual indices: Continental", sep = ""),
+      ggplot2::labs(title = paste(species, " Continental Trajectory and raw mean counts", sep = ""),
                     x = "Year",
-                    y = "Index",
-                    subtitle = paste("Note: scale of observed means and annual indices may not match")) +
+                    y = "Annual index of abundance (mean count)") +
       ggplot2::geom_point(data = indices,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6))+
       ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index)) +
       ggplot2::geom_ribbon(data = indices, ggplot2::aes(x = Year, ymin = lci, ymax = uci), alpha = 0.12)+
@@ -135,9 +134,9 @@ plot_cont_indices <- function(indices_list = NULL,
                      plot.title = ggplot2::element_text(size = title_size),
                      axis.title = ggplot2::element_text(size = axis_title_size),
                      axis.text = ggplot2::element_text(size = axis_text_size)) +
-      ggplot2::labs(title = paste(species, " Annual indices: Continental", sep = ""),
+      ggplot2::labs(title = paste(species, " Continental Trajectory", sep = ""),
                     x = "Year",
-                    y = "Index") +
+                    y = "Annual index of abundance (mean count)") +
       ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index)) +
       ggplot2::geom_ribbon(data = indices, ggplot2::aes(x = Year, ymin = lci, ymax = uci), alpha = 0.12)+
       ggplot2::scale_x_continuous(breaks = yys)+

@@ -128,10 +128,9 @@ plot_strata_indices <- function(indices_list = NULL,
             plot.title = ggplot2::element_text(size = title_size),
             axis.title = ggplot2::element_text(size = axis_title_size),
             axis.text = ggplot2::element_text(size = axis_text_size)) +
-      ggplot2::labs(title = paste(species, " Annual indices for Stratum ", i, sep = ""),
+      ggplot2::labs(title = paste(species, " Trajectory and raw mean counts", i, sep = ""),
            x = "Year",
-           y = "Index",
-           subtitle = paste("Note: scale of observed means and annual indices may not match")) +
+           y = "Annual index of abundance (mean count)") +
       ggplot2::geom_point(data = to_plot,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6))+
       ggplot2::geom_line(data = to_plot, ggplot2::aes(x = Year, y = Index)) +
       ggplot2::geom_ribbon(data = to_plot, ggplot2::aes(x = Year, ymin = lci, ymax = uci), alpha = 0.12)+
@@ -148,9 +147,9 @@ plot_strata_indices <- function(indices_list = NULL,
                        plot.title = ggplot2::element_text(size = title_size),
                        axis.title = ggplot2::element_text(size = axis_title_size),
                        axis.text = ggplot2::element_text(size = axis_text_size)) +
-        ggplot2::labs(title = paste(species, " Annual indices for Stratum ", i, sep = ""),
+        ggplot2::labs(title = paste(species, " Trajectory ", i, sep = ""),
                       x = "Year",
-                      y = "Index") +
+                      y = "Annual index of abundance (mean count)") +
         ggplot2::geom_line(data = to_plot, ggplot2::aes(x = Year, y = Index)) +
         ggplot2::geom_ribbon(data = to_plot, ggplot2::aes(x = Year, ymin = lci, ymax = uci), alpha = 0.12)+
         ggplot2::scale_x_continuous(breaks = yys)+

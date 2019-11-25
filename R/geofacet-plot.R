@@ -24,10 +24,10 @@
 #'
 #' @return ggplot object
 #'
+#' @importFrom geofacet facet_geo
 #' @importFrom ggplot2 ggplot theme element_blank element_line
 #' labs geom_line geom_ribbon aes element_text element_rect
 #' @importFrom grDevices grey
-#' @importFrom geofacet facet_geo
 #' @importFrom ggrepel geom_text_repel
 #'
 #' @examples
@@ -118,7 +118,7 @@ geofacet_plot <- function(indices_list = NULL,
      #
 
     region_names <- utils::read.csv(system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = F)
-    #region_names <- read.csv(paste0("C:/Users/smithac/Documents/GitHub/temp/composite-regions/stratcan.csv"),stringsAsFactors = F)
+    #region_names <- read.csv(paste0("C:/Users/smithac/Documents/GitHub/bbsBayes/inst/composite-regions/stratcan.csv"),stringsAsFactors = F)
  #   region_names$region = factor(region_names$region,levels = levels(area_weights$region))
 
     indices = merge(indices,region_names[,c("prov_state","region","bcr")],by.x = "Region",by.y = "region")
@@ -145,13 +145,16 @@ geofacet_plot <- function(indices_list = NULL,
       indices = indices[order(indices$Region,indices$Year),]
 
       trlabs = indices[which(indices$Year == yys[2]),]
-      trlabs$Trend = paste0(signif(round(trlabs$Trend,1),2)," BCR",trlabs$bcr)
+      trlabs$lbl = paste0(signif(round(trlabs$Trend,1),2)," BCR",trlabs$bcr)
 
 
     }else{
 
       indices$Trendcat = factor(rep("#313695",nrow(indices),levels = map_palette))
-    }
+      trlabs = indices[which(indices$Year == yys[2]),]
+      trlabs$lbl = paste0("BCR",trlabs$bcr)
+
+       }
 
 
     ptraj <- ggplot2::ggplot(data = indices) +
@@ -169,23 +172,16 @@ geofacet_plot <- function(indices_list = NULL,
       ggplot2::geom_ribbon(data = indices, ggplot2::aes(x = Year, ymin = lci, ymax = uci,fill = Trendcat,group = Region), alpha = alpha_ribbon)+
       ggplot2::scale_x_continuous(breaks = yys)+
       ggplot2::coord_cartesian(ylim = c(0,uplim))+
-      ggplot2::scale_colour_manual(values = map_palette, aesthetics = c("colour","fill"))
+      ggplot2::scale_colour_manual(values = map_palette, aesthetics = c("colour","fill"))+
+      ggrepel::geom_text_repel(data = trlabs, mapping = ggplot2::aes(x = Year,y = uci,label = lbl,group = Region),colour = grDevices::grey(0.6), size = 2,nudge_y = 0.2*uplim,segment.alpha = 0.1)
 
 
     if(add_observed_means){
-      ptraj+
-        ggplot2::geom_point(data = indices,ggplot2::aes(x = Year,y = obs_mean,group = Region),colour = grDevices::grey(0.6),size = 0.5, alpha = alpha_ribbon)
-    }
-
-    if(!is.null(trends)){
-      ptraj+
-        #ggrepel::geom_text_repel(data = trlabs, mapping = ggplot2::aes(x = Year,y = uci,label = Trend,colour = Trendcat), size = 3,nudge_y = 0.2*uplim,segment.alpha = 0.1)
-        ggrepel::geom_text_repel(data = trlabs, mapping = ggplot2::aes(x = Year,y = uci,label = Trend,group = Region),colour = grDevices::grey(0.6), size = 2,nudge_y = 0.2*uplim,segment.alpha = 0.1)
+      ptraj <- ptraj+ggplot2::geom_point(data = indices,ggplot2::aes(x = Year,y = obs_mean,group = Region),colour = grDevices::grey(0.6),size = 0.5, alpha = alpha_ribbon)
     }
 
 
-    ptraj2 <- ptraj+
-      geofacet::facet_geo(facets = ~ code,grid = facets,label = "code")
+   outplot <- ptraj+geofacet::facet_geo(facets = ~ code,grid = facets,label = "code")
 
 
 
@@ -212,12 +208,13 @@ geofacet_plot <- function(indices_list = NULL,
       names(map_palette) <- levels(trends$Trendcat)
       indices <- merge(indices,trends[,c("Region","Trend","Trendcat")],by = "Region")
       trlabs = indices[which(indices$Year == yys[2]),]
-      trlabs$Trend = paste(signif(round(trlabs$Trend,1),2),"%/yr")
+      trlabs$lbl = paste(signif(round(trlabs$Trend,1),2),"%/yr")
 
 
        }else{
 
       indices$Trendcat = factor(rep("#313695",nrow(indices),levels = map_palette))
+
       }
 
 
@@ -239,24 +236,21 @@ geofacet_plot <- function(indices_list = NULL,
 
 
        if(add_observed_means){
-        ptraj+
-          ggplot2::geom_point(data = indices,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6),size = 0.5, alpha = alpha_ribbon)
+        ptraj <- ptraj+ggplot2::geom_point(data = indices,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6),size = 0.5, alpha = alpha_ribbon)
       }
 
       if(!is.null(trends)){
-        ptraj+
-          #ggrepel::geom_text_repel(data = trlabs, mapping = ggplot2::aes(x = Year,y = uci,label = Trend,colour = Trendcat), size = 3,nudge_y = 0.2*uplim,segment.alpha = 0.1)
-        ggrepel::geom_text_repel(data = trlabs, mapping = ggplot2::aes(x = Year,y = uci,label = Trend),colour = grDevices::grey(0.6), size = 2,nudge_y = 0.2*uplim,segment.alpha = 0.1)
+        ptraj <- ptraj+ggrepel::geom_text_repel(data = trlabs, mapping = ggplot2::aes(x = Year,y = uci,label = lbl),colour = grDevices::grey(0.6), size = 2,nudge_y = 0.2*uplim,segment.alpha = 0.1)
       }
-       ptraj2 <- ptraj+
-          geofacet::facet_geo(facets = ~ code,grid = facets,label = "code")
+
+      outplot <- ptraj+geofacet::facet_geo(facets = ~ code,grid = facets,label = "code")
 
 
 
 
   }
 
-     return(ptraj2)
+     return(outplot)
 
 }#end function
 
