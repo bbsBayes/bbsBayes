@@ -8,8 +8,8 @@ model
 	for( k in 1 : ncounts )
 	{
 		log(lambda[k]) <- obs[strat[k],obser[k]] + eta*firstyr[k] + strata[strat[k]] + yeareffect[strat[k],year[k]] + yy[strat[k],year[k]] + noise[k]
-	 	noise[k] ~ dnorm(0, taunoise)
-    #noise[k] ~ dt(0, taunoise, nu) #alternative t-distributed noise = heavy-tailed overdispersion
+	#	noise[k] ~ dnorm(0, taunoise)
+    noise[k] ~ dt(0, taunoise, nu) #alternative t-distributed noise = heavy-tailed overdispersion
 		count[k] ~ dpois(lambda[k])
 
 		#----------------------------------#
@@ -36,7 +36,7 @@ model
 
 	### fixed effect priors
 
-#	nu ~ dgamma(2, 0.1) #degrees of freedom (i.e., the heavy-tail component of the t-distribution), if nu is large (infinite) this is equivalent to the normal distribution noise
+	nu ~ dgamma(2, 0.1) #degrees of freedom (i.e., the heavy-tail component of the t-distribution), if nu is large (infinite) this is equivalent to the normal distribution noise
   taunoise ~ dgamma(0.001,0.001)
 	sdnoise <- 1 / pow(taunoise, 0.5)
 	#taunoise <- 1/pow(sdnoise,2)#~ dgamma(0.001,0.001) # alternative priors

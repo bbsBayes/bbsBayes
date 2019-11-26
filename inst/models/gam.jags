@@ -2,8 +2,9 @@ model
 {  #### counts and overdispersion effects  ###### Hierarchical GAM model first applied to BBS data in 2017 testing
 	for( k in 1 : ncounts )
 	{
-		log(lambda[k]) <- obs[strat[k],obser[k]] + eta*firstyr[k] + strata[strat[k]] + yeareffect[year[k],strat[k]] + noise[k]
-		noise[k] ~ dnorm(0, taunoise)
+		log(lambda[k]) <- obs[strat[k],obser[k]] + eta*firstyr[k] + strata[strat[k]] + yeareffect[strat[k],year[k]] + noise[k]
+	 	noise[k] ~ dnorm(0, taunoise)
+    #noise[k] ~ dt(0, taunoise, nu) #alternative t-distributed noise = heavy-tailed overdispersion
 
 		count[k] ~ dpois(lambda[k])
 		#----------------------------------#
@@ -30,6 +31,7 @@ model
 
 	### fixed effect priors
 
+#	nu ~ dgamma(2, 0.1) #degrees of freedom (i.e., the heavy-tail component of the t-distribution), if nu is large (infinite) this is equivalent to the normal distribution noise
 	taunoise ~ dgamma(0.001,0.001)
 	sdnoise <- 1 / pow(taunoise, 0.5)
 	#taunoise <- 1/pow(sdnoise,2)#~ dgamma(0.001,0.001) # alternative priors
@@ -37,7 +39,7 @@ model
 	#mulogtauobs ~ dnorm(0,2)#3.33) #informative prior that reduces the chance of very large values of sdobs
 	#mulogtauobs ~ dnorm(0.0,1.0E-6) #alternative less informative prior
 	#taulogtauobs ~ dgamma(2,0.2) #informative prior that reduces the chance of very large values of sdobs
-	eta ~ dnorm( 0.0,1.0E-6)
+	eta ~ dnorm( 0.0,0.01)
 	STRATA ~ dnorm( 0.0,0.01)
 
 	taustrata ~ dgamma(0.001,0.0001) #<- 1/pow(sdbeta,2)#
@@ -48,36 +50,30 @@ model
  sdobs <- 1/pow(tauobs, 0.5)
  tauobs ~ dgamma(0.001,0.0001)
 
+
 	#### stratum-level effects  ######
-	for( s in 1 : nstrata ) #run 159 times for mourning dove
+	for( i in 1 : nstrata )
 	{
 		#### observer effects  ######
 
-		for( i in 1 : nobservers[s] )
+		for( o in 1 : nobservers[i] )
 		{
-			#obs[s,i] ~ dnorm( 0.0,tauobs[s])
-			obs[s,i] ~ dnorm(0.0, tauobs)
+			#obs[i,o] ~ dnorm( 0.0,tauobs[i])
+			obs[i,o] ~ dnorm(0.0, tauobs)
 		}
-
-
-		#log(tauobs[s]) <- logtauobs[s]
-		#logtauobs[s] ~ dnorm(mulogtauobs,taulogtauobs)
-		#sdobs[s] <- 1 / pow(tauobs[s], 0.5)
+		#log(tauobs[i]) <- logtauobs[i]
+		#logtauobs[i] ~ dnorm(mulogtauobs,taulogtauobs)
+		#sdobs[i] <- 1 / pow(tauobs, 0.5)
 		#### end observer effects  ######
 
 
 		### stratum-level priors
 
-		strata.p[s] ~ dnorm(0,taustrata)
-		strata[s] <- STRATA + strata.p[s]
-		sdyear[s] <- 1/pow(tauyear[s],0.5)
-		tauyear[s] ~ dgamma(0.001,0.001) #
-		#tauyear[s] <- 1/pow(sdyear[s],2)
-		#sdyear[s] ~ dunif(0.00001,5)
-		expstrata[s] <- exp(strata[s])
-		overdisp[s] <- 1 + 1/(expstrata[s]*taunoise)
+		strata.p[i] ~ dnorm(0,taustrata)
+		strata[i] <- STRATA + strata.p[i]
+		expstrata[i] <- exp(strata[i])
+		overdisp[i] <- 1 + 1/(expstrata[i]*taunoise)
 	}# end s strata loop and stratum-level effects
-
 
 
 
@@ -88,50 +84,42 @@ model
 	tauX~dgamma(1.0E-2,1.0E-4) #alternate prior, original from Cainiceanu et al. second gamma parameter == 0.0001 << (abs(mean(B.X[]))^2)/2, mean(B.X[]) ~ 0.2
 	#tauX <- 1/pow(sdX,2) # prior on precision of gam hyperparameters
 	sdX <- 1/(pow(tauX,0.5)) # ~ dunif(0,5)
-	taubeta ~dgamma(1.0E-2,1.0E-4) # prior on precision of gam coefficients(
+	taubeta ~ dgamma(2,0.2) # prior on precision of gam coefficients(
 	sdbeta <- 1/(pow(taubeta,0.5))
 
-	for(j in 1:nknots)
-	{ # Computation of GAM components
-		B.X[j] ~ dnorm(0,tauX)
-
-		for(k in 1:nstrata)
-		{
-			#beta.X.p[k,j] ~ dnorm(0,taubeta) ##alternative non-centered parameterization
-      #beta.X[k,j] <- B.X[j]+beta.X.p[k,j]
-      beta.X[k,j] ~ dnorm(B.X[j],taubeta)
-
-			for ( i in ymin : ymax )
-			{
-				X.part[i,j,k] <- beta.X[k,j]*(X.basis[i,j])
-
-			}#i
-
-		}#k
-	}#j
-
-	for (i in ymin : ymax )
+	for(k in 1:nknots)
 	{
-		for(k in 1:nstrata)
+		# Computation of GAM components
+		B.X[k] ~ dnorm(0,tauX)
+
+		for(i in 1:nstrata)
 		{
-			yeareffect[i,k] <- sum(X.part[i,1:nknots,k])
-		}#k
+			#beta.X.p[i,k] ~ dnorm(0,taubeta) #alternative non-centered parameterization
+      #beta.X[i,k] <- B.X[k]+beta.X.p[i,k]
+      beta.X[i,k] ~ dnorm(B.X[k],taubeta) T(-10,10) #avoiding log density calculation errors
+
+
+			for ( t in ymin : ymax )
+			{
+				X.part[i,k,t] <- beta.X[i,k]*(X.basis[t,k])
+			}#t
+		}#i
+	}#k
+
+		for(i in 1:nstrata)
+		{
+		for (t in ymin : ymax )
+	{
+			yeareffect[i,t] <- sum(X.part[i,1:nknots,t])
+		}#t
 	}#i
-
-
-
-
-
 
 
 	#-------------------------------------------------#
 
 
 
-
-
-
-	#### summary statistics  ######
+#### summary statistics  ######
 	sdn <- exp(0.5*sdnoise*sdnoise)
 
 	for( i in 1 : nstrata )
@@ -140,12 +128,12 @@ model
 		{
 			for(o in 1 : nobservers[i])
 			{
-				no[i,t,o] <- exp(strata[i]+yeareffect[t,i] + obs[i,o])
+				no[i,t,o] <- exp(strata[i]+yeareffect[i,t] + obs[i,o])
 			}
 
 			mn[i,t] <- mean(no[i,t,1 : nobservers[i]])
 			n[i,t] <- nonzeroweight[i]*(mn[i,t]*sdn)
-			n2[i,t] <- nonzeroweight[i]*exp(strata[i]+yeareffect[t,i] + 0.5*sdnoise*sdnoise+ 0.5*sdobs*sdobs) #n2 is an alternative way of calculating the annual indices
+			n2[i,t] <- nonzeroweight[i]*exp(strata[i]+yeareffect[i,t] + 0.5*sdnoise*sdnoise+ 0.5*sdobs*sdobs) #n2 is an alternative way of calculating the annual indices
 		}
 	}
 
