@@ -8,7 +8,7 @@ run_model(jags_data = NULL, model_file_path = NULL, inits = NULL,
   parameters_to_save = c("n"), track_n = TRUE, n_chains = 3,
   n_adapt = NULL, n_burnin = 20000, n_thin = 10,
   n_saved_steps = 2000, n_iter = 10000, parallel = FALSE,
-  quiet = FALSE, ...)
+  quiet = FALSE, modules = c("glm"), ...)
 }
 \arguments{
 \item{jags_data}{List or environment containing the data to model, as output
@@ -52,6 +52,8 @@ If TRUE, the number of cores used will be the minimum of the
 \code{n_chains} specified and the number of cores on your computer}
 
 \item{quiet}{Should JAGS output be suppressed?}
+
+\item{modules}{Character vector of JAGS modules to load before analysis. By default module 'glm' is loaded (in addition to 'basemod' and 'bugs'). To force no additional modules to load, set modules=NULL.}
 
 \item{...}{Additional arguments}
 }
