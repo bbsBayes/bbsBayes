@@ -32,6 +32,7 @@
 #'   If TRUE, the number of cores used will be the minimum of the
 #'   \code{n_chains} specified and the number of cores on your computer
 #' @param quiet Should JAGS output be suppressed?
+#' @param modules Character vector of JAGS modules to load before analysis. By default module 'glm' is loaded (in addition to 'basemod' and 'bugs'). To force no additional modules to load, set modules=NULL.
 #' @param ... Additional arguments
 #' @return jagsUI object
 #'
@@ -92,6 +93,7 @@ run_model <- function(jags_data = NULL,
                       n_iter = 10000,
                       parallel = FALSE,
                       quiet = FALSE,
+                      modules = c("glm"),
                       ...)
 {
   if (is.null(jags_data))
@@ -151,7 +153,8 @@ run_model <- function(jags_data = NULL,
                            n.iter = n_iter + n_burnin,
                            n.thin = n_thin,
                            parallel = parallel,
-                           verbose = !quiet)
+                           verbose = !quiet,
+                           modules = modules)
 
   jags_job$strat_name <- strata_used
   jags_job$stratify_by <- stratify_by
