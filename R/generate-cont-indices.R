@@ -101,6 +101,8 @@ generate_cont_indices <- function(jags_mod = NULL,
   n_median <- apply(N, 2, median)
   data_summary <- data.frame(Year = seq(y_min:y_max),
                              Region = "Continental",
+                             Region_alt = "Continental",
+                             Region_type = "continental",
                              Index = n_median)
   for(qq in quantiles){
   data_summary[,paste0("Index_q_",qq)] <- apply(N,2,stats::quantile,probs = qq)

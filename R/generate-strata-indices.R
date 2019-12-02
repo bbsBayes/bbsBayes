@@ -78,6 +78,8 @@ generate_strata_indices <- function(jags_mod = NULL,
   data_summary <- data.frame(Year = integer(),
                              Index = double(),
                              Region = character(),
+                             Region_alt = character(),
+                             Region_type = character(),
                              stringsAsFactors = FALSE)
 
   for (i in strata_indices)
@@ -90,7 +92,9 @@ generate_strata_indices <- function(jags_mod = NULL,
 
     strat_summary <- data.frame(Year = seq(y_min:y_max),
                                Index = as.numeric(as.vector(n_median[i,])),
-                               Region = area_weights[which(area_weights$num == i), ]$region)
+                               Region = area_weights[which(area_weights$num == i), ]$region,
+                               Region_alt = area_weights[which(area_weights$num == i), ]$region,
+                               Region_type = "stratum")
     strat_summary$Year <- (strat_summary$Year - 1) + min(r_year)
     for(qq in quantiles){
       strat_summary[,paste0("Index_q_",qq)] <- apply(n[,i,],2,stats::quantile,probs = qq)

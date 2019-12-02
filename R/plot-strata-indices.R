@@ -112,10 +112,11 @@ plot_strata_indices <- function(indices_list = NULL,
   yys = c(yys[-length(yys)],mxy)
 
 
+
   plot_index <- 1
-  for (i in unique(indices$Region))
+  for (i in unique(indices$Region_alt))
   {
-    to_plot <- indices[which(indices$Region == i), ]
+    to_plot <- indices[which(indices$Region_alt == i), ]
 
     if(add_observed_means){
 
