@@ -106,7 +106,7 @@ geofacet_plot <- function(indices_list = NULL,
 
   mny = min(indices$Year)
   mxy = max(indices$Year)
-  yys = seq(mny,mxy,length.out = 3)
+  yys = as.integer(seq(mny,mxy,length.out = 3))
 
 
   uplim = max(indices$Index)
