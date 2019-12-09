@@ -17,11 +17,11 @@ model
 	}
 
 
-	nfzero <- sum(fzero[1:ncounts])
+	nfzero <- sum(fzero[1:ncounts]) # number of zeros in the posterior prediction
 	gof <- sum(err[1:ncounts])
 	fgof <- sum(ferr[1:ncounts])
 	diffgof <- gof-fgof
-	posdiff <- step(diffgof)
+	posdiff <- step(diffgof) #Bayesian p-value assessing overall model-fit
 
 #	nu ~ dgamma(2, 0.1) #degrees of freedom (i.e., the heavy-tail component of the t-distribution), if nu is large (infinite) this is equivalent to the normal distribution noise
 	taunoise ~ dgamma(0.001,0.001)

@@ -149,7 +149,9 @@ model
 ## rescaling factor for t-distribution noise, from Link and Sauer, unpublished
 adj <- (1.422*pow(nu,0.906))/(1+(1.422*pow(nu,0.906)))
 sdnoise.adj <- sdnoise/adj
-sdn <- 0.5*pow(sdnoise.adj,2)
+sdn_ret <- 0.5*pow(sdnoise.adj,2)
+sdobs_ret <- 0.5*pow(sdobs,2)
+
 
 	for( i in 1 : nstrata )
 	{
@@ -157,15 +159,15 @@ sdn <- 0.5*pow(sdnoise.adj,2)
 		{
 			for(o in 1 : nobservers[i])
 			{
-				no[i,t,o] <- exp(strata[i]+yeareffect[i,t] + yy[i,t] + obs[i,o])
-				no3[i,t,o] <- exp(strata[i]+yeareffect[i,t] + obs[i,o])
+				no[i,t,o] <- exp(strata[i]+yeareffect[i,t] + yy[i,t] + obs[i,o]+sdn_ret)
+				no3[i,t,o] <- exp(strata[i]+yeareffect[i,t] + obs[i,o]+sdn_ret)
 			}
 
 			mn[i,t] <- mean(no[i,t,(1 : nobservers[i])])
-			n[i,t] <- nonzeroweight[i]*(mn[i,t]*sdn)
-			n2[i,t] <- nonzeroweight[i]*exp(strata[i]+yeareffect[i,t] + yy[i,t] + 0.5*sdnoise.adj*sdnoise.adj+ 0.5*sdobs*sdobs) #n2 is an alternative way of calculating the annual indices
+			n[i,t] <- nonzeroweight[i]*(mn[i,t])
+			n2[i,t] <- nonzeroweight[i]*exp(strata[i]+yeareffect[i,t] + yy[i,t] + sdn_ret + sdobs_ret) #n2 is an alternative way of calculating the annual indices
 						mn3[i,t] <- mean(no3[i,t,1 : nobservers[i]])
-			n3[i,t] <- nonzeroweight[i]*(mn3[i,t]*sdn)
+			n3[i,t] <- nonzeroweight[i]*(mn3[i,t])
 
 		}
 	}
