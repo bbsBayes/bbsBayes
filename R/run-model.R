@@ -32,7 +32,7 @@
 #'   If TRUE, the number of cores used will be the minimum of the
 #'   \code{n_chains} specified and the number of cores on your computer
 #' @param quiet Should JAGS output be suppressed?
-#' @param modules Character vector of JAGS modules to load before analysis. By default module 'glm' is loaded (in addition to 'basemod' and 'bugs'). To force no additional modules to load, set modules=NULL.
+#' @param modules Character vector of JAGS modules to load before analysis. By default no extra modules are loaded (other than 'basemod' and 'bugs'). To force glm or other modules to load, use modules = "glm". See JAGS manual for more options.
 #' @param ... Additional arguments
 #' @return jagsUI object
 #'
@@ -93,7 +93,7 @@ run_model <- function(jags_data = NULL,
                       n_iter = 10000,
                       parallel = FALSE,
                       quiet = FALSE,
-                      modules = c("glm"),
+                      modules = NULL,
                       ...)
 {
   if (is.null(jags_data))
@@ -107,6 +107,7 @@ run_model <- function(jags_data = NULL,
   }else{
     model <- jags_data[["model"]]
     heavy_tailed <- jags_data[["heavy_tailed"]]
+    jags_data[["heavy_tailed"]] <- NULL
     if(heavy_tailed)
       {
       model <- paste0(model,"_heavy")
