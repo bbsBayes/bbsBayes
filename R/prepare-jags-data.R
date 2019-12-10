@@ -401,10 +401,10 @@ prepare_jags_data <- function(strat_data = NULL,
     if (heavy_tailed)
     {
       to_return <- c(to_return,
-                     list(heavy_tailed <- TRUE))
+                     list(heavy_tailed = TRUE))
     }else{
       to_return <- c(to_return,
-                     list(heavy_tailed <- FALSE))
+                     list(heavy_tailed = FALSE))
 
     }
   }
