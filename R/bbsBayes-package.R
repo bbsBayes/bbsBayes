@@ -12,7 +12,11 @@
          list(slope = "slope.jags",
               firstdiff = "first-difference.jags",
               gam = "gam.jags",
-              gamye = "gam-ye.jags"),
+              gamye = "gam-ye.jags",
+              slope_heavy = "slope.t.jags",
+              firstdiff_heavy = "first-difference.t.jags",
+              gam_heavy = "gam.t.jags",
+              gamye_heavy = "gam-ye.t.jags"),
          parent.env(environment()))
 
   assign("strata",
@@ -22,4 +26,5 @@
               bcr = "bcr.csv",
               latlong = "db.csv"),
          parent.env(environment()))
+
 }

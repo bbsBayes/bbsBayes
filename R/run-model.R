@@ -106,6 +106,11 @@ run_model <- function(jags_data = NULL,
     jags_data[["model"]] <- NULL
   }else{
     model <- jags_data[["model"]]
+    heavy_tailed <- jags_data[["heavy_tailed"]]
+    if(heavy_tailed)
+      {
+      model <- paste0(model,"_heavy")
+    }
     model <- system.file("models",
                          models[[model]],
                          package="bbsBayes")
@@ -165,10 +170,10 @@ run_model <- function(jags_data = NULL,
   #### alternatively, incoporate a logical option to automatically continue running the model until some minimum convergence criterion is met
   rhat_check = r_hat(jags_job,
                      threshold = 1.1)
-  if(nrow(rhat_check) > (length(parameters_to_save)*0.05)){
+  if(nrow(rhat_check) > 1){
     failed = paste(rhat_check$Parameter,collapse = " ; ")
     nfail = nrow(rhat_check)
-   warning(paste("Warning",nfail,"parameters did not converged. Consider re-running with a longer burn-in."))
+   warning(paste("Warning",nfail,"parameters did not converged. Consider re-running with a longer burn-in and-or more posterior samples."))
 
     warning(paste("Convergence failure on the following parameters:",failed))
   }

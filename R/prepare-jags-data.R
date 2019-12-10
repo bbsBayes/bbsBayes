@@ -7,6 +7,7 @@
 #' @param species_to_run Character string of the English name of the species to run
 #' @param model Character string of model to be used.
 #'   Options are "slope", "firstdiff", "gam", "gamye.
+#' @param heavy_tailed Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution, with heavier tails than the standard normal distribution. Default is currently FALSE, but recent results suggest users should strongly consider setting this to TRUE, even though it requires much longer convergence times
 #' @param n_knots Number of knots to be used in GAM function
 #' @param min_year Minimum year to keep in analysis
 #' @param max_year Maximum year to keep in analysis
@@ -22,6 +23,7 @@
 #'
 #' @return List of data to be used in JAGS, including:
 #'   \item{model}{The model to be used in JAGS}
+#'   \item{heavy_tailed}{Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution}
 #'   \item{ncounts}{The number of counts containing useful data for the species}
 #'   \item{nstrata}{The number of strata used in the analysis}
 #'   \item{ymin}{Minimum year used}
@@ -89,6 +91,7 @@
 prepare_jags_data <- function(strat_data = NULL,
                             species_to_run = NULL,
                             model = NULL,
+                            heavy_tailed = FALSE,
                             n_knots = NULL,
                             min_year = NULL,
                             max_year = NULL,
@@ -115,6 +118,7 @@ prepare_jags_data <- function(strat_data = NULL,
   {
     stop("Invalid model specified"); return(NULL)
   }
+
 
   birds <- strat_data$bird_strat
   route <- strat_data$route_strat
@@ -393,6 +397,15 @@ prepare_jags_data <- function(strat_data = NULL,
       X_basis<-t(solve(X_sqrt.OMEGA_all,t(X_K)))
 
       to_return <- c(to_return, list(nknots = n_knots, X.basis = X_basis))
+    }
+    if (heavy_tailed)
+    {
+      to_return <- c(to_return,
+                     list(heavy_tailed <- TRUE))
+    }else{
+      to_return <- c(to_return,
+                     list(heavy_tailed <- FALSE))
+
     }
   }
   if (!isTRUE(quiet)){pb$tick()}
