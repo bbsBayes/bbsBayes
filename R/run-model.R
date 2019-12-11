@@ -104,6 +104,7 @@ run_model <- function(jags_data = NULL,
   {
     model <- model_file_path
     jags_data[["model"]] <- NULL
+    jags_data[["heavy_tailed"]] <- NULL
   }else{
     model <- jags_data[["model"]]
     heavy_tailed <- jags_data[["heavy_tailed"]]
