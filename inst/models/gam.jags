@@ -8,24 +8,24 @@ model
 
 		count[k] ~ dpois(lambda[k])
 		#----------------------------------#
-		fcount[k] ~ dpois(lambda[k])
-		err[k] <- pow(count[k]-lambda[k],2)/lambda[k]
-		ferr[k] <- pow(fcount[k]-lambda[k],2)/lambda[k]
-		fzero[k] <- equals(fcount[k],0)
-		loglik[k] <- logdensity.pois(count[k], lambda[k])
+		#fcount[k] ~ dpois(lambda[k])
+		#err[k] <- pow(count[k]-lambda[k],2)/lambda[k]
+		#ferr[k] <- pow(fcount[k]-lambda[k],2)/lambda[k]
+		#fzero[k] <- equals(fcount[k],0)
+		#loglik[k] <- logdensity.pois(count[k], lambda[k])
 		#----------------------------------#
 	}
 
 
 	### goodness of fit statistics
 
-	maxf <- max(fcount[1:ncounts])
-	meanf <- mean(fcount[1:ncounts])
-	nfzero <- sum(fzero[1:ncounts])
-	gof <- sum(err[1:ncounts])
-	fgof <- sum(ferr[1:ncounts])
-	diffgof <- gof-fgof
-	posdiff <- step(diffgof)
+	#maxf <- max(fcount[1:ncounts])
+	#meanf <- mean(fcount[1:ncounts])
+	#nfzero <- sum(fzero[1:ncounts])
+	#gof <- sum(err[1:ncounts])
+	#fgof <- sum(ferr[1:ncounts])
+	#diffgof <- gof-fgof
+	#posdiff <- step(diffgof)
 
 
 
@@ -43,7 +43,7 @@ model
 	STRATA ~ dnorm( 0.0,0.01)
 
 	taustrata ~ dgamma(0.001,0.0001) #<- 1/pow(sdbeta,2)#
-	sdstrata <- 1/pow(taubeta,0.5)#~ dunif(0.001,10)
+	sdstrata <- 1/pow(taustrata,0.5)#~ dunif(0.001,10)
 
 	#log(tauobs) <- logtauobs
 	#logtauobs ~ dnorm(mulogtauobs, taulogtauobs)
@@ -94,9 +94,9 @@ model
 
 		for(i in 1:nstrata)
 		{
-			#beta.X.p[i,k] ~ dnorm(0,taubeta) #alternative non-centered parameterization
-      #beta.X[i,k] <- B.X[k]+beta.X.p[i,k]
-      beta.X[i,k] ~ dnorm(B.X[k],taubeta) T(-10,10) #avoiding log density calculation errors
+			beta.X.p[i,k] ~ dnorm(0,taubeta) #alternative non-centered parameterization
+      beta.X[i,k] <- B.X[k]+beta.X.p[i,k]
+      #beta.X[i,k] ~ dnorm(B.X[k],taubeta) #alternative centered parameterization
 
 
 			for ( t in ymin : ymax )

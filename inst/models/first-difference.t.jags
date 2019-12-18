@@ -8,20 +8,20 @@ model
 
 		count[k] ~ dpois(lambda[k])
 		#----------------------------------#
-		fcount[k] ~ dpois(lambda[k])
-		err[k] <- pow(count[k]-lambda[k],2)/lambda[k]
-		ferr[k] <- pow(fcount[k]-lambda[k],2)/lambda[k]
-		fzero[k] <- equals(fcount[k],0)
-		loglik[k] <- logdensity.pois(count[k], lambda[k])
+		#fcount[k] ~ dpois(lambda[k])
+		#err[k] <- pow(count[k]-lambda[k],2)/lambda[k]
+		#ferr[k] <- pow(fcount[k]-lambda[k],2)/lambda[k]
+		#fzero[k] <- equals(fcount[k],0)
+		#loglik[k] <- logdensity.pois(count[k], lambda[k])
 		#----------------------------------#
 	}
 
 
-	nfzero <- sum(fzero[1:ncounts])
-	gof <- sum(err[1:ncounts])
-	fgof <- sum(ferr[1:ncounts])
-	diffgof <- gof-fgof
-	posdiff <- step(diffgof)
+	#nfzero <- sum(fzero[1:ncounts])
+	#gof <- sum(err[1:ncounts])
+	#fgof <- sum(ferr[1:ncounts])
+	#diffgof <- gof-fgof
+	#posdiff <- step(diffgof)
 
 	nu ~ dgamma(2, 0.1) #degrees of freedom (i.e., the heavy-tail component of the t-distribution), if nu is large (infinite) this is equivalent to the normal distribution noise
 	taunoise ~ dgamma(0.001,0.001)
