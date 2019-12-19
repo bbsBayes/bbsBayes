@@ -333,8 +333,8 @@ prepare_jags_data <- function(strat_data = NULL,
   if (!isTRUE(quiet)){pb$tick()}
 
   recenter = floor(diff(c(1,ymax))/2)
-  rescale = 10 # this generates a year variable with sd ~ 1 because of the ~50 years in the time-series
-  spsp_f$yearscale = (spsp_f$year-recenter)/rescale
+  rescale = ymax # this generates a year variable with range = 1, this rescaling helps the convergence for the GAM beta parameters
+  spsp_f$yearscale = (spsp_f$year-recenter)/ymax
   if (!isTRUE(quiet)){pb$tick()}
 
   scaledyear = seq(min(spsp_f$yearscale),max(spsp_f$yearscale),length = nyears)
