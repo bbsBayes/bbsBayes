@@ -38,7 +38,7 @@ stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
 prepped_data <- prepare_jags_data(strat_data = stratified_data,
                                   species_to_run = "Wood Thrush",
                                   model = "slope")
-mod <- run_model(jags_data = prepped_data)
+mod <- run_model(jags_data = prepped_data, parameters_to_save = "lambda")
 
 
   # Output LPPD

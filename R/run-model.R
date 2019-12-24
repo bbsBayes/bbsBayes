@@ -18,8 +18,10 @@
 #'   not be able to generate annual indices if "n" is not tracked.
 #' @param n_chains Optional number of chains to run. Defaults to 3.
 #' @param n_adapt Optional integer specifying the number of steps to
-#'   adapt the JAGS model. It is recommended to do a minimum of 100,
-#'   \code{run-model} will default to 500.
+#'   adapt the JAGS model.  The default is \code{NULL}, which will result in
+#'   the function running groups of 100 adaptation iterations (to amax of 10,000)
+#'   until JAGS reports adaptation is sufficient. If you set it manually,
+#'   1000 is the recommended minimum value.
 #' @param n_burnin Optional integer specifying the number of iterations
 #'   to burn in the model. Defaults to 20000 per chain.
 #' @param n_thin Optional number of steps to thin or discard.
@@ -30,6 +32,7 @@
 #'   If TRUE, the number of cores used will be the minimum of the
 #'   \code{n_chains} specified and the number of cores on your computer
 #' @param quiet Should JAGS output be suppressed?
+#' @param modules Character vector of JAGS modules to load before analysis. By default no extra modules are loaded (other than 'basemod' and 'bugs'). To force glm or other modules to load, use modules = "glm". See JAGS manual for more options.
 #' @param ... Additional arguments
 #' @return jagsUI object
 #'
@@ -83,13 +86,14 @@ run_model <- function(jags_data = NULL,
                       parameters_to_save = c("n"),
                       track_n = TRUE,
                       n_chains = 3,
-                      n_adapt = 500,
+                      n_adapt = NULL,
                       n_burnin = 20000,
                       n_thin = 10,
                       n_saved_steps = 2000,
                       n_iter = 10000,
                       parallel = FALSE,
                       quiet = FALSE,
+                      modules = NULL,
                       ...)
 {
   if (is.null(jags_data))
@@ -100,8 +104,15 @@ run_model <- function(jags_data = NULL,
   {
     model <- model_file_path
     jags_data[["model"]] <- NULL
+    jags_data[["heavy_tailed"]] <- NULL
   }else{
     model <- jags_data[["model"]]
+    heavy_tailed <- jags_data[["heavy_tailed"]]
+    jags_data[["heavy_tailed"]] <- NULL
+    if(heavy_tailed)
+      {
+      model <- paste0(model,"_heavy")
+    }
     model <- system.file("models",
                          models[[model]],
                          package="bbsBayes")
@@ -149,11 +160,25 @@ run_model <- function(jags_data = NULL,
                            n.iter = n_iter + n_burnin,
                            n.thin = n_thin,
                            parallel = parallel,
-                           verbose = !quiet)
+                           verbose = !quiet,
+                           modules = modules)
 
   jags_job$strat_name <- strata_used
   jags_job$stratify_by <- stratify_by
   jags_job$r_year <- r_year
+
+  #### check the Rhat values for convergence failure
+  #### if there are failures, then throw a warning
+  #### alternatively, incoporate a logical option to automatically continue running the model until some minimum convergence criterion is met
+  rhat_check = r_hat(jags_job,
+                     threshold = 1.1)
+  if(nrow(rhat_check) > 1){
+    failed = paste(rhat_check$Parameter,collapse = " ; ")
+    nfail = nrow(rhat_check)
+   warning(paste("Warning",nfail,"parameters did not converged. Consider re-running with a longer burn-in and-or more posterior samples."))
+
+    warning(paste("Convergence failure on the following parameters:",failed))
+  }
 
   return(jags_job)
 }

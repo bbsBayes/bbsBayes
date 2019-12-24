@@ -3,8 +3,8 @@ model
 	for( k in 1 : ncounts )
 	{
 		log(lambda[k]) <-  obs[strat[k],obser[k]] + eta*firstyr[k] + strata[strat[k]] + yeareffect[strat[k],year[k]] +noise[k]
-	 	noise[k] ~ dnorm(0, taunoise)
-    #noise[k] ~ dt(0, taunoise, nu) #alternative t-distributed noise = heavy-tailed overdispersion
+	#	noise[k] ~ dnorm(0, taunoise)
+    noise[k] ~ dt(0, taunoise, nu) #alternative t-distributed noise = heavy-tailed overdispersion
 
 		count[k] ~ dpois(lambda[k])
 		#----------------------------------#
@@ -17,13 +17,13 @@ model
 	}
 
 
-	#nfzero <- sum(fzero[1:ncounts]) # number of zeros in the posterior prediction
+	#nfzero <- sum(fzero[1:ncounts])
 	#gof <- sum(err[1:ncounts])
 	#fgof <- sum(ferr[1:ncounts])
 	#diffgof <- gof-fgof
-	#posdiff <- step(diffgof) #Bayesian p-value assessing overall model-fit
+	#posdiff <- step(diffgof)
 
-#	nu ~ dgamma(2, 0.1) #degrees of freedom (i.e., the heavy-tail component of the t-distribution), if nu is large (infinite) this is equivalent to the normal distribution noise
+	nu ~ dgamma(2, 0.1) #degrees of freedom (i.e., the heavy-tail component of the t-distribution), if nu is large (infinite) this is equivalent to the normal distribution noise
 	taunoise ~ dgamma(0.001,0.001)
 	sdnoise <- 1 / pow(taunoise, 0.5)
 	tauobs ~ dgamma(0.001,0.001)
@@ -88,8 +88,14 @@ model
 	}
 
 
+## rescaling factor for t-distribution noise, from Link and Sauer, unpublished
+adj <- (1.422*pow(nu,0.906))/(1+(1.422*pow(nu,0.906)))
+sdnoise.adj <- sdnoise/adj
+sdn_ret <- 0.5*pow(sdnoise.adj,2)
+sdobs_ret <- 0.5*pow(sdobs,2)
 
 	#### summary statistics  ######
+
 	sdn <- exp(0.5*sdnoise*sdnoise)
 
 	for( i in 1 : nstrata )
@@ -98,12 +104,12 @@ model
 		{
 			for(o in 1 : nobservers[i])
 			{
-				no[i,t,o] <- exp(strata[i]+yeareffect[i,t] + obs[i,o])
+				no[i,t,o] <- exp(strata[i]+yeareffect[i,t] + obs[i,o] + sdn_ret)
 			}
 
 			mn[i,t] <- mean(no[i,t,1 : nobservers[i]])
-			n[i,t] <- nonzeroweight[i]*(mn[i,t]*sdn)
-				n2[i,t] <- nonzeroweight[i]*exp(yeareffect[i,t] + 0.5*sdnoise*sdnoise+ 0.5*sdobs*sdobs) #n2 is an alternative approach to calculating annual indices
+			n[i,t] <- nonzeroweight[i]*(mn[i,t])
+				n2[i,t] <- nonzeroweight[i]*exp(yeareffect[i,t] + sdn_ret + sdobs_ret) #n2 is an alternative approach to calculating annual indices
 		}
 	}
 

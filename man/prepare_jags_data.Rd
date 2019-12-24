@@ -5,9 +5,10 @@
 \title{Wrangle data to use for JAGS input}
 \usage{
 prepare_jags_data(strat_data = NULL, species_to_run = NULL,
-  model = NULL, n_knots = NULL, min_year = NULL, max_year = NULL,
-  min_n_routes = 3, min_max_route_years = 3,
-  min_mean_route_years = 1, strata_rem = NULL, quiet = FALSE, ...)
+  model = NULL, heavy_tailed = FALSE, n_knots = NULL,
+  min_year = NULL, max_year = NULL, min_n_routes = 3,
+  min_max_route_years = 3, min_mean_route_years = 1,
+  strata_rem = NULL, quiet = FALSE, ...)
 }
 \arguments{
 \item{strat_data}{Large list of stratified data returned by \code{stratify()}}
@@ -16,6 +17,8 @@ prepare_jags_data(strat_data = NULL, species_to_run = NULL,
 
 \item{model}{Character string of model to be used.
 Options are "slope", "firstdiff", "gam", "gamye.}
+
+\item{heavy_tailed}{Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution, with heavier tails than the standard normal distribution. Default is currently FALSE, but recent results suggest users should strongly consider setting this to TRUE, even though it requires much longer convergence times}
 
 \item{n_knots}{Number of knots to be used in GAM function}
 
@@ -41,6 +44,7 @@ species observed. Defaults to 1.}
 \value{
 List of data to be used in JAGS, including:
   \item{model}{The model to be used in JAGS}
+  \item{heavy_tailed}{Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution}
   \item{ncounts}{The number of counts containing useful data for the species}
   \item{nstrata}{The number of strata used in the analysis}
   \item{ymin}{Minimum year used}

@@ -5,6 +5,7 @@
 #'
 #' @param model Model to be saved. Options are "slope", "firstdiff", "gam", "gamye"
 #' @param filename File name to create on disk.
+#' @param heavy_tailed Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution, with heavier tails than the standard normal distribution. Default is currently FALSE, but recent results suggest users should strongly consider setting this to TRUE, even though it requires much longer convergence times
 #'
 #' @export
 #'
@@ -26,8 +27,12 @@
 #'
 
 model_to_file <- function(model = NULL,
-                          filename = NULL)
+                          filename = NULL,
+                          heavy_tailed = FALSE)
 {
+  if(heavy_tailed){
+    model <- paste0(model,"_heavy")
+  }
   model_file <- system.file("models",models[[model]],package="bbsBayes")
   write(readChar(model_file, file.info(model_file)$size), file = filename)
 }

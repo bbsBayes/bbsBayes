@@ -4,12 +4,14 @@
 \alias{model_to_file}
 \title{Save model to text file}
 \usage{
-model_to_file(model = NULL, filename = NULL)
+model_to_file(model = NULL, filename = NULL, heavy_tailed = FALSE)
 }
 \arguments{
 \item{model}{Model to be saved. Options are "slope", "firstdiff", "gam", "gamye"}
 
 \item{filename}{File name to create on disk.}
+
+\item{heavy_tailed}{Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution, with heavier tails than the standard normal distribution. Default is currently FALSE, but recent results suggest users should strongly consider setting this to TRUE, even though it requires much longer convergence times}
 }
 \description{
 \code{model_to_file} allows you to save any of the preloaded hierarchical

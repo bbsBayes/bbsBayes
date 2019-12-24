@@ -164,8 +164,8 @@ fetch_bbs_data <- function(level = "state", quiet = FALSE, force = FALSE)
   unlink(temp)
   tick(pb, quiet)
 
-  species <- species[, -c(4, 5)] # remove french and scientific name
-  names(species) <- c("seq","aou","english","order","family","genus","species")
+  #species <- species[, -c(4, 5)] # remove french and spanish name
+  names(species) <- c("seq","aou","english","french","spanish","order","family","genus","species")
   tick(pb, quiet)
 
   # this reads in the USGS BBS ftp site species file

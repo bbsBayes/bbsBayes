@@ -6,7 +6,8 @@
 #'   change in that stratum.
 #'
 #' @param trend Dataframe of strata trends produced by
-#'   \code{generate_strata_trends}
+#'   \code{generate_strata_trends} or \code{generate_regional_trends(..., regions = "stratum")}
+#' @param select logical flag to indicate if the stratum data need to be selected out of an trends object that includes continental, national, or other region-types. Default is FALSE
 #' @param stratify_by How were the data stratified?
 #' @param slope Logical, if TRUE, maps values of the alternative trend metric if slope = T was used in \code{generate_strata_trends}, the slope of a log-linear regression through the annual indices. Default FALSE.
 #'
@@ -41,11 +42,16 @@
 #'
 
 generate_map <- function(trend = NULL,
+                         select = F,
                          stratify_by = NULL,
                          slope = FALSE)
 {
   Trend <- NULL
   rm(Trend)
+
+  if(select){
+    trend = trend[which(trend$Region_type == "stratum"),]
+  }
 
   if (is.null(stratify_by))
   {
@@ -54,8 +60,9 @@ generate_map <- function(trend = NULL,
 
   if (is.null(trend))
   {
-    stop("Argument trend is empty."); return(NULL)
+    stop("Argument trend is empty, or stratification of model does not match stratify_by argument"); return(NULL)
   }
+
 
   map <- rgdal::readOGR(dsn = system.file("maps",
                                    package = "bbsBayes"),
