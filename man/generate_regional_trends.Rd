@@ -29,7 +29,7 @@ Dataframe with one row for each region included in indices object, and columns i
   \item{End_year}{last year of the trend}
   \item{Region}{short name of the region}
   \item{Region_alt}{Long name for region}
-  \item{Region_type}{Type of region including "continental", "national","Province/State","BCR", or "stratum"}
+  \item{Region_type}{Type of region including "continental", "national","Province/State","BCR", "bcr_by_national", or "stratum"}
   \item{Strata_included}{Strata included in the trend and annual index calculations}
   \item{Strata_excluded}{Strata excluded from the trend and annual index calculations because they have no observations of the species in the first part of the time series}
   \item{Trend}{Estimated mean annual percent change over the trend time-period (i.e., Start_year - End_year), according to an endpoint comparison of annual index in Start_year and the annual index in End_year}

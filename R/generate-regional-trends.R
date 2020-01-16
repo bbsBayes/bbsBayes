@@ -15,7 +15,7 @@
 #'   \item{End_year}{last year of the trend}
 #'   \item{Region}{short name of the region}
 #'   \item{Region_alt}{Long name for region}
-#'   \item{Region_type}{Type of region including "continental", "national","Province/State","BCR", or "stratum"}
+#'   \item{Region_type}{Type of region including "continental", "national","Province/State","BCR", "bcr_by_national", or "stratum"}
 #'   \item{Strata_included}{Strata included in the trend and annual index calculations}
 #'   \item{Strata_excluded}{Strata excluded from the trend and annual index calculations because they have no observations of the species in the first part of the time series}
 #'   \item{Trend}{Estimated mean annual percent change over the trend time-period (i.e., Start_year - End_year), according to an endpoint comparison of annual index in Start_year and the annual index in End_year}
@@ -96,9 +96,7 @@ area_weights <- indices$area_weights
 all_regions = names(n_all)
 dsum = indices$data_summary
 
-  # region_names <- utils::read.csv(system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = F)
-  # region_names$region = factor(region_names$region,levels = levels(area_weights$region))
-  #
+
 trend <- data.frame(Start_year = integer(),
                     End_year = integer(),
                     Region = character(),
@@ -119,16 +117,21 @@ for(qq in quantiles){
 
 
 for(rr in regions){ #selecting the type of composite region
-  for(rrs in all_regions[grep(all_regions,pattern = rr)]){
+
+  #regsest = all_regions[grep(all_regions,pattern = rr)]
+  regsest = paste0(rr,"_",unique(dsum[which(dsum$Region_type == rr),"Region"]))
+
+  for(rrs in regsest){
+
+    reg = gsub(rrs,pattern = paste0(rr,"_"),replacement = "",fixed = T)
+    w_summary_rows = which(dsum$Region == reg & dsum$Region_type == rr)
 
 
 n = n_all[[rrs]]
-reg = gsub(rrs,pattern = paste0(rr,"_"),replacement = "",fixed = T)
-w_summary_rows = which(dsum$Region == reg & dsum$Region_type == rr)
 
 reg_alt = unique(dsum[w_summary_rows,"Region_alt"])
 st_inc = unique(dsum[w_summary_rows,"Strata_included"])
-nstr = length(st_inc)
+nstr = length(unlist(str_split(st_inc,pattern = " ; ")))
 st_exc = unique(dsum[w_summary_rows,"Strata_excluded"])
 
   if(slope){

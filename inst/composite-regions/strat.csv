@@ -1,216 +1,216 @@
-prov_state,region,area_sq_km,national,bcr,Province_State,Country
-AB,CA-AB-10,52564.62776,CA,10,Alberta,Canada
-AB,CA-AB-11,149351.8331,CA,11,Alberta,Canada
-AB,CA-AB-6,445135.6378,CA,6,Alberta,Canada
-AB,CA-AB-7,8810.525556,CA,7,Alberta,Canada
-AB,CA-AB-8,6987.155721,CA,8,Alberta,Canada
-AK,US-AK-1,9551.175525,US,1,ALASKA,United States of America
-AK,US-AK-2,283405.1211,US,2,ALASKA,United States of America
-AK,US-AK-3,306158.9957,US,3,ALASKA,United States of America
-AK,US-AK-4,725835.2411,US,4,ALASKA,United States of America
-AK,US-AK-5,151116.6435,US,5,ALASKA,United States of America
-AL,US-AL-24,8096.559465,US,24,ALABAMA,United States of America
-AL,US-AL-27,82308.21077,US,27,ALABAMA,United States of America
-AL,US-AL-28,37769.67704,US,28,ALABAMA,United States of America
-AL,US-AL-29,5299.042011,US,29,ALABAMA,United States of America
-AR,US-AR-24,33232.45277,US,24,ARKANSAS,United States of America
-AR,US-AR-25,65339.52936,US,25,ARKANSAS,United States of America
-AR,US-AR-26,39366.35515,US,26,ARKANSAS,United States of America
-AZ,US-AZ-16,93754.54135,US,16,ARIZONA,United States of America
-AZ,US-AZ-33,103604.2661,US,33,ARIZONA,United States of America
-AZ,US-AZ-34,96616.35621,US,34,ARIZONA,United States of America
-AZ,US-AZ-35,962.279898,US,35,ARIZONA,United States of America
-BC,CA-BC-10,383005.7851,CA,10,British Columbia,Canada
-BC,CA-BC-4,193179.8187,CA,4,British Columbia,Canada
-BC,CA-BC-5,199819.8393,CA,5,British Columbia,Canada
-BC,CA-BC-6,106917.4071,CA,6,British Columbia,Canada
-BC,CA-BC-9,59938.97821,CA,9,British Columbia,Canada
-CA,US-CA-15,51971.46243,US,15,CALIFORNIA,United States of America
-CA,US-CA-32,165694.434,US,32,CALIFORNIA,United States of America
-CA,US-CA-33,105017.0225,US,33,CALIFORNIA,United States of America
-CA,US-CA-5,45531.68747,US,5,CALIFORNIA,United States of America
-CA,US-CA-9,40413.85126,US,9,CALIFORNIA,United States of America
-CO,US-CO-10,8811.463957,US,10,COLORADO,United States of America
-CO,US-CO-16,147141.7032,US,16,COLORADO,United States of America
-CO,US-CO-18,113590.6371,US,18,COLORADO,United States of America
-CT,US-CT-14,1194.516875,US,14,CONNECTICUT,United States of America
-CT,US-CT-28,598.8186274,US,28,CONNECTICUT,United States of America
-CT,US-CT-30,10964.56533,US,30,CONNECTICUT,United States of America
-DE,US-DE-29,282.9189562,US,29,DELAWARE,United States of America
-DE,US-DE-30,5099.946436,US,30,DELAWARE,United States of America
-FL,US-FL-27,52285.00639,US,27,FLORIDA,United States of America
-FL,US-FL-31,94181.7424,US,31,FLORIDA,United States of America
-GA,US-GA-27,93344.68296,US,27,GEORGIA,United States of America
-GA,US-GA-28,16305.83719,US,28,GEORGIA,United States of America
-GA,US-GA-29,42620.38957,US,29,GEORGIA,United States of America
-IA,US-IA-11,30394.81773,US,11,IOWA,United States of America
-IA,US-IA-22,108201.3834,US,22,IOWA,United States of America
-IA,US-IA-23,7051.503472,US,23,IOWA,United States of America
-ID,US-ID-10,104598.8955,US,10,IDAHO,United States of America
-ID,US-ID-16,760.6774212,US,16,IDAHO,United States of America
-ID,US-ID-9,110607.7536,US,9,IDAHO,United States of America
-IL,US-IL-22,124348.9731,US,22,ILLINOIS,United States of America
-IL,US-IL-23,2605.389559,US,23,ILLINOIS,United States of America
-IL,US-IL-24,18425.11091,US,24,ILLINOIS,United States of America
-IL,US-IL-26,76.8053173,US,26,ILLINOIS,United States of America
-IN,US-IN-22,44870.79798,US,22,INDIANA,United States of America
-IN,US-IN-23,12851.42135,US,23,INDIANA,United States of America
-IN,US-IN-24,35994.39571,US,24,INDIANA,United States of America
-KS,US-KS-18,37179.31886,US,18,KANSAS,United States of America
-KS,US-KS-19,109389.954,US,19,KANSAS,United States of America
-KS,US-KS-21,82.0502115,US,21,KANSAS,United States of America
-KS,US-KS-22,66243.17067,US,22,KANSAS,United States of America
-KS,US-KS-24,86.76933965,US,24,KANSAS,United States of America
-KY,US-KY-24,69757.48467,US,24,KENTUCKY,United States of America
-KY,US-KY-26,568.0388336,US,26,KENTUCKY,United States of America
-KY,US-KY-27,4397.905182,US,27,KENTUCKY,United States of America
-KY,US-KY-28,30215.62946,US,28,KENTUCKY,United States of America
-LA,US-LA-25,47075.20194,US,25,LOUISIANA,United States of America
-LA,US-LA-26,41858.83052,US,26,LOUISIANA,United States of America
-LA,US-LA-27,7148.805158,US,27,LOUISIANA,United States of America
-LA,US-LA-37,24987.11983,US,37,LOUISIANA,United States of America
-MA,US-MA-14,5777.246774,US,14,MASSACHUSETTS,United States of America
-MA,US-MA-28,501.5543701,US,28,MASSACHUSETTS,United States of America
-MA,US-MA-30,14563.88972,US,30,MASSACHUSETTS,United States of America
-MB,CA-MB-11,70100.47692,CA,11,Manitoba,Canada
-MB,CA-MB-12,15312.00905,CA,12,Manitoba,Canada
-MB,CA-MB-3,1342.48864,CA,3,Manitoba,Canada
-MB,CA-MB-6,127190.0755,CA,6,Manitoba,Canada
-MB,CA-MB-7,202162.8187,CA,7,Manitoba,Canada
-MB,CA-MB-8,234151.3754,CA,8,Manitoba,Canada
-MD,US-MD-28,4226.367965,US,28,MARYLAND,United States of America
-MD,US-MD-29,7252.380128,US,29,MARYLAND,United States of America
-MD,US-MD-30,14135.13673,US,30,MARYLAND,United States of America
-ME,US-ME-14,81905.02965,US,14,MAINE,United States of America
-ME,US-ME-30,2162.480561,US,30,MAINE,United States of America
-MI,US-MI-12,86620.13752,US,12,MICHIGAN,United States of America
-MI,US-MI-22,4207.860922,US,22,MICHIGAN,United States of America
-MI,US-MI-23,58943.50968,US,23,MICHIGAN,United States of America
-MN,US-MN-11,70093.23758,US,11,MINNESOTA,United States of America
-MN,US-MN-12,88347.1842,US,12,MINNESOTA,United States of America
-MN,US-MN-22,10490.36995,US,22,MINNESOTA,United States of America
-MN,US-MN-23,49554.11063,US,23,MINNESOTA,United States of America
-MO,US-MO-22,83079.15872,US,22,MISSOURI,United States of America
-MO,US-MO-24,87034.01027,US,24,MISSOURI,United States of America
-MO,US-MO-26,11025.20997,US,26,MISSOURI,United States of America
-MS,US-MS-26,19563.31701,US,26,MISSISSIPPI,United States of America
-MS,US-MS-27,103771.0106,US,27,MISSISSIPPI,United States of America
-MT,US-MT-10,158791.9278,US,10,MONTANA,United States of America
-MT,US-MT-11,83760.1691,US,11,MONTANA,United States of America
-MT,US-MT-17,138443.336,US,17,MONTANA,United States of America
-NB,CA-NB-14,72990.97354,CA,14,New Brunswick,Canada
-NC,US-NC-27,60229.45108,US,27,NORTH CAROLINA,United States of America
-NC,US-NC-28,21172.75249,US,28,NORTH CAROLINA,United States of America
-NC,US-NC-29,46404.25433,US,29,NORTH CAROLINA,United States of America
-ND,US-ND-11,128136.2203,US,11,NORTH DAKOTA,United States of America
-ND,US-ND-17,54966.0664,US,17,NORTH DAKOTA,United States of America
-NE,US-NE-11,15651.84701,US,11,NEBRASKA,United States of America
-NE,US-NE-17,4482.414584,US,17,NEBRASKA,United States of America
-NE,US-NE-18,35473.64702,US,18,NEBRASKA,United States of America
-NE,US-NE-19,122725.373,US,19,NEBRASKA,United States of America
-NE,US-NE-22,22156.34237,US,22,NEBRASKA,United States of America
-NH,US-NH-14,19955.6371,US,14,NEW HAMPSHIRE,United States of America
-NH,US-NH-30,3980.173081,US,30,NEW HAMPSHIRE,United States of America
-NJ,US-NJ-28,3860.543866,US,28,NEW JERSEY,United States of America
-NJ,US-NJ-29,3892.271298,US,29,NEW JERSEY,United States of America
-NJ,US-NJ-30,12229.43542,US,30,NEW JERSEY,United States of America
-NL,CA-NL-3,19379.90867,CA,3,Newfoundland and Labrador,Canada
-NL,CA-NL-7,228086.2383,CA,7,Newfoundland and Labrador,Canada
-NL,CA-NL-8,157082.8757,CA,8,Newfoundland and Labrador,Canada
-NM,US-NM-16,132610.0341,US,16,NEW MEXICO,United States of America
-NM,US-NM-18,67396.63341,US,18,NEW MEXICO,United States of America
-NM,US-NM-34,27645.86998,US,34,NEW MEXICO,United States of America
-NM,US-NM-35,87921.59941,US,35,NEW MEXICO,United States of America
-NS,CA-NS-14,56312.75061,CA,14,Nova Scotia,Canada
-NT,CA-NT-3,254910.029,CA,3,Northwest Territories,Canada
-NT,CA-NT-4,83562.84472,CA,4,Northwest Territories,Canada
-NT,CA-NT-6,509421.6842,CA,6,Northwest Territories,Canada
-NT,CA-NT-7,328542.3969,CA,7,Northwest Territories,Canada
-NU,CA-NU-3,1461324.103,CA,3,Nunavut,Canada
-NU,CA-NU-7,106315.4038,CA,7,Nunavut,Canada
-NV,US-NV-15,785.4580628,US,15,NEVADA,United States of America
-NV,US-NV-16,158.2922004,US,16,NEVADA,United States of America
-NV,US-NV-33,38362.01152,US,33,NEVADA,United States of America
-NV,US-NV-9,246807.9216,US,9,NEVADA,United States of America
-NY,US-NY-13,54097.57916,US,13,NEW YORK,United States of America
-NY,US-NY-14,28749.08914,US,14,NEW YORK,United States of America
-NY,US-NY-28,38018.08535,US,28,NEW YORK,United States of America
-NY,US-NY-30,5198.810463,US,30,NEW YORK,United States of America
-OH,US-OH-13,21453.20696,US,13,OHIO,United States of America
-OH,US-OH-22,52865.02987,US,22,OHIO,United States of America
-OH,US-OH-23,87.13931767,US,23,OHIO,United States of America
-OH,US-OH-24,1082.880734,US,24,OHIO,United States of America
-OH,US-OH-28,30933.37483,US,28,OHIO,United States of America
-OK,US-OK-18,11148.64909,US,18,OKLAHOMA,United States of America
-OK,US-OK-19,75069.82993,US,19,OKLAHOMA,United States of America
-OK,US-OK-21,41847.86805,US,21,OKLAHOMA,United States of America
-OK,US-OK-22,15669.2978,US,22,OKLAHOMA,United States of America
-OK,US-OK-24,7771.451289,US,24,OKLAHOMA,United States of America
-OK,US-OK-25,29620.02446,US,25,OKLAHOMA,United States of America
-ON,CA-ON-12,206180.0945,CA,12,Ontario,Canada
-ON,CA-ON-13,83859.42257,CA,13,Ontario,Canada
-ON,CA-ON-7,263166.8269,CA,7,Ontario,Canada
-ON,CA-ON-8,435545.9089,CA,8,Ontario,Canada
-OR,US-OR-10,53638.54953,US,10,OREGON,United States of America
-OR,US-OR-5,81963.46579,US,5,OREGON,United States of America
-OR,US-OR-9,115677.5788,US,9,OREGON,United States of America
-PA,US-PA-13,8060.665925,US,13,PENNSYLVANIA,United States of America
-PA,US-PA-28,96973.38673,US,28,PENNSYLVANIA,United States of America
-PA,US-PA-29,12131.6755,US,29,PENNSYLVANIA,United States of America
-PE,CA-PE-14,5189.163649,CA,14,Prince Edward Island,Canada
-QC,CA-QC-12,174314.3922,CA,12,Quebec,Canada
-QC,CA-QC-13,28408.95862,CA,13,Quebec,Canada
-QC,CA-QC-14,67711.31033,CA,14,Quebec,Canada
-QC,CA-QC-3,206485.6945,CA,3,Quebec,Canada
-QC,CA-QC-7,561846.4436,CA,7,Quebec,Canada
-QC,CA-QC-8,470310.6252,CA,8,Quebec,Canada
-RI,US-RI-30,2833.614362,US,30,RHODE ISLAND,United States of America
-SC,US-SC-27,51140.29625,US,27,SOUTH CAROLINA,United States of America
-SC,US-SC-28,1775.902464,US,28,SOUTH CAROLINA,United States of America
-SC,US-SC-29,26958.71053,US,29,SOUTH CAROLINA,United States of America
-SD,US-SD-11,89409.31454,US,11,SOUTH DAKOTA,United States of America
-SD,US-SD-17,103740.7224,US,17,SOUTH DAKOTA,United States of America
-SD,US-SD-18,2078.594001,US,18,SOUTH DAKOTA,United States of America
-SD,US-SD-19,838.9527547,US,19,SOUTH DAKOTA,United States of America
-SD,US-SD-22,3376.081658,US,22,SOUTH DAKOTA,United States of America
-SK,CA-SK-11,241315.0014,CA,11,Saskatchewan,Canada
-SK,CA-SK-6,177762.7476,CA,6,Saskatchewan,Canada
-SK,CA-SK-7,44814.07453,CA,7,Saskatchewan,Canada
-SK,CA-SK-8,188614.6638,CA,8,Saskatchewan,Canada
-TN,US-TN-24,40643.74482,US,24,TENNESSEE,United States of America
-TN,US-TN-26,1525.506763,US,26,TENNESSEE,United States of America
-TN,US-TN-27,25256.09855,US,27,TENNESSEE,United States of America
-TN,US-TN-28,41401.92503,US,28,TENNESSEE,United States of America
-TX,US-TX-18,105639.3669,US,18,TEXAS,United States of America
-TX,US-TX-19,89322.85764,US,19,TEXAS,United States of America
-TX,US-TX-20,58594.89976,US,20,TEXAS,United States of America
-TX,US-TX-21,152288.5813,US,21,TEXAS,United States of America
-TX,US-TX-25,71055.61504,US,25,TEXAS,United States of America
-TX,US-TX-35,99676.68323,US,35,TEXAS,United States of America
-TX,US-TX-36,68077.38205,US,36,TEXAS,United States of America
-TX,US-TX-37,40837.1742,US,37,TEXAS,United States of America
-UT,US-UT-10,2875.338373,US,10,UTAH,United States of America
-UT,US-UT-16,131471.5894,US,16,UTAH,United States of America
-UT,US-UT-33,311.4143929,US,33,UTAH,United States of America
-UT,US-UT-9,85199.37731,US,9,UTAH,United States of America
-VA,US-VA-27,18706.52761,US,27,VIRGINIA,United States of America
-VA,US-VA-28,39831.98859,US,28,VIRGINIA,United States of America
-VA,US-VA-29,42367.76971,US,29,VIRGINIA,United States of America
-VA,US-VA-30,2846.801184,US,30,VIRGINIA,United States of America
-VT,US-VT-13,4533.428718,US,13,VERMONT,United States of America
-VT,US-VT-14,20508.05298,US,14,VERMONT,United States of America
-WA,US-WA-10,22876.08348,US,10,WASHINGTON,United States of America
-WA,US-WA-5,52629.00809,US,5,WASHINGTON,United States of America
-WA,US-WA-9,99497.40896,US,9,WASHINGTON,United States of America
-WI,US-WI-12,46194.38968,US,12,WISCONSIN,United States of America
-WI,US-WI-22,1316.460034,US,22,WISCONSIN,United States of America
-WI,US-WI-23,98330.49869,US,23,WISCONSIN,United States of America
-WV,US-WV-28,62692.4925,US,28,WEST VIRGINIA,United States of America
-WY,US-WY-10,165734.9472,US,10,WYOMING,United States of America
-WY,US-WY-16,10978.85712,US,16,WYOMING,United States of America
-WY,US-WY-17,64730.2089,US,17,WYOMING,United States of America
-WY,US-WY-18,12182.58154,US,18,WYOMING,United States of America
-YT,CA-YT-3,28020.81351,CA,3,Yukon,Canada
-YT,CA-YT-4,435349.3424,CA,4,Yukon,Canada
-YT,CA-YT-5,4128.331567,CA,5,Yukon,Canada
-YT,CA-YT-6,17376.54475,CA,6,Yukon,Canada
+prov_state,region,area_sq_km,national,bcr,Province_State,Country,bcr_by_country
+AB,CA-AB-10,52564.62776,CA,10,Alberta,Canada,Canada-BCR_10
+AB,CA-AB-11,149351.8331,CA,11,Alberta,Canada,Canada-BCR_11
+AB,CA-AB-6,445135.6378,CA,6,Alberta,Canada,Canada-BCR_6
+AB,CA-AB-7,8810.525556,CA,7,Alberta,Canada,Canada-BCR_7
+AB,CA-AB-8,6987.155721,CA,8,Alberta,Canada,Canada-BCR_8
+AK,US-AK-1,9551.175525,US,1,ALASKA,United States of America,United States of America-BCR_1
+AK,US-AK-2,283405.1211,US,2,ALASKA,United States of America,United States of America-BCR_2
+AK,US-AK-3,306158.9957,US,3,ALASKA,United States of America,United States of America-BCR_3
+AK,US-AK-4,725835.2411,US,4,ALASKA,United States of America,United States of America-BCR_4
+AK,US-AK-5,151116.6435,US,5,ALASKA,United States of America,United States of America-BCR_5
+AL,US-AL-24,8096.559465,US,24,ALABAMA,United States of America,United States of America-BCR_24
+AL,US-AL-27,82308.21077,US,27,ALABAMA,United States of America,United States of America-BCR_27
+AL,US-AL-28,37769.67704,US,28,ALABAMA,United States of America,United States of America-BCR_28
+AL,US-AL-29,5299.042011,US,29,ALABAMA,United States of America,United States of America-BCR_29
+AR,US-AR-24,33232.45277,US,24,ARKANSAS,United States of America,United States of America-BCR_24
+AR,US-AR-25,65339.52936,US,25,ARKANSAS,United States of America,United States of America-BCR_25
+AR,US-AR-26,39366.35515,US,26,ARKANSAS,United States of America,United States of America-BCR_26
+AZ,US-AZ-16,93754.54135,US,16,ARIZONA,United States of America,United States of America-BCR_16
+AZ,US-AZ-33,103604.2661,US,33,ARIZONA,United States of America,United States of America-BCR_33
+AZ,US-AZ-34,96616.35621,US,34,ARIZONA,United States of America,United States of America-BCR_34
+AZ,US-AZ-35,962.279898,US,35,ARIZONA,United States of America,United States of America-BCR_35
+BC,CA-BC-10,383005.7851,CA,10,British Columbia,Canada,Canada-BCR_10
+BC,CA-BC-4,193179.8187,CA,4,British Columbia,Canada,Canada-BCR_4
+BC,CA-BC-5,199819.8393,CA,5,British Columbia,Canada,Canada-BCR_5
+BC,CA-BC-6,106917.4071,CA,6,British Columbia,Canada,Canada-BCR_6
+BC,CA-BC-9,59938.97821,CA,9,British Columbia,Canada,Canada-BCR_9
+CA,US-CA-15,51971.46243,US,15,CALIFORNIA,United States of America,United States of America-BCR_15
+CA,US-CA-32,165694.434,US,32,CALIFORNIA,United States of America,United States of America-BCR_32
+CA,US-CA-33,105017.0225,US,33,CALIFORNIA,United States of America,United States of America-BCR_33
+CA,US-CA-5,45531.68747,US,5,CALIFORNIA,United States of America,United States of America-BCR_5
+CA,US-CA-9,40413.85126,US,9,CALIFORNIA,United States of America,United States of America-BCR_9
+CO,US-CO-10,8811.463957,US,10,COLORADO,United States of America,United States of America-BCR_10
+CO,US-CO-16,147141.7032,US,16,COLORADO,United States of America,United States of America-BCR_16
+CO,US-CO-18,113590.6371,US,18,COLORADO,United States of America,United States of America-BCR_18
+CT,US-CT-14,1194.516875,US,14,CONNECTICUT,United States of America,United States of America-BCR_14
+CT,US-CT-28,598.8186274,US,28,CONNECTICUT,United States of America,United States of America-BCR_28
+CT,US-CT-30,10964.56533,US,30,CONNECTICUT,United States of America,United States of America-BCR_30
+DE,US-DE-29,282.9189562,US,29,DELAWARE,United States of America,United States of America-BCR_29
+DE,US-DE-30,5099.946436,US,30,DELAWARE,United States of America,United States of America-BCR_30
+FL,US-FL-27,52285.00639,US,27,FLORIDA,United States of America,United States of America-BCR_27
+FL,US-FL-31,94181.7424,US,31,FLORIDA,United States of America,United States of America-BCR_31
+GA,US-GA-27,93344.68296,US,27,GEORGIA,United States of America,United States of America-BCR_27
+GA,US-GA-28,16305.83719,US,28,GEORGIA,United States of America,United States of America-BCR_28
+GA,US-GA-29,42620.38957,US,29,GEORGIA,United States of America,United States of America-BCR_29
+IA,US-IA-11,30394.81773,US,11,IOWA,United States of America,United States of America-BCR_11
+IA,US-IA-22,108201.3834,US,22,IOWA,United States of America,United States of America-BCR_22
+IA,US-IA-23,7051.503472,US,23,IOWA,United States of America,United States of America-BCR_23
+ID,US-ID-10,104598.8955,US,10,IDAHO,United States of America,United States of America-BCR_10
+ID,US-ID-16,760.6774212,US,16,IDAHO,United States of America,United States of America-BCR_16
+ID,US-ID-9,110607.7536,US,9,IDAHO,United States of America,United States of America-BCR_9
+IL,US-IL-22,124348.9731,US,22,ILLINOIS,United States of America,United States of America-BCR_22
+IL,US-IL-23,2605.389559,US,23,ILLINOIS,United States of America,United States of America-BCR_23
+IL,US-IL-24,18425.11091,US,24,ILLINOIS,United States of America,United States of America-BCR_24
+IL,US-IL-26,76.8053173,US,26,ILLINOIS,United States of America,United States of America-BCR_26
+IN,US-IN-22,44870.79798,US,22,INDIANA,United States of America,United States of America-BCR_22
+IN,US-IN-23,12851.42135,US,23,INDIANA,United States of America,United States of America-BCR_23
+IN,US-IN-24,35994.39571,US,24,INDIANA,United States of America,United States of America-BCR_24
+KS,US-KS-18,37179.31886,US,18,KANSAS,United States of America,United States of America-BCR_18
+KS,US-KS-19,109389.954,US,19,KANSAS,United States of America,United States of America-BCR_19
+KS,US-KS-21,82.0502115,US,21,KANSAS,United States of America,United States of America-BCR_21
+KS,US-KS-22,66243.17067,US,22,KANSAS,United States of America,United States of America-BCR_22
+KS,US-KS-24,86.76933965,US,24,KANSAS,United States of America,United States of America-BCR_24
+KY,US-KY-24,69757.48467,US,24,KENTUCKY,United States of America,United States of America-BCR_24
+KY,US-KY-26,568.0388336,US,26,KENTUCKY,United States of America,United States of America-BCR_26
+KY,US-KY-27,4397.905182,US,27,KENTUCKY,United States of America,United States of America-BCR_27
+KY,US-KY-28,30215.62946,US,28,KENTUCKY,United States of America,United States of America-BCR_28
+LA,US-LA-25,47075.20194,US,25,LOUISIANA,United States of America,United States of America-BCR_25
+LA,US-LA-26,41858.83052,US,26,LOUISIANA,United States of America,United States of America-BCR_26
+LA,US-LA-27,7148.805158,US,27,LOUISIANA,United States of America,United States of America-BCR_27
+LA,US-LA-37,24987.11983,US,37,LOUISIANA,United States of America,United States of America-BCR_37
+MA,US-MA-14,5777.246774,US,14,MASSACHUSETTS,United States of America,United States of America-BCR_14
+MA,US-MA-28,501.5543701,US,28,MASSACHUSETTS,United States of America,United States of America-BCR_28
+MA,US-MA-30,14563.88972,US,30,MASSACHUSETTS,United States of America,United States of America-BCR_30
+MB,CA-MB-11,70100.47692,CA,11,Manitoba,Canada,Canada-BCR_11
+MB,CA-MB-12,15312.00905,CA,12,Manitoba,Canada,Canada-BCR_12
+MB,CA-MB-3,1342.48864,CA,3,Manitoba,Canada,Canada-BCR_3
+MB,CA-MB-6,127190.0755,CA,6,Manitoba,Canada,Canada-BCR_6
+MB,CA-MB-7,202162.8187,CA,7,Manitoba,Canada,Canada-BCR_7
+MB,CA-MB-8,234151.3754,CA,8,Manitoba,Canada,Canada-BCR_8
+MD,US-MD-28,4226.367965,US,28,MARYLAND,United States of America,United States of America-BCR_28
+MD,US-MD-29,7252.380128,US,29,MARYLAND,United States of America,United States of America-BCR_29
+MD,US-MD-30,14135.13673,US,30,MARYLAND,United States of America,United States of America-BCR_30
+ME,US-ME-14,81905.02965,US,14,MAINE,United States of America,United States of America-BCR_14
+ME,US-ME-30,2162.480561,US,30,MAINE,United States of America,United States of America-BCR_30
+MI,US-MI-12,86620.13752,US,12,MICHIGAN,United States of America,United States of America-BCR_12
+MI,US-MI-22,4207.860922,US,22,MICHIGAN,United States of America,United States of America-BCR_22
+MI,US-MI-23,58943.50968,US,23,MICHIGAN,United States of America,United States of America-BCR_23
+MN,US-MN-11,70093.23758,US,11,MINNESOTA,United States of America,United States of America-BCR_11
+MN,US-MN-12,88347.1842,US,12,MINNESOTA,United States of America,United States of America-BCR_12
+MN,US-MN-22,10490.36995,US,22,MINNESOTA,United States of America,United States of America-BCR_22
+MN,US-MN-23,49554.11063,US,23,MINNESOTA,United States of America,United States of America-BCR_23
+MO,US-MO-22,83079.15872,US,22,MISSOURI,United States of America,United States of America-BCR_22
+MO,US-MO-24,87034.01027,US,24,MISSOURI,United States of America,United States of America-BCR_24
+MO,US-MO-26,11025.20997,US,26,MISSOURI,United States of America,United States of America-BCR_26
+MS,US-MS-26,19563.31701,US,26,MISSISSIPPI,United States of America,United States of America-BCR_26
+MS,US-MS-27,103771.0106,US,27,MISSISSIPPI,United States of America,United States of America-BCR_27
+MT,US-MT-10,158791.9278,US,10,MONTANA,United States of America,United States of America-BCR_10
+MT,US-MT-11,83760.1691,US,11,MONTANA,United States of America,United States of America-BCR_11
+MT,US-MT-17,138443.336,US,17,MONTANA,United States of America,United States of America-BCR_17
+NB,CA-NB-14,72990.97354,CA,14,New Brunswick,Canada,Canada-BCR_14
+NC,US-NC-27,60229.45108,US,27,NORTH CAROLINA,United States of America,United States of America-BCR_27
+NC,US-NC-28,21172.75249,US,28,NORTH CAROLINA,United States of America,United States of America-BCR_28
+NC,US-NC-29,46404.25433,US,29,NORTH CAROLINA,United States of America,United States of America-BCR_29
+ND,US-ND-11,128136.2203,US,11,NORTH DAKOTA,United States of America,United States of America-BCR_11
+ND,US-ND-17,54966.0664,US,17,NORTH DAKOTA,United States of America,United States of America-BCR_17
+NE,US-NE-11,15651.84701,US,11,NEBRASKA,United States of America,United States of America-BCR_11
+NE,US-NE-17,4482.414584,US,17,NEBRASKA,United States of America,United States of America-BCR_17
+NE,US-NE-18,35473.64702,US,18,NEBRASKA,United States of America,United States of America-BCR_18
+NE,US-NE-19,122725.373,US,19,NEBRASKA,United States of America,United States of America-BCR_19
+NE,US-NE-22,22156.34237,US,22,NEBRASKA,United States of America,United States of America-BCR_22
+NH,US-NH-14,19955.6371,US,14,NEW HAMPSHIRE,United States of America,United States of America-BCR_14
+NH,US-NH-30,3980.173081,US,30,NEW HAMPSHIRE,United States of America,United States of America-BCR_30
+NJ,US-NJ-28,3860.543866,US,28,NEW JERSEY,United States of America,United States of America-BCR_28
+NJ,US-NJ-29,3892.271298,US,29,NEW JERSEY,United States of America,United States of America-BCR_29
+NJ,US-NJ-30,12229.43542,US,30,NEW JERSEY,United States of America,United States of America-BCR_30
+NL,CA-NL-3,19379.90867,CA,3,Newfoundland and Labrador,Canada,Canada-BCR_3
+NL,CA-NL-7,228086.2383,CA,7,Newfoundland and Labrador,Canada,Canada-BCR_7
+NL,CA-NL-8,157082.8757,CA,8,Newfoundland and Labrador,Canada,Canada-BCR_8
+NM,US-NM-16,132610.0341,US,16,NEW MEXICO,United States of America,United States of America-BCR_16
+NM,US-NM-18,67396.63341,US,18,NEW MEXICO,United States of America,United States of America-BCR_18
+NM,US-NM-34,27645.86998,US,34,NEW MEXICO,United States of America,United States of America-BCR_34
+NM,US-NM-35,87921.59941,US,35,NEW MEXICO,United States of America,United States of America-BCR_35
+NS,CA-NS-14,56312.75061,CA,14,Nova Scotia,Canada,Canada-BCR_14
+NT,CA-NT-3,254910.029,CA,3,Northwest Territories,Canada,Canada-BCR_3
+NT,CA-NT-4,83562.84472,CA,4,Northwest Territories,Canada,Canada-BCR_4
+NT,CA-NT-6,509421.6842,CA,6,Northwest Territories,Canada,Canada-BCR_6
+NT,CA-NT-7,328542.3969,CA,7,Northwest Territories,Canada,Canada-BCR_7
+NU,CA-NU-3,1461324.103,CA,3,Nunavut,Canada,Canada-BCR_3
+NU,CA-NU-7,106315.4038,CA,7,Nunavut,Canada,Canada-BCR_7
+NV,US-NV-15,785.4580628,US,15,NEVADA,United States of America,United States of America-BCR_15
+NV,US-NV-16,158.2922004,US,16,NEVADA,United States of America,United States of America-BCR_16
+NV,US-NV-33,38362.01152,US,33,NEVADA,United States of America,United States of America-BCR_33
+NV,US-NV-9,246807.9216,US,9,NEVADA,United States of America,United States of America-BCR_9
+NY,US-NY-13,54097.57916,US,13,NEW YORK,United States of America,United States of America-BCR_13
+NY,US-NY-14,28749.08914,US,14,NEW YORK,United States of America,United States of America-BCR_14
+NY,US-NY-28,38018.08535,US,28,NEW YORK,United States of America,United States of America-BCR_28
+NY,US-NY-30,5198.810463,US,30,NEW YORK,United States of America,United States of America-BCR_30
+OH,US-OH-13,21453.20696,US,13,OHIO,United States of America,United States of America-BCR_13
+OH,US-OH-22,52865.02987,US,22,OHIO,United States of America,United States of America-BCR_22
+OH,US-OH-23,87.13931767,US,23,OHIO,United States of America,United States of America-BCR_23
+OH,US-OH-24,1082.880734,US,24,OHIO,United States of America,United States of America-BCR_24
+OH,US-OH-28,30933.37483,US,28,OHIO,United States of America,United States of America-BCR_28
+OK,US-OK-18,11148.64909,US,18,OKLAHOMA,United States of America,United States of America-BCR_18
+OK,US-OK-19,75069.82993,US,19,OKLAHOMA,United States of America,United States of America-BCR_19
+OK,US-OK-21,41847.86805,US,21,OKLAHOMA,United States of America,United States of America-BCR_21
+OK,US-OK-22,15669.2978,US,22,OKLAHOMA,United States of America,United States of America-BCR_22
+OK,US-OK-24,7771.451289,US,24,OKLAHOMA,United States of America,United States of America-BCR_24
+OK,US-OK-25,29620.02446,US,25,OKLAHOMA,United States of America,United States of America-BCR_25
+ON,CA-ON-12,206180.0945,CA,12,Ontario,Canada,Canada-BCR_12
+ON,CA-ON-13,83859.42257,CA,13,Ontario,Canada,Canada-BCR_13
+ON,CA-ON-7,263166.8269,CA,7,Ontario,Canada,Canada-BCR_7
+ON,CA-ON-8,435545.9089,CA,8,Ontario,Canada,Canada-BCR_8
+OR,US-OR-10,53638.54953,US,10,OREGON,United States of America,United States of America-BCR_10
+OR,US-OR-5,81963.46579,US,5,OREGON,United States of America,United States of America-BCR_5
+OR,US-OR-9,115677.5788,US,9,OREGON,United States of America,United States of America-BCR_9
+PA,US-PA-13,8060.665925,US,13,PENNSYLVANIA,United States of America,United States of America-BCR_13
+PA,US-PA-28,96973.38673,US,28,PENNSYLVANIA,United States of America,United States of America-BCR_28
+PA,US-PA-29,12131.6755,US,29,PENNSYLVANIA,United States of America,United States of America-BCR_29
+PE,CA-PE-14,5189.163649,CA,14,Prince Edward Island,Canada,Canada-BCR_14
+QC,CA-QC-12,174314.3922,CA,12,Quebec,Canada,Canada-BCR_12
+QC,CA-QC-13,28408.95862,CA,13,Quebec,Canada,Canada-BCR_13
+QC,CA-QC-14,67711.31033,CA,14,Quebec,Canada,Canada-BCR_14
+QC,CA-QC-3,206485.6945,CA,3,Quebec,Canada,Canada-BCR_3
+QC,CA-QC-7,561846.4436,CA,7,Quebec,Canada,Canada-BCR_7
+QC,CA-QC-8,470310.6252,CA,8,Quebec,Canada,Canada-BCR_8
+RI,US-RI-30,2833.614362,US,30,RHODE ISLAND,United States of America,United States of America-BCR_30
+SC,US-SC-27,51140.29625,US,27,SOUTH CAROLINA,United States of America,United States of America-BCR_27
+SC,US-SC-28,1775.902464,US,28,SOUTH CAROLINA,United States of America,United States of America-BCR_28
+SC,US-SC-29,26958.71053,US,29,SOUTH CAROLINA,United States of America,United States of America-BCR_29
+SD,US-SD-11,89409.31454,US,11,SOUTH DAKOTA,United States of America,United States of America-BCR_11
+SD,US-SD-17,103740.7224,US,17,SOUTH DAKOTA,United States of America,United States of America-BCR_17
+SD,US-SD-18,2078.594001,US,18,SOUTH DAKOTA,United States of America,United States of America-BCR_18
+SD,US-SD-19,838.9527547,US,19,SOUTH DAKOTA,United States of America,United States of America-BCR_19
+SD,US-SD-22,3376.081658,US,22,SOUTH DAKOTA,United States of America,United States of America-BCR_22
+SK,CA-SK-11,241315.0014,CA,11,Saskatchewan,Canada,Canada-BCR_11
+SK,CA-SK-6,177762.7476,CA,6,Saskatchewan,Canada,Canada-BCR_6
+SK,CA-SK-7,44814.07453,CA,7,Saskatchewan,Canada,Canada-BCR_7
+SK,CA-SK-8,188614.6638,CA,8,Saskatchewan,Canada,Canada-BCR_8
+TN,US-TN-24,40643.74482,US,24,TENNESSEE,United States of America,United States of America-BCR_24
+TN,US-TN-26,1525.506763,US,26,TENNESSEE,United States of America,United States of America-BCR_26
+TN,US-TN-27,25256.09855,US,27,TENNESSEE,United States of America,United States of America-BCR_27
+TN,US-TN-28,41401.92503,US,28,TENNESSEE,United States of America,United States of America-BCR_28
+TX,US-TX-18,105639.3669,US,18,TEXAS,United States of America,United States of America-BCR_18
+TX,US-TX-19,89322.85764,US,19,TEXAS,United States of America,United States of America-BCR_19
+TX,US-TX-20,58594.89976,US,20,TEXAS,United States of America,United States of America-BCR_20
+TX,US-TX-21,152288.5813,US,21,TEXAS,United States of America,United States of America-BCR_21
+TX,US-TX-25,71055.61504,US,25,TEXAS,United States of America,United States of America-BCR_25
+TX,US-TX-35,99676.68323,US,35,TEXAS,United States of America,United States of America-BCR_35
+TX,US-TX-36,68077.38205,US,36,TEXAS,United States of America,United States of America-BCR_36
+TX,US-TX-37,40837.1742,US,37,TEXAS,United States of America,United States of America-BCR_37
+UT,US-UT-10,2875.338373,US,10,UTAH,United States of America,United States of America-BCR_10
+UT,US-UT-16,131471.5894,US,16,UTAH,United States of America,United States of America-BCR_16
+UT,US-UT-33,311.4143929,US,33,UTAH,United States of America,United States of America-BCR_33
+UT,US-UT-9,85199.37731,US,9,UTAH,United States of America,United States of America-BCR_9
+VA,US-VA-27,18706.52761,US,27,VIRGINIA,United States of America,United States of America-BCR_27
+VA,US-VA-28,39831.98859,US,28,VIRGINIA,United States of America,United States of America-BCR_28
+VA,US-VA-29,42367.76971,US,29,VIRGINIA,United States of America,United States of America-BCR_29
+VA,US-VA-30,2846.801184,US,30,VIRGINIA,United States of America,United States of America-BCR_30
+VT,US-VT-13,4533.428718,US,13,VERMONT,United States of America,United States of America-BCR_13
+VT,US-VT-14,20508.05298,US,14,VERMONT,United States of America,United States of America-BCR_14
+WA,US-WA-10,22876.08348,US,10,WASHINGTON,United States of America,United States of America-BCR_10
+WA,US-WA-5,52629.00809,US,5,WASHINGTON,United States of America,United States of America-BCR_5
+WA,US-WA-9,99497.40896,US,9,WASHINGTON,United States of America,United States of America-BCR_9
+WI,US-WI-12,46194.38968,US,12,WISCONSIN,United States of America,United States of America-BCR_12
+WI,US-WI-22,1316.460034,US,22,WISCONSIN,United States of America,United States of America-BCR_22
+WI,US-WI-23,98330.49869,US,23,WISCONSIN,United States of America,United States of America-BCR_23
+WV,US-WV-28,62692.4925,US,28,WEST VIRGINIA,United States of America,United States of America-BCR_28
+WY,US-WY-10,165734.9472,US,10,WYOMING,United States of America,United States of America-BCR_10
+WY,US-WY-16,10978.85712,US,16,WYOMING,United States of America,United States of America-BCR_16
+WY,US-WY-17,64730.2089,US,17,WYOMING,United States of America,United States of America-BCR_17
+WY,US-WY-18,12182.58154,US,18,WYOMING,United States of America,United States of America-BCR_18
+YT,CA-YT-3,28020.81351,CA,3,Yukon,Canada,Canada-BCR_3
+YT,CA-YT-4,435349.3424,CA,4,Yukon,Canada,Canada-BCR_4
+YT,CA-YT-5,4128.331567,CA,5,Yukon,Canada,Canada-BCR_5
+YT,CA-YT-6,17376.54475,CA,6,Yukon,Canada,Canada-BCR_6
