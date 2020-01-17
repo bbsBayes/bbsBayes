@@ -69,6 +69,9 @@ generate_map <- function(trend = NULL,
                  layer = maps[[stratify_by]],
                  verbose = FALSE)
   breaks <- c(-7, -4, -2, -1, -0.5, 0.5, 1, 2, 4, 7)
+  labls = c(paste0("< ",breaks[1]),paste0(breaks[-c(length(breaks))],":", breaks[-c(1)]),paste0("> ",breaks[length(breaks)]))
+  labls = paste0(labls, " %")
+
   map@data$row_num <- 1:nrow(map@data)
   map@data <- merge(map@data, trend, by.x = "ST_12", by.y = "Region", all = T)
   map@data <- map@data[order(map@data$row_num), ]
@@ -82,6 +85,8 @@ generate_map <- function(trend = NULL,
 
   map_palette <- c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
                    "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")
+  names(map_palette) <- labls
 
-  return(sp::spplot(map, col.regions = map_palette))
+  return(sp::spplot(map, col.regions = map_palette, edge.col = grey(0.5)),
+         par.settings = list(axis.line = list(col = 'transparent')))
 }
