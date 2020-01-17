@@ -133,7 +133,7 @@ generate_regional_indices <- function(jags_mod = NULL,
     if(nrow(region_names) != nrow(region_names_o)){
       stop("Alt_region_names does not match the original model stratification. Please ensure your alternative regions exactly match the model stratification"); return(NULL)
     }
-    if(all(regions %in% names(region_names)) == F){
+    if(all(regions[-which(regions %in% c("continental","stratum"))] %in% names(region_names)) == F){
       stop("desired regions do not match the columns in your alternative regions dataframe"); return(NULL)
 
     }
