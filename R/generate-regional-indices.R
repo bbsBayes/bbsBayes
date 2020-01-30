@@ -58,7 +58,7 @@ generate_regional_indices <- function(jags_mod = NULL,
                                   regions = c("stratum","continental"),
                                   alternate_n = "n",
                                   startyear = NULL,
-                                  max_backcast = 5,
+                                  max_backcast = 1,
                                   alt_region_names = NULL)
 {
   if (is.null(jags_mod))
@@ -203,7 +203,7 @@ obs_df = data.frame(year = integer(),
     rawst <- rawst[order(rawst$year),]
 
     o_mns <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = mean,na.rm = T))
-    nrts <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = length))
+    nrts <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = function(x){length(which(!is.na(x)))}))
     nnzero <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = function(x){length(which(x>0))}))
     if(sum(nnzero[1:max_backcast]) < 1 & as.integer(fyearbystrat[j]) > y_min){
        st_rem <- c(st_rem,as.character(area_weights[which(area_weights$num == j),"region"]))
