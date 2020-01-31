@@ -9,7 +9,7 @@
 #' @param quantiles vector of quantiles to be sampled from the posterior distribution Defaults to c(0.025,0.05,0.25,0.5,0.75,0.95,0.975)
 #' @param regions vector selcting regional compilation(s) to calculate. Default is "continental","stratum", options also include "national", "prov_state", "bcr", and "bcr_by_country" for the stratifications that include areas that align with those regions.
 #' @param alternate_n text string indicating the name of the alternative annual index parameter in a model, Default is "n"
-#' @param max_backcast an integer indicating the maximum number of years to backcast the stratum-level estimates before the first year in which the species was observed on any route in that stratum. Default is 5. If the observed data in a given stratum do not include at least one non-zero observation of the species between the first year of the BBS and startyear+max_backcast, the stratum is dropped from the relevant regional summary. Optionally this can be set to NULL to ignore any backcasting limit (i.e., to generate annual indices for the entire time series, regardless of when the species was first observed)
+#' @param max_backcast an optional integer indicating the maximum number of years to backcast the stratum-level estimates before the first year in which the species was observed on any route in that stratum. 5 is used in the CWS national estimates. If the observed data in a given stratum do not include at least one non-zero observation of the species between the first year of the BBS and startyear+max_backcast, the stratum is dropped from the relevant regional summary. Default value, NULL ignores any backcasting limit (i.e., generates annual indices for the entire time series, regardless of when the species was first observed)
 #' @param startyear Optional first year for which to calculate the annual indices if a trajectory for only the more recent portion of the time series is desired. This is probably most relevant if max_backcast is set and so trajectories for different time-periods could include a different subset of strata (i.e., strata removed)
 #' @param alt_region_names Optional dataframe generated with the \code{extract_strata_areas} function, then modified with an additional column indicating the strata to include in a custom spatial summary
 #'
@@ -58,7 +58,7 @@ generate_regional_indices <- function(jags_mod = NULL,
                                   regions = c("stratum","continental"),
                                   alternate_n = "n",
                                   startyear = NULL,
-                                  max_backcast = 1,
+                                  max_backcast = NULL,
                                   alt_region_names = NULL)
 {
   if (is.null(jags_mod))
