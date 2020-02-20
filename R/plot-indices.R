@@ -26,18 +26,18 @@
 #'
 #' \dontrun{
 #' # Run a JAGS model analysis on a species
-#' stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
+#' stratified_data <- stratify(by = "bcr")
 #' prepped_data <- prepare_jags_data(strat_data = stratified_data,
 #'                                   species_to_run = "Wood Thrush",
 #'                                   model = "slope")
 #' mod <- run_model(jags_data = prepped_data)
 #'
 #' #Generate the indices for each strata
-#' strata_indices <- generate_strata_indices(jags_mod = mod)
+#' indices <- generate_regional_indices(jags_mod = mod)
 #'
 #'
 #' # After generating strata indices, plot them
-#' s_plot <- plot_strata_indices(indices = strata_indices,
+#' s_plot <- plot_indices(indices = strata_indices,
 #'                               species = "Wood Thrush")
 #'
 #' # s_plot is just a list of ggplot objects, so you can access by index
@@ -48,30 +48,30 @@
 #'
 #' # You can specify to only plot a subset of years using min_year and max_year
 #' # Plots indices from 1990 onward
-#' s_plot <- plot_strata_indices(indices = strata_indices,
+#' s_plot <- plot_indices(indices = strata_indices,
 #'                               min_year = 1990,
 #'                               species = "Wood Thrush")
 #' #Plot up indices up to the year 2000
-#' s_plot <- plot_strata_indices(indices = strata_indices,
+#' s_plot <- plot_indices(indices = strata_indices,
 #'                               max_year = 2000,
 #'                               species = "Wood Thrush")
 #' #Plot indices between 1970 and 2010
-#' s_plot <- plot_strata_indices(indices = strata_indices,
+#' s_plot <- plot_indices(indices = strata_indices,
 #'                               min_year = 1970,
 #'                               max_year = 2010,
 #'                               species = "Wood Thrush")
 #' }
 #' @export
 #'
-plot_strata_indices <- function(indices_list = NULL,
-                                ci_width = 0.95,
-                              min_year = NULL,
-                              max_year = NULL,
-                              species = "",
-                              title_size = 20,
-                              axis_title_size = 18,
-                              axis_text_size = 16,
-                              add_observed_means = F)
+plot_indices <- function(indices_list = NULL,
+                         ci_width = 0.95,
+                         min_year = NULL,
+                         max_year = NULL,
+                         species = "",
+                         title_size = 20,
+                         axis_title_size = 18,
+                         axis_text_size = 16,
+                         add_observed_means = F)
 {
   Year <- NULL
   rm(Year)
@@ -92,7 +92,7 @@ plot_strata_indices <- function(indices_list = NULL,
   indices$lci = indices[,lqc]
   indices$uci = indices[,uqc]
 
-
+  cl = "cornflowerblue"
 
   plot_list <- list()
 
@@ -121,7 +121,7 @@ plot_strata_indices <- function(indices_list = NULL,
     if(add_observed_means){
 
 
-    p <- ggplot2::ggplot() +
+      p <- ggplot2::ggplot() +
       ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
             panel.grid.minor = ggplot2::element_blank(),
             panel.background = ggplot2::element_blank(),
@@ -129,12 +129,12 @@ plot_strata_indices <- function(indices_list = NULL,
             plot.title = ggplot2::element_text(size = title_size),
             axis.title = ggplot2::element_text(size = axis_title_size),
             axis.text = ggplot2::element_text(size = axis_text_size)) +
-      ggplot2::labs(title = paste(species, " Trajectory and raw mean counts", i, sep = ""),
+      ggplot2::labs(title = paste(species, " Trajectory and raw mean counts ", i, sep = ""),
            x = "Year",
            y = "Annual index of abundance (mean count)") +
       ggplot2::geom_point(data = to_plot,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6))+
-      ggplot2::geom_line(data = to_plot, ggplot2::aes(x = Year, y = Index)) +
-      ggplot2::geom_ribbon(data = to_plot, ggplot2::aes(x = Year, ymin = lci, ymax = uci), alpha = 0.12)+
+      ggplot2::geom_line(data = to_plot, ggplot2::aes(x = Year, y = Index), colour = cl) +
+      ggplot2::geom_ribbon(data = to_plot, ggplot2::aes(x = Year, ymin = lci, ymax = uci),fill = cl,alpha = 0.3)+
       ggplot2::scale_x_continuous(breaks = yys)+
       ggplot2::scale_y_continuous(limits = c(0,NA))
 
@@ -151,8 +151,8 @@ plot_strata_indices <- function(indices_list = NULL,
         ggplot2::labs(title = paste(species, " Trajectory ", i, sep = ""),
                       x = "Year",
                       y = "Annual index of abundance (mean count)") +
-        ggplot2::geom_line(data = to_plot, ggplot2::aes(x = Year, y = Index)) +
-        ggplot2::geom_ribbon(data = to_plot, ggplot2::aes(x = Year, ymin = lci, ymax = uci), alpha = 0.12)+
+        ggplot2::geom_line(data = to_plot, ggplot2::aes(x = Year, y = Index), colour = cl) +
+        ggplot2::geom_ribbon(data = to_plot, ggplot2::aes(x = Year, ymin = lci, ymax = uci),fill = cl, alpha = 0.3)+
         ggplot2::scale_x_continuous(breaks = yys)+
         ggplot2::scale_y_continuous(limits = c(0,NA))
 

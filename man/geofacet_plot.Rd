@@ -12,7 +12,7 @@ geofacet_plot(indices_list = NULL, select = F, stratify_by = NULL,
 \item{indices_list}{Dataframe of strata or state/province indices produced by
 \code{generate_strata_indices} or \code{generate_regional_indices}}
 
-\item{select}{logical flag to indicate if the continental data need to be selected out of an indices_list object that includes stratum, national, or other region-types. Default is FALSE}
+\item{select}{logical flag to indicate if the strata_level data need to be selected out of an indices_list object that includes stratum, national, or other region-types. Default is FALSE}
 
 \item{stratify_by}{How were the data stratified?}
 

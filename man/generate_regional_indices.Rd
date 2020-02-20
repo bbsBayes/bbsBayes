@@ -24,7 +24,7 @@ generate_regional_indices(jags_mod = NULL, jags_data = NULL,
 
 \item{max_backcast}{an optional integer indicating the maximum number of years to backcast the stratum-level estimates before the first year in which the species was observed on any route in that stratum. 5 is used in the CWS national estimates. If the observed data in a given stratum do not include at least one non-zero observation of the species between the first year of the BBS and startyear+max_backcast, the stratum is dropped from the relevant regional summary. Default value, NULL ignores any backcasting limit (i.e., generates annual indices for the entire time series, regardless of when the species was first observed)}
 
-\item{alt_region_names}{Optional dataframe generated with the \code{extract_strata_areas} function, then modified with an additional column indicating the strata to include in a custom spatial summary}
+\item{alt_region_names}{Optional dataframe indicating the strata to include in a custom spatial summary. Generate the basic dataframe structure with the \code{extract_strata_areas} function, then modify with an additional column indicating the strata to include in a custom spatial summary}
 }
 \value{
 List of 6 objects:
@@ -63,7 +63,8 @@ prepped_data <- prepare_jags_data(strat_data = stratified_data,
 mod <- run_model(jags_data = prepped_data)
 
 #Generate the continental indices weighted by each strata
-cont_index <- generate_cont_indices(jags_mod = mod)
+cont_index <- generate_regional_indices(jags_mod = mod,
+                                        jags_data = prepped_data)
 }
 
 }

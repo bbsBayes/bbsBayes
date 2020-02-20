@@ -16,7 +16,8 @@ Imports:
   stringr,
   grDevices,
   rgdal,
-  sp, 
+  dplyr,
+  sf,
   tools,
   latticeExtra,
   rappdirs

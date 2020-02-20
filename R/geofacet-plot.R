@@ -9,7 +9,7 @@
 #'
 #' @param indices_list Dataframe of strata or state/province indices produced by
 #'   \code{generate_strata_indices} or \code{generate_regional_indices}
-#' @param select logical flag to indicate if the continental data need to be selected out of an indices_list object that includes stratum, national, or other region-types. Default is FALSE
+#' @param select logical flag to indicate if the strata_level data need to be selected out of an indices_list object that includes stratum, national, or other region-types. Default is FALSE
 #' @param stratify_by How were the data stratified?
 #' @param multiple Logical, if TRUE, multiple strata-level trajectories are plotted within each prov/state facet
 #' @param trends Optional dataframe of matching strata or state/province trends produced by
@@ -163,7 +163,7 @@ geofacet_plot <- function(indices_list = NULL,
                      panel.background = ggplot2::element_blank(),
                      axis.text = ggplot2::element_text(colour = grey(0.2)),
                      strip.background = ggplot2::element_rect(fill = grDevices::grey(0.97)),#strcol #, colour = grey(0.9), size = NULL, linetype = NULL, color = NULL, inherit.blank = FALSE
-                     #axis.line = element_line(colour = "black"),
+                     strip.text = ggplot2::element_text(size = 4,margin = margin()),#
                      legend.position = "none") +
       ggplot2::labs(title = paste(species,"trajectories within Provinces and States"), x = "", y = "Annual indices") +
 
@@ -224,7 +224,7 @@ geofacet_plot <- function(indices_list = NULL,
                        panel.background = ggplot2::element_blank(),
                        axis.text = ggplot2::element_text(colour = grey(0.2)),
                        strip.background = ggplot2::element_rect(fill = grDevices::grey(0.97)),#strcol #, colour = grey(0.9), size = NULL, linetype = NULL, color = NULL, inherit.blank = FALSE
-                       #axis.line = element_line(colour = "black"),
+                       strip.text = ggplot2::element_text(size = 4,margin = margin()),#
                        legend.position = "none") +
         ggplot2::labs(title = paste(species,"trajectories within Provinces and States"), x = "", y = "Annual indices") +
         ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index),colour = grDevices::grey(0.6)) +

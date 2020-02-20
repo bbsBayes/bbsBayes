@@ -10,11 +10,13 @@
 #' @param select logical flag to indicate if the stratum data need to be selected out of an trends object that includes continental, national, or other region-types. Default is FALSE
 #' @param stratify_by How were the data stratified?
 #' @param slope Logical, if TRUE, maps values of the alternative trend metric if slope = T was used in \code{generate_strata_trends}, the slope of a log-linear regression through the annual indices. Default FALSE.
+#' @param species Text, optional species name to add plot title. if left blank "" no title is added
 #'
 #' @return spplot object
 #'
-#' @importFrom rgdal readOGR
-#' @importFrom sp spplot sp.polygons
+#' @importFrom sf read_sf
+#' @importFrom dplyr left_join
+#' @importFrom ggplot2 geom_sf
 #'
 #' @examples
 #'
@@ -23,17 +25,17 @@
 #' stratification <- "bcr"
 #'
 #' # Run a JAGS model analysis on a species
-#' stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = stratification)
+#' stratified_data <- stratify(by = stratification)
 #' prepped_data <- prepare_jags_data(strat_data = stratified_data,
 #'                                   species_to_run = "Wood Thrush",
 #'                                   model = "slope")
-#' mod <- run_model(jags_data = prepped_data)
+#' jags_mod <- run_model(jags_data = prepped_data)
 #'
 #' #Generate the indices for each strata
-#' strata_index <- generate_strata_indices(jags_mod = mod)
+#' strata_index <- generate_regional_indices(jags_mod = jags_mod)
 #'
 #' # Get the data frame of trends by strata
-#' trend <- generate_strata_trends(indices = strata_index)
+#' trend <- generate_regional_trends(indices = strata_index)
 #'
 #' # Obtain a map of the trends by each strata
 #' map <- generate_map(trend = trend, stratify_by = stratification)
@@ -44,7 +46,8 @@
 generate_map <- function(trend = NULL,
                          select = F,
                          stratify_by = NULL,
-                         slope = FALSE)
+                         slope = FALSE,
+                         species = "")
 {
   Trend <- NULL
   rm(Trend)
@@ -64,29 +67,62 @@ generate_map <- function(trend = NULL,
   }
 
 
-  map <- rgdal::readOGR(dsn = system.file("maps",
-                                   package = "bbsBayes"),
-                 layer = maps[[stratify_by]],
-                 verbose = FALSE)
+  fyr = min(trend$Start_year)
+  lyr = min(trend$End_year)
+
+  map <- sf::read_sf(dsn = system.file("maps",
+                                       package = "bbsBayes"),
+                     layer = maps[[stratify_by]],
+                     quiet = TRUE)
+
+
   breaks <- c(-7, -4, -2, -1, -0.5, 0.5, 1, 2, 4, 7)
   labls = c(paste0("< ",breaks[1]),paste0(breaks[-c(length(breaks))],":", breaks[-c(1)]),paste0("> ",breaks[length(breaks)]))
   labls = paste0(labls, " %")
 
-  map@data$row_num <- 1:nrow(map@data)
-  map@data <- merge(map@data, trend, by.x = "ST_12", by.y = "Region", all = T)
-  map@data <- map@data[order(map@data$row_num), ]
   if(slope){
-    map@data$Trend <- as.numeric(as.character(map@data$Slope_Trend))
+    trend$Tplot <- as.numeric(as.character(trend$Slope_Trend))
   }else{
-  map@data$Trend <- as.numeric(as.character(map@data$Trend))
+    trend$Tplot <- as.numeric(as.character(trend$Trend))
   }
-  map@data$Trend <- cut(map@data$Trend, breaks = c(-Inf, breaks, Inf))
-  map@data <- subset(map@data, select = c(Trend))
+  trend$Tplot <- cut(trend$Tplot,breaks = c(-Inf, breaks, Inf),labels = labls)
+
+  trend$ST_12 = trend$Region
+  map = dplyr::left_join(x = map,y = trend,by = "ST_12")
+
+  if(species != ""){
+    ptit = paste(species,"trends",fyr,"-",lyr)
+  }else{
+    ptit = ""
+  }
+
+
+  #
+  # map@data$row_num <- 1:nrow(map@data)
+  # map@data <- merge(map@data, trend, by.x = "ST_12", by.y = "Region", all = T)
+  # map@data <- map@data[order(map@data$row_num), ]
+  #
+  # map@data$Trend <- cut(map@data$Trend, breaks = c(-Inf, breaks, Inf))
+  # map@data <- subset(map@data, select = c(Trend))
 
   map_palette <- c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
                    "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")
   names(map_palette) <- labls
 
-  return(sp::spplot(map, col.regions = map_palette, edge.col = grey(0.5),
-         par.settings = list(axis.line = list(col = 'transparent'))))
+  mp.plot = ggplot2::ggplot()+
+    ggplot2::geom_sf(data = map,ggplot2::aes(fill = Tplot),colour = grey(0.4),size = 0.1)+
+    ggplot2::theme_minimal()+
+    ggplot2::ylab("")+
+    ggplot2::xlab("")+
+    ggplot2::labs(title = ptit)+
+    ggplot2::theme(legend.position = "right", line = ggplot2::element_line(size = 0.4),
+                   rect = ggplot2::element_rect(size = 0.1),
+          axis.text = ggplot2::element_blank(),
+          axis.line = ggplot2::element_blank())+
+    scale_colour_manual(values = map_palette, aesthetics = c("fill"),
+                        guide = guide_legend(reverse=TRUE),
+                        name=paste0("Trend\n",fyr,"-",lyr))
+
+
+  return(mp.plot)
 }

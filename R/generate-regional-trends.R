@@ -35,6 +35,8 @@
 #'   \item{Mean_Number_of_Routes}{The average number of BBS routes across years contributing data for this region and species}
 #'
 #' @importFrom stats quantile
+#' @importFrom stringr str_split
+#'
 #'
 #' @examples
 #'
@@ -131,7 +133,7 @@ n = n_all[[rrs]]
 
 reg_alt = unique(dsum[w_summary_rows,"Region_alt"])
 st_inc = unique(dsum[w_summary_rows,"Strata_included"])
-nstr = length(unlist(str_split(st_inc,pattern = " ; ")))
+nstr = length(unlist(stringr::str_split(st_inc,pattern = " ; ")))
 st_exc = unique(dsum[w_summary_rows,"Strata_excluded"])
 
   if(slope){
