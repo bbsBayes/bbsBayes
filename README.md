@@ -7,6 +7,10 @@
 ## Overview
 bbsBayes is a package to perform hierarchical Bayesian analysis of North American Breeding Bird Survey (BBS) data. 'bbsBayes' will run a full model analysis for one or more species that you choose, or you can take more control and specify how the data should be stratified, prepared for JAGS, or modelled. 
 
+<img src="man/figures/BARS_Continental_Trajectory.png" />
+<img src="man/figures/BARS_trendmap.png" />
+
+
 ## Installation
 
 We expect a CRAN release shortly, but for now you can install from Github using the following options:
@@ -147,9 +151,7 @@ tp = plot_indices(indices = indices,
 print(tp[[1]])
 ```
 <img src="man/figures/BARS_Continental_Trajectory.png" />
-``` r
-print(tp[[2]])
-```
+`print(tp[[2]])`
 <img src="man/figures/BARS_Canada_Trajectory.png" />
 etc.
 
