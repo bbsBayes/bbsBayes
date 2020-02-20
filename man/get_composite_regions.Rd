@@ -4,10 +4,10 @@
 \alias{get_composite_regions}
 \title{Get the area of each strata}
 \usage{
-get_composite_regions(strata_type = NULL)
+get_composite_regions(stratify_by = NULL)
 }
 \arguments{
-\item{strata_type}{Stratification type to return the areas of}
+\item{stratify_by}{Stratification type to return the areas of}
 }
 \value{
 Data frame with at least the following variables:
@@ -15,7 +15,7 @@ Data frame with at least the following variables:
   \item{area_sq_km}{Area of the stratum/region in square kilometres}
 }
 \description{
-\code{get_strata_area} allows you to obtain the area of each strata
+\code{get_composite_regions} allows you to obtain the dataframe defining the original composite regions
   for a given stratification type.
 }
 \examples{
@@ -25,13 +25,14 @@ Data frame with at least the following variables:
 # Most useful if the user wishes to create an set of custom composite regions
 #
 # USGS BBS
-st_comp_regions <- get_composite_regions(strata_type = "bbs_usgs")
+st_comp_regions <- get_composite_regions(stratify_by = "bbs_usgs")
 # create new column "Great_Plains"
 gpall <- rep("Outside",nrow(st_comp_regions))
 gp <- which(st_comp_region$bcr \%in\% c(11,17,18,19))
 gpall[gp] <- "Inside"
 st_comp_region$Great_Plains <- gpall
-#st_comp_region can now be used as the dataframe input to the argument alt_region_names in generate_regional_indices,  with "Great_Plains" as the value for the argument region
+# st_comp_region can now be used as the dataframe input to the argument alt_region_names in generate_regional_indices,
+# with "Great_Plains" as the value for the argument region
 
 
 # CWS BBS

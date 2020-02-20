@@ -72,7 +72,7 @@ bbs_data <- fetch_bbs_data()
 data_stratified <- stratify(bbs_data, stratify_by = "latlong")
 data_jags <- prepare_jags_data(strat_data = data_stratified,
                                species_to_run = "Pacific Wren",
-                               model = "standard")
+                               model = "slope")
 
 # Run a JAGS model with default JAGS arguments
 # Note that you do not have to specify the model file. This is saved

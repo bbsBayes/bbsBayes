@@ -2,7 +2,7 @@
 % Please edit documentation in R/get-species-aou.R
 \name{get_species_aou}
 \alias{get_species_aou}
-\title{Get AOU code of a species}
+\title{Get BBS numerical code of a species}
 \usage{
 get_species_aou(species, sp_eng)
 }
@@ -15,6 +15,6 @@ get_species_aou(species, sp_eng)
 4-5 digit AOU code for the given species, -1 if not found
 }
 \description{
-Simply return the 4-5 digit AOU code for the given species.
+Simply return the 4-5 digit BBS code for the given species.
 }
 \keyword{internal}

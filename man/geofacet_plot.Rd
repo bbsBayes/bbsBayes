@@ -62,5 +62,17 @@ trend <- generate_strata_trends(indices = strata_index)
 
 # Obtain a map of the trends by each strata
 map <- geofacet_plot(indices = strata_index, trend = trend, stratify_by = stratification)
+
+# There is an unfortunate conflict between geofacet function in the geofacet package
+# and the S3 +.gg method in other ggplot-extension-packages like ggmcmc
+# The geofacet_plot function may fail with the following error message:
+#  Error: Don't know how to add e2 to a plot
+# If this happens, you can fix the problem by following these steps
+#   1 - save your model output
+#   2 - restart your R-session
+#   3 - reload the bbsBayes package (do not re-load the other conflicting package, e.g., ggmcmc)
+map <- geofacet_plot(indices = strata_index, trend = trend, stratify_by = stratification)
+
+
 }
 }
