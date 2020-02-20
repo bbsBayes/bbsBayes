@@ -44,6 +44,9 @@ generate_strata_indices <- function(jags_mod = NULL,
                                   quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),
                                   alternate_n = "n")
 {
+  warning(paste("generate_strata_indices is deprecated in favour of generate_regional_indices(region = \"stratum\")"))
+
+
   if (is.null(jags_mod))
   {
     stop("No model output supplied to generate_strata_indices()."); return(NULL)

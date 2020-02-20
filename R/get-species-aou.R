@@ -1,6 +1,6 @@
-#' Get AOU code of a species
+#' Get BBS numerical code of a species
 #'
-#' Simply return the 4-5 digit AOU code for the given species.
+#' Simply return the 4-5 digit BBS code for the given species.
 #'
 #' @param species Species List
 #' @param sp_eng English name of species

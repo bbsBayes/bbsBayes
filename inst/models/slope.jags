@@ -94,7 +94,8 @@ model
 
 
 	#### summary statistics  ######
-	sdn <- exp(0.5*sdnoise*sdnoise)
+	sdn_ret <- 0.5*sdnoise*sdnoise
+	sdobs_ret <- 0.5*sdobs*sdobs
 
 	for( i in 1 : nstrata )
 	{
@@ -102,12 +103,18 @@ model
 		{
 			for(o in 1 : nobservers[i])
 			{
-				no[i,t,o] <- exp(strata[i] + beta[i]*(t-fixedyear) + yeareffect[i,t] + obs[i,o])
+				no[i,t,o] <- exp(strata[i] + beta[i]*(t-fixedyear) + yeareffect[i,t] + obs[i,o]+sdn_ret)
+				no3[i,t,o] <- exp(strata[i] + beta[i]*(t-fixedyear) + obs[i,o]+sdn_ret)
+
 			}
 
 			mn[i,t] <- mean(no[i,t,1 : nobservers[i]])
-			n[i,t] <- nonzeroweight[i]*(mn[i,t]*sdn)
-			n2[i,t] <- nonzeroweight[i]*exp(strata[i] + beta[i]*(t-fixedyear) + yeareffect[i,t] + 0.5*sdnoise*sdnoise+ 0.5*sdobs*sdobs)
+			mn3[i,t] <- mean(no3[i,t,1 : nobservers[i]])
+			n[i,t] <- nonzeroweight[i]*(mn[i,t])
+			n3[i,t] <- nonzeroweight[i]*(mn3[i,t])
+
+			n2[i,t] <- nonzeroweight[i]*exp(strata[i] + beta[i]*(t-fixedyear) + yeareffect[i,t] + sdn_ret + sdobs_ret)
+			n4[i,t] <- nonzeroweight[i]*exp(strata[i] + beta[i]*(t-fixedyear) + sdn_ret + sdobs_ret)
 		}
 	}
 

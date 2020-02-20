@@ -1,6 +1,6 @@
 #' Get final values of JAGS model
 #'
-#' \code{get_final_values} returns the final values of the monitored parameters of
+#' \code{get_final_values} returns the final values of all parameters of
 #'   the model created by \code{run_model} as a list. This function would mostly be used
 #'   in conjunction with \code{run_model} to provide initial values.
 #'

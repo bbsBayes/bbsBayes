@@ -96,7 +96,7 @@ jags_mod$Rhat # shows the Rhat values for each monitored parameter
 If important monitored parameters have not converged, we recommend inspecting the model diagnostics with the package ggmcmc. 
 ``` r 
 install.packages("ggmcmc")
-S <- ggmcmc::ggs(jags_mod$samples,family = "B.X")
+S <- ggmcmc::ggs(jags_mod$samples,family = "B.X") #samples object is an mcmc.list object
 ggmcmc::ggmcmc(S,family = "B.X") ## this will output a pdf with a series of plots useful for assessing convergence. Be warned this function will be overwhelmed if trying to handle all of the n values from a BBS analysis of a broad-ranged species
 ```
 
@@ -116,7 +116,7 @@ indices <- generate_regional_indices(jags_mod = jags_mod,
                                      "national",
                                      "prov_state",
                                      "stratum"))
-                                     #also "bcr", "bcr_by_country",
+                                     #also "bcr", "bcr_by_country"
 ```
 
 #### Population Trends
@@ -179,7 +179,9 @@ For stratifications that can be compiled by political regions (i.e., `bbs_cws`, 
                      slope = F,
                      species = "Barn Swallow")
   
+  #png("BARS_geofacet.png",width = 1500, height = 750,res = 150)
   print(gf)
+  #dev.off()
   ```
 <img src="man/figures/BARS_geofacet.png" />
 

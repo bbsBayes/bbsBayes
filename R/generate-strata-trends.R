@@ -42,6 +42,9 @@ generate_strata_trends <- function(indices = NULL,
                                    quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),
                                    slope = FALSE)
 {
+  warning(paste("generate_strata_trends is deprecated in favour of generate_regional_trends()"))
+
+
   if (is.null(indices))
   {
     stop("No indices supplied to generate_strata_trends()."); return(NULL)
