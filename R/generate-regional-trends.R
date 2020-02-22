@@ -81,6 +81,12 @@ generate_regional_trends <- function(indices = NULL,
   }else{
     min_year <- indices$y_min + (Min_year-indices$startyear)
     minyn <- 1 + (Min_year-indices$startyear)
+
+    if(min_year < 0){
+      min_year = indices$y_min
+      Min_year <- indices$startyear
+      minyn <- 1
+    }
   }
   if (is.null(Max_year))
   {

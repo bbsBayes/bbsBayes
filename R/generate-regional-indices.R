@@ -101,11 +101,19 @@ generate_regional_indices <- function(jags_mod = NULL,
     y_min <- startyear-inity
     y_max <- data_list$y_max
     mr_year <- startyear
+
+    if(inity > startyear){
+      y_min <- data_list$y_min
+      y_max <- data_list$y_max
+      mr_year <- min(data_list$r_year)
+    }
+
   }else{
   y_min <- data_list$y_min
   y_max <- data_list$y_max
   mr_year <- min(data_list$r_year)
   }
+
 
   if(is.null(max_backcast)){
     max_backcast <- length(y_min:y_max)
@@ -181,10 +189,10 @@ generate_regional_indices <- function(jags_mod = NULL,
 
     for(rrs in rrall){ # for each of the composite regions
 
-      region_alt_name = as.character(unique(region_names[which(region_names[,rr] == rrs),col_region_name]))
+      region_alt_name <- as.character(unique(region_names[which(region_names[,rr] == rrs),col_region_name]))
   if(rr == "bcr"){region_alt_name = paste("BCR",region_alt_name,sep = "_")}
 
-st_sela = as.character(region_names[which(region_names[,rr] == rrs),"region"])
+st_sela <- as.character(region_names[which(region_names[,rr] == rrs),"region"])
 
 st_rem <- NULL
 strata_sel <- area_weights[which(area_weights$region %in% st_sela),"num"]
@@ -243,7 +251,15 @@ if(!is.null(st_rem)){
 
 if(length(strata_sel)<1){next}
 
-n_weight <- n[,,y_min:y_max]
+#n_weight <- n[,,y_min:y_max]
+#
+
+
+
+n_weight <- array(NA,dim = c(dim(n)[c(1,2)],length(y_min:y_max)))
+n_weight[,,1:length(y_min:y_max)] <- n[,,y_min:y_max]
+
+
   # Weight each sampled n
   for (i in 1:n_samples)
   {
