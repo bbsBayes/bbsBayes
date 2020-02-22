@@ -17,7 +17,7 @@
 #'   \item{Region_alt}{Long name for region}
 #'   \item{Region_type}{Type of region including "continental", "national","Province/State","BCR", "bcr_by_national", or "stratum"}
 #'   \item{Strata_included}{Strata included in the trend and annual index calculations}
-#'   \item{Strata_excluded}{Strata excluded from the trend and annual index calculations because they have no observations of the species in the first part of the time series}
+#'   \item{Strata_excluded}{Strata potentially excluded from the trend and annual index calculations because they have no observations of the species in the first part of the time series}
 #'   \item{Trend}{Estimated mean annual percent change over the trend time-period (i.e., Start_year - End_year), according to an endpoint comparison of annual index in Start_year and the annual index in End_year}
 #'   \item{Trend_Q_quantiles}{quantiles of the posterior distribution of Trend estimates, matching levels included in the quantiles argument}
 #'   \item{Percent_Change}{Estimated total percent change over the trend time-period}
@@ -33,6 +33,7 @@
 #'   \item{Width_of_X_percent_Credible_Interval_Slope}{Width (in percent/year) of the credible interval on the Trend calculation for the slope-based trend. Calculated for the widest credible interval requested in quantiles argument. Default is 95 percent CI (i.e., Slope_Trend_Q0.975 - Slope_Trend_Q0.025)}
 #'   \item{Number_of_Routes}{The number of unique BBS routes included in the trend calculation for this region and species}
 #'   \item{Mean_Number_of_Routes}{The average number of BBS routes across years contributing data for this region and species}
+#'   \item{backcast_flag}{approximate proportion of the included species range*years that rely on extrapolated population trajectories. Only calculated if max_backcast != NULL}
 #'
 #' @importFrom stats quantile
 #' @importFrom stringr str_split
@@ -212,6 +213,7 @@ if(slope){
 }
   trendt[,"Number_of_Routes"] <- mean(dsum[w_summary_rows,"nrts_total"])
   trendt[,"Mean_Number_of_Routes"] <- mean(dsum[w_summary_rows,"nrts"])
+  trendt[,"backcast_flag"] <- mean(dsum[w_summary_rows,"backcast_flag"])
 
 
   trend = rbind(trend,trendt)

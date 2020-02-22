@@ -105,7 +105,8 @@ There are a number of tools available to summarize and visualize the posterior p
 #### Annual Indices of Abundance and Population Trajectories
 The main monitored parameters are the annual indices of relative abundance within a stratum (i.e., parameters "n[strata,year]"). The time-series of these annual indices form the estimated population trajectories.
 ``` r
-indices <- generate_regional_indices(jags_mod)
+indices <- generate_regional_indices(jags_mod = jags_mod,
+                                     jags_data = jags_data)
 ```
 By default, this function generates estimates for the continent (i.e., survey-wide) and for the individual strata. However, the user can also select summaries for composite regions (regions made up of collections of strata), such as countries, provinces/states, Bird Conservation Regions, etc.
 

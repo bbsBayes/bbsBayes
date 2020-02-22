@@ -186,9 +186,9 @@ generate_regional_indices <- function(jags_mod = NULL,
 
 st_sela = as.character(region_names[which(region_names[,rr] == rrs),"region"])
 
-st_rem = NULL
-strata_sel = area_weights[which(area_weights$region %in% st_sela),"num"]
-st_sel = area_weights[which(area_weights$region %in% st_sela),"region"]
+st_rem <- NULL
+strata_sel <- area_weights[which(area_weights$region %in% st_sela),"num"]
+st_sel <- area_weights[which(area_weights$region %in% st_sela),"region"]
 
 if(length(strata_sel)<1){next}
 
@@ -197,8 +197,9 @@ obs_df = data.frame(year = integer(),
                     strat = integer(),
                     obs_mean = double(),
                     nrts = integer(),
-                    nnzero = integer())
-strata_rem_flag <- NULL
+                    nnzero = integer(),
+                    nrts_total = integer(),
+                    strata_rem_flag = double())
   for (j in strata_sel)
   {
     rawst <- raw[which(raw$strat == j),c("year","count")]
@@ -209,19 +210,25 @@ strata_rem_flag <- NULL
     o_mns <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = mean,na.rm = T))
     nrts <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = function(x){length(which(!is.na(x)))}))
     nnzero <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = function(x){length(which(x>0))}))
-    if(sum(nnzero[1:max_backcast]) < 1 & as.integer(fyearbystrat[j]) > y_min){
-       st_rem <- c(st_rem,as.character(area_weights[which(area_weights$num == j),"region"]))
-       strata_rem_flag <- c(strata_rem_flag,((as.integer(fyearbystrat[j]) - y_min)/y_max)*(area_weights[which(area_weights$num == j),"area_sq_km"]/sum(area_weights[which(area_weights$num %in% strata_sel),"area_sq_km"])))
-    if(length(strata_sel) == 1){break}
+    strata_p <- (non_zero_weight[j])*(area_weights[which(area_weights$num == j),"area_sq_km"]/sum(area_weights[which(area_weights$num %in% strata_sel),"area_sq_km"]))
 
-    next
-       } #if no observations of the species in the first 5 years, then remove the strata from trend summaries
-    obs_df_t <- data.frame(year = c(y_min:y_max),
+    if(sum(nnzero[1:max_backcast]) < 1 & as.integer(fyearbystrat[j]) > y_min){ #if no observations of the species in the first 5 years, then remove the strata from trend summaries
+       st_rem <- c(st_rem,as.character(area_weights[which(area_weights$num == j),"region"]))
+       strem_flag <- c(rep(strata_p,fyearbystrat[j]-(y_min-1)),rep(0,y_max-fyearbystrat[j]))
+    #if(length(strata_sel) == 1){break}
+    }else{
+      strem_flag <- rep(0,length(y_max:y_min))
+
+     }
+
+
+     obs_df_t <- data.frame(year = c(y_min:y_max),
                            strat = j,
                            obs_mean = o_mns*((area_weights$area_sq_km[which(area_weights$num == j)])/ sum(area_weights[which(area_weights$num %in% strata_sel),"area_sq_km"]))*(non_zero_weight[j]),
                            nrts = nrts,
                            nnzero = nnzero,
-                           nrts_total = as.integer(nrts_total_by_strat[j]))
+                           nrts_total = as.integer(nrts_total_by_strat[j]),
+                           strata_rem_flag = strem_flag)
 
     obs_df <- rbind(obs_df,obs_df_t)
   }
@@ -229,12 +236,10 @@ strata_rem_flag <- NULL
 
 if(!is.null(st_rem)){
   if(drop_exclude){
-    strata_sel = strata_sel[-which(strata_sel %in% area_weights[which(area_weights$region %in% st_rem),"num"])]
-    st_sel = st_sel[-which(st_sel %in% st_rem)]
+    strata_sel <- strata_sel[-which(strata_sel %in% area_weights[which(area_weights$region %in% st_rem),"num"])]
+    st_sel <- st_sel[-which(st_sel %in% st_rem)]
   }
-}else{
-  strata_rem_flag = 0
-  }
+}
 
 if(length(strata_sel)<1){next}
 
@@ -276,7 +281,7 @@ n_weight <- n_weight[,strata_sel,]
   data_summaryr$nrts <- as.numeric(by(obs_df[,4],INDICES = obs_df[,1],FUN = sum,na.rm = T))
   data_summaryr$nnzero <- as.numeric(by(obs_df[,5],INDICES = obs_df[,1],FUN = sum,na.rm = T))
   data_summaryr$nrts_total <- as.numeric(by(obs_df[,6],INDICES = obs_df[,1],FUN = sum,na.rm = T))
-  data_summaryr$backcast_flag <- sum(strata_rem_flag)
+  data_summaryr$backcast_flag <- as.numeric(by(obs_df[,7],INDICES = obs_df[,1],FUN = sum,na.rm = T))
 
   data_summary = rbind(data_summary,data_summaryr)
 
