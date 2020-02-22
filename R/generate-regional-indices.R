@@ -9,7 +9,8 @@
 #' @param quantiles vector of quantiles to be sampled from the posterior distribution Defaults to c(0.025,0.05,0.25,0.5,0.75,0.95,0.975)
 #' @param regions vector selcting regional compilation(s) to calculate. Default is "continental","stratum", options also include "national", "prov_state", "bcr", and "bcr_by_country" for the stratifications that include areas that align with those regions.
 #' @param alternate_n text string indicating the name of the alternative annual index parameter in a model, Default is "n"
-#' @param max_backcast an optional integer indicating the maximum number of years to backcast the stratum-level estimates before the first year in which the species was observed on any route in that stratum. 5 is used in the CWS national estimates. If the observed data in a given stratum do not include at least one non-zero observation of the species between the first year of the BBS and startyear+max_backcast, the stratum is dropped from the relevant regional summary. Default value, NULL ignores any backcasting limit (i.e., generates annual indices for the entire time series, regardless of when the species was first observed)
+#' @param max_backcast an optional integer indicating the maximum number of years to backcast the stratum-level estimates before the first year in which the species was observed on any route in that stratum. 5 is used in the CWS national estimates. If the observed data in a given stratum do not include at least one non-zero observation of the species between the first year of the BBS and startyear+max_backcast, the stratum is flagged within the relevant regional summary. Default value, NULL ignores any backcasting limit (i.e., generates annual indices for the entire time series, regardless of when the species was first observed)
+#' @param drop_exclude logical indicating if the strata that exceed the max_backcast threshold should be excluded from the calculations, Default is FALSE (regions are flagged and listed but not dropped)
 #' @param startyear Optional first year for which to calculate the annual indices if a trajectory for only the more recent portion of the time series is desired. This is probably most relevant if max_backcast is set and so trajectories for different time-periods could include a different subset of strata (i.e., strata removed)
 #' @param alt_region_names Optional dataframe indicating the strata to include in a custom spatial summary. Generate the basic dataframe structure with the \code{extract_strata_areas} function, then modify with an additional column indicating the strata to include in a custom spatial summary
 #'
@@ -20,12 +21,13 @@
 #'   \item{Region_alt}{Long name for region}
 #'   \item{Region_type}{Type of region including "continental", "national","Province/State","BCR", "bcr_by_country", or "stratum"}
 #'   \item{Strata_included}{Strata included in the annual index calculations}
-#'   \item{Strata_excluded}{Strata excluded from the annual index calculations because they have no observations of the species in the first part of the time series, see arguments max_backcast and startyear}
+#'   \item{Strata_excluded}{Strata potentially excluded from the annual index calculations because they have no observations of the species in the first part of the time series, see arguments max_backcast and startyear}
 #'   \item{Index}{Strata-weighted count index}
 #'   \item{additional columns for each of the values in quantiles}{quantiles of the posterior distribution}
 #'   \item{obs_mean}{Mean of the observed annual counts of birds across all routes and all years. An alternative estimate of the average relative abundance of the species in the region and year. Differences between this and the annual indices are a function of the model. For composite regions (i.e., anything other than stratum-level estimates) this average count is calculated as an area-weighted average across all strata included}
 #'   \item{nrts}{Number of BBS routes that contributed data for this species, region, and year}
 #'   \item{nnzero}{Number of BBS routes on which this species was observed (i.e., count is > 0) in this region and year}
+#'   \item{backcast_flag}{approximate annual average proportion of the covered species range that relies on extrapolated population trajectories. Only calculated if max_backcast != NULL}
 #'
 #'   \item{samples}{array of all samples from the posterior distribution}
 #'   \item{area-weights}{data frame of the strata names and area weights used to calculate the continental estimates}
@@ -59,6 +61,7 @@ generate_regional_indices <- function(jags_mod = NULL,
                                   regions = c("stratum","continental"),
                                   alternate_n = "n",
                                   startyear = NULL,
+                                  drop_exclude = FALSE,
                                   max_backcast = NULL,
                                   alt_region_names = NULL)
 {
@@ -195,7 +198,7 @@ obs_df = data.frame(year = integer(),
                     obs_mean = double(),
                     nrts = integer(),
                     nnzero = integer())
-
+strata_rem_flag <- NULL
   for (j in strata_sel)
   {
     rawst <- raw[which(raw$strat == j),c("year","count")]
@@ -208,8 +211,11 @@ obs_df = data.frame(year = integer(),
     nnzero <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = function(x){length(which(x>0))}))
     if(sum(nnzero[1:max_backcast]) < 1 & as.integer(fyearbystrat[j]) > y_min){
        st_rem <- c(st_rem,as.character(area_weights[which(area_weights$num == j),"region"]))
+       strata_rem_flag <- c(strata_rem_flag,((as.integer(fyearbystrat[j]) - y_min)/y_max)*(area_weights[which(area_weights$num == j),"area_sq_km"]/sum(area_weights[which(area_weights$num %in% strata_sel),"area_sq_km"])))
     if(length(strata_sel) == 1){break}
-    next} #if no observations of the species in the first 5 years, then remove the strata from trend summaries
+
+    next
+       } #if no observations of the species in the first 5 years, then remove the strata from trend summaries
     obs_df_t <- data.frame(year = c(y_min:y_max),
                            strat = j,
                            obs_mean = o_mns*((area_weights$area_sq_km[which(area_weights$num == j)])/ sum(area_weights[which(area_weights$num %in% strata_sel),"area_sq_km"]))*(non_zero_weight[j]),
@@ -222,8 +228,12 @@ obs_df = data.frame(year = integer(),
 
 
 if(!is.null(st_rem)){
-  strata_sel = strata_sel[-which(strata_sel %in% area_weights[which(area_weights$region %in% st_rem),"num"])]
-  st_sel = st_sel[-which(st_sel %in% st_rem)]
+  if(drop_exclude){
+    strata_sel = strata_sel[-which(strata_sel %in% area_weights[which(area_weights$region %in% st_rem),"num"])]
+    st_sel = st_sel[-which(st_sel %in% st_rem)]
+  }
+}else{
+  strata_rem_flag = 0
   }
 
 if(length(strata_sel)<1){next}
@@ -266,6 +276,7 @@ n_weight <- n_weight[,strata_sel,]
   data_summaryr$nrts <- as.numeric(by(obs_df[,4],INDICES = obs_df[,1],FUN = sum,na.rm = T))
   data_summaryr$nnzero <- as.numeric(by(obs_df[,5],INDICES = obs_df[,1],FUN = sum,na.rm = T))
   data_summaryr$nrts_total <- as.numeric(by(obs_df[,6],INDICES = obs_df[,1],FUN = sum,na.rm = T))
+  data_summaryr$backcast_flag <- sum(strata_rem_flag)
 
   data_summary = rbind(data_summary,data_summaryr)
 

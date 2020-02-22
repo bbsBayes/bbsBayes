@@ -31,7 +31,8 @@ gpall <- rep("Outside",nrow(st_comp_regions))
 gp <- which(st_comp_region$bcr \%in\% c(11,17,18,19))
 gpall[gp] <- "Inside"
 st_comp_region$Great_Plains <- gpall
-# st_comp_region can now be used as the dataframe input to the argument alt_region_names in generate_regional_indices,
+# st_comp_region can now be used as the dataframe input to the argument alt_region_names
+# in generate_regional_indices,
 # with "Great_Plains" as the value for the argument region
 
 

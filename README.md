@@ -151,7 +151,7 @@ tp = plot_indices(indices = indices,
 print(tp[[1]])
 ```
 <img src="man/figures/BARS_Continental_Trajectory.png" />
-`print(tp[[2]])`
+` print(tp[[2]]) `
 <img src="man/figures/BARS_Canada_Trajectory.png" />
 etc.
 
