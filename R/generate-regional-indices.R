@@ -1,4 +1,4 @@
-#' Generate a dataframe of the regional yearly indices
+#' Generate regional annual indices of abundance continent and strata and optionally for countries, states/provinces, or BCRs from analyses run on the stratifications that support these composite regions
 #'
 #' \code{generate_regional_indices} creates a data frame of the strata-weighted
 #'   regional indices by year. This data frame can then be used to
@@ -14,12 +14,12 @@
 #' @param startyear Optional first year for which to calculate the annual indices if a trajectory for only the more recent portion of the time series is desired. This is probably most relevant if max_backcast is set and so trajectories for different time-periods could include a different subset of strata (i.e., strata removed)
 #' @param alt_region_names Optional dataframe indicating the strata to include in a custom spatial summary. Generate the basic dataframe structure with the \code{extract_strata_areas} function, then modify with an additional column indicating the strata to include in a custom spatial summary
 #'
-#' @return List of 6 objects:
+#' @return List of 6 objects
 #'   \item{data_summary}{dataframe with the following columns}
 #'   \item{Year}{Year of particular index}
 #'   \item{Region}{Region name}
 #'   \item{Region_alt}{Long name for region}
-#'   \item{Region_type}{Type of region including "continental", "national","Province/State","BCR", "bcr_by_country", or "stratum"}
+#'   \item{Region_type}{Type of region including continental, national,Province_State,BCR, bcr_by_country, or stratum}
 #'   \item{Strata_included}{Strata included in the annual index calculations}
 #'   \item{Strata_excluded}{Strata potentially excluded from the annual index calculations because they have no observations of the species in the first part of the time series, see arguments max_backcast and startyear}
 #'   \item{Index}{Strata-weighted count index}
@@ -27,7 +27,7 @@
 #'   \item{obs_mean}{Mean of the observed annual counts of birds across all routes and all years. An alternative estimate of the average relative abundance of the species in the region and year. Differences between this and the annual indices are a function of the model. For composite regions (i.e., anything other than stratum-level estimates) this average count is calculated as an area-weighted average across all strata included}
 #'   \item{nrts}{Number of BBS routes that contributed data for this species, region, and year}
 #'   \item{nnzero}{Number of BBS routes on which this species was observed (i.e., count is > 0) in this region and year}
-#'   \item{backcast_flag}{approximate annual average proportion of the covered species range that relies on extrapolated population trajectories. Only calculated if max_backcast != NULL}
+#'   \item{backcast_flag}{approximate annual average proportion of the covered species range that is free of extrapolated population trajectories. e.g., 1.0 = data cover full time-series, 0.75 = data cover 75 percent of time-series. Only calculated if max_backcast != NULL}
 #'
 #'   \item{samples}{array of all samples from the posterior distribution}
 #'   \item{area-weights}{data frame of the strata names and area weights used to calculate the continental estimates}
@@ -41,7 +41,7 @@
 #'
 #' \dontrun{
 #' # Run a JAGS model analysis on a species
-#' stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
+#' stratified_data <- stratify(by = "bcr")
 #' prepped_data <- prepare_jags_data(strat_data = stratified_data,
 #'                                   species_to_run = "Wood Thrush",
 #'                                   model = "slope")
@@ -236,7 +236,7 @@ obs_df = data.frame(year = integer(),
                            nrts = nrts,
                            nnzero = nnzero,
                            nrts_total = as.integer(nrts_total_by_strat[j]),
-                           strata_rem_flag = strem_flag)
+                           strata_rem_flag = 1-strem_flag)
 
     obs_df <- rbind(obs_df,obs_df_t)
   }
