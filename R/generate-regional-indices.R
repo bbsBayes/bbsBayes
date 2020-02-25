@@ -236,7 +236,7 @@ obs_df = data.frame(year = integer(),
                            nrts = nrts,
                            nnzero = nnzero,
                            nrts_total = as.integer(nrts_total_by_strat[j]),
-                           strata_rem_flag = 1-strem_flag)
+                           strata_rem_flag = strem_flag)
 
     obs_df <- rbind(obs_df,obs_df_t)
   }
@@ -297,7 +297,7 @@ n_weight <- n_weight[,strata_sel,]
   data_summaryr$nrts <- as.numeric(by(obs_df[,4],INDICES = obs_df[,1],FUN = sum,na.rm = T))
   data_summaryr$nnzero <- as.numeric(by(obs_df[,5],INDICES = obs_df[,1],FUN = sum,na.rm = T))
   data_summaryr$nrts_total <- as.numeric(by(obs_df[,6],INDICES = obs_df[,1],FUN = sum,na.rm = T))
-  data_summaryr$backcast_flag <- as.numeric(by(obs_df[,7],INDICES = obs_df[,1],FUN = sum,na.rm = T))
+  data_summaryr$backcast_flag <- 1-as.numeric(by(obs_df[,7],INDICES = obs_df[,1],FUN = sum,na.rm = T))
 
   data_summary = rbind(data_summary,data_summaryr)
 
