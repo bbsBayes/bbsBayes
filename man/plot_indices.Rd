@@ -6,7 +6,8 @@
 \usage{
 plot_indices(indices_list = NULL, ci_width = 0.95, min_year = NULL,
   max_year = NULL, species = "", title_size = 20,
-  axis_title_size = 18, axis_text_size = 16, add_observed_means = F)
+  axis_title_size = 18, axis_text_size = 16,
+  add_observed_means = FALSE, add_number_routes = FALSE)
 }
 \arguments{
 \item{indices_list}{List of indices of annual abundance and other results produced by
@@ -27,6 +28,8 @@ plot_indices(indices_list = NULL, ci_width = 0.95, min_year = NULL,
 \item{axis_text_size}{Specify font size of axis text. Defaults to 16}
 
 \item{add_observed_means}{Should the plot include points indicated the observed mean counts. Defaults to FALSE. Note: scale of observed means and annual indices may not match due to imbalanced sampling among routes}
+
+\item{add_number_routes}{Should the plot be superimposed over a dotplot showing the number of BBS routes included in each year. This is useful as a visual check on the relative data-density through time because in most cases the number of observations increases over time}
 }
 \value{
 List of ggplot objects, each entry being a plot

@@ -152,7 +152,9 @@ tp = plot_indices(indices = indices,
 print(tp[[1]])
 ```
 <img src="man/figures/BARS_Continental_Trajectory.png" />
-` print(tp[[2]]) `
+``` r 
+print(tp[[2]]) 
+```
 <img src="man/figures/BARS_Canada_Trajectory.png" />
 etc.
 
@@ -191,7 +193,120 @@ There are numerous other functions available for analysis of the data.
 
 ### Advanced options and customized models
 
-To be added soon...
+### Alternative Models
+The package has (currently) four status and trend models that differ somewhat in the way they model the time-series of observations. The four model options are slope, gam, gamye, and firstdiff. 
+<img src="man/figures/AMKE_all.png" />
+
+
+#### slope
+The slope option estimates the time series as a log-linear regression with random year-effect terms that allow the trajectory to depart from the smooth regression line. It is the model used by the USGS and CWS to estimate bbs trends since 2011. It has been described in a number of publications (). 
+
+``` r
+    #stratified_data <- stratify(by = "bbs_usgs")
+    
+    #jags_data_slope <- prepare_jags_data(stratified_data, 
+    #                           species_to_run = "American Kestrel",
+    #                           min_max_route_years = 3,
+    #                           model = "slope")
+
+    #jags_mod_full_slope <- run_model(jags_data = jags_data)
+                               
+    slope_ind <- generate_regional_indices(jags_mod = jags_mod_full_slope,
+                                     jags_data = jags_data_slope,
+                                     regions = c("continental"))
+    slope_plot = plot_indices(indices = slope_ind,
+                         species = "American Kestrel SLOPE",
+                         add_observed_means = TRUE)
+    #png("AMKE_Slope.png", width = 1500,height = 900,res = 150)
+    print(slope_plot)
+    #dev.off()
+    
+```
+<img src="man/figures/AMKE_slope.png" />
+
+#### gam
+The gam option models the time series as a semiparametric smooth using a Generalized Additive Model (GAM) structure.
+``` r
+    #stratified_data <- stratify(by = "bbs_usgs")
+    
+    #jags_data_gam <- prepare_jags_data(stratified_data, 
+    #                           species_to_run = "American Kestrel",
+    #                           min_max_route_years = 3,
+    #                           model = "gam")
+
+    #jags_mod_full_gam <- run_model(jags_data = jags_data)
+                               
+    gam_ind <- generate_regional_indices(jags_mod = jags_mod_full_gam,
+                                     jags_data = jags_data_gam,
+                                     regions = c("continental"))
+    gam_plot = plot_indices(indices = gam_ind,
+                         species = "American Kestrel GAM",
+                         add_observed_means = TRUE)
+    #png("AMKE_gam.png", width = 1500,height = 900,res = 150)
+    print(gam_plot)
+    #dev.off()
+    
+```
+<img src="man/figures/AMKE_gam.png" />
+
+
+
+#### gamye
+The gamye option includes the semiparametric smooth used in the gam option, but also includes random year-effect terms that track annual fluctuations around the smooth.
+``` r
+    #stratified_data <- stratify(by = "bbs_usgs")
+    
+    #jags_data_gamye <- prepare_jags_data(stratified_data, 
+    #                           species_to_run = "American Kestrel",
+    #                           min_max_route_years = 3,
+    #                           model = "gamye")
+
+    #jags_mod_full_gamye <- run_model(jags_data = jags_data)
+                               
+    gamye_ind <- generate_regional_indices(jags_mod = jags_mod_full_gamye,
+                                     jags_data = jags_data_gamye,
+                                     regions = c("continental"))
+    gamye_plot = plot_indices(indices = gamye_ind,
+                         species = "American Kestrel GAMYE",
+                         add_observed_means = TRUE)
+    #png("AMKE_gamye.png", width = 1500,height = 900,res = 150)
+    print(gamye_plot)
+    #dev.off()
+    
+```
+<img src="man/figures/AMKE_gamye.png" />
+
+
+
+
+### firstdiff
+The firstdiff option models the time-series as a random-walk from the first year, so that the first-differences of the sequence of year-effects are random effects with mean = 0 and an estimated variance.
+``` r
+    #stratified_data <- stratify(by = "bbs_usgs")
+    
+    #jags_data_firstdiff <- prepare_jags_data(stratified_data, 
+    #                           species_to_run = "American Kestrel",
+    #                           min_max_route_years = 3,
+    #                           model = "firstdiff")
+
+    #jags_mod_full_firstdiff <- run_model(jags_data = jags_data)
+                               
+    firstdiff_ind <- generate_regional_indices(jags_mod = jags_mod_full_firstdiff,
+                                     jags_data = jags_data_firstdiff,
+                                     regions = c("continental"))
+    firstdiff_plot = plot_indices(indices = firstdiff_ind,
+                         species = "American Kestrel FIRSTDIFF",
+                         add_observed_means = TRUE)
+    #png("AMKE_firstdiff.png", width = 1500,height = 900,res = 150)
+    print(firstdiff_plot)
+    #dev.off()
+    
+```
+<img src="man/figures/AMKE_firstdiff.png" />
+
+
+
+
 
 #### Alternate extra-Poisson error distributions
 
