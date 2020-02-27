@@ -28,7 +28,7 @@ Option 2: Less-stable development version
 # To install the development version from GitHub:
 install.packages("devtools")
 library(devtools)
-devtools::install_github("BrandonEdwards/bbsBayes")
+devtools::install_github("AdamCSmithCWS/bbsBayes")
 ```
 
 ## Basic Status and Trend Analyses
@@ -423,7 +423,7 @@ The default approach `parameters_to_save = c("n")` slightly underestimates the u
   * it more accurately represents the relative contribution of each stratum to the combined (e.g., continental or national) population trajectory and trends. The alternative n2 approach tends to overestimate the observed mean counts, and that bias varies among strata, which affects each strata's contribution to the combined regional estimates.
   * the small underestimate in the uncertainty of the annual indices, does not affect the uncertainty of the trend estimates.
   
-For example, in the figures below, the predicted annual indices (blue line and CI-band) are much more similar to the observed average counts (grey dots) for the Default n approach. 
+#### For example, in the figures below, the predicted annual indices (blue line and CI-band) are much more similar to the observed average counts (grey dots) for the Default n approach. 
   
 <img src="man/figures/Alternate_n_all.png" />
 
@@ -462,7 +462,7 @@ For example, the figure below (produced using a modified version of the standard
 
 <img src="man/figures/PAWR_Canada.png" />
 
-##### The figure below provides another example of the benefits of removing the year-effect annual fluctuations when calculating trends. 
+#### The figure below provides another example of the benefits of removing the year-effect annual fluctuations when calculating trends. 
 Each point on the graph represents the 10-year trend estimate for Wood Thrush in Canada, ending in a given year (e.g., the points at 2015 represent the species national population trend from 2005-2015).
 The red and green points are the trend estimates from the default trend estimates derived from the full population trajectories for the gamye and slope models. The Blue points represent the trends calculated using the decomposed trajectory of the gamye model, including only the smooth component. 
 When the annual fluctuations are included (SLOPE and GAMYE including Year Effects), the population trends surpass the IUCN trend-criterion, in some years (e.g., 2011) suggesting that if assessed in those years the species would be listed as Threatened (trend in the orange region). However, a more stable trend estimate from the decomposed trajectory (GAMYE - Smooth only in Blue) shows that the species is probably best thought of as in decline, but not surpassing the Threatened criterion.
