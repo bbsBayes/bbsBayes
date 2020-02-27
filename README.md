@@ -109,6 +109,7 @@ indices <- generate_regional_indices(jags_mod = jags_mod,
                                      jags_data = jags_data)
 ```
 By default, this function generates estimates for the continent (i.e., survey-wide) and for the individual strata. However, the user can also select summaries for composite regions (regions made up of collections of strata), such as countries, provinces/states, Bird Conservation Regions, etc.
+For display, the posterior medians are used for annual indices (instead of the posterior means) due to the asymetrical distributions caused by the log-linear retransformation.
 
 ``` r
 indices <- generate_regional_indices(jags_mod = jags_mod,
@@ -141,7 +142,7 @@ trends <- generate_regional_trends(indices = indices,
 ## Visualizing Predictions
 
 ### Population Trajectories
-Generate plots of the population trajectories through time.This function produces a list of ggplot figures that can be combined into a single pdf file, or printed to individual devices.
+Generate plots of the population trajectories through time. The `plot_indices()` function produces a list of ggplot figures that can be combined into a single pdf file, or printed to individual devices.
 ``` r
 tp = plot_indices(indices = indices,
                          species = "Barn Swallow",
@@ -471,7 +472,54 @@ When the annual fluctuations are included (SLOPE and GAMYE including Year Effect
 
 
 
-## Alternate Measures of Trend
+## Alternate Measures of Trend and Population Change
+
+The `generate_regional_trends()` function produces much more than just the trend estimates.
+
+### Slope Trends
+The default trend calculation is an interval-specific estimate of the geometric mean annual change in the population. 
+ $Trend = (\frac {n[Minyear]}{n[Maxyear]})^{(1/(Maxyear-Minyear))}$
+It relies on a comparison of the annual indices in the first and last years of the trend period to quantify the mean rate of population change. However, it ignores the pattern of change between the two end-points.
+
+The user can choose an alternative estimate of change that is calculated by fitting a log-linear slope to the series of all annual indices between the two end-points (e.g., all 11 years in a 10-year trend from 2008-2018). The slope of this line could be expressed as an average annual percent change across the time-period of interest.
+If working with estimates derived from a model with strong annual fluctuations and for which no decomposition is possible (e.g., "firstdiff" model), this slope-based trend may be a more comprehensive measure of the average population change, that is less dependent on the particular end-point years.
+These slope trends can be added to the trend output table by setting the `slope = TRUE` argument in `generate_regional_trends()`. The standard trends are still calculated, but additional columns are added that include the alternate estimates.
+NOTE: the `generate_map()` function can map slope trends as well with the same `slope = TRUE` argument.
+
+
+```r
+    #jags_data_firstdiff <- prepare_jags_data(stratified_data, 
+    #                           species_to_run = "American Kestrel",
+    #                           model = "firstdiff")
+
+    #jags_mod_full_firstdiff <- run_model(jags_data = jags_data)
+                               
+    #firstdiff_ind <- generate_regional_indices(jags_mod = jags_mod_full_firstdiff,
+    #                                 jags_data = jags_data_firstdiff,
+    #                                 regions = c("continental","stratum"))
+    fd_slope_trends_08_18 <- generate_regional_trends(jags_mod = firstdiff_ind,
+                                                       Min_year = 2008,
+                                                       Max_year = 2018,
+                                                       slope = TRUE)
+    generate_map(fd_slope_trends_0.8_18,
+                 slope = TRUE,
+                 stratify_by = "bbs_usgs")
+    )
+```
+
+### Percent Change and probability of change
+The `generate_regional_trends()` function also produces estimates of the overall percent-change in the population between the first and last years of the trend-period. This calculation is often easier to interpret than an average annual rate of change. These percent change estimates have associated uncertainty bounds, and so can be helpful for deriving statements such as "between 2008 and 2018, the population has declined by 20 percent, but that estimate is relatively uncertain and the true decline may be as little as 2 percent or as much as 50 percent" 
+
+In addition, the function can optionally calculate the posterior conditional probability that a population has changed by at least a certain amount, using the `prob_decrease` and `prob_increase` arguments. These values can be useful for deriving statements such as "our model suggests that there is a 95% probability that the species has increased (i.e., > 0% increase) and a 45 percent probability that the species has increased more than 2-fold (i.e., > 100% increase)"
+
+```r
+    fd_slope_trends_08_18 <- generate_regional_trends(jags_mod = firstdiff_ind,
+                                                       Min_year = 2008,
+                                                       Max_year = 2018,
+                                                       slope = TRUE,
+                                                       prob_increase = c(0,100))
+                                                       
+```
 
 
 ## Custom regional summaries
