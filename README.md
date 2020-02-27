@@ -189,7 +189,66 @@ For stratifications that can be compiled by political regions (i.e., `bbs_cws`, 
 <img src="man/figures/BARS_geofacet.png" />
 
 
-There are numerous other functions available for analysis of the data.
+### EXAMPLE - Replicating the CWS status and trend estimates (2018 version onwards)
+
+The CWS analysis, as of the 2018 BBS data-version, uses the GAMYE model. It also monitors two estimates of the population trajectory:
+ * one for visualizing the trajectory that includes the annual fluctuations estimated by the year-effects "n"
+ * and another for calculation trends using a trajectory that removes the annual fluctuations around the smooth "n3".
+ 
+The full script to run the CWS analysis for the 2018 BBS data version is accessible here: https://github.com/AdamCSmithCWS/BBS_Summaries
+
+``` r
+species.eng = "Pacific Wren"
+
+stratified_data <- stratify(by = "bbs_cws") #same as USGS but with BCR7 as one stratum and PEI and Nova Scotia combined into one stratum
+
+jags_data <- prepare_jags_data(strat_data = stratified_data,
+                                 species_to_run = species.eng,
+                                 min_max_route_years = 5,
+                                 model = "gamye", 
+                                 heavy_tailed = T) #heavy-tailed version of gamye model
+                                 
+                                 
+jags_mod <- run_model(jags_data = jags_data,
+                               n_saved_steps = 2000,
+                               n_burnin = 10000,
+                               n_chains = 3,
+                               n_thin = 20,
+                               parallel = F, 
+                          parameters_to_save = c("n","n3","nu","B.X","beta.X","strata","sdbeta","sdX"),
+                          modules = NULL) 
+
+# n and n3 allow for index and trend calculations, other parameters monitored to help assess convergence and for model testing 
+
+```
+
+### EXAMPLE - Replicating (approximately) the earlier USGS status and trend estimates (2011 - 2017 data versions)
+
+The USGS analysis, from 2011 through 2017, uses the SLOPE model. Future analyses from the USGS will likely use the first difference model (see, Link et al. 2017 https://doi.org/10.1650/CONDOR-17-1.1) 
+
+NOTE: the USGS analysis is not run using the bbsBayes package, and so this analysis may not exactly replicate the published version. However, any variations should be very minor.
+
+``` r
+species.eng = "Pacific Wren"
+
+stratified_data <- stratify(by = "bbs_usgs") #BCR by province/state/territory intersections
+
+jags_data <- prepare_jags_data(strat_data = stratified_data,
+                                 species_to_run = species.eng,
+                                 min_max_route_years = 1,
+                                 model = "slope", 
+                                 heavy_tailed = FALSE) #normal-tailed version of slope model
+                                 
+                                 
+jags_mod <- run_model(jags_data = jags_data,
+                               n_saved_steps = 2000,
+                               n_burnin = 10000,
+                               n_chains = 3,
+                               n_thin = 20,
+                               parallel = F,
+                          modules = NULL) 
+
+```
 
 ### Advanced options and customized models
 
@@ -199,7 +258,7 @@ The package has (currently) four status and trend models that differ somewhat in
 
 
 #### slope
-The slope option estimates the time series as a log-linear regression with random year-effect terms that allow the trajectory to depart from the smooth regression line. It is the model used by the USGS and CWS to estimate bbs trends since 2011. It has been described in a number of publications (). 
+The slope option estimates the time series as a log-linear regression with random year-effect terms that allow the trajectory to depart from the smooth regression line. It is the model used by the USGS and CWS to estimate bbs trends since 2011. The basic model was first described in 2002 (Link and Sauer 2002; https://doi.org/10.1890/0012-9658(2002)083[2832:AHAOPC]2.0.CO;2) and its application to the annual status and trend estimates is documented in Sauer and Link (2011; https://doi.org/10.1525/auk.2010.09220) and Smith et al. (2014; http://dx.doi.org/10.22621/cfn.v128i2.1565). 
 
 ``` r
     #stratified_data <- stratify(by = "bbs_usgs")
@@ -225,7 +284,7 @@ The slope option estimates the time series as a log-linear regression with rando
 <img src="man/figures/AMKE_slope.png" />
 
 #### gam
-The gam option models the time series as a semiparametric smooth using a Generalized Additive Model (GAM) structure.
+The gam option models the time series as a semiparametric smooth using a Generalized Additive Model (GAM) structure. See https://github.com/AdamCSmithCWS/GAM_Paper_Script for more information (full publication coming soon)
 ``` r
     #stratified_data <- stratify(by = "bbs_usgs")
     
@@ -252,7 +311,7 @@ The gam option models the time series as a semiparametric smooth using a General
 
 
 #### gamye
-The gamye option includes the semiparametric smooth used in the gam option, but also includes random year-effect terms that track annual fluctuations around the smooth.
+The gamye option includes the semiparametric smooth used in the gam option, but also includes random year-effect terms that track annual fluctuations around the smooth. This is the model that the Canadian Wildlife Service is now using for the annual status and trend estimates.
 ``` r
     #stratified_data <- stratify(by = "bbs_usgs")
     
@@ -280,7 +339,7 @@ The gamye option includes the semiparametric smooth used in the gam option, but 
 
 
 ### firstdiff
-The firstdiff option models the time-series as a random-walk from the first year, so that the first-differences of the sequence of year-effects are random effects with mean = 0 and an estimated variance.
+The firstdiff option models the time-series as a random-walk from the first year, so that the first-differences of the sequence of year-effects are random effects with mean = 0 and an estimated variance. This model has been described in Link et al. 2017 https://doi.org/10.1650/CONDOR-17-1.1
 ``` r
     #stratified_data <- stratify(by = "bbs_usgs")
     
@@ -306,11 +365,40 @@ The firstdiff option models the time-series as a random-walk from the first year
 
 
 
-
-
 #### Alternate extra-Poisson error distributions
 
+For all of the models, the BBS counts on a given route and year are modeled as Poisson variables with over-dispersion. The over-dispersion approach used here is to add a count-level random effect that adds extra variance to the unit variance:mean ratio of the Poisson. 
+In the `prepare_jags_data` function, the user can choose between two distributions to model the extra-Poisson variance: 
+
+ * the default normal distribution (`heavy_tailed = FALSE`) 
+ * an alternative heavy-tailed t-distribution. (`heavy_tailed = TRUE`)
+ 
+The heavy-tailed version is well supported for many species, particularly species that are sometimes observed in large groups. Note: the heavy-tailed version can require significantly more time to converge (~2-5 fold increase in processing time).
+
+``` r
+#stratified_data <- stratify(by = "bbs_usgs")
+    
+    #jags_data_firstdiff <- prepare_jags_data(stratified_data, 
+    #                           species_to_run = "American Kestrel",
+    #                           min_max_route_years = 3,
+    #                           model = "firstdiff",
+    #                           heavy_tailed = TRUE) 
+
+    #jags_mod_full_firstdiff <- run_model(jags_data = jags_data)
+```
+
 #### Alternate Annual Indices
+
+In all the models, the default measure of the annual index of abundance (the yearly component of the population trajectory) is the derived parameter "n". The `run_model` function monitors n by default, because it is these parameters that form the basis of the estimated population trajectories and trends.
+There are two ways of calculating these annual indices for each model, that the user can choose using the following arguments in `run_model()`.
+
+ * the default, `parameters_to_save = c("n")` estimates the mean of the expected counts from the existing combinations of observers and routes in a given stratum and year
+ * the alternative, `parameters_to_save = c("n2"), track_n = FALSE` is actually the standard approach used in the USGS status and trend estimates. It estimates the the expected count from a new observer-route combination, assuming the distribution of observer-route effects is approximately normal.
+ 
+The default approach slightly underestimates the uncertainty of the annual indices (slightly narrower CI width). However, we have chosen this approach as the default because:
+  * it much more accurately represents the observed mean counts, and so allows for an intuitive interpretation of the annual indices; and,
+  * it more accurately represents the relative contribution of each stratum to the combined (e.g., continental or national) population trajectory and trends. The alternative n2 approach tends to overestimate the observed mean counts, and that bias varies among strata, which affects the stratum's contribution to the combined regional estimates.
+  <img src="man/figures/Alternate_n_all.png">
 
 #### Alternate Measures of Trend
 
