@@ -100,9 +100,9 @@ S <- ggmcmc::ggs(jags_mod$samples,family = "B.X") #samples object is an mcmc.lis
 ggmcmc::ggmcmc(S,family = "B.X") ## this will output a pdf with a series of plots useful for assessing convergence. Be warned this function will be overwhelmed if trying to handle all of the n values from a BBS analysis of a broad-ranged species
 ```
 
-### Model Predictions
+## Model Predictions
 There are a number of tools available to summarize and visualize the posterior predictions from the model. 
-#### Annual Indices of Abundance and Population Trajectories
+### Annual Indices of Abundance and Population Trajectories
 The main monitored parameters are the annual indices of relative abundance within a stratum (i.e., parameters "n[strata,year]"). The time-series of these annual indices form the estimated population trajectories.
 ``` r
 indices <- generate_regional_indices(jags_mod = jags_mod,
@@ -120,7 +120,7 @@ indices <- generate_regional_indices(jags_mod = jags_mod,
                                      #also "bcr", "bcr_by_country"
 ```
 
-#### Population Trends
+### Population Trends
 Population trends can be calculated from the series of annual indices of abundance. The trends are expressed as geometric mean rates of change (%/year) between two points in time. $Trend = (\frac {n[Minyear]}{n[Maxyear]})^{(1/(Maxyear-Minyear))}$
 ``` r
 trends <- generate_regional_trends(indices = indices,
@@ -138,9 +138,9 @@ trends <- generate_regional_trends(indices = indices,
                                    prob_increase = c(0,33,100))
 ```
 
-### Visualizing Predictions
+## Visualizing Predictions
 
-#### Population Trajectories
+### Population Trajectories
 Generate plots of the population trajectories through time.This function produces a list of ggplot figures that can be combined into a single pdf file, or printed to individual devices.
 ``` r
 tp = plot_indices(indices = indices,
@@ -158,7 +158,7 @@ print(tp[[2]])
 <img src="man/figures/BARS_Canada_Trajectory.png" />
 etc.
 
-#### Trend Maps
+### Trend Maps
 The trends can be mapped to produce strata maps coloured by species population trends.
 ``` r
 mp = generate_map(trends,
@@ -169,7 +169,7 @@ print(mp)
 ```
 <img src="man/figures/BARS_trendmap.png" />
 
-#### Geofacet Trajectories
+### Geofacet Trajectories
 
 For stratifications that can be compiled by political regions (i.e., `bbs_cws`, `bbs_usgs`, or `state`), the function `geofacet_plot` will generate a ggplot object that plots the state and province level population trajectories in facets arranged in an approximately geographic arrangement. These plots offer a concise, range-wide summary of a species' population status and trends.
 
@@ -189,7 +189,7 @@ For stratifications that can be compiled by political regions (i.e., `bbs_cws`, 
 <img src="man/figures/BARS_geofacet.png" />
 
 
-### EXAMPLE - Replicating the CWS status and trend estimates (2018 version onwards)
+## EXAMPLE - Replicating the CWS status and trend estimates (2018 version onwards)
 
 The CWS analysis, as of the 2018 BBS data-version, uses the GAMYE model. It also monitors two estimates of the population trajectory:
  * one for visualizing the trajectory that includes the annual fluctuations estimated by the year-effects "n"
@@ -222,7 +222,7 @@ jags_mod <- run_model(jags_data = jags_data,
 
 ```
 
-### EXAMPLE - Replicating (approximately) the earlier USGS status and trend estimates (2011 - 2017 data versions)
+## EXAMPLE - Replicating (approximately) the earlier USGS status and trend estimates (2011 - 2017 data versions)
 
 The USGS analysis, from 2011 through 2017, uses the SLOPE model. Future analyses from the USGS will likely use the first difference model (see, Link et al. 2017 https://doi.org/10.1650/CONDOR-17-1.1) 
 
@@ -245,19 +245,21 @@ jags_mod <- run_model(jags_data = jags_data,
                                n_burnin = 10000,
                                n_chains = 3,
                                n_thin = 20,
-                               parallel = F,
+                               parallel = FALSE,
+                               track_n = FALSE,
+                               parameters_to_save = c("n2"), #more on this alternative annual index below
                           modules = NULL) 
 
 ```
 
-### Advanced options and customized models
+## Advanced options and customized models
 
-### Alternative Models
+## Alternative Models
 The package has (currently) four status and trend models that differ somewhat in the way they model the time-series of observations. The four model options are slope, gam, gamye, and firstdiff. 
 <img src="man/figures/AMKE_all.png" />
 
 
-#### slope
+### slope
 The slope option estimates the time series as a log-linear regression with random year-effect terms that allow the trajectory to depart from the smooth regression line. It is the model used by the USGS and CWS to estimate bbs trends since 2011. The basic model was first described in 2002 (Link and Sauer 2002; https://doi.org/10.1890/0012-9658(2002)083[2832:AHAOPC]2.0.CO;2) and its application to the annual status and trend estimates is documented in Sauer and Link (2011; https://doi.org/10.1525/auk.2010.09220) and Smith et al. (2014; http://dx.doi.org/10.22621/cfn.v128i2.1565). 
 
 ``` r
@@ -283,7 +285,7 @@ The slope option estimates the time series as a log-linear regression with rando
 ```
 <img src="man/figures/AMKE_slope.png" />
 
-#### gam
+### gam
 The gam option models the time series as a semiparametric smooth using a Generalized Additive Model (GAM) structure. See https://github.com/AdamCSmithCWS/GAM_Paper_Script for more information (full publication coming soon)
 ``` r
     #stratified_data <- stratify(by = "bbs_usgs")
@@ -310,7 +312,7 @@ The gam option models the time series as a semiparametric smooth using a General
 
 
 
-#### gamye
+### gamye
 The gamye option includes the semiparametric smooth used in the gam option, but also includes random year-effect terms that track annual fluctuations around the smooth. This is the model that the Canadian Wildlife Service is now using for the annual status and trend estimates.
 ``` r
     #stratified_data <- stratify(by = "bbs_usgs")
@@ -365,7 +367,7 @@ The firstdiff option models the time-series as a random-walk from the first year
 
 
 
-#### Alternate extra-Poisson error distributions
+## Alternate extra-Poisson error distributions
 
 For all of the models, the BBS counts on a given route and year are modeled as Poisson variables with over-dispersion. The over-dispersion approach used here is to add a count-level random effect that adds extra variance to the unit variance:mean ratio of the Poisson. 
 In the `prepare_jags_data` function, the user can choose between two distributions to model the extra-Poisson variance: 
@@ -387,26 +389,96 @@ The heavy-tailed version is well supported for many species, particularly specie
     #jags_mod_full_firstdiff <- run_model(jags_data = jags_data)
 ```
 
-#### Alternate Annual Indices
+## Alternate Annual Indices and Resulting Trends
 
 In all the models, the default measure of the annual index of abundance (the yearly component of the population trajectory) is the derived parameter "n". The `run_model` function monitors n by default, because it is these parameters that form the basis of the estimated population trajectories and trends.
-There are two ways of calculating these annual indices for each model, that the user can choose using the following arguments in `run_model()`.
 
- * the default, `parameters_to_save = c("n")` estimates the mean of the expected counts from the existing combinations of observers and routes in a given stratum and year
- * the alternative, `parameters_to_save = c("n2"), track_n = FALSE` is actually the standard approach used in the USGS status and trend estimates. It estimates the the expected count from a new observer-route combination, assuming the distribution of observer-route effects is approximately normal.
+### Alternate retransformations
+
+There are two ways of calculating these annual indices for each model. The two approaches differ in the way they calculate the retransformation from the log-scale model parameters to the count-scale predictions. The user can choose using the following arguments in `run_model()` and `generate_regional_indices()`.
+
+ * the default, estimates the mean of the expected counts from the existing combinations of observers and routes in a given stratum and year. This approach retransforms an annual prediction for every observer-route combination in the stratum and then averages across those predictions.
+ ``` r
+ mod <- run_model(... ,
+                  parameters_to_save = "n",
+                  ... )
+ indices <- generate_regional_indices(... ,
+                                      alternate_n = "n",
+                                      ... )
+ ```
+ * the alternative, `parameters_to_save = c("n2"), track_n = FALSE` is actually the standard approach used in the USGS status and trend estimates. It estimates the the expected count from a new observer-route combination, assuming the distribution of observer-route effects is approximately normal. This approach uses a log-normal retransformation factor that adds half of the estimated variance of observer-route effects to the log-scale prediction for each year and stratum, then retransforms that log-scale prediction to the count-scale. This is the approach described in Sauer and Link (2011; https://doi.org/10.1525/auk.2010.09220). 
  
-The default approach slightly underestimates the uncertainty of the annual indices (slightly narrower CI width). However, we have chosen this approach as the default because:
-  * it much more accurately represents the observed mean counts, and so allows for an intuitive interpretation of the annual indices; and,
-  * it more accurately represents the relative contribution of each stratum to the combined (e.g., continental or national) population trajectory and trends. The alternative n2 approach tends to overestimate the observed mean counts, and that bias varies among strata, which affects the stratum's contribution to the combined regional estimates.
-  <img src="man/figures/Alternate_n_all.png">
+ ``` r
+ mod <- run_model(... ,
+                  parameters_to_save = "n2",
+                  ... )
+ indices <- generate_regional_indices(... ,
+                                      alternate_n = "n2",
+                                      ... )
+ ```
+ 
+The default approach `parameters_to_save = c("n")` slightly underestimates the uncertainty of the annual indices (slightly narrower CI width). However, we have chosen this approach as the default because:
 
-#### Alternate Measures of Trend
+  * it much more accurately represents the observed mean counts, and so allows for an intuitive interpretation of the annual indices; 
+  * it more accurately represents the relative contribution of each stratum to the combined (e.g., continental or national) population trajectory and trends. The alternative n2 approach tends to overestimate the observed mean counts, and that bias varies among strata, which affects each strata's contribution to the combined regional estimates.
+  * the small underestimate in the uncertainty of the annual indices, does not affect the uncertainty of the trend estimates.
+  
+For example, in the figures below, the predicted annual indices (blue line and CI-band) are much more similar to the observed average counts (grey dots) for the Default n approach. 
+  
+<img src="man/figures/Alternate_n_all.png" />
 
-#### Custom regional summaries
 
-#### Exporting the JAGS model
+### Decomposing the population trajectories for two of the models
 
-#### Modifying the JAGS model and data
+For two of the main model types `"slope" and "gamye"`, users can choose two different ways to calculate trajectories and population trends. With these two model types, the population trajectories are composed of two largely independent components, a long-term smooth and the random annual fluctuations around that smooth. Because the two components are largely independent, the population trajectory can be decomposed.  
+The default approach is to include the annual fluctuations around the linear (`slope`) or GAM-smooth (`gamye`) components of the trajectories. These trend estimates are more comprehensive in that they include the full estimated trajectory, but they will vary more between subsequent years (e.g., more variability between a 1970-2017 trend and a 1970-2018 trend), because they include the effects of the annual fluctuations.
+ 
+ ``` r
+ mod <- run_model(... ,
+                  parameters_to_save = "n",
+                  ... )
+ indices <- generate_regional_indices(... ,
+                                      alternate_n = "n",
+                                      ... )
+ ```
+ 
+An alternative approach is to decompose the full trajectory and to exclude the annual fluctuations around the linear (`slope`) or smooth (`gamye`) components. In this case, the predicted trends will be much more stable between subsequent years. 
+For the CWS status and trend analyses, the visualized population trajectories are calculated using the full trajectory, and the trend estimates are derived from the decomposed trajectory using only the smooth component.
 
-#### Comparing Models
+ 
+ ``` r
+ mod <- run_model(... ,
+                  parameters_to_save = c("n","n3"),
+                  ... )
+ indices_visualize <- generate_regional_indices(... ,
+                                      alternate_n = "n",
+                                      ... )
+ indices_trend_calculation <- generate_regional_indices(... ,
+                                      alternate_n = "n3",
+                                      ... )
+ ```
+
+For example, the figure below (produced using a modified version of the standard  plotting functions), shows the two kinds of trajectories for Pacific Wren from the 2018 CWS analysis. The light-blue trajectory is the visualized trajectory, including the yearly fluctuations. The orange trajectory is the one used for trend calculations, which includes only the GAM-smooth component. For the kinds of broad-scale status assessments that form the primary use of the published estimates of trends, this decomposition is a particularly useful feature of these two models.     
+
+<img src="man/figures/PAWR_Canada.png" />
+
+##### The figure below provides another example of the benefits of removing the year-effect annual fluctuations when calculating trends. 
+Each point on the graph represents the 10-year trend estimate for Wood Thrush in Canada, ending in a given year (e.g., the points at 2015 represent the species national population trend from 2005-2015).
+The red and green points are the trend estimates from the default trend estimates derived from the full population trajectories for the gamye and slope models. The Blue points represent the trends calculated using the decomposed trajectory of the gamye model, including only the smooth component. 
+When the annual fluctuations are included (SLOPE and GAMYE including Year Effects), the population trends surpass the IUCN trend-criterion, in some years (e.g., 2011) suggesting that if assessed in those years the species would be listed as Threatened (trend in the orange region). However, a more stable trend estimate from the decomposed trajectory (GAMYE - Smooth only in Blue) shows that the species is probably best thought of as in decline, but not surpassing the Threatened criterion.
+
+<img src="man/figures/WOTH_status_assessment.png" />
+
+
+
+## Alternate Measures of Trend
+
+
+## Custom regional summaries
+
+## Exporting the JAGS model
+
+## Modifying the JAGS model and data
+
+## Comparing Models
 
