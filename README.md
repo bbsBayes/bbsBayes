@@ -88,7 +88,12 @@ jags_mod <- run_model(jags_data = jags_data,
 
 ```
 The `run_model` function generates a large list (object jagsUI) that includes the posterior draws, convergence information, data, etc.
-It will send a warning if Gelman-Rubin Rhat cross-chain convergence criterion is > 1.1 for any of the monitored parameters. Re-running the model with a longer burn-in and/or more posterior iterations or greater thinning rates may improve convergence. The seriousness of these convergence failures is something the user must interpret for themselves. If all or the vast majority of the n parameters have converged (e.g., you're receiving this message for other monitored parameters), then inference on population trajectories and trends from the model are generally reliable. 
+
+### Convergence
+
+The `run_model()` function will send a warning if Gelman-Rubin Rhat cross-chain convergence criterion is > 1.1 for any of the monitored parameters. Re-running the model with a longer burn-in and/or more posterior iterations or greater thinning rates may improve convergence. 
+The seriousness of these convergence failures is something the user must interpret for themselves. In some cases some parameters of the model may not be separately estimable, but if there is no direct inference drawn from those separate parameters, their convergence may not be necessary.
+If all or the vast majority of the n parameters have converged (e.g., you're receiving this warning message for other monitored parameters), then inference on population trajectories and trends from the model are reliable. 
 ``` r
 jags_mod$n.eff #shows the effective sample size for each monitored parameter
 jags_mod$Rhat # shows the Rhat values for each monitored parameter
@@ -98,6 +103,21 @@ If important monitored parameters have not converged, we recommend inspecting th
 install.packages("ggmcmc")
 S <- ggmcmc::ggs(jags_mod$samples,family = "B.X") #samples object is an mcmc.list object
 ggmcmc::ggmcmc(S,family = "B.X") ## this will output a pdf with a series of plots useful for assessing convergence. Be warned this function will be overwhelmed if trying to handle all of the n values from a BBS analysis of a broad-ranged species
+```
+bbsBayes also includes a function to help re-start an MCMC chain, so that you avoid having to wait for an additional burn-in period.
+``` r
+### if jags_mod has failed to converge...
+new_initials <- get_final_values(jags_mod)
+
+jags_mod2 <- run_model(jags_data = jags_data,
+                               n_saved_steps = 1000,
+                               n_burnin = 0,
+                               n_chains = 3,
+                               n_thin = 10,
+                               parallel = FALSE,
+                               inits = new_initials,
+                          parameters_to_save = c("n", "n3", "nu", "B.X", "beta.X", "strata", "sdbeta", "sdX"),
+                          modules = NULL)
 ```
 
 ## Model Predictions
@@ -523,10 +543,35 @@ In addition, the function can optionally calculate the posterior conditional pro
 
 
 ## Custom regional summaries
+Yes, you can calculate the trend and trajectories for custom combinations of strata, such as the trends for Eastern and Western populations of Bobolinks.
+``` r
+get_composite_regions()
+```
+Details coming soon...
 
 ## Exporting the JAGS model
+You can easily export any of the bbsBayes models to a text file.
+``` r
+model_to_file(model = "slope",
+              filename = "my_slope_model.txt")
+```
+Then, you can modify the model text (e.g., try a different prior) and run the modified model 
+``` r
+run_model <- function(... ,
+                      model_file_path = "my_modified_slope_model.txt",
+                      ... )
+```
+Details coming soon...
+
 
 ## Modifying the JAGS model and data
+You can even export the bbsBayes model as text, and modify it to add in covariates. For example a GAM smooth to estimate the effect of the day of year on the observations, or an annual weather covariate, or...
+Then add the relevant covariate data to the jags_data object, and you're off!
+We'll add some more details and examples soon.
 
 ## Comparing Models
+Finally, bbsBayes can be used to run Bayesian cross-validations. For example, the `get_final_values()` function is useful to provide an efficient starting point for a cross-validation runs, without having to wait for another full burn-in period. 
+Examples and references coming soon.
+
+NOTE: although bbsBayes includes functions to calculate WAIC, recent work has shown that WAIC performs very poorly with the BBS data (https://doi.org/10.1650/CONDOR-17-1.1). We recommend a k-fold cross-validation approach. 
 
