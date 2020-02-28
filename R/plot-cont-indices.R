@@ -69,6 +69,10 @@ plot_cont_indices <- function(indices_list = NULL,
                             axis_text_size = 16,
                             add_observed_means = F)
 {
+
+  warning(paste("plot_cont_indices is deprecated in favour of plot_indices()"))
+
+
   Year <- NULL
   rm(Year)
   Index <- NULL

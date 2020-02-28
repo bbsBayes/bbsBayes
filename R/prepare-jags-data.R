@@ -34,6 +34,8 @@
 #'   \item{osber}{Vector of unique observer-route pairings}
 #'   \item{year}{Vector of years for each count}
 #'   \item{firstyr}{Vector of indicator variables as to whether an observer was a first year}
+#'   \item{month}{vector of numeric month of observation}
+#'   \item{day}{vector of numeric day of observation}
 #'   \item{nobservers}{Total number of observer-route pairings}
 #'   \item{fixedyear}{Median of all years (ymin:ymax), included only with slope model}
 #'   \item{nknots}{Number of knots to use for smooting functions, included only with GAM}
@@ -89,18 +91,18 @@
 #'
 
 prepare_jags_data <- function(strat_data = NULL,
-                            species_to_run = NULL,
-                            model = NULL,
-                            heavy_tailed = FALSE,
-                            n_knots = NULL,
-                            min_year = NULL,
-                            max_year = NULL,
-                            min_n_routes = 3,
-                            min_max_route_years = 3,
-                            min_mean_route_years = 1,
-                            strata_rem = NULL,
-                            quiet = FALSE,
-                            ...)
+                              species_to_run = NULL,
+                              model = NULL,
+                              heavy_tailed = FALSE,
+                              n_knots = NULL,
+                              min_year = NULL,
+                              max_year = NULL,
+                              min_n_routes = 3,
+                              min_max_route_years = 3,
+                              min_mean_route_years = 1,
+                              strata_rem = NULL,
+                              quiet = FALSE,
+                              ...)
 {
   if (is.null(strat_data))
   {
@@ -316,8 +318,8 @@ prepare_jags_data <- function(strat_data = NULL,
   spsp_f <- spsp_ft
 
   spsp_f[which(is.na(spsp_f$firstyear)),"firstyear"] <- 0
-  spsp_f <- spsp_f[,c("count","stratum","obser","yr","firstyear","strat_name","rt.uni","Year")]
-  names(spsp_f) <- c("count","strat","obser","year","firstyr","strat_name","route","rYear")
+  spsp_f <- spsp_f[,c("count","stratum","obser","yr","firstyear","strat_name","rt.uni","Year","Month","Day")]
+  names(spsp_f) <- c("count","strat","obser","year","firstyr","strat_name","route","rYear","Month","Day")
   if (!isTRUE(quiet)){pb$tick()}
 
   pR_wts <- pR.wts
@@ -360,21 +362,23 @@ prepare_jags_data <- function(strat_data = NULL,
   nstrata=length(unique(spsp_f$strat))
 
   to_return <- list(model = model,
-                   ncounts = nrow(spsp_f),
-                   nstrata=length(unique(spsp_f$strat)),
-                   ymin = ymin,
-                   ymax = ymax,
-                   nonzeroweight = pR_wts$p.r.ever,
-                   count = as.integer(spsp_f$count),
-                   strat_name = spsp_f$strat_name,
-                   strat = as.integer(spsp_f$strat),
-                   obser = as.integer(spsp_f$obser),
-                   year = spsp_f$year,
-                   firstyr = spsp_f$firstyr,
-                   nobservers = n_observers,
-                   stratify_by = strat_data$stratify_by,
-                   route = spsp_f$route,
-                   r_year = spsp_f$rYear)
+                    ncounts = nrow(spsp_f),
+                    nstrata=length(unique(spsp_f$strat)),
+                    ymin = ymin,
+                    ymax = ymax,
+                    nonzeroweight = pR_wts$p.r.ever,
+                    count = as.integer(spsp_f$count),
+                    strat_name = spsp_f$strat_name,
+                    strat = as.integer(spsp_f$strat),
+                    obser = as.integer(spsp_f$obser),
+                    year = spsp_f$year,
+                    firstyr = spsp_f$firstyr,
+                    nobservers = n_observers,
+                    stratify_by = strat_data$stratify_by,
+                    route = spsp_f$route,
+                    r_year = spsp_f$rYear,
+                    month = spsp_f$Month,
+                    day = spsp_f$Day)
   if (!is.null(model))
   {
     if (tolower(model) == "slope")

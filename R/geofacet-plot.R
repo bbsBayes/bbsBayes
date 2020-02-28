@@ -9,7 +9,7 @@
 #'
 #' @param indices_list Dataframe of strata or state/province indices produced by
 #'   \code{generate_strata_indices} or \code{generate_regional_indices}
-#' @param select logical flag to indicate if the continental data need to be selected out of an indices_list object that includes stratum, national, or other region-types. Default is FALSE
+#' @param select logical flag to indicate if the strata_level data need to be selected out of an indices_list object that includes stratum, national, or other region-types. Default is FALSE
 #' @param stratify_by How were the data stratified?
 #' @param multiple Logical, if TRUE, multiple strata-level trajectories are plotted within each prov/state facet
 #' @param trends Optional dataframe of matching strata or state/province trends produced by
@@ -51,6 +51,18 @@
 #'
 #' # Obtain a map of the trends by each strata
 #' map <- geofacet_plot(indices = strata_index, trend = trend, stratify_by = stratification)
+#'
+#' # There is an unfortunate conflict between geofacet function in the geofacet package
+#' # and the S3 +.gg method in other ggplot-extension-packages like ggmcmc
+#' # The geofacet_plot function may fail with the following error message:
+#' #  Error: Don't know how to add e2 to a plot
+#' # If this happens, you can fix the problem by following these steps
+#' #   1 - save your model output
+#' #   2 - restart your R-session
+#' #   3 - reload the bbsBayes package (do not re-load the other conflicting package, e.g., ggmcmc)
+#' map <- geofacet_plot(indices = strata_index, trend = trend, stratify_by = stratification)
+#'
+#'
 #' }
 #' @export
 #'
@@ -161,9 +173,10 @@ geofacet_plot <- function(indices_list = NULL,
       ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
                      panel.grid.minor = ggplot2::element_blank(),
                      panel.background = ggplot2::element_blank(),
-                     axis.text = ggplot2::element_text(colour = grey(0.2)),
+                     axis.text.x = ggplot2::element_text(colour = grey(0.2),size = 5,angle = 90),
+                     axis.text.y = ggplot2::element_text(colour = grey(0.2),size = 5),
                      strip.background = ggplot2::element_rect(fill = grDevices::grey(0.97)),#strcol #, colour = grey(0.9), size = NULL, linetype = NULL, color = NULL, inherit.blank = FALSE
-                     #axis.line = element_line(colour = "black"),
+                     strip.text = ggplot2::element_text(size = 6,margin = margin()),#
                      legend.position = "none") +
       ggplot2::labs(title = paste(species,"trajectories within Provinces and States"), x = "", y = "Annual indices") +
 
@@ -181,7 +194,8 @@ geofacet_plot <- function(indices_list = NULL,
     }
 
 
-   outplot <- ptraj+geofacet::facet_geo(facets = ~ code,grid = facets,label = "code")
+   outplot <- suppressMessages(ptraj+geofacet::facet_geo(facets = ~ code,grid = facets,label = "code"))
+   # messages above suppressed so user does not receive invitation to submit the geofacet
 
 
 
@@ -222,9 +236,10 @@ geofacet_plot <- function(indices_list = NULL,
         ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
                        panel.grid.minor = ggplot2::element_blank(),
                        panel.background = ggplot2::element_blank(),
-                       axis.text = ggplot2::element_text(colour = grey(0.2)),
+                       axis.text.x = ggplot2::element_text(colour = grey(0.2),size = 5,angle = 90),
+                       axis.text.y = ggplot2::element_text(colour = grey(0.2),size = 5),
                        strip.background = ggplot2::element_rect(fill = grDevices::grey(0.97)),#strcol #, colour = grey(0.9), size = NULL, linetype = NULL, color = NULL, inherit.blank = FALSE
-                       #axis.line = element_line(colour = "black"),
+                       strip.text = ggplot2::element_text(size = 6,margin = margin()),#
                        legend.position = "none") +
         ggplot2::labs(title = paste(species,"trajectories within Provinces and States"), x = "", y = "Annual indices") +
         ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index),colour = grDevices::grey(0.6)) +
@@ -243,7 +258,8 @@ geofacet_plot <- function(indices_list = NULL,
         ptraj <- ptraj+ggrepel::geom_text_repel(data = trlabs, mapping = ggplot2::aes(x = Year,y = uci,label = lbl),colour = grDevices::grey(0.6), size = 2,nudge_y = 0.2*uplim,segment.alpha = 0.1)
       }
 
-      outplot <- ptraj+geofacet::facet_geo(facets = ~ code,grid = facets,label = "code")
+      outplot <- suppressMessages(ptraj+geofacet::facet_geo(facets = ~ code,grid = facets,label = "code"))
+      # messages above suppressed so user does not receive invitation to submit the geofacet
 
 
 

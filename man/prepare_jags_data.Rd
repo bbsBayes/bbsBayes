@@ -55,6 +55,8 @@ List of data to be used in JAGS, including:
   \item{osber}{Vector of unique observer-route pairings}
   \item{year}{Vector of years for each count}
   \item{firstyr}{Vector of indicator variables as to whether an observer was a first year}
+  \item{month}{vector of numeric month of observation}
+  \item{day}{vector of numeric day of observation}
   \item{nobservers}{Total number of observer-route pairings}
   \item{fixedyear}{Median of all years (ymin:ymax), included only with slope model}
   \item{nknots}{Number of knots to use for smooting functions, included only with GAM}

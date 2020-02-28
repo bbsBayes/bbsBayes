@@ -34,7 +34,7 @@ Gelman, Andrew; Rubin, Donald B. Inference from Iterative Simulation Using Multi
 
 \dontrun{
 # Run a JAGS model analysis on a species
-stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
+stratified_data <- stratify(by = "bcr")
 prepped_data <- prepare_jags_data(strat_data = stratified_data,
                                   species_to_run = "Wood Thrush",
                                   model = "slope",
@@ -48,7 +48,7 @@ convergence <- r_hat(jags_mod = mod)
 convergence <- r_hat(jags_mod = mod, parameter_list = "beta")
 
 # Only return R Hat values greater than or equal to specified value
-convergence <- r_hat(jags_mod = mod, threshold = 1.08)
+convergence <- r_hat(jags_mod = mod, threshold = 1.1)
 }
 
 }

@@ -12,7 +12,7 @@ geofacet_plot(indices_list = NULL, select = F, stratify_by = NULL,
 \item{indices_list}{Dataframe of strata or state/province indices produced by
 \code{generate_strata_indices} or \code{generate_regional_indices}}
 
-\item{select}{logical flag to indicate if the continental data need to be selected out of an indices_list object that includes stratum, national, or other region-types. Default is FALSE}
+\item{select}{logical flag to indicate if the strata_level data need to be selected out of an indices_list object that includes stratum, national, or other region-types. Default is FALSE}
 
 \item{stratify_by}{How were the data stratified?}
 
@@ -62,5 +62,17 @@ trend <- generate_strata_trends(indices = strata_index)
 
 # Obtain a map of the trends by each strata
 map <- geofacet_plot(indices = strata_index, trend = trend, stratify_by = stratification)
+
+# There is an unfortunate conflict between geofacet function in the geofacet package
+# and the S3 +.gg method in other ggplot-extension-packages like ggmcmc
+# The geofacet_plot function may fail with the following error message:
+#  Error: Don't know how to add e2 to a plot
+# If this happens, you can fix the problem by following these steps
+#   1 - save your model output
+#   2 - restart your R-session
+#   3 - reload the bbsBayes package (do not re-load the other conflicting package, e.g., ggmcmc)
+map <- geofacet_plot(indices = strata_index, trend = trend, stratify_by = stratification)
+
+
 }
 }

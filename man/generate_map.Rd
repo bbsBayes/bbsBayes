@@ -5,7 +5,7 @@
 \title{Generate a map of trends by strata.}
 \usage{
 generate_map(trend = NULL, select = F, stratify_by = NULL,
-  slope = FALSE)
+  slope = FALSE, species = "")
 }
 \arguments{
 \item{trend}{Dataframe of strata trends produced by
@@ -16,6 +16,8 @@ generate_map(trend = NULL, select = F, stratify_by = NULL,
 \item{stratify_by}{How were the data stratified?}
 
 \item{slope}{Logical, if TRUE, maps values of the alternative trend metric if slope = T was used in \code{generate_strata_trends}, the slope of a log-linear regression through the annual indices. Default FALSE.}
+
+\item{species}{Text, optional species name to add plot title. if left blank "" no title is added}
 }
 \value{
 spplot object
@@ -33,17 +35,17 @@ spplot object
 stratification <- "bcr"
 
 # Run a JAGS model analysis on a species
-stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = stratification)
+stratified_data <- stratify(by = stratification)
 prepped_data <- prepare_jags_data(strat_data = stratified_data,
                                   species_to_run = "Wood Thrush",
                                   model = "slope")
-mod <- run_model(jags_data = prepped_data)
+jags_mod <- run_model(jags_data = prepped_data)
 
 #Generate the indices for each strata
-strata_index <- generate_strata_indices(jags_mod = mod)
+strata_index <- generate_regional_indices(jags_mod = jags_mod)
 
 # Get the data frame of trends by strata
-trend <- generate_strata_trends(indices = strata_index)
+trend <- generate_regional_trends(indices = strata_index)
 
 # Obtain a map of the trends by each strata
 map <- generate_map(trend = trend, stratify_by = stratification)

@@ -160,15 +160,17 @@ sdobs_ret <- 0.5*pow(sdobs,2)
 		{
 			for(o in 1 : nobservers[i])
 			{
-				no[i,t,o] <- exp(strata[i]+yeareffect[i,t] + yy[i,t] + obs[i,o]+sdn_ret)
-				no3[i,t,o] <- exp(strata[i]+yeareffect[i,t] + obs[i,o]+sdn_ret)
+				no[i,t,o] <- exp(strata[i]+yeareffect[i,t] + yy[i,t] + obs[i,o] + sdn_ret)
+				no3[i,t,o] <- exp(strata[i]+yeareffect[i,t] + obs[i,o] + sdn_ret)
 			}
 
 			mn[i,t] <- mean(no[i,t,(1 : nobservers[i])])
+			mn3[i,t] <- mean(no3[i,t,(1 : nobservers[i])])
 			n[i,t] <- nonzeroweight[i]*(mn[i,t])
-			n2[i,t] <- nonzeroweight[i]*exp(strata[i]+yeareffect[i,t] + yy[i,t] + sdn_ret + sdobs_ret) #n2 is an alternative way of calculating the annual indices
-						mn3[i,t] <- mean(no3[i,t,1 : nobservers[i]])
 			n3[i,t] <- nonzeroweight[i]*(mn3[i,t])
+
+			n2[i,t] <- nonzeroweight[i]*exp(strata[i]+yeareffect[i,t] + yy[i,t] + sdn_ret + sdobs_ret) #n2 is an alternative way of calculating n
+			n4[i,t] <- nonzeroweight[i]*exp(strata[i]+yeareffect[i,t] + sdn_ret + sdobs_ret) #n4 is an alternative way of calculating n3
 
 		}
 	}

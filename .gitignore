@@ -4,11 +4,15 @@
 .Ruserdata
 output/*
 testdata
+fetch-example-results.R
 testfile.R
+jags_data_GAMYE_PAWR.RData
+jags_mod_GAMYE_PAWR.RData
 *.html
 jags_mod_full.RData
 temp.RData
 jags_mod_full_gam.RData
 temp.geofacet.pdf
 *output/
+*.EX.R
 

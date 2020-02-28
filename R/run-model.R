@@ -32,7 +32,7 @@
 #'   If TRUE, the number of cores used will be the minimum of the
 #'   \code{n_chains} specified and the number of cores on your computer
 #' @param quiet Should JAGS output be suppressed?
-#' @param modules Character vector of JAGS modules to load before analysis. By default no extra modules are loaded (other than 'basemod' and 'bugs'). To force glm or other modules to load, use modules = "glm". See JAGS manual for more options.
+#' @param modules Character vector of JAGS modules to load before analysis. By default no extra modules are loaded (other than 'basemod' and 'bugs'). To force glm or other modules to load, use modules = "glm". Be warned, our experience suggests that including the glm module may cause problems with the BBS data.
 #' @param ... Additional arguments
 #' @return jagsUI object
 #'
@@ -46,31 +46,30 @@
 #' bbs_data <- fetch_bbs_data()
 #' data_stratified <- stratify(bbs_data, stratify_by = "latlong")
 #' data_jags <- prepare_jags_data(strat_data = data_stratified,
-#'                                species_to_run = "Bufflehead",
-#'                                model = "standard")
+#'                                species_to_run = "Pacific Wren",
+#'                                model = "slope")
 #'
 #' # Run a JAGS model with default JAGS arguments
 #' # Note that you do not have to specify the model file. This is saved
 #' #   in the output from prepare_jags_data
 #' jags_mod <- run_model(jags_data = data_jags)
 #'
-#' # You can specify how many chains to run, how many adaptation interations,
-#' # how many burn in iterations, how many sampling interations, and how much\
-#' # thinning.
+#' # You can specify how many chains to run, whether to run chains in parallel,
+#' # how many burn in iterations, how many sampling interations, and the thinning rate.
 #' jags_mod <- run_model(jags_data = data_jags,
-#'                       n_chains = 2,
-#'                       n_adapt = 200,
+#'                       n_chains = 3,
 #'                       n_burnin = 5000,
 #'                       n_thin = 10,
-#'                       n_iter = 10000)
+#'                       n_iter = 10000,
+#'                       parallel = TRUE)
 #'
 #' # You can specify a vector of variable names to monitor. By default, the
 #' #   variable "n" is monitored to produce trends
 #' jags_mod <- run_model(jags_data = data_jags,
 #'                       parameters_to_save = c("n", "strata"))
 #'
-#' # In fact, the variable "n" will always be tracked, even if you don't specify
-#' #  it to be tracked. This ensures that trends can always be calculated in
+#' # In fact, the variable "n" is monitored by default
+#' #  This ensures that trends can always be calculated in
 #' #  case the user forgets to specify "n" if they went to specify other
 #' #  variables to track. If, however, you are absolutely sure you do not
 #' #  want to track "n", you can set the parameter "track_n" to FALSE
@@ -175,7 +174,7 @@ run_model <- function(jags_data = NULL,
   if(nrow(rhat_check) > 1){
     failed = paste(rhat_check$Parameter,collapse = " ; ")
     nfail = nrow(rhat_check)
-   warning(paste("Warning",nfail,"parameters did not converged. Consider re-running with a longer burn-in and-or more posterior samples."))
+   warning(paste("Warning",nfail,"parameters did not converged (Rhat > 1.1). Consider re-running with a longer burn-in and-or more posterior samples."))
 
     warning(paste("Convergence failure on the following parameters:",failed))
   }

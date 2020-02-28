@@ -2,7 +2,7 @@
 % Please edit documentation in R/generate-regional-trends.R
 \name{generate_regional_trends}
 \alias{generate_regional_trends}
-\title{Generate regional trends for countries, states/provinces, or BCRs from analyses run on the cws or usgs stratifications}
+\title{Generate regional trends continent and strata and optionally for countries, states/provinces, or BCRs from analyses run on the stratifications that support these composite regions}
 \usage{
 generate_regional_trends(indices = NULL, Min_year = NULL,
   Max_year = NULL, quantiles = c(0.025, 0.05, 0.25, 0.75, 0.95, 0.975),
@@ -29,9 +29,9 @@ Dataframe with one row for each region included in indices object, and columns i
   \item{End_year}{last year of the trend}
   \item{Region}{short name of the region}
   \item{Region_alt}{Long name for region}
-  \item{Region_type}{Type of region including "continental", "national","Province/State","BCR", or "stratum"}
+  \item{Region_type}{Type of region including continental, national,Province_State,BCR, bcr_by_national, or stratum}
   \item{Strata_included}{Strata included in the trend and annual index calculations}
-  \item{Strata_excluded}{Strata excluded from the trend and annual index calculations because they have no observations of the species in the first part of the time series}
+  \item{Strata_excluded}{Strata potentially excluded from the trend and annual index calculations because they have no observations of the species in the first part of the time series}
   \item{Trend}{Estimated mean annual percent change over the trend time-period (i.e., Start_year - End_year), according to an endpoint comparison of annual index in Start_year and the annual index in End_year}
   \item{Trend_Q_quantiles}{quantiles of the posterior distribution of Trend estimates, matching levels included in the quantiles argument}
   \item{Percent_Change}{Estimated total percent change over the trend time-period}
@@ -47,6 +47,7 @@ Dataframe with one row for each region included in indices object, and columns i
   \item{Width_of_X_percent_Credible_Interval_Slope}{Width (in percent/year) of the credible interval on the Trend calculation for the slope-based trend. Calculated for the widest credible interval requested in quantiles argument. Default is 95 percent CI (i.e., Slope_Trend_Q0.975 - Slope_Trend_Q0.025)}
   \item{Number_of_Routes}{The number of unique BBS routes included in the trend calculation for this region and species}
   \item{Mean_Number_of_Routes}{The average number of BBS routes across years contributing data for this region and species}
+  \item{backcast_flag}{approximate proportion of the included species range*years that are free of extrapolated population trajectories e.g., 1.0 = data cover full time-series, 0.75 = data cover 75 percent of time-series. Only calculated if max_backcast != NULL}
 }
 \description{
 \code{generate_regional_trends} calculates the geometric mean annual changes in population size for composite regions.
@@ -55,7 +56,7 @@ Dataframe with one row for each region included in indices object, and columns i
 
 \dontrun{
 # Run a JAGS model analysis on a species
-stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bbs_usgs")
+stratified_data <- stratify(by = "bbs_usgs")
 prepped_data <- prepare_jags_data(strat_data = stratified_data,
                                   species_to_run = "Wood Thrush",
                                   model = "slope")

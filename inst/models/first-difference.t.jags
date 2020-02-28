@@ -109,7 +109,7 @@ sdobs_ret <- 0.5*pow(sdobs,2)
 
 			mn[i,t] <- mean(no[i,t,1 : nobservers[i]])
 			n[i,t] <- nonzeroweight[i]*(mn[i,t])
-				n2[i,t] <- nonzeroweight[i]*exp(yeareffect[i,t] + sdn_ret + sdobs_ret) #n2 is an alternative approach to calculating annual indices
+				n2[i,t] <- nonzeroweight[i]*exp(yeareffect[i,t] + sdn_ret + sdobs_ret) #n2 is an alternative approach to calculating n
 		}
 	}
 

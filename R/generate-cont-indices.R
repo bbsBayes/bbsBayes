@@ -43,6 +43,9 @@ generate_cont_indices <- function(jags_mod = NULL,
                                   quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),
                                   alternate_n = "n")
 {
+
+  warning(paste("generate_cont_indices is deprecated in favour of generate_regional_indices(region = \"continental\")"))
+
   if (is.null(jags_mod))
   {
     stop("No model output supplied to generate_cont_indices()."); return(NULL)
