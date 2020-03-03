@@ -65,6 +65,7 @@ generate_regional_indices <- function(jags_mod = NULL,
                                   max_backcast = NULL,
                                   alt_region_names = NULL)
 {
+
   if (is.null(jags_mod))
   {
     stop("No model output supplied to generate_regional_indices()."); return(NULL)
@@ -197,7 +198,8 @@ st_rem <- NULL
 strata_sel <- area_weights[which(area_weights$region %in% st_sela),"num"]
 st_sel <- area_weights[which(area_weights$region %in% st_sela),"region"]
 
-pz_area <- area_weights[which(area_weights$num %in% strata_sel),"area_sq_km"]*non_zero_weight[strata_sel]
+#pz_area <- area_weights[which(area_weights$num %in% strata_sel),"area_sq_km"]*non_zero_weight[strata_sel]
+pz_area <- area_weights[,"area_sq_km"]*non_zero_weight
 #pz_area is the non_zero_weighted area (the area of the stratum * proportion of the routes included)
 # it's designed to estimate the proportional contribution (excluding abundance) of that region to the composite trajectory
 
@@ -246,7 +248,7 @@ obs_df = data.frame(year = integer(),
   }
 
 
-if(!is.null(st_rem)){
+  if(!is.null(st_rem)){
   if(drop_exclude){
     strata_sel <- strata_sel[-which(strata_sel %in% area_weights[which(area_weights$region %in% st_rem),"num"])]
     st_sel <- st_sel[-which(st_sel %in% st_rem)]
