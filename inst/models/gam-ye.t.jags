@@ -1,8 +1,7 @@
 model
 {
 	#### counts and overdispersion effects  ###### Hierarchical GAM model with additional random year-effects
-	####  builds on the GAM model used in 2016 work
-	### not yet applied or tested
+	#### heavy-tailed version
 
 
 	for( k in 1 : ncounts )
@@ -87,6 +86,8 @@ model
 	# Following Crainiceanu, C. M., Ruppert, D. & Wand, M. P. (2005). Bayesian Analysis for Penalized Spline Regression Using WinBUGS. Journal of Statistical Softare, 14 (14), 1-24.
 	# X.basis is data computed in R
 
+alpha ~ dnorm(0,0.1) #fixed effect overall intercept for the GAM
+
 	tauX~dgamma(1.0E-2,1.0E-4) #alternate prior, original from Cainiceanu et al. second gamma parameter == 0.0001 << (abs(mean(B.X[]))^2)/2, mean(B.X[]) ~ 0.2
 	#tauX <- 1/pow(sdX,2) # prior on precision of gam hyperparameters
 	sdX <- 1/(pow(tauX,0.5)) # ~ dunif(0,5)
@@ -116,7 +117,7 @@ model
 		{
 		for (t in ymin : ymax )
 	{
-			yeareffect[i,t] <- sum(X.part[i,1:nknots,t])
+			yeareffect[i,t] <- sum(X.part[i,1:nknots,t]) + alpha
 		}#t
 	}#i
 
