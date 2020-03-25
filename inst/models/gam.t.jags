@@ -95,7 +95,7 @@ alpha ~ dnorm(0,0.1) #fixed effect overall intercept for the GAM
 	for(k in 1:nknots)
 	{
 		# Computation of GAM components
-		B.X[k] ~ dnorm(0,tauX)
+		B.X[k] ~ dnorm(alpha,tauX)
 
 		for(i in 1:nstrata)
 		{
@@ -115,7 +115,7 @@ alpha ~ dnorm(0,0.1) #fixed effect overall intercept for the GAM
 		{
 		for (t in ymin : ymax )
 	{
-			yeareffect[i,t] <- sum(X.part[i,1:nknots,t]) + alpha
+			yeareffect[i,t] <- sum(X.part[i,1:nknots,t])
 		}#t
 	}#i
 
