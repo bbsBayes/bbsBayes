@@ -77,7 +77,18 @@ geofacet_plot <- function(indices_list = NULL,
                           trends = NULL,
                           slope = FALSE,
                           add_observed_means = FALSE,
-                          species = ""){
+                          species = "")
+{
+  # Annoying thing to get rid of check notes
+  Year <- NULL; rm(Year)
+  Index <- NULL; rm(Index)
+  Region <- NULL; rm(Region)
+  lci <- NULL; rm(lci)
+  uci <- NULL; rm(uci)
+  Trendcat <- NULL; rm(Trendcat)
+  margin <- NULL; rm(margin)
+  lbl <- NULL; rm(lbl)
+  obs_mean <- NULL; rm(obs_mean)
 
   if (is.null(stratify_by))
   {
