@@ -15,12 +15,12 @@ bbsBayes is a package to perform hierarchical Bayesian analysis of North America
 
 We expect a CRAN release shortly, but for now you can install from Github using the following options:
 
-Option 1: Most recent stable release (currently v2.0.0)
+Option 1: Most recent stable release (currently v2.1.0)
 ``` r
-# To install v2.0.0 from Github:
+# To install v2.1.0 from Github:
 install.packages("devtools")
 library(devtools)
-devtools::install_github("BrandonEdwards/bbsBayes", ref = "v2.0.0")
+devtools::install_github("BrandonEdwards/bbsBayes", ref = "v2.1.0")
 ```
 
 Option 2: Less-stable development version
@@ -28,7 +28,7 @@ Option 2: Less-stable development version
 # To install the development version from GitHub:
 install.packages("devtools")
 library(devtools)
-devtools::install_github("AdamCSmithCWS/bbsBayes")
+devtools::install_github("BrandonEdwards/bbsBayes")
 ```
 
 ## Basic Status and Trend Analyses
