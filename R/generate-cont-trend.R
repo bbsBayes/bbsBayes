@@ -29,6 +29,16 @@
 #' generate_cont_trend(indices = cont_index)
 #' }
 #'
+#' @name bbsBayes-deprecated
+#' @seealso \code{\link{generate_cont_trend}}
+#' @keywords internal
+NULL
+
+#' @rdname bbsBayes-deprecated
+#' @section \code{generate_cont_trend}:
+#'   For \code{generate_cont_trend()}, use
+#'   \code{generate_trends()}.
+#'
 #' @export
 #'
 
@@ -39,7 +49,8 @@ generate_cont_trend <- function(indices = NULL,
                                 slope = FALSE)
 {
 
-  warning(paste("generate_cont_trends is deprecated in favour of generate_regional_trends()"))
+  .Deprecated(new = "generate_trends",
+              msg = paste("generate_cont_trends is deprecated in favour of generate_trends()"))
 
 
   if (is.null(indices))
