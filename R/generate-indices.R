@@ -1,6 +1,6 @@
 #' Generate regional annual indices of abundance continent and strata and optionally for countries, states/provinces, or BCRs from analyses run on the stratifications that support these composite regions
 #'
-#' \code{generate_regional_indices} creates a data frame of the strata-weighted
+#' \code{generate_indices} creates a data frame of the strata-weighted
 #'   regional indices by year. This data frame can then be used to
 #'   generate a population trajectory of the species.
 #'
@@ -48,44 +48,31 @@
 #' mod <- run_model(jags_data = prepped_data)
 #'
 #' #Generate the continental indices weighted by each strata
-#' cont_index <- generate_regional_indices(jags_mod = mod,
-#'                                         jags_data = prepped_data)
+#' cont_index <- generate_indices(jags_mod = mod,
+#'                                jags_data = prepped_data)
 #' }
-#'
-#' @name bbsBayes-deprecated
-#' @seealso \code{\link{generate_regional_indices}}
-#' @keywords internal
-NULL
-
-#' @rdname bbsBayes-deprecated
-#' @section \code{generate_regional_indices}:
-#'   For \code{generate_regional_indices()}, use
-#'   \code{generate_indices()}.
 #'
 #' @export
 #'
 
-generate_regional_indices <- function(jags_mod = NULL,
-                                      jags_data = NULL,
-                                  quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),
-                                  regions = c("stratum","continental"),
-                                  alternate_n = "n",
-                                  startyear = NULL,
-                                  drop_exclude = FALSE,
-                                  max_backcast = NULL,
-                                  alt_region_names = NULL)
+generate_indices <- function(jags_mod = NULL,
+                             jags_data = NULL,
+                             quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),
+                             regions = c("stratum","continental"),
+                             alternate_n = "n",
+                             startyear = NULL,
+                             drop_exclude = FALSE,
+                             max_backcast = NULL,
+                             alt_region_names = NULL)
 {
-  .Deprecated(new = "generate_indices",
-              msg = "generate_regional_indices is deprecated in favour of generate_indices")
-
   if (is.null(jags_mod))
   {
-    stop("No model output supplied to generate_regional_indices()."); return(NULL)
+    stop("No model output supplied to generate_indices()."); return(NULL)
   }
 
   if (is.null(jags_data))
   {
-    warning("No original data object supplied to generate_regional_indices(). Number of routes will not be calculated")
+    warning("No original data object supplied to generate_indices(). Number of routes will not be calculated")
   }
 
   if(!is.null(jags_data)){
