@@ -20,8 +20,6 @@
 #'   is set to \code{TRUE}. Double precision numerical value of pWAIC if
 #'   \code{pointwise} is set to \code{FALSE}.
 #'
-#' @export
-#'
 #' @importFrom stats dpois var
 #'
 #' @examples
@@ -38,10 +36,24 @@
 #'          jags_mod = mod)
 #' }
 #'
+#' @name bbsBayes-deprecated
+#' @seealso \code{\link{p_waic}}
+#' @keywords internal
+NULL
+
+#' @rdname bbsBayes-deprecated
+#' @section \code{p_waic}:
+#'   WAIC should no longer be used for BBS data.
+#'   Cross validation should be used instead.
+#'
+#' @export
+#'
 p_waic <- function(jags_data = NULL,
                    jags_mod = NULL,
                    pointwise = FALSE)
 {
+  .Deprecated(msg = "WAIC should no longer be used for BBS data. Use cross validation instead.")
+
   bugs <- get_prepared_data(jags_data)
 
   pwaic_point <- data.frame(index = 1:nrow(bugs))

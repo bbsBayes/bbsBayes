@@ -17,8 +17,6 @@
 #'
 #' @return Double precision numerical value
 #'
-#' @export
-#'
 #' @examples
 #'
 #' \dontrun{
@@ -34,10 +32,24 @@
 #'        jags_mod = mod)
 #' }
 #'
+#' @name bbsBayes-deprecated
+#' @seealso \code{\link{waic}}
+#' @keywords internal
+NULL
+
+#' @rdname bbsBayes-deprecated
+#' @section \code{waic}:
+#'   WAIC should no longer be used for BBS data.
+#'   Cross validation should be used instead.
+#'
+#' @export
+#'
 
 waic <- function(jags_data = NULL,
                  jags_mod = NULL)
 {
+  .Deprecated(msg = "WAIC should no longer be used for BBS data. Use cross validation instead.")
+
   lppd_sum <- lppd(jags_data = jags_data, jags_mod = jags_mod)
   pwaic_sum <- p_waic(jags_data = jags_data, jags_mod = jags_mod)
 
