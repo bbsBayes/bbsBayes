@@ -49,8 +49,11 @@ generate_map <- function(trend = NULL,
                          slope = FALSE,
                          species = "")
 {
+  # Silly things to remove "visible binding" note in check
   Trend <- NULL
   rm(Trend)
+  Tplot <- NULL
+  rm(Tplot)
 
   if(select){
     trend = trend[which(trend$Region_type == "stratum"),]
@@ -119,9 +122,9 @@ generate_map <- function(trend = NULL,
                    rect = ggplot2::element_rect(size = 0.1),
           axis.text = ggplot2::element_blank(),
           axis.line = ggplot2::element_blank())+
-    scale_colour_manual(values = map_palette, aesthetics = c("fill"),
-                        guide = guide_legend(reverse=TRUE),
-                        name=paste0("Trend\n",fyr,"-",lyr))
+    ggplot2::scale_colour_manual(values = map_palette, aesthetics = c("fill"),
+                        guide = ggplot2::guide_legend(reverse=TRUE),
+                        name = paste0("Trend\n",fyr,"-",lyr))
 
 
   return(mp.plot)

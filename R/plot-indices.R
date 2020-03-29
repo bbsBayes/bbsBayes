@@ -76,13 +76,12 @@ plot_indices <- function(indices_list = NULL,
                          add_observed_means = FALSE,
                          add_number_routes = FALSE)
 {
-  Year <- NULL
-  rm(Year)
-  Index <- NULL
-  rm(Index)
-
-  Stratum <- NULL
-  rm(Stratum)
+  Year <- NULL; rm(Year)
+  Index <- NULL; rm(Index)
+  Stratum <- NULL; rm(Stratum)
+  obs_mean <- NULL; rm(obs_mean)
+  lci <- NULL; rm(lci)
+  uci <- NULL; rm(uci)
 
   indices = indices_list$data_summary
 

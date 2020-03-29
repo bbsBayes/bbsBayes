@@ -3,7 +3,7 @@ citHeader("To cite the Breeding Bird Survey data in publication, please use:")
 citEntry(
   entry = "misc",
   title = "North American Breeding Bird Survey Dataset 1966 - 2018",
-  version = "2017.0",
+  version = "2018.0",
   publisher = "U.S. Geological Survey, Patuxent Wildlife Research Center.",
   author = "Pardieck, Keith L. and Ziolkowski Jr., Dave J. and Lutmerding, M. and Aponte, Veronica and Hudson, Marie-Anne R.",
   textVersion = "Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding, V. Aponte and M-A.R. Hudson. 2019. North American Breeding Bird Survey Dataset 1966 - 2018, version 2018.0. U.S. Geological Survey, Patuxent Wildlife Research Center. https://doi.org/10.5066/P9HE8XYJ."

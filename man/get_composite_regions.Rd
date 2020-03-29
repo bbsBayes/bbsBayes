@@ -4,10 +4,10 @@
 \alias{get_composite_regions}
 \title{Get the area of each strata}
 \usage{
-get_composite_regions(stratify_by = NULL)
+get_composite_regions(strata_type = NULL)
 }
 \arguments{
-\item{stratify_by}{Stratification type to return the areas of}
+\item{strata_type}{Stratification type to return the areas of}
 }
 \value{
 Data frame with at least the following variables:
@@ -25,7 +25,7 @@ Data frame with at least the following variables:
 # Most useful if the user wishes to create an set of custom composite regions
 #
 # USGS BBS
-st_comp_regions <- get_composite_regions(stratify_by = "bbs_usgs")
+st_comp_regions <- get_composite_regions(strata_type = "bbs_usgs")
 # create new column "Great_Plains"
 gpall <- rep("Outside",nrow(st_comp_regions))
 gp <- which(st_comp_region$bcr \%in\% c(11,17,18,19))

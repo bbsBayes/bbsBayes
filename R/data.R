@@ -4,11 +4,11 @@
 #'   NOTE: This only contains data for Wood Thrush, not the full data set.
 #'   The full count set is obtained via the function \code{fetch_bbs_data}.
 #'   The data is obtained from the United States Geological Survey and is
-#'   subject to change as new data is added each year. The data should be cited as follows:
+#'   subject to change as new data is added each year. See Details for citation.
 #'
-#'   Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding and M.-A.R. Hudson. 2018.
-#'   North American Breeding Bird Survey Dataset 1966 - 2017, version 2017.0. U.S.
-#'   Geological Survey, Patuxent Wildlife Research Center. https://doi.org/10.5066/F76972V8.
+#' Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding, V. Aponte and M-A.R. Hudson. 2019.
+#'   North American Breeding Bird Survey Dataset 1966 - 2018, version 2018.0.
+#'   U.S. Geological Survey, Patuxent Wildlife Research Center. https://doi.org/10.5066/P9HE8XYJ.
 #'
 #' @format A data frame with 20 rows and 15 variables:
 #' \describe{
@@ -37,11 +37,11 @@
 #'   NOTE: This only contains data for Wood Thrush, not the full data set.
 #'   The full count set is obtained via the function \code{fetch_bbs_data}.
 #'   The data is obtained from the United States Geological Survey and is
-#'   subject to change as new data is added each year. The data should be cited as follows:
+#'   subject to change as new data is added each year. See Details for citation.
 #'
-#'   Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding and M.-A.R. Hudson. 2018.
-#'   North American Breeding Bird Survey Dataset 1966 - 2017, version 2017.0. U.S.
-#'   Geological Survey, Patuxent Wildlife Research Center. https://doi.org/10.5066/F76972V8.
+#' Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding, V. Aponte and M-A.R. Hudson. 2019.
+#'   North American Breeding Bird Survey Dataset 1966 - 2018, version 2018.0.
+#'   U.S. Geological Survey, Patuxent Wildlife Research Center. https://doi.org/10.5066/P9HE8XYJ.
 #'
 #' @format A data frame with 20 rows and 32 variables:
 #' \describe{
@@ -87,11 +87,11 @@
 #'   NOTE: This only contains data for Wood Thrush, not the full data set.
 #'   The full count set is obtained via the function \code{fetch_bbs_data}.
 #'   The data is obtained from the United States Geological Survey and is
-#'   subject to change as new data is added each year. The data should be cited as follows:
+#'   subject to change as new data is added each year. See Details for citation.
 #'
-#'   Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding and M.-A.R. Hudson. 2018.
-#'   North American Breeding Bird Survey Dataset 1966 - 2017, version 2017.0. U.S.
-#'   Geological Survey, Patuxent Wildlife Research Center. https://doi.org/10.5066/F76972V8.
+#' Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding, V. Aponte and M-A.R. Hudson. 2019.
+#'   North American Breeding Bird Survey Dataset 1966 - 2018, version 2018.0.
+#'   U.S. Geological Survey, Patuxent Wildlife Research Center. https://doi.org/10.5066/P9HE8XYJ.
 #'
 #' @format A data frame with 20 rows and 10 variables:
 #' \describe{

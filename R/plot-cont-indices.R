@@ -73,11 +73,11 @@ plot_cont_indices <- function(indices_list = NULL,
   warning(paste("plot_cont_indices is deprecated in favour of plot_indices()"))
 
 
-  Year <- NULL
-  rm(Year)
-  Index <- NULL
-  rm(Index)
-
+  Year <- NULL; rm(Year)
+  Index <- NULL; rm(Index)
+  obs_mean <- NULL; rm(obs_mean)
+  lci <- NULL; rm(lci)
+  uci <- NULL; rm(uci)
 
   indices = indices_list$data_summary
 
