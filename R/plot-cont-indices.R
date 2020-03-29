@@ -56,22 +56,32 @@
 #'
 #' }
 #'
+#' @name bbsBayes-deprecated
+#' @seealso \code{\link{plot_cont_indices}}
+#' @keywords internal
+NULL
+
+#' @rdname bbsBayes-deprecated
+#' @section \code{plot_cont_indices}:
+#'   For \code{plot_cont_indices()}, use \code{plot_indices()}.
+#'
 #' @export
+#'
 #'
 plot_cont_indices <- function(indices_list = NULL,
                               select = F,
                               ci_width = 0.95,
-                            min_year = NULL,
-                            max_year = NULL,
-                            species = "",
-                            title_size = 20,
-                            axis_title_size = 18,
-                            axis_text_size = 16,
-                            add_observed_means = F)
+                              min_year = NULL,
+                              max_year = NULL,
+                              species = "",
+                              title_size = 20,
+                              axis_title_size = 18,
+                              axis_text_size = 16,
+                              add_observed_means = F)
 {
 
-  warning(paste("plot_cont_indices is deprecated in favour of plot_indices()"))
-
+  .Deprecated(new = "plot_indices",
+              msg = "plot_cont_indices() is deprecated in favour of plot_indices()")
 
   Year <- NULL; rm(Year)
   Index <- NULL; rm(Index)
