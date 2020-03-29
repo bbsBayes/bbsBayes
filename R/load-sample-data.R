@@ -8,8 +8,6 @@
 #' \item{route}{Data frame of sample yearly route data}
 #' \item{species}{Sample list of North American bird species}
 #'
-#' @export
-#'
 #' @examples
 #'
 #' \dontrun{
@@ -23,8 +21,26 @@
 #'
 #' }
 #'
+#' @name bbsBayes-deprecated
+#' @seealso \code{\link{load_sample_data}}
+#' @keywords internal
+NULL
+
+#' @rdname bbsBayes-deprecated
+#' @section \code{load_sample_data}:
+#'   Sample data will no longer be provided for bbsBayes. Instead, you should
+#'   download the USGS data using \code{fetch_bbs_data()}, which will save
+#'   the data to your disk without needing to load the data into an R session.
+#'
+#' @export
+#'
 load_sample_data <- function()
 {
+  .Deprecated(new = "fetch_bbs_data",
+              msg = paste0("Sample data will no longer be provided for bbsBayes. Instead, you should ",
+                           "download the USGS data using fetch_bbs_data(), which will save ",
+                           "the data to your disk without needing to load the data into an R session."))
+
   return(list(bird = bbsBayes::bird_sample,
               route = bbsBayes::route_sample,
               species = bbsBayes::species_sample))
