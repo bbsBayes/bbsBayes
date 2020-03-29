@@ -56,12 +56,22 @@ fetch_bbs_data <- function(level = "state", quiet = FALSE, force = FALSE)
   {
     message(paste0("Creating data directory at ", bbs_dir$data()))
     dir.create(bbs_dir$data(), recursive = TRUE)
-  }else
+  }
+
+  if (level == "state")
   {
     if (file.exists(paste0(bbs_dir$data(), "/bbs_raw_data.RData")) &
         isFALSE(force))
     {
-      warning("BBS data file already exists. Use \"force = TRUE\" to overwrite.")
+      warning("BBS state-level data file already exists. Use \"force = TRUE\" to overwrite.")
+      return()
+    }
+  }else if (level == "stop")
+  {
+    if (file.exists(paste0(bbs_dir$data(), "/bbs_stop_data.RData")) &
+        isFALSE(force))
+    {
+      warning("BBS stop-level data file already exists. Use \"force = TRUE\" to overwrite.")
       return()
     }
   }
@@ -178,8 +188,15 @@ fetch_bbs_data <- function(level = "state", quiet = FALSE, force = FALSE)
                    route = route,
                    species = species)
 
-  message(paste0("Saving BBS data to ", bbs_dir$data()))
-  save(bbs_data, file = paste0(bbs_dir$data(), "/bbs_raw_data.RData"))
+  if (level == "state")
+  {
+    message(paste0("Saving BBS data to ", bbs_dir$data()))
+    save(bbs_data, file = paste0(bbs_dir$data(), "/bbs_raw_data.RData"))
+  }else if (level == "stop")
+  {
+    message(paste0("Saving BBS data to ", bbs_dir$data()))
+    save(bbs_data, file = paste0(bbs_dir$data(), "/bbs_stop_data.RData"))
+  }
 
 }
 
