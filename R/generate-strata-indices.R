@@ -36,6 +36,15 @@
 #' #Generate the indices for each strata
 #' strata_index <- generate_strata_indices(jags_mod = mod)
 #' }
+#' @name bbsBayes-deprecated
+#' @seealso \code{\link{generate_strata_indices}}
+#' @keywords internal
+NULL
+
+#' @rdname bbsBayes-deprecated
+#' @section \code{generate_strata_indices}:
+#'   For \code{generate_strata_indices()}, use
+#'   \code{generate_indices(regions = "stratum")}.
 #'
 #' @export
 #'
@@ -44,7 +53,8 @@ generate_strata_indices <- function(jags_mod = NULL,
                                   quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),
                                   alternate_n = "n")
 {
-  warning(paste("generate_strata_indices is deprecated in favour of generate_regional_indices(region = \"stratum\")"))
+  .Deprecated(new = "generate_indices",
+              msg = paste("generate_strata_indices is deprecated in favour of generate_indices(region = \"stratum\")"))
 
 
   if (is.null(jags_mod))

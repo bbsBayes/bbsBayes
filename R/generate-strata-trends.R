@@ -33,6 +33,16 @@
 #' trend <- generate_strata_trends(indices = strata_index)
 #' }
 #'
+#' @name bbsBayes-deprecated
+#' @seealso \code{\link{generate_strata_trends}}
+#' @keywords internal
+NULL
+
+#' @rdname bbsBayes-deprecated
+#' @section \code{generate_strata_trends}:
+#'   For \code{generate_strata_trends()}, use
+#'   \code{generate_trends()}.
+#'
 #' @export
 #'
 
@@ -42,7 +52,8 @@ generate_strata_trends <- function(indices = NULL,
                                    quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),
                                    slope = FALSE)
 {
-  warning(paste("generate_strata_trends is deprecated in favour of generate_regional_trends()"))
+  .Deprecated(new = "generate_trends",
+              msg = paste("generate_strata_trends is deprecated in favour of generate_trends()"))
 
 
   if (is.null(indices))
