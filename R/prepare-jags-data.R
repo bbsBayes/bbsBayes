@@ -164,8 +164,9 @@ prepare_jags_data <- function(strat_data = NULL,
 
   if (!isTRUE(quiet))
   {
+    message("Preparing JAGS data")
     pb <- progress::progress_bar$new(
-      format = "Preparing JAGS data   [:bar] :percent eta: :eta",
+      format = "\r[:bar] :percent eta: :eta",
       clear = FALSE,
       total = length(unique(spsp.c$strat_name)) + 26,
       width = 80)

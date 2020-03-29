@@ -73,8 +73,9 @@ fetch_bbs_data <- function(level = "state", quiet = FALSE, force = FALSE)
   ################################################################
   if (!isTRUE(quiet))
   {
+    message("Downloading route data (Task 2/3)")
     pb <- progress::progress_bar$new(
-      format = "Downloading route data (Task 2/3)\n[:bar] :percent eta: :eta",
+      format = "\r[:bar] :percent eta: :eta",
       clear = FALSE,
       total = 9,
       width = 100)
@@ -137,8 +138,9 @@ fetch_bbs_data <- function(level = "state", quiet = FALSE, force = FALSE)
 
   if (!isTRUE(quiet))
   {
+    message("Downloading species data (Task 3/3)")
     pb <- progress::progress_bar$new(
-      format = "Downloading species data (Task 3/3)\n[:bar] :percent eta: :eta",
+      format = "\r[:bar] :percent eta: :eta",
       clear = FALSE,
       total = 4,
       width = 100)
@@ -197,8 +199,9 @@ get_counts <- function(level, quiet) {
   bird_count_filenames <- utils::read.csv(dir_listing_csv)
 
   if (!isTRUE(quiet)) {
+    message("Downloading count data (Task 1/3)")
     pb <- progress::progress_bar$new(
-      format = "Downloading count data (Task 1/3)\n[:bar] :percent eta: :eta",
+      format = "\r[:bar] :percent eta: :eta",
       clear = FALSE,
       total = nrow(bird_count_filenames) + 1,
       width = 100)

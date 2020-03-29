@@ -58,6 +58,11 @@ stratify <- function(by = NULL,
     by <- stratify_by
   }
 
+  if (sample_data)
+  {
+    message("The use of sample data has been deprecated.")
+  }
+
   if(isFALSE(is.element(by, c("state", "bcr", "latlong", "bbs_cws", "bbs_usgs"))))
   {
     stop("Invalid stratification specified, choose one of state, bcr, latlong, bbs_cws, or bbs_usgs"); return(NULL)
@@ -78,8 +83,9 @@ stratify <- function(by = NULL,
 
   if (!isTRUE(quiet))
   {
+    message("Stratifying data")
     pb <- progress::progress_bar$new(
-      format = "Stratifying data   [:bar] :percent eta: :eta",
+      format = "\r[:bar] :percent eta: :eta",
       clear = FALSE,
       total = 8,
       width = 80)
