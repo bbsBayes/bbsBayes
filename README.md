@@ -15,12 +15,12 @@ bbsBayes is a package to perform hierarchical Bayesian analysis of North America
 
 We expect a CRAN release shortly, but for now you can install from Github using the following options:
 
-Option 1: Most recent stable release (currently v2.1.0)
+Option 1: Most recent stable release (currently v2.2.0)
 ``` r
-# To install v2.1.0 from Github:
+# To install v2.2.0 from Github:
 install.packages("devtools")
 library(devtools)
-devtools::install_github("BrandonEdwards/bbsBayes", ref = "v2.1.0")
+devtools::install_github("BrandonEdwards/bbsBayes", ref = "v2.2.0")
 ```
 
 Option 2: Less-stable development version
@@ -125,38 +125,38 @@ There are a number of tools available to summarize and visualize the posterior p
 ### Annual Indices of Abundance and Population Trajectories
 The main monitored parameters are the annual indices of relative abundance within a stratum (i.e., parameters "n[strata,year]"). The time-series of these annual indices form the estimated population trajectories.
 ``` r
-indices <- generate_regional_indices(jags_mod = jags_mod,
-                                     jags_data = jags_data)
+indices <- generate_indices(jags_mod = jags_mod,
+                            jags_data = jags_data)
 ```
 By default, this function generates estimates for the continent (i.e., survey-wide) and for the individual strata. However, the user can also select summaries for composite regions (regions made up of collections of strata), such as countries, provinces/states, Bird Conservation Regions, etc.
 For display, the posterior medians are used for annual indices (instead of the posterior means) due to the asymetrical distributions caused by the log-linear retransformation.
 
 ``` r
-indices <- generate_regional_indices(jags_mod = jags_mod,
-                                     jags_data = jags_data,
-                                     regions = c("continental",
-                                     "national",
-                                     "prov_state",
-                                     "stratum"))
-                                     #also "bcr", "bcr_by_country"
+indices <- generate_indices(jags_mod = jags_mod,
+                            jags_data = jags_data,
+                            regions = c("continental",
+                            "national",
+                            "prov_state",
+                            "stratum"))
+                            #also "bcr", "bcr_by_country"
 ```
 
 ### Population Trends
 Population trends can be calculated from the series of annual indices of abundance. The trends are expressed as geometric mean rates of change (%/year) between two points in time. $Trend = (\frac {n[Minyear]}{n[Maxyear]})^{(1/(Maxyear-Minyear))}$
 ``` r
-trends <- generate_regional_trends(indices = indices,
-                                   Min_year = 1970,
-                                   Max_year = 2018)
+trends <- generate_trends(indices = indices,
+                          Min_year = 1970,
+                          Max_year = 2018)
 ```
-The `generate_regional_trends` function returns a dataframe with 1 row for each unit of the region-types requested in the `generate_regional_indices` function (i.e., 1 for each stratum, 1 continental, etc.). The dataframe has at least 27 columns that report useful information related to each trend, including the start and end year of the trend, lists of included strata, total number of routes, number of strata, mean observed counts, and estimates of the % change in the population between the start and end years. 
+The `generate_trends` function returns a dataframe with 1 row for each unit of the region-types requested in the `generate_indices` function (i.e., 1 for each stratum, 1 continental, etc.). The dataframe has at least 27 columns that report useful information related to each trend, including the start and end year of the trend, lists of included strata, total number of routes, number of strata, mean observed counts, and estimates of the % change in the population between the start and end years. 
 
-The `generate_regional_trends` function includes some other arguments that allow the user to adjust the quantiles used to summarize uncertainty (e.g., interquartile range of the trend estiamtes, or the 67% CIs), as well as include additional calculations, such as the probability a population has declined (or increased) by > X%. 
+The `generate_trends` function includes some other arguments that allow the user to adjust the quantiles used to summarize uncertainty (e.g., interquartile range of the trend estiamtes, or the 67% CIs), as well as include additional calculations, such as the probability a population has declined (or increased) by > X%. 
 ``` r
-trends <- generate_regional_trends(indices = indices,
-                                   Min_year = 1970,
-                                   Max_year = 2018,
-                                   prob_decrease = c(0,25,30,50),
-                                   prob_increase = c(0,33,100))
+trends <- generate_trends(indices = indices,
+                          Min_year = 1970,
+                          Max_year = 2018,
+                          prob_decrease = c(0,25,30,50),
+                          prob_increase = c(0,33,100))
 ```
 
 ## Visualizing Predictions
@@ -293,9 +293,9 @@ The slope option estimates the time series as a log-linear regression with rando
 
     #jags_mod_full_slope <- run_model(jags_data = jags_data)
                                
-    slope_ind <- generate_regional_indices(jags_mod = jags_mod_full_slope,
-                                     jags_data = jags_data_slope,
-                                     regions = c("continental"))
+    slope_ind <- generate_indices(jags_mod = jags_mod_full_slope,
+                                  jags_data = jags_data_slope,
+                                  regions = c("continental"))
     slope_plot = plot_indices(indices = slope_ind,
                          species = "American Kestrel SLOPE",
                          add_observed_means = TRUE)
@@ -318,9 +318,9 @@ The gam option models the time series as a semiparametric smooth using a General
 
     #jags_mod_full_gam <- run_model(jags_data = jags_data)
                                
-    gam_ind <- generate_regional_indices(jags_mod = jags_mod_full_gam,
-                                     jags_data = jags_data_gam,
-                                     regions = c("continental"))
+    gam_ind <- generate_indices(jags_mod = jags_mod_full_gam,
+                                jags_data = jags_data_gam,
+                                regions = c("continental"))
     gam_plot = plot_indices(indices = gam_ind,
                          species = "American Kestrel GAM",
                          add_observed_means = TRUE)
@@ -345,9 +345,9 @@ The gamye option includes the semiparametric smooth used in the gam option, but 
 
     #jags_mod_full_gamye <- run_model(jags_data = jags_data)
                                
-    gamye_ind <- generate_regional_indices(jags_mod = jags_mod_full_gamye,
-                                     jags_data = jags_data_gamye,
-                                     regions = c("continental"))
+    gamye_ind <- generate_indices(jags_mod = jags_mod_full_gamye,
+                                  jags_data = jags_data_gamye,
+                                  regions = c("continental"))
     gamye_plot = plot_indices(indices = gamye_ind,
                          species = "American Kestrel GAMYE",
                          add_observed_means = TRUE)
@@ -373,9 +373,9 @@ The firstdiff option models the time-series as a random-walk from the first year
 
     #jags_mod_full_firstdiff <- run_model(jags_data = jags_data)
                                
-    firstdiff_ind <- generate_regional_indices(jags_mod = jags_mod_full_firstdiff,
-                                     jags_data = jags_data_firstdiff,
-                                     regions = c("continental"))
+    firstdiff_ind <- generate_indices(jags_mod = jags_mod_full_firstdiff,
+                                      jags_data = jags_data_firstdiff,
+                                      regions = c("continental"))
     firstdiff_plot = plot_indices(indices = firstdiff_ind,
                          species = "American Kestrel FIRSTDIFF",
                          add_observed_means = TRUE)
@@ -416,16 +416,16 @@ In all the models, the default measure of the annual index of abundance (the yea
 
 ### Alternate retransformations
 
-There are two ways of calculating these annual indices for each model. The two approaches differ in the way they calculate the retransformation from the log-scale model parameters to the count-scale predictions. The user can choose using the following arguments in `run_model()` and `generate_regional_indices()`.
+There are two ways of calculating these annual indices for each model. The two approaches differ in the way they calculate the retransformation from the log-scale model parameters to the count-scale predictions. The user can choose using the following arguments in `run_model()` and `generate_indices()`.
 
  * the default, estimates the mean of the expected counts from the existing combinations of observers and routes in a given stratum and year. This approach retransforms an annual prediction for every observer-route combination in the stratum and then averages across those predictions.
  ``` r
  mod <- run_model(... ,
                   parameters_to_save = "n",
                   ... )
- indices <- generate_regional_indices(... ,
-                                      alternate_n = "n",
-                                      ... )
+ indices <- generate_indices(... ,
+                             alternate_n = "n",
+                             ... )
  ```
  * the alternative, `parameters_to_save = c("n2"), track_n = FALSE` is actually the standard approach used in the USGS status and trend estimates. It estimates the the expected count from a new observer-route combination, assuming the distribution of observer-route effects is approximately normal. This approach uses a log-normal retransformation factor that adds half of the estimated variance of observer-route effects to the log-scale prediction for each year and stratum, then retransforms that log-scale prediction to the count-scale. This is the approach described in Sauer and Link (2011; https://doi.org/10.1525/auk.2010.09220). 
  
@@ -433,9 +433,9 @@ There are two ways of calculating these annual indices for each model. The two a
  mod <- run_model(... ,
                   parameters_to_save = "n2",
                   ... )
- indices <- generate_regional_indices(... ,
-                                      alternate_n = "n2",
-                                      ... )
+ indices <- generate_indices(... ,
+                             alternate_n = "n2",
+                             ... )
  ```
  
 The default approach `parameters_to_save = c("n")` slightly underestimates the uncertainty of the annual indices (slightly narrower CI width). However, we have chosen this approach as the default because:
@@ -458,9 +458,9 @@ The default approach is to include the annual fluctuations around the linear (`s
  mod <- run_model(... ,
                   parameters_to_save = "n",
                   ... )
- indices <- generate_regional_indices(... ,
-                                      alternate_n = "n",
-                                      ... )
+ indices <- generate_indices(... ,
+                             alternate_n = "n",
+                             ... )
  ```
  
 An alternative approach is to decompose the full trajectory and to exclude the annual fluctuations around the linear (`slope`) or smooth (`gamye`) components. In this case, the predicted trends will be much more stable between subsequent years. 
@@ -471,12 +471,12 @@ For the CWS status and trend analyses, the visualized population trajectories ar
  mod <- run_model(... ,
                   parameters_to_save = c("n","n3"),
                   ... )
- indices_visualize <- generate_regional_indices(... ,
-                                      alternate_n = "n",
-                                      ... )
- indices_trend_calculation <- generate_regional_indices(... ,
-                                      alternate_n = "n3",
-                                      ... )
+ indices_visualize <- generate_indices(... ,
+                                       alternate_n = "n",
+                                       ... )
+ indices_trend_calculation <- generate_indices(... ,
+                                               alternate_n = "n3",
+                                               ... )
  ```
 
 For example, the figure below (produced using a modified version of the standard  plotting functions), shows the two kinds of trajectories for Pacific Wren from the 2018 CWS analysis. The light-blue trajectory is the visualized trajectory, including the yearly fluctuations. The orange trajectory is the one used for trend calculations, which includes only the GAM-smooth component. For the kinds of broad-scale status assessments that form the primary use of the published estimates of trends, this decomposition is a particularly useful feature of these two models.     
@@ -494,7 +494,7 @@ When the annual fluctuations are included (SLOPE and GAMYE including Year Effect
 
 ## Alternate Measures of Trend and Population Change
 
-The `generate_regional_trends()` function produces much more than just the trend estimates.
+The `generate_trends()` function produces much more than just the trend estimates.
 
 ### Slope Trends
 The default trend calculation is an interval-specific estimate of the geometric mean annual change in the population. 
@@ -503,7 +503,7 @@ It relies on a comparison of the annual indices in the first and last years of t
 
 The user can choose an alternative estimate of change that is calculated by fitting a log-linear slope to the series of all annual indices between the two end-points (e.g., all 11 years in a 10-year trend from 2008-2018). The slope of this line could be expressed as an average annual percent change across the time-period of interest.
 If working with estimates derived from a model with strong annual fluctuations and for which no decomposition is possible (e.g., "firstdiff" model), this slope-based trend may be a more comprehensive measure of the average population change, that is less dependent on the particular end-point years.
-These slope trends can be added to the trend output table by setting the `slope = TRUE` argument in `generate_regional_trends()`. The standard trends are still calculated, but additional columns are added that include the alternate estimates.
+These slope trends can be added to the trend output table by setting the `slope = TRUE` argument in `generate_trends()`. The standard trends are still calculated, but additional columns are added that include the alternate estimates.
 NOTE: the `generate_map()` function can map slope trends as well with the same `slope = TRUE` argument.
 
 
@@ -514,13 +514,13 @@ NOTE: the `generate_map()` function can map slope trends as well with the same `
 
     #jags_mod_full_firstdiff <- run_model(jags_data = jags_data)
                                
-    #firstdiff_ind <- generate_regional_indices(jags_mod = jags_mod_full_firstdiff,
-    #                                 jags_data = jags_data_firstdiff,
-    #                                 regions = c("continental","stratum"))
-    fd_slope_trends_08_18 <- generate_regional_trends(jags_mod = firstdiff_ind,
-                                                       Min_year = 2008,
-                                                       Max_year = 2018,
-                                                       slope = TRUE)
+    #firstdiff_ind <- generate_indices(jags_mod = jags_mod_full_firstdiff,
+    #                                  jags_data = jags_data_firstdiff,
+    #                                  regions = c("continental","stratum"))
+    fd_slope_trends_08_18 <- generate_trends(jags_mod = firstdiff_ind,
+                                             Min_year = 2008,
+                                             Max_year = 2018,
+                                             slope = TRUE)
     generate_map(fd_slope_trends_0.8_18,
                  slope = TRUE,
                  stratify_by = "bbs_usgs")
@@ -528,16 +528,16 @@ NOTE: the `generate_map()` function can map slope trends as well with the same `
 ```
 
 ### Percent Change and probability of change
-The `generate_regional_trends()` function also produces estimates of the overall percent-change in the population between the first and last years of the trend-period. This calculation is often easier to interpret than an average annual rate of change. These percent change estimates have associated uncertainty bounds, and so can be helpful for deriving statements such as "between 2008 and 2018, the population has declined by 20 percent, but that estimate is relatively uncertain and the true decline may be as little as 2 percent or as much as 50 percent" 
+The `generate_trends()` function also produces estimates of the overall percent-change in the population between the first and last years of the trend-period. This calculation is often easier to interpret than an average annual rate of change. These percent change estimates have associated uncertainty bounds, and so can be helpful for deriving statements such as "between 2008 and 2018, the population has declined by 20 percent, but that estimate is relatively uncertain and the true decline may be as little as 2 percent or as much as 50 percent" 
 
 In addition, the function can optionally calculate the posterior conditional probability that a population has changed by at least a certain amount, using the `prob_decrease` and `prob_increase` arguments. These values can be useful for deriving statements such as "our model suggests that there is a 95% probability that the species has increased (i.e., > 0% increase) and a 45 percent probability that the species has increased more than 2-fold (i.e., > 100% increase)"
 
 ```r
-    fd_slope_trends_08_18 <- generate_regional_trends(jags_mod = firstdiff_ind,
-                                                       Min_year = 2008,
-                                                       Max_year = 2018,
-                                                       slope = TRUE,
-                                                       prob_increase = c(0,100))
+    fd_slope_trends_08_18 <- generate_trends(jags_mod = firstdiff_ind,
+                                             Min_year = 2008,
+                                             Max_year = 2018,
+                                             slope = TRUE,
+                                             prob_increase = c(0,100))
                                                        
 ```
 
