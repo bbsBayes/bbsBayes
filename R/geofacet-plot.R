@@ -26,7 +26,7 @@
 #'
 #' @importFrom geofacet facet_geo
 #' @importFrom ggplot2 ggplot theme element_blank element_line
-#' labs geom_line geom_ribbon aes element_text element_rect
+#' labs geom_line geom_ribbon aes element_text element_rect margin
 #' @importFrom grDevices grey
 #' @importFrom ggrepel geom_text_repel
 #'
@@ -86,7 +86,6 @@ geofacet_plot <- function(indices_list = NULL,
   lci <- NULL; rm(lci)
   uci <- NULL; rm(uci)
   Trendcat <- NULL; rm(Trendcat)
-  margin <- NULL; rm(margin)
   lbl <- NULL; rm(lbl)
   obs_mean <- NULL; rm(obs_mean)
 
@@ -187,7 +186,7 @@ geofacet_plot <- function(indices_list = NULL,
                      axis.text.x = ggplot2::element_text(colour = grey(0.2),size = 5,angle = 90),
                      axis.text.y = ggplot2::element_text(colour = grey(0.2),size = 5),
                      strip.background = ggplot2::element_rect(fill = grDevices::grey(0.97)),#strcol #, colour = grey(0.9), size = NULL, linetype = NULL, color = NULL, inherit.blank = FALSE
-                     strip.text = ggplot2::element_text(size = 6,margin = margin()),#
+                     strip.text = ggplot2::element_text(size = 6,margin = ggplot2::margin()),#
                      legend.position = "none") +
       ggplot2::labs(title = paste(species,"trajectories within Provinces and States"), x = "", y = "Annual indices") +
 
@@ -250,7 +249,7 @@ geofacet_plot <- function(indices_list = NULL,
                        axis.text.x = ggplot2::element_text(colour = grey(0.2),size = 5,angle = 90),
                        axis.text.y = ggplot2::element_text(colour = grey(0.2),size = 5),
                        strip.background = ggplot2::element_rect(fill = grDevices::grey(0.97)),#strcol #, colour = grey(0.9), size = NULL, linetype = NULL, color = NULL, inherit.blank = FALSE
-                       strip.text = ggplot2::element_text(size = 6,margin = margin()),#
+                       strip.text = ggplot2::element_text(size = 6, margin = ggplot2::margin()),#
                        legend.position = "none") +
         ggplot2::labs(title = paste(species,"trajectories within Provinces and States"), x = "", y = "Annual indices") +
         ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index),colour = grDevices::grey(0.6)) +
