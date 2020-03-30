@@ -15,12 +15,12 @@ bbsBayes is a package to perform hierarchical Bayesian analysis of North America
 
 We expect a CRAN release shortly, but for now you can install from Github using the following options:
 
-Option 1: Most recent stable release (currently v2.2.0)
+Option 1: Most recent stable release (currently v2.2.1)
 ``` r
-# To install v2.2.0 from Github:
+# To install v2.2.1 from Github:
 install.packages("devtools")
 library(devtools)
-devtools::install_github("BrandonEdwards/bbsBayes", ref = "v2.2.0")
+devtools::install_github("BrandonEdwards/bbsBayes", ref = "v2.2.1")
 ```
 
 Option 2: Less-stable development version
@@ -198,7 +198,7 @@ For stratifications that can be compiled by political regions (i.e., `bbs_cws`, 
   gf <- geofacet_plot(indices_list = indices,
                      select = T,
                      stratify_by = "bbs_cws",
-                     multiple = F,
+                     multiple = T,
                      trends = trends,
                      slope = F,
                      species = "Barn Swallow")
@@ -517,7 +517,7 @@ NOTE: the `generate_map()` function can map slope trends as well with the same `
     #firstdiff_ind <- generate_indices(jags_mod = jags_mod_full_firstdiff,
     #                                  jags_data = jags_data_firstdiff,
     #                                  regions = c("continental","stratum"))
-    fd_slope_trends_08_18 <- generate_trends(jags_mod = firstdiff_ind,
+    fd_slope_trends_08_18 <- generate_trends(indices = firstdiff_ind,
                                              Min_year = 2008,
                                              Max_year = 2018,
                                              slope = TRUE)
@@ -533,7 +533,7 @@ The `generate_trends()` function also produces estimates of the overall percent-
 In addition, the function can optionally calculate the posterior conditional probability that a population has changed by at least a certain amount, using the `prob_decrease` and `prob_increase` arguments. These values can be useful for deriving statements such as "our model suggests that there is a 95% probability that the species has increased (i.e., > 0% increase) and a 45 percent probability that the species has increased more than 2-fold (i.e., > 100% increase)"
 
 ```r
-    fd_slope_trends_08_18 <- generate_trends(jags_mod = firstdiff_ind,
+    fd_slope_trends_08_18 <- generate_trends(indices = firstdiff_ind,
                                              Min_year = 2008,
                                              Max_year = 2018,
                                              slope = TRUE,
