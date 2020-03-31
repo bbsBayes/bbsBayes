@@ -41,7 +41,7 @@
 #' jags_mod <- run_model(jags_data = jags_data,
 #'                       n_adapt = 0,
 #'                       n_burnin = 0,
-#'                       n_iter = 10,
+#'                       n_iter = 5,
 #'                       n_thin = 1,
 #'                       parameters_to_save = c("n",
 #'                                              "lambda"))
@@ -49,11 +49,6 @@
 #' # Output LPPD
 #' lppd(jags_data = jags_data,
 #'      jags_mod = jags_mod)
-#'
-#' # Get dataframe of pointwise LPPD values for each count
-#' lppd_pointwise <- lppd(jags_data = jags_data,
-#'                        jags_mod = jags_mod,
-#'                        pointwise = TRUE)
 #'
 
 lppd <- function(jags_data = NULL,

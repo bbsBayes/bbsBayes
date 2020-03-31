@@ -56,7 +56,7 @@ jags_data <- prepare_jags_data(strat_data = strat_data,
 jags_mod <- run_model(jags_data = jags_data,
                       n_adapt = 0,
                       n_burnin = 0,
-                      n_iter = 50,
+                      n_iter = 10,
                       n_thin = 1)
 
 # Generate only national, continental, and stratum indices
