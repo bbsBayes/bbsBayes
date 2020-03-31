@@ -1,8 +1,8 @@
 Package: bbsBayes
 Type: Package
 Title: Hierarchical Bayesian Analysis of North American Breeding Bird Survey Data
-Version: 2.2.2
-Date: 2020-03-30
+Version: 2.2.1
+Date: 2020-03-31
 Authors@R: c(person("Brandon P.M.", "Edwards", role = c("aut", "cre"),
                      email = "edwardsb@uoguelph.ca"),
               person("Adam C.", "Smith", role = "aut",
@@ -30,9 +30,9 @@ Description: Perform hierarchical Bayesian analysis of North
   model analysis for one or more species that you choose, or you can take
   more control and specify how the data should be stratified, prepared
   for JAGS, or modelled. The functions provided here allow you to replicate
-  analyses performed by the USGS (see Link and Sauer (2011) 
-  <doi: 10.1525/auk.2010.09220>) and CWS (see Smith and Edwards (2020) 
-  <doi: 10.1101/2020.03.26.010215>).
+  analyses performed by the United State Geological Survey (USGS, see Link 
+  and Sauer (2011) <doi: 10.1525/auk.2010.09220>) and Canadian Wildlife Service
+  (CWS, see Smith and Edwards (2020) <doi: 10.1101/2020.03.26.010215>).
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
