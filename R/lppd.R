@@ -33,7 +33,7 @@
 #' jags_data <- prepare_jags_data(strat_data = strat_data,
 #'                                species_to_run = "Pacific Wren",
 #'                                model = "firstdiff",
-#'                                min_year = 2009,
+#'                                min_year = 2014,
 #'                                max_year = 2018)
 #'
 #' # Now run a JAGS model. Make sure to track the lambda parameter here
