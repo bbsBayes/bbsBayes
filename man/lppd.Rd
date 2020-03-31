@@ -32,23 +32,35 @@ NOTE: in order to calculated LPPD, the model MUST track the parameter
   amount of memory when simulating with \code{run_model}
 }
 \examples{
-\dontrun{
-# Run a JAGS model analysis on a species
-stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
-prepped_data <- prepare_jags_data(strat_data = stratified_data,
-                                  species_to_run = "Wood Thrush",
-                                  model = "slope")
-mod <- run_model(jags_data = prepped_data, parameters_to_save = "lambda")
+# Toy example with Pacific Wren sample data
+# First, stratify the sample data
 
+strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
 
-  # Output LPPD
-  lppd(jags_data = prepped_data,
-       jags_mod = mod)
+# Prepare the stratified data for use in a JAGS model.
+jags_data <- prepare_jags_data(strat_data = strat_data,
+                               species_to_run = "Pacific Wren",
+                               model = "firstdiff",
+                               min_year = 2009,
+                               max_year = 2018)
 
-  # Get dataframe of pointwise LPPD values for each count
-  lppd_pointwise <- lppd(jags_data = prepped_data,
-                         jags_mod = mod,
-                         pointwise = TRUE)
-}
+# Now run a JAGS model. Make sure to track the lambda parameter here
+
+jags_mod <- run_model(jags_data = jags_data,
+                      n_adapt = 0,
+                      n_burnin = 0,
+                      n_iter = 50,
+                      n_thin = 1,
+                      parameters_to_save = c("n",
+                                             "lambda"))
+
+# Output LPPD
+lppd(jags_data = jags_data,
+     jags_mod = jags_mod)
+
+# Get dataframe of pointwise LPPD values for each count
+lppd_pointwise <- lppd(jags_data = jags_data,
+                       jags_mod = jags_mod,
+                       pointwise = TRUE)
 
 }

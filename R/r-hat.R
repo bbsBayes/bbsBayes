@@ -21,25 +21,36 @@
 #' @export
 #'
 #' @examples
+#' # Toy example with Pacific Wren sample data
+#' # First, stratify the sample data
 #'
-#' \dontrun{
-#' # Run a JAGS model analysis on a species
-#' stratified_data <- stratify(by = "bcr")
-#' prepped_data <- prepare_jags_data(strat_data = stratified_data,
-#'                                   species_to_run = "Wood Thrush",
-#'                                   model = "slope",
-#'                                   parameters = c("strata", "beta"))
-#' mod <- run_model(jags_data = prepped_data)
+#' strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
+#'
+#' # Prepare the stratified data for use in a JAGS model.
+#' jags_data <- prepare_jags_data(strat_data = strat_data,
+#'                                species_to_run = "Pacific Wren",
+#'                                model = "firstdiff",
+#'                                min_year = 2009,
+#'                                max_year = 2018)
+#'
+#' # Now run a JAGS model.
+#'
+#' jags_mod <- run_model(jags_data = jags_data,
+#'                       n_adapt = 0,
+#'                       n_burnin = 0,
+#'                       n_iter = 50,
+#'                       n_thin = 1,
+#'                       parameters_to_track = c("n","strata"))
 #'
 #' # Check convergence for all parameters
-#' convergence <- r_hat(jags_mod = mod)
+#' convergence <- r_hat(jags_mod = jags_mod)
 #'
 #' # Check convergence for only subset of parameters
-#' convergence <- r_hat(jags_mod = mod, parameter_list = "beta")
+#' convergence <- r_hat(jags_mod = jags_mod, parameter_list = "strata")
 #'
 #' # Only return R Hat values greater than or equal to specified value
-#' convergence <- r_hat(jags_mod = mod, threshold = 1.1)
-#' }
+#' convergence <- r_hat(jags_mod = jags_mod, threshold = 1.1)
+#'
 #'
 
 r_hat <- function(jags_mod = NULL,

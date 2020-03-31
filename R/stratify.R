@@ -6,8 +6,8 @@
 #'
 #' @param by String argument of stratification type.
 #'   Options are "state", "bcr", "latlong", "bbs_cws", "bbs_usgs"
-#' @param sample_data Should just sample data (just Wood Thrush) be used?
-#'   Defaults to FALSE
+#' @param sample_data Should just sample data (just Pacific Wren) be used?
+#'   Defaults to FALSE.
 #' @param quiet Should progress bars be suppressed?
 #' @param bbs_data Raw BBS data saved as a list of 3 data frames.
 #'   Not necessary if you have already run \code{fetch_bbs_data}
@@ -21,24 +21,27 @@
 #'
 #' @examples
 #'
-#' \dontrun{
+#' # Toy examples using Pacific Wren sample data
 #'
-#' # Download BBS data and stratify by USGS BBS stratifications.
-#' fetch_bbs_data()
-#' data_strat <- stratify(by = "bbs_usgs")
+#' # Stratify by CWS USGS stratifications
+#' data_strat <- stratify(by = "bbs_usgs", sample_data = TRUE)
 #'
 #' # Stratify by Bird Conservation Regions only
-#' data_strat <- stratify(by = "bcr")
+#' data_strat <- stratify(by = "bcr", sample_data = TRUE)
 #'
 #' # Stratify by CWS BBS stratifications
-#' data_strat <- stratify(by = "bbs_cws")
+#' data_strat <- stratify(by = "bbs_cws", sample_data = TRUE)
 #'
 #' # Stratify by State/Province/Territory only
-#' data_strat <- stratify(by = "state")
+#' data_strat <- stratify(by = "state", sample_data = TRUE)
 #'
 #' # Stratify by blocks of 1 degree of latitude X 1 degree of longitude
-#' data_strat <- stratify(by = "latlong")
-
+#' data_strat <- stratify(by = "latlong", sample_data = TRUE)
+#'
+#' \dontrun{
+#' # Requires fetch_bbs_data() to have been run.
+#'
+#' data_strat <- stratify(by = "bbs_cws")
 #' }
 
 #' @importFrom progress progress_bar
@@ -56,11 +59,6 @@ stratify <- function(by = NULL,
   {
     message("Argument \"stratify_by\" has been deprecated in favour of \"by\"")
     by <- stratify_by
-  }
-
-  if (sample_data)
-  {
-    message("The use of sample data has been deprecated.")
   }
 
   if(isFALSE(is.element(by, c("state", "bcr", "latlong", "bbs_cws", "bbs_usgs"))))

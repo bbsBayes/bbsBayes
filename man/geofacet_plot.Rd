@@ -43,22 +43,54 @@ ggplot object
 }
 \examples{
 
+# Toy example with Pacific Wren sample data
+# First, stratify the sample data
+
+strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
+
+# Prepare the stratified data for use in a JAGS model.
+jags_data <- prepare_jags_data(strat_data = strat_data,
+                               species_to_run = "Pacific Wren",
+                               model = "firstdiff",
+                               min_year = 2009,
+                               max_year = 2018)
+
+# Now run a JAGS model.
+jags_mod <- run_model(jags_data = jags_data,
+                      n_adapt = 0,
+                      n_burnin = 0,
+                      n_iter = 50,
+                      n_thin = 1)
+
+# Generate the  stratum indices
+indices <- generate_indices(jags_mod = jags_mod,
+                            jags_data = jags_data,
+                            regions = c("stratum"))
+
+# Now make the geofacet plot.
+gp <- geofacet_plot(indices_list = indices,
+                    stratify_by = "bbs_cws",
+                    species = "Pacific Wren",
+                    multiple = TRUE)
+
 \dontrun{
 # Set stratification type for future use
 stratification <- "bbs_cws"
 
 # Run a JAGS model analysis on a species
-stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = stratification)
+stratified_data <- stratify(by = stratification)
 prepped_data <- prepare_jags_data(strat_data = stratified_data,
                                   species_to_run = "Canada Warbler",
                                   model = "gam")
 mod <- run_model(jags_data = prepped_data)
 
 #Generate the indices for each strata
-strata_index <- generate_strata_indices(jags_mod = mod)
+strata_index <- generate_indices(jags_mod = mod,
+                                 jags_data = prepped_data,
+                                 regions = c("stratum"))
 
 # Get the data frame of trends by strata
-trend <- generate_strata_trends(indices = strata_index)
+trend <- generate_trends(indices = strata_index)
 
 # Obtain a map of the trends by each strata
 map <- geofacet_plot(indices = strata_index, trend = trend, stratify_by = stratification)

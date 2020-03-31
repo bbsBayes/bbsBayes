@@ -41,10 +41,34 @@
 #'
 #' @examples
 #'
+#' # Toy example with Pacific Wren sample data
+#' # First, stratify the sample data
+#'
+#' strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
+#'
+#' # Prepare the stratified data for use in a JAGS model.
+#' jags_data <- prepare_jags_data(strat_data = strat_data,
+#'                                species_to_run = "Pacific Wren",
+#'                                model = "firstdiff",
+#'                                min_year = 2009,
+#'                                max_year = 2018)
+#'
+#' # Now run a JAGS model. For the sake of speed, we've adjusted
+#' #   some arguments so that the JAGS model will not run any
+#' #   adaptation steps (n_adapt = 0), no burnin steps (n_burnin = 0),
+#' #   only 50 iterations per chain (n_iter = 50), and will not
+#' #   thin the chain (n_thin = 1). This will produce several convergence
+#' #   warnings, but we can ignore them for the sake of this toy example.
+#'
+#' jags_mod <- run_model(jags_data = jags_data,
+#'                       n_adapt = 0,
+#'                       n_burnin = 0,
+#'                       n_iter = 50,
+#'                       n_thin = 1)
+#'
 #' \dontrun{
 #' # Download BBS data, stratify, and prepare data for a JAGS run with Standard model
-#' bbs_data <- fetch_bbs_data()
-#' data_stratified <- stratify(bbs_data, stratify_by = "latlong")
+#' data_stratified <- stratify(by = "latlong")
 #' data_jags <- prepare_jags_data(strat_data = data_stratified,
 #'                                species_to_run = "Pacific Wren",
 #'                                model = "slope")

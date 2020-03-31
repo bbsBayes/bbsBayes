@@ -46,22 +46,36 @@
 #' @export
 #'
 #' @examples
+#' # Toy example with Pacific Wren sample data
+#' # First, stratify the sample data
+#'
+#' strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
+#'
+#' # Prepare the stratified data for use in a JAGS model. In this
+#' #   toy example, we will set the minimum year as 2009 and
+#' #   maximum year as 2018, effectively only setting up to
+#' #   model 10 years of data. We will use the "first difference
+#' #   model.
+#' jags_data <- prepare_jags_data(strat_data = strat_data,
+#'                                species_to_run = "Pacific Wren",
+#'                                model = "firstdiff",
+#'                                min_year = 2009,
+#'                                max_year = 2018)
 #'
 #' \dontrun{
-#' # Download BBS data and stratify it
-#' bbs_data <- fetch_bbs_data()
-#' stratified_data <- stratify(bbs_data, stratify_by = "bbs_usgs")
+#' # Requires fetch_bbs_data() to have been run.
+#' stratified_data <- stratify(by = "bbs_usgs")
 #'
 #' # Prepare the stratified data for use in a JAGS model.
 #' # This particular instance prepares for the Slope BBS model.
 #' data_jags_slope <- prepare_jags_data(strat_data = stratified_data,
-#'                                species_to_run = "Spruce Grouse",
-#'                                model = "slope")
+#'                                      species_to_run = "Spruce Grouse",
+#'                                      model = "slope")
 #'
 #' # Prepare data for use the First Difference BBS model.
 #' data_jags_firstdiff <- prepare_jags_data(strat_data = stratified_data,
-#'                                species_to_run = "Mallard",
-#'                                model = "firstdiff")
+#'                                          species_to_run = "Mallard",
+#'                                          model = "firstdiff")
 #'
 #' # You can also specify the GAM model, with an optional number of
 #' # knots to use for the GAM basis.

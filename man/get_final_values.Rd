@@ -17,3 +17,41 @@ List of final values of monitored parameters.
   the model created by \code{run_model} as a list. This function would mostly be used
   in conjunction with \code{run_model} to provide initial values.
 }
+\examples{
+# Toy example with Pacific Wren sample data
+# First, stratify the sample data
+
+strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
+
+# Prepare the stratified data for use in a JAGS model.
+jags_data <- prepare_jags_data(strat_data = strat_data,
+                               species_to_run = "Pacific Wren",
+                               model = "firstdiff",
+                               min_year = 2009,
+                               max_year = 2018)
+
+# Now run a JAGS model. For the sake of speed, we've adjusted
+#   some arguments so that the JAGS model will not run any
+#   adaptation steps (n_adapt = 0), no burnin steps (n_burnin = 0),
+#   only 50 iterations per chain (n_iter = 50), and will not
+#   thin the chain (n_thin = 1). This will produce several convergence
+#   warnings, but we can ignore them for the sake of this toy example.
+
+jags_mod <- run_model(jags_data = jags_data,
+                      n_adapt = 0,
+                      n_burnin = 0,
+                      n_iter = 50,
+                      n_thin = 1)
+
+# Get the final values
+final_values <- get_final_values(model = jags_mod)
+
+# Then, we can use these final values as input for another model run
+jags_mod2 <- run_model(jags_data = jags_data,
+                       n_adapt = 0,
+                       n_burnin = 0,
+                       n_iter = 50,
+                       n_thin = 1,
+                       inits = final_values)
+
+}

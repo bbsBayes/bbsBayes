@@ -26,6 +26,39 @@
 #'
 #' @examples
 #'
+#' # Toy example with Pacific Wren sample data
+#' # First, stratify the sample data
+#'
+#' strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
+#'
+#' # Prepare the stratified data for use in a JAGS model.
+#' jags_data <- prepare_jags_data(strat_data = strat_data,
+#'                                species_to_run = "Pacific Wren",
+#'                                model = "firstdiff",
+#'                                min_year = 2009,
+#'                                max_year = 2018)
+#'
+#' # Now run a JAGS model.
+#' jags_mod <- run_model(jags_data = jags_data,
+#'                       n_adapt = 0,
+#'                       n_burnin = 0,
+#'                       n_iter = 50,
+#'                       n_thin = 1)
+#'
+#' # Generate only national, continental, and stratum indices
+#' indices <- generate_indices(jags_mod = jags_mod,
+#'                             jags_data = jags_data,
+#'                             regions = c("national",
+#'                                         "continental",
+#'                                         "stratum"))
+#'
+#' # Now, plot_indices() will generate a list of plots for all regions
+#' plot_list <- plot_indices(indices_list = indices,
+#'                           species = "Pacific Wren")
+#'
+#' #Suppose we wanted to access the continental plot. We could do so with
+#' cont_plot <- plot_list$continental
+#'
 #' \dontrun{
 #' # Run a JAGS model analysis on a species
 #' stratified_data <- stratify(by = "bcr")
@@ -39,7 +72,7 @@
 #'
 #'
 #' # After generating strata indices, plot them
-#' s_plot <- plot_indices(indices = strata_indices,
+#' s_plot <- plot_indices(indices_list = strata_indices,
 #'                               species = "Wood Thrush")
 #'
 #' # s_plot is just a list of ggplot objects, so you can access by index
@@ -50,15 +83,15 @@
 #'
 #' # You can specify to only plot a subset of years using min_year and max_year
 #' # Plots indices from 1990 onward
-#' s_plot <- plot_indices(indices = strata_indices,
+#' s_plot <- plot_indices(indices_list = strata_indices,
 #'                               min_year = 1990,
 #'                               species = "Wood Thrush")
 #' #Plot up indices up to the year 2000
-#' s_plot <- plot_indices(indices = strata_indices,
+#' s_plot <- plot_indices(indices_list = strata_indices,
 #'                               max_year = 2000,
 #'                               species = "Wood Thrush")
 #' #Plot indices between 1970 and 2010
-#' s_plot <- plot_indices(indices = strata_indices,
+#' s_plot <- plot_indices(indices_list = strata_indices,
 #'                               min_year = 1970,
 #'                               max_year = 2010,
 #'                               species = "Wood Thrush")

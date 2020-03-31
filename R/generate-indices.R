@@ -39,6 +39,34 @@
 #'
 #' @examples
 #'
+#' # Toy example with Pacific Wren sample data
+#' # First, stratify the sample data
+#'
+#' strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
+#'
+#' # Prepare the stratified data for use in a JAGS model.
+#' jags_data <- prepare_jags_data(strat_data = strat_data,
+#'                                species_to_run = "Pacific Wren",
+#'                                model = "firstdiff",
+#'                                min_year = 2009,
+#'                                max_year = 2018)
+#'
+#' # Now run a JAGS model.
+#' jags_mod <- run_model(jags_data = jags_data,
+#'                       n_adapt = 0,
+#'                       n_burnin = 0,
+#'                       n_iter = 50,
+#'                       n_thin = 1)
+#'
+#' # Generate the continental and stratum indices
+#' indices <- generate_indices(jags_mod = jags_mod,
+#'                             jags_data = jags_data)
+#'
+#' # Generate only national indices
+#' indices_nat <- generate_indices(jags_mod = jags_mod,
+#'                                 jags_data = jags_data,
+#'                                 regions = c("national"))
+#'
 #' \dontrun{
 #' # Run a JAGS model analysis on a species
 #' stratified_data <- stratify(by = "bcr")
