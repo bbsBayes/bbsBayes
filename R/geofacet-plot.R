@@ -62,28 +62,6 @@
 #'                     species = "Pacific Wren",
 #'                     multiple = TRUE)
 #'
-#' \dontrun{
-#' # Set stratification type for future use
-#' stratification <- "bbs_cws"
-#'
-#' # Run a JAGS model analysis on a species
-#' stratified_data <- stratify(by = stratification)
-#' prepped_data <- prepare_jags_data(strat_data = stratified_data,
-#'                                   species_to_run = "Canada Warbler",
-#'                                   model = "gam")
-#' mod <- run_model(jags_data = prepped_data)
-#'
-#' #Generate the indices for each strata
-#' strata_index <- generate_indices(jags_mod = mod,
-#'                                  jags_data = prepped_data,
-#'                                  regions = c("stratum"))
-#'
-#' # Get the data frame of trends by strata
-#' trend <- generate_trends(indices = strata_index)
-#'
-#' # Obtain a map of the trends by each strata
-#' map <- geofacet_plot(indices = strata_index, trend = trend, stratify_by = stratification)
-#'
 #' # There is an unfortunate conflict between geofacet function in the geofacet package
 #' # and the S3 +.gg method in other ggplot-extension-packages like ggmcmc
 #' # The geofacet_plot function may fail with the following error message:
@@ -92,10 +70,7 @@
 #' #   1 - save your model output
 #' #   2 - restart your R-session
 #' #   3 - reload the bbsBayes package (do not re-load the other conflicting package, e.g., ggmcmc)
-#' map <- geofacet_plot(indices = strata_index, trend = trend, stratify_by = stratification)
 #'
-#'
-#' }
 #' @export
 #'
 

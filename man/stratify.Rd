@@ -52,9 +52,10 @@ data_strat <- stratify(by = "state", sample_data = TRUE)
 # Stratify by blocks of 1 degree of latitude X 1 degree of longitude
 data_strat <- stratify(by = "latlong", sample_data = TRUE)
 
-\dontrun{
-# Requires fetch_bbs_data() to have been run.
+\donttest{
+# Requires fetch_bbs_data() to have been run (takes about 10 minutes).
 
+# Stratify the entire data set, may take a minute or so
 data_strat <- stratify(by = "bbs_cws")
 }
 }

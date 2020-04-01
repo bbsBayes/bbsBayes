@@ -12,23 +12,6 @@
 #'
 #' @importFrom stats lm
 #'
-#' @examples
-#'
-#' \dontrun{
-#' # Run a JAGS model analysis on a species
-#' stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
-#' prepped_data <- prepare_jags_data(strat_data = stratified_data,
-#'                                   species_to_run = "Wood Thrush",
-#'                                   model = "slope")
-#' mod <- run_model(jags_data = prepped_data)
-#'
-#' #Generate the continental indices weighted by each strata
-#' cont_index <- generate_cont_indices(jags_mod = mod)
-#'
-#' #Output the trend
-#' generate_cont_trend(indices = cont_index)
-#' }
-#'
 #' @name bbsBayes-deprecated
 #' @seealso \code{\link{generate_cont_trend}}
 #' @keywords internal

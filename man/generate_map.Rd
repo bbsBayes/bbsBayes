@@ -60,25 +60,4 @@ map <- generate_map(trend = trends,
                     stratify_by = "bbs_cws",
                     select = TRUE,
                     species = "Pacific Wren")
-
-\dontrun{
-# Set stratification type for future use
-stratification <- "bcr"
-
-# Run a JAGS model analysis on a species
-stratified_data <- stratify(by = stratification)
-prepped_data <- prepare_jags_data(strat_data = stratified_data,
-                                  species_to_run = "Wood Thrush",
-                                  model = "slope")
-jags_mod <- run_model(jags_data = prepped_data)
-
-#Generate the indices for each strata
-strata_index <- generate_indices(jags_mod = jags_mod)
-
-# Get the data frame of trends by strata
-trend <- generate_trends(indices = strata_index)
-
-# Obtain a map of the trends by each strata
-map <- generate_map(trend = trend, stratify_by = stratification)
-}
 }

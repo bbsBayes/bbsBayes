@@ -37,20 +37,6 @@
 #'
 #' @importFrom stats quantile
 #'
-#' @examples
-#'
-#' \dontrun{
-#' # Run a JAGS model analysis on a species
-#' stratified_data <- stratify(by = "bcr")
-#' prepped_data <- prepare_jags_data(strat_data = stratified_data,
-#'                                   species_to_run = "Wood Thrush",
-#'                                   model = "slope")
-#' mod <- run_model(jags_data = prepped_data)
-#'
-#' #Generate the continental indices weighted by each strata
-#' cont_index <- generate_regional_indices(jags_mod = mod,
-#'                                         jags_data = prepped_data)
-#' }
 #'
 #' @name bbsBayes-deprecated
 #' @seealso \code{\link{generate_regional_indices}}

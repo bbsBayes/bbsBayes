@@ -41,23 +41,6 @@
 #' @importFrom stringr str_split
 #'
 #'
-#' @examples
-#'
-#' \dontrun{
-#' # Run a JAGS model analysis on a species
-#' stratified_data <- stratify(by = "bbs_usgs")
-#' prepped_data <- prepare_jags_data(strat_data = stratified_data,
-#'                                   species_to_run = "Wood Thrush",
-#'                                   model = "slope")
-#' mod <- run_model(jags_data = prepped_data)
-#'
-#' #Generate the annual indices for states/provinces, countries, and BCRs
-#' regional_index <- generate_regional_indices(jags_mod = mod)
-#'
-#' #Output the trend
-#' generate_regional_trends(indices = regional_index)
-#' }
-#'
 #' @name bbsBayes-deprecated
 #' @seealso \code{\link{generate_regional_trends}}
 #' @keywords internal

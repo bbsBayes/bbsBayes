@@ -68,20 +68,6 @@
 #' # Now, generate the trends
 #' trends <- generate_trends(indices = indices)
 #'
-#' \dontrun{
-#' # Run a JAGS model analysis on a species
-#' stratified_data <- stratify(by = "bbs_usgs")
-#' prepped_data <- prepare_jags_data(strat_data = stratified_data,
-#'                                   species_to_run = "Wood Thrush",
-#'                                   model = "slope")
-#' mod <- run_model(jags_data = prepped_data)
-#'
-#' #Generate the annual indices for states/provinces, countries, and BCRs
-#' regional_index <- generate_indices(jags_mod = mod)
-#'
-#' #Output the trend
-#' generate_trends(indices = regional_index)
-#' }
 #'
 #' @export
 #'

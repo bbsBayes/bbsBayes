@@ -11,19 +11,21 @@
 #'
 #' @examples
 #'
-#' \dontrun{
-#' # Save the Slope model to a file called "slope.txt"
-#' model_to_file(model = "slope", filename = "slope.txt")
+#' # Save the Slope model to a file called "slope.txt" in temp directory
+#' model_to_file(model = "slope",
+#'               filename = file.path(tempdir(), "slope.txt"))
 #'
-#' # Save the First Difference model to a file called "fd.txt"
-#' model_to_file(model = "firstdiff", filename = "fd.txt")
+#' # Save the First Difference model to a file called "fd.txt" in temp directory
+#' model_to_file(model = "firstdiff",
+#'               filename = file.path(tempdir(), "fd.txt"))
 #'
-#' # Save the GAM model to a file called "gam.txt"
-#' model_to_file(model = "gam", filename = "gam.txt")
+#' # Save the GAM model to a file called "gam.txt" in temp directory
+#' model_to_file(model = "gam",
+#'               filename = file.path(tempdir(), "gam.txt"))
 #'
-#' # Save the GAM year effects model to a file called "gamye.txt"
-#' model_to_file(model = "gamye", filename = "gamye.txt")
-#' }
+#' # Save the GAM year effects model to a file called "gamye.txt" in temp directory
+#' model_to_file(model = "gamye",
+#'               filename = file.path(tempdir(), "gamye.txt"))
 #'
 
 model_to_file <- function(model = NULL,

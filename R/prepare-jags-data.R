@@ -62,46 +62,15 @@
 #'                                min_year = 2009,
 #'                                max_year = 2018)
 #'
-#' \dontrun{
-#' # Requires fetch_bbs_data() to have been run.
-#' stratified_data <- stratify(by = "bbs_usgs")
-#'
-#' # Prepare the stratified data for use in a JAGS model.
-#' # This particular instance prepares for the Slope BBS model.
-#' data_jags_slope <- prepare_jags_data(strat_data = stratified_data,
-#'                                      species_to_run = "Spruce Grouse",
-#'                                      model = "slope")
-#'
-#' # Prepare data for use the First Difference BBS model.
-#' data_jags_firstdiff <- prepare_jags_data(strat_data = stratified_data,
-#'                                          species_to_run = "Mallard",
-#'                                          model = "firstdiff")
-#'
 #' # You can also specify the GAM model, with an optional number of
 #' # knots to use for the GAM basis.
 #' # By default, the number of knots will be equal to the floor
-#' # of the total unique years for the species / 5
-#' data_jags <- prepare_jags_data(strat_data = stratified_data,
-#'                                species_to_run = "Wood Thrush",
+#' # of the total unique years for the species / 4
+#' jags_data <- prepare_jags_data(strat_data = strat_data,
+#'                                species_to_run = "Pacific Wren",
 #'                                model = "gam",
 #'                                n_knots = 9)
 #'
-#' # For users that may want to use their own model, you can choose not
-#' # to specify a model, and prepare_jags_model will just prepare the
-#' # minimum amount of data
-#' data_jags <- prepare_jags_data(strat_data = stratified_data,
-#'                                species_to_run = "Wood Thrush"
-#'
-#' # Capitalization and punctuation matter (for now)
-#' # This code will produce an error.
-#' data_jags <- prepare_jags_data(strat_data = stratified_data,
-#'                                species_to_run = "Eastern whippoorwill"
-#'                                model = "slope")
-#' # But this code will be fine
-#' data_jags <- prepare_jags_data(strat_data = stratified_data,
-#'                                species_to_run = "Eastern Whip-poor-will"
-#'                                model = "slope")
-#' }
 #'
 
 prepare_jags_data <- function(strat_data = NULL,
