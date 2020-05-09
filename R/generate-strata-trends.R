@@ -16,22 +16,16 @@
 #'
 #'
 #' @importFrom stats lm
-#' @examples
 #'
-#' \dontrun{
-#' # Run a JAGS model analysis on a species
-#' stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
-#' prepped_data <- prepare_jags_data(strat_data = stratified_data,
-#'                                   species_to_run = "Wood Thrush",
-#'                                   model = "slope")
-#' mod <- run_model(jags_data = prepped_data)
-#'
-#' #Generate the indices for each strata
-#' strata_index <- generate_strata_indices(jags_mod = mod)
-#'
-#' # Get the data frame of trends by strata
-#' trend <- generate_strata_trends(indices = strata_index)
-#' }
+#' @name bbsBayes-deprecated
+#' @seealso \code{\link{generate_strata_trends}}
+#' @keywords internal
+NULL
+
+#' @rdname bbsBayes-deprecated
+#' @section \code{generate_strata_trends}:
+#'   For \code{generate_strata_trends()}, use
+#'   \code{generate_trends()}.
 #'
 #' @export
 #'
@@ -42,7 +36,8 @@ generate_strata_trends <- function(indices = NULL,
                                    quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),
                                    slope = FALSE)
 {
-  warning(paste("generate_strata_trends is deprecated in favour of generate_regional_trends()"))
+  .Deprecated(new = "generate_trends",
+              msg = paste("generate_strata_trends is deprecated in favour of generate_trends()"))
 
 
   if (is.null(indices))

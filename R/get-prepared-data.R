@@ -22,16 +22,25 @@
 #' @export
 #'
 #' @examples
-#'   \dontrun{
+#' # Toy example with Pacific Wren sample data
+#' # First, stratify the sample data
 #'
-#'     # Prepare the data for a given species
-#'     jags_prep <- prepare_jags_data(strat_data = stratified_data,
-#'                                    species_to_run = "Wood Thrush",
-#'                                    model = "gam")
+#' strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
 #'
-#'     # Obtain the reassembled data frame for the data sent to JAGS
-#'     prepped_data <- get_prepared_data(jags_data = jags_prep)
-#'   }
+#' # Prepare the stratified data for use in a JAGS model. In this
+#' #   toy example, we will set the minimum year as 2009 and
+#' #   maximum year as 2018, effectively only setting up to
+#' #   model 10 years of data. We will use the "first difference
+#' #   model.
+#' jags_data <- prepare_jags_data(strat_data = strat_data,
+#'                                species_to_run = "Pacific Wren",
+#'                                model = "firstdiff",
+#'                                min_year = 2009,
+#'                                max_year = 2018)
+#'
+#' # Obtain the reassembled data frame for the data sent to JAGS
+#' prepped_data <- get_prepared_data(jags_data = jags_data)
+#'
 #'
 
 get_prepared_data <- function(jags_data = NULL)

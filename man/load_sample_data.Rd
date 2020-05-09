@@ -18,15 +18,7 @@ is returned as a list of data frames, similar to what is returned by \code{load_
 }
 \examples{
 
-\dontrun{
-
-# Be sure to assign the output of load_sample_data() to a variable.
-# This function returns a lot of data, and if the output is not
-# captured in a variable, R attempts to dump it into the console
-# which tends to get highly bogged down.
-
 sample_data <- load_sample_data()
 
-}
 
 }

@@ -12,22 +12,15 @@
 #'
 #' @importFrom stats lm
 #'
-#' @examples
-#'
-#' \dontrun{
-#' # Run a JAGS model analysis on a species
-#' stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
-#' prepped_data <- prepare_jags_data(strat_data = stratified_data,
-#'                                   species_to_run = "Wood Thrush",
-#'                                   model = "slope")
-#' mod <- run_model(jags_data = prepped_data)
-#'
-#' #Generate the continental indices weighted by each strata
-#' cont_index <- generate_cont_indices(jags_mod = mod)
-#'
-#' #Output the trend
-#' generate_cont_trend(indices = cont_index)
-#' }
+#' @name bbsBayes-deprecated
+#' @seealso \code{\link{generate_cont_trend}}
+#' @keywords internal
+NULL
+
+#' @rdname bbsBayes-deprecated
+#' @section \code{generate_cont_trend}:
+#'   For \code{generate_cont_trend()}, use
+#'   \code{generate_trends()}.
 #'
 #' @export
 #'
@@ -39,7 +32,8 @@ generate_cont_trend <- function(indices = NULL,
                                 slope = FALSE)
 {
 
-  warning(paste("generate_cont_trends is deprecated in favour of generate_regional_trends()"))
+  .Deprecated(new = "generate_trends",
+              msg = paste("generate_cont_trends is deprecated in favour of generate_trends()"))
 
 
   if (is.null(indices))
