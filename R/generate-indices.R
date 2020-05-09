@@ -1,6 +1,6 @@
 #' Generate regional annual indices of abundance continent and strata and optionally for countries, states/provinces, or BCRs from analyses run on the stratifications that support these composite regions
 #'
-#' \code{generate_regional_indices} creates a data frame of the strata-weighted
+#' \code{generate_indices} creates a data frame of the strata-weighted
 #'   regional indices by year. This data frame can then be used to
 #'   generate a population trajectory of the species.
 #'
@@ -37,42 +37,57 @@
 #'
 #' @importFrom stats quantile
 #'
+#' @examples
 #'
-#' @name bbsBayes-deprecated
-#' @seealso \code{\link{generate_regional_indices}}
-#' @keywords internal
-NULL
-
-#' @rdname bbsBayes-deprecated
-#' @section \code{generate_regional_indices}:
-#'   For \code{generate_regional_indices()}, use
-#'   \code{generate_indices()}.
+#' # Toy example with Pacific Wren sample data
+#' # First, stratify the sample data
+#'
+#' strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
+#'
+#' # Prepare the stratified data for use in a JAGS model.
+#' jags_data <- prepare_jags_data(strat_data = strat_data,
+#'                                species_to_run = "Pacific Wren",
+#'                                model = "firstdiff",
+#'                                min_year = 2009,
+#'                                max_year = 2018)
+#'
+#' # Now run a JAGS model.
+#' jags_mod <- run_model(jags_data = jags_data,
+#'                       n_adapt = 0,
+#'                       n_burnin = 0,
+#'                       n_iter = 10,
+#'                       n_thin = 1)
+#'
+#' # Generate the continental and stratum indices
+#' indices <- generate_indices(jags_mod = jags_mod,
+#'                             jags_data = jags_data)
+#'
+#' # Generate only national indices
+#' indices_nat <- generate_indices(jags_mod = jags_mod,
+#'                                 jags_data = jags_data,
+#'                                 regions = c("national"))
 #'
 #' @export
 #'
 
-generate_regional_indices <- function(jags_mod = NULL,
-                                      jags_data = NULL,
-                                  quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),
-                                  regions = c("stratum","continental"),
-                                  alternate_n = "n",
-                                  startyear = NULL,
-                                  drop_exclude = FALSE,
-                                  max_backcast = NULL,
-                                  alt_region_names = NULL)
+generate_indices <- function(jags_mod = NULL,
+                             jags_data = NULL,
+                             quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),
+                             regions = c("stratum","continental"),
+                             alternate_n = "n",
+                             startyear = NULL,
+                             drop_exclude = FALSE,
+                             max_backcast = NULL,
+                             alt_region_names = NULL)
 {
-
-  .Deprecated(new = "generate_indices",
-              msg = "generate_regional_indices is deprecated in favour of generate_indices")
-
   if (is.null(jags_mod))
   {
-    stop("No model output supplied to generate_regional_indices()."); return(NULL)
+    stop("No model output supplied to generate_indices()."); return(NULL)
   }
 
   if (is.null(jags_data))
   {
-    warning("No original data object supplied to generate_regional_indices(). Number of routes will not be calculated")
+    warning("No original data object supplied to generate_indices(). Number of routes will not be calculated")
   }
 
   if(!is.null(jags_data)){
@@ -150,7 +165,8 @@ generate_regional_indices <- function(jags_mod = NULL,
 
     }
   }
-
+  #region_names <- read.csv(paste0("C:/Users/smithac/Documents/GitHub/bbsBayes/inst/composite-regions/stratcan.csv"),stringsAsFactors = F)
+  #region_names$region = factor(region_names$region,levels = levels(area_weights$region))
   region_names$stratum = region_names$region
   region_names$continental = "Continental"
 
@@ -197,11 +213,6 @@ st_rem <- NULL
 strata_sel <- area_weights[which(area_weights$region %in% st_sela),"num"]
 st_sel <- area_weights[which(area_weights$region %in% st_sela),"region"]
 
-#pz_area <- area_weights[which(area_weights$num %in% strata_sel),"area_sq_km"]*non_zero_weight[strata_sel]
-pz_area <- area_weights[,"area_sq_km"]*non_zero_weight
-#pz_area is the non_zero_weighted area (the area of the stratum * proportion of the routes included)
-# it's designed to estimate the proportional contribution (excluding abundance) of that region to the composite trajectory
-
 if(length(strata_sel)<1){next}
 
 
@@ -222,8 +233,7 @@ obs_df = data.frame(year = integer(),
     o_mns <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = mean,na.rm = T))
     nrts <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = function(x){length(which(!is.na(x)))}))
     nnzero <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = function(x){length(which(x>0))}))
-    strata_p <- pz_area[j]/sum(pz_area[strata_sel])
-
+    strata_p <- (non_zero_weight[j])*(area_weights[which(area_weights$num == j),"area_sq_km"]/sum(area_weights[which(area_weights$num %in% strata_sel),"area_sq_km"]))
 
     if(sum(nnzero[1:max_backcast]) < 1 & as.integer(fyearbystrat[j]) > y_min){ #if no observations of the species in the first 5 years, then remove the strata from trend summaries
        st_rem <- c(st_rem,as.character(area_weights[which(area_weights$num == j),"region"]))
@@ -247,7 +257,7 @@ obs_df = data.frame(year = integer(),
   }
 
 
-  if(!is.null(st_rem)){
+if(!is.null(st_rem)){
   if(drop_exclude){
     strata_sel <- strata_sel[-which(strata_sel %in% area_weights[which(area_weights$region %in% st_rem),"num"])]
     st_sel <- st_sel[-which(st_sel %in% st_rem)]

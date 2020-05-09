@@ -26,31 +26,41 @@
 #'
 #' @importFrom geofacet facet_geo
 #' @importFrom ggplot2 ggplot theme element_blank element_line
-#' labs geom_line geom_ribbon aes element_text element_rect
+#' labs geom_line geom_ribbon aes element_text element_rect margin
 #' @importFrom grDevices grey
 #' @importFrom ggrepel geom_text_repel
 #'
 #' @examples
 #'
-#' \dontrun{
-#' # Set stratification type for future use
-#' stratification <- "bbs_cws"
+#' # Toy example with Pacific Wren sample data
+#' # First, stratify the sample data
 #'
-#' # Run a JAGS model analysis on a species
-#' stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = stratification)
-#' prepped_data <- prepare_jags_data(strat_data = stratified_data,
-#'                                   species_to_run = "Canada Warbler",
-#'                                   model = "gam")
-#' mod <- run_model(jags_data = prepped_data)
+#' strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
 #'
-#' #Generate the indices for each strata
-#' strata_index <- generate_strata_indices(jags_mod = mod)
+#' # Prepare the stratified data for use in a JAGS model.
+#' jags_data <- prepare_jags_data(strat_data = strat_data,
+#'                                species_to_run = "Pacific Wren",
+#'                                model = "firstdiff",
+#'                                min_year = 2009,
+#'                                max_year = 2018)
 #'
-#' # Get the data frame of trends by strata
-#' trend <- generate_strata_trends(indices = strata_index)
+#' # Now run a JAGS model.
+#' jags_mod <- run_model(jags_data = jags_data,
+#'                       n_adapt = 0,
+#'                       n_burnin = 0,
+#'                       n_iter = 10,
+#'                       n_thin = 1)
 #'
-#' # Obtain a map of the trends by each strata
-#' map <- geofacet_plot(indices = strata_index, trend = trend, stratify_by = stratification)
+#' # Generate the  stratum indices
+#' indices <- generate_indices(jags_mod = jags_mod,
+#'                             jags_data = jags_data,
+#'                             regions = c("stratum"))
+#'
+#' # Now make the geofacet plot.
+#' gp <- geofacet_plot(indices_list = indices,
+#'                     stratify_by = "bbs_cws",
+#'                     species = "Pacific Wren",
+#'                     multiple = TRUE)
 #'
 #' # There is an unfortunate conflict between geofacet function in the geofacet package
 #' # and the S3 +.gg method in other ggplot-extension-packages like ggmcmc
@@ -60,10 +70,7 @@
 #' #   1 - save your model output
 #' #   2 - restart your R-session
 #' #   3 - reload the bbsBayes package (do not re-load the other conflicting package, e.g., ggmcmc)
-#' map <- geofacet_plot(indices = strata_index, trend = trend, stratify_by = stratification)
 #'
-#'
-#' }
 #' @export
 #'
 
@@ -86,7 +93,6 @@ geofacet_plot <- function(indices_list = NULL,
   lci <- NULL; rm(lci)
   uci <- NULL; rm(uci)
   Trendcat <- NULL; rm(Trendcat)
-  margin <- NULL; rm(margin)
   lbl <- NULL; rm(lbl)
   obs_mean <- NULL; rm(obs_mean)
 
@@ -187,7 +193,7 @@ geofacet_plot <- function(indices_list = NULL,
                      axis.text.x = ggplot2::element_text(colour = grey(0.2),size = 5,angle = 90),
                      axis.text.y = ggplot2::element_text(colour = grey(0.2),size = 5),
                      strip.background = ggplot2::element_rect(fill = grDevices::grey(0.97)),#strcol #, colour = grey(0.9), size = NULL, linetype = NULL, color = NULL, inherit.blank = FALSE
-                     strip.text = ggplot2::element_text(size = 6,margin = margin()),#
+                     strip.text = ggplot2::element_text(size = 6,margin = ggplot2::margin()),#
                      legend.position = "none") +
       ggplot2::labs(title = paste(species,"trajectories within Provinces and States"), x = "", y = "Annual indices") +
 
@@ -250,7 +256,7 @@ geofacet_plot <- function(indices_list = NULL,
                        axis.text.x = ggplot2::element_text(colour = grey(0.2),size = 5,angle = 90),
                        axis.text.y = ggplot2::element_text(colour = grey(0.2),size = 5),
                        strip.background = ggplot2::element_rect(fill = grDevices::grey(0.97)),#strcol #, colour = grey(0.9), size = NULL, linetype = NULL, color = NULL, inherit.blank = FALSE
-                       strip.text = ggplot2::element_text(size = 6,margin = margin()),#
+                       strip.text = ggplot2::element_text(size = 6, margin = ggplot2::margin()),#
                        legend.position = "none") +
         ggplot2::labs(title = paste(species,"trajectories within Provinces and States"), x = "", y = "Annual indices") +
         ggplot2::geom_line(data = indices, ggplot2::aes(x = Year, y = Index),colour = grDevices::grey(0.6)) +

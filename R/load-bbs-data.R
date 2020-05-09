@@ -12,7 +12,7 @@
 #'
 #' @export
 #'
-#'
+
 load_bbs_data <- function()
 {
   bbs_data <- NULL

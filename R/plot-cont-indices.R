@@ -20,58 +20,33 @@
 #' labs geom_line geom_ribbon aes element_text
 #' @importFrom grDevices grey
 #'
-#' @examples
 #'
-#' \dontrun{
-#'
-#' # Run a JAGS model analysis on a species
-#' stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
-#' prepped_data <- prepare_jags_data(strat_data = stratified_data,
-#'                                   species_to_run = "Wood Thrush",
-#'                                   model = "slope")
-#' mod <- run_model(jags_data = prepped_data)
-#'
-#' #Generate the continental indices weighted by each strata
-#' cont_indices <- generate_cont_indices(jags_mod = mod)
-#'
-#'
-#' # After generating continental indices, plot them
-#' plot_cont_indices(indices = cont_indices, species = "Wood Thrush")
-#'
-#'
-#' # You can specify to only plot a subset of years using min_year and max_year
-#' # Plots indices from 1990 onward
-#' c_plot <- plot_cont_indices(indices = cont_indices,
-#'                             min_year = 1990,
-#'                             species = "Wood Thrush")
-#' #Plot up indicess up to the year 2000
-#' c_plot <- plot_cont_indices(indices = cont_indices,
-#'                             max_year = 2000,
-#'                             species = "Wood Thrush")
-#' #Plot indicess between 1970 and 2010
-#' c_plot <- plot_cont_indices(indices = cont_indices,
-#'                             min_year = 1970,
-#'                             max_year = 2010,
-#'                             species = "Wood Thrush")
-#'
-#' }
+#' @name bbsBayes-deprecated
+#' @seealso \code{\link{plot_cont_indices}}
+#' @keywords internal
+NULL
+
+#' @rdname bbsBayes-deprecated
+#' @section \code{plot_cont_indices}:
+#'   For \code{plot_cont_indices()}, use \code{plot_indices()}.
 #'
 #' @export
+#'
 #'
 plot_cont_indices <- function(indices_list = NULL,
                               select = F,
                               ci_width = 0.95,
-                            min_year = NULL,
-                            max_year = NULL,
-                            species = "",
-                            title_size = 20,
-                            axis_title_size = 18,
-                            axis_text_size = 16,
-                            add_observed_means = F)
+                              min_year = NULL,
+                              max_year = NULL,
+                              species = "",
+                              title_size = 20,
+                              axis_title_size = 18,
+                              axis_text_size = 16,
+                              add_observed_means = F)
 {
 
-  warning(paste("plot_cont_indices is deprecated in favour of plot_indices()"))
-
+  .Deprecated(new = "plot_indices",
+              msg = "plot_cont_indices() is deprecated in favour of plot_indices()")
 
   Year <- NULL; rm(Year)
   Index <- NULL; rm(Index)

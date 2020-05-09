@@ -56,12 +56,22 @@ fetch_bbs_data <- function(level = "state", quiet = FALSE, force = FALSE)
   {
     message(paste0("Creating data directory at ", bbs_dir$data()))
     dir.create(bbs_dir$data(), recursive = TRUE)
-  }else
+  }
+
+  if (level == "state")
   {
     if (file.exists(paste0(bbs_dir$data(), "/bbs_raw_data.RData")) &
         isFALSE(force))
     {
-      warning("BBS data file already exists. Use \"force = TRUE\" to overwrite.")
+      warning("BBS state-level data file already exists. Use \"force = TRUE\" to overwrite.")
+      return()
+    }
+  }else if (level == "stop")
+  {
+    if (file.exists(paste0(bbs_dir$data(), "/bbs_stop_data.RData")) &
+        isFALSE(force))
+    {
+      warning("BBS stop-level data file already exists. Use \"force = TRUE\" to overwrite.")
       return()
     }
   }
@@ -73,8 +83,9 @@ fetch_bbs_data <- function(level = "state", quiet = FALSE, force = FALSE)
   ################################################################
   if (!isTRUE(quiet))
   {
+    message("Downloading route data (Task 2/3)")
     pb <- progress::progress_bar$new(
-      format = "Downloading route data (Task 2/3)\n[:bar] :percent eta: :eta",
+      format = "\r[:bar] :percent eta: :eta",
       clear = FALSE,
       total = 9,
       width = 100)
@@ -137,8 +148,9 @@ fetch_bbs_data <- function(level = "state", quiet = FALSE, force = FALSE)
 
   if (!isTRUE(quiet))
   {
+    message("Downloading species data (Task 3/3)")
     pb <- progress::progress_bar$new(
-      format = "Downloading species data (Task 3/3)\n[:bar] :percent eta: :eta",
+      format = "\r[:bar] :percent eta: :eta",
       clear = FALSE,
       total = 4,
       width = 100)
@@ -176,8 +188,15 @@ fetch_bbs_data <- function(level = "state", quiet = FALSE, force = FALSE)
                    route = route,
                    species = species)
 
-  message(paste0("Saving BBS data to ", bbs_dir$data()))
-  save(bbs_data, file = paste0(bbs_dir$data(), "/bbs_raw_data.RData"))
+  if (level == "state")
+  {
+    message(paste0("Saving BBS data to ", bbs_dir$data()))
+    save(bbs_data, file = paste0(bbs_dir$data(), "/bbs_raw_data.RData"))
+  }else if (level == "stop")
+  {
+    message(paste0("Saving BBS data to ", bbs_dir$data()))
+    save(bbs_data, file = paste0(bbs_dir$data(), "/bbs_stop_data.RData"))
+  }
 
 }
 
@@ -197,8 +216,9 @@ get_counts <- function(level, quiet) {
   bird_count_filenames <- utils::read.csv(dir_listing_csv)
 
   if (!isTRUE(quiet)) {
+    message("Downloading count data (Task 1/3)")
     pb <- progress::progress_bar$new(
-      format = "Downloading count data (Task 1/3)\n[:bar] :percent eta: :eta",
+      format = "\r[:bar] :percent eta: :eta",
       clear = FALSE,
       total = nrow(bird_count_filenames) + 1,
       width = 100)

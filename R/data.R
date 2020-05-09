@@ -1,7 +1,7 @@
-#' Sample point count data per species (Wood Thrush only)
+#' Sample point count data per species (Pacific Wren only)
 #'
 #' A sample dataset containing 10-stop counts of each bird species seen per route per year.
-#'   NOTE: This only contains data for Wood Thrush, not the full data set.
+#'   NOTE: This only contains data for Pacific Wren, not the full data set.
 #'   The full count set is obtained via the function \code{fetch_bbs_data}.
 #'   The data is obtained from the United States Geological Survey and is
 #'   subject to change as new data is added each year. See Details for citation.
@@ -31,10 +31,10 @@
 #'
 "bird_sample"
 
-#' Sample route data per year run (Wood Thrush only)
+#' Sample route data per year run (Pacific Wren only)
 #'
 #' A dataset containing data for each route run per year.
-#'   NOTE: This only contains data for Wood Thrush, not the full data set.
+#'   NOTE: This only contains data for Pacific Wren, not the full data set.
 #'   The full count set is obtained via the function \code{fetch_bbs_data}.
 #'   The data is obtained from the United States Geological Survey and is
 #'   subject to change as new data is added each year. See Details for citation.
@@ -81,10 +81,10 @@
 #'
 "route_sample"
 
-#' Sample North American bird species list (Wood Thrush only)
+#' Sample North American bird species list (Pacific Wren only)
 #'
 #' A dataset containing species list of North America.
-#'   NOTE: This only contains data for Wood Thrush, not the full data set.
+#'   NOTE: This only contains data for Pacific Wren, not the full data set.
 #'   The full count set is obtained via the function \code{fetch_bbs_data}.
 #'   The data is obtained from the United States Geological Survey and is
 #'   subject to change as new data is added each year. See Details for citation.

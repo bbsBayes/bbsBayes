@@ -17,27 +17,24 @@
 #'
 #' @return Double precision numerical value
 #'
+#' @name bbsBayes-deprecated
+#' @seealso \code{\link{waic}}
+#' @keywords internal
+NULL
+
+#' @rdname bbsBayes-deprecated
+#' @section \code{waic}:
+#'   WAIC should no longer be used for BBS data.
+#'   Cross validation should be used instead.
+#'
 #' @export
-#'
-#' @examples
-#'
-#' \dontrun{
-#' # Run a JAGS model analysis on a species
-#' stratified_data <- stratify(bbs_data = fetch_bbs_data(), stratify_by = "bcr")
-#' prepped_data <- prepare_jags_data(strat_data = stratified_data,
-#'                                   species_to_run = "Wood Thrush",
-#'                                   model = "slope")
-#' mod <- run_model(jags_data = prepped_data)
-#'
-#'   # Output WAIC
-#'   waic(jags_data = prepped_data,
-#'        jags_mod = mod)
-#' }
 #'
 
 waic <- function(jags_data = NULL,
                  jags_mod = NULL)
 {
+  .Deprecated(msg = "WAIC should no longer be used for BBS data. Use cross validation instead.")
+
   lppd_sum <- lppd(jags_data = jags_data, jags_mod = jags_mod)
   pwaic_sum <- p_waic(jags_data = jags_data, jags_mod = jags_mod)
 

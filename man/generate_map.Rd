@@ -29,25 +29,35 @@ spplot object
   change in that stratum.
 }
 \examples{
+# Toy example with Pacific Wren sample data
+# First, stratify the sample data
+strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
 
-\dontrun{
-# Set stratification type for future use
-stratification <- "bcr"
+# Prepare the stratified data for use in a JAGS model.
+jags_data <- prepare_jags_data(strat_data = strat_data,
+                               species_to_run = "Pacific Wren",
+                               model = "firstdiff",
+                               min_year = 2009,
+                               max_year = 2018)
 
-# Run a JAGS model analysis on a species
-stratified_data <- stratify(by = stratification)
-prepped_data <- prepare_jags_data(strat_data = stratified_data,
-                                  species_to_run = "Wood Thrush",
-                                  model = "slope")
-jags_mod <- run_model(jags_data = prepped_data)
+# Now run a JAGS model.
+jags_mod <- run_model(jags_data = jags_data,
+                      n_adapt = 0,
+                      n_burnin = 0,
+                      n_iter = 10,
+                      n_thin = 1)
 
-#Generate the indices for each strata
-strata_index <- generate_regional_indices(jags_mod = jags_mod)
+# Generate the continental and stratum indices
+indices <- generate_indices(jags_mod = jags_mod,
+                            jags_data = jags_data)
 
-# Get the data frame of trends by strata
-trend <- generate_regional_trends(indices = strata_index)
+# Now, generate the trends
+trends <- generate_trends(indices = indices)
 
-# Obtain a map of the trends by each strata
-map <- generate_map(trend = trend, stratify_by = stratification)
-}
+# Generate the map. Set select = TRUE because we are passing a
+#    dataframe of trends of more than just the stratum regions
+map <- generate_map(trend = trends,
+                    stratify_by = "bbs_cws",
+                    select = TRUE,
+                    species = "Pacific Wren")
 }

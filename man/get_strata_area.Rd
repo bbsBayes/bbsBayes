@@ -20,7 +20,6 @@ Data frame with the following variables:
 }
 \examples{
 
-\dontrun{
 # Obtain the strata area for each of the 5 stratification types
 
 # USGS BBS
@@ -37,6 +36,5 @@ st_area <- get_strata_area(strata_type = "state")
 
 # Degree block
 st_area <- get_strata_area(strata_type = "latlong")
-}
 
 }

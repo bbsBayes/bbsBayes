@@ -26,45 +26,59 @@
 #'
 #' @examples
 #'
-#' \dontrun{
-#' # Run a JAGS model analysis on a species
-#' stratified_data <- stratify(by = "bcr")
-#' prepped_data <- prepare_jags_data(strat_data = stratified_data,
-#'                                   species_to_run = "Wood Thrush",
-#'                                   model = "slope")
-#' mod <- run_model(jags_data = prepped_data)
+#' # Toy example with Pacific Wren sample data
+#' # First, stratify the sample data
 #'
-#' #Generate the indices for each strata
-#' indices <- generate_regional_indices(jags_mod = mod)
+#' strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
 #'
+#' # Prepare the stratified data for use in a JAGS model.
+#' jags_data <- prepare_jags_data(strat_data = strat_data,
+#'                                species_to_run = "Pacific Wren",
+#'                                model = "firstdiff",
+#'                                min_year = 2009,
+#'                                max_year = 2018)
 #'
-#' # After generating strata indices, plot them
-#' s_plot <- plot_indices(indices = strata_indices,
-#'                               species = "Wood Thrush")
+#' # Now run a JAGS model.
+#' jags_mod <- run_model(jags_data = jags_data,
+#'                       n_adapt = 0,
+#'                       n_burnin = 0,
+#'                       n_iter = 10,
+#'                       n_thin = 1)
 #'
-#' # s_plot is just a list of ggplot objects, so you can access by index
-#' s_plot[[1]]
+#' # Generate only national, continental, and stratum indices
+#' indices <- generate_indices(jags_mod = jags_mod,
+#'                             jags_data = jags_data,
+#'                             regions = c("national",
+#'                                         "continental",
+#'                                         "stratum"))
 #'
-#' # Or access by strata name, noting the underscores in place of special characters
-#' s_plot[["US_FL_31"]]
+#' # Now, plot_indices() will generate a list of plots for all regions
+#' plot_list <- plot_indices(indices_list = indices,
+#'                           species = "Pacific Wren")
+#'
+#' #Suppose we wanted to access the continental plot. We could do so with
+#' cont_plot <- plot_list$continental
 #'
 #' # You can specify to only plot a subset of years using min_year and max_year
-#' # Plots indices from 1990 onward
-#' s_plot <- plot_indices(indices = strata_indices,
-#'                               min_year = 1990,
-#'                               species = "Wood Thrush")
-#' #Plot up indices up to the year 2000
-#' s_plot <- plot_indices(indices = strata_indices,
-#'                               max_year = 2000,
-#'                               species = "Wood Thrush")
-#' #Plot indices between 1970 and 2010
-#' s_plot <- plot_indices(indices = strata_indices,
-#'                               min_year = 1970,
-#'                               max_year = 2010,
-#'                               species = "Wood Thrush")
-#' }
+#' # Plots indices from 2015 onward
+#' plot_list_2015_on <- plot_indices(indices_list = indices,
+#'                                   min_year = 2015,
+#'                                   species = "Pacific Wren")
+#'
+#' #Plot up indices up to the year 2017
+#' plot_list_max_2017 <- plot_indices(indices_list = indices,
+#'                                    max_year = 2017,
+#'                                    species = "Pacific Wren")
+#'
+#' #Plot indices between 2011 and 2016
+#' plot_list_2011_2015 <- plot_indices(indices_list = indices,
+#'                                     min_year = 2011,
+#'                                     max_year = 2016,
+#'                                     species = "Pacific Wren")
+#'
 #' @export
 #'
+
 plot_indices <- function(indices_list = NULL,
                          ci_width = 0.95,
                          min_year = NULL,

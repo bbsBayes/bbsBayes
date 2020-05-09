@@ -15,7 +15,6 @@
 #'
 #' @examples
 #'
-#' \dontrun{
 #' # Obtain the strata area for each of the 5 stratification types
 #'
 #' # USGS BBS
@@ -32,7 +31,6 @@
 #'
 #' # Degree block
 #' st_area <- get_strata_area(strata_type = "latlong")
-#' }
 #'
 
 get_strata_area <- function(strata_type = NULL)
