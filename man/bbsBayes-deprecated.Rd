@@ -42,9 +42,10 @@ generate_strata_trends(indices = NULL, min_year = NULL,
 
 p_waic(jags_data = NULL, jags_mod = NULL, pointwise = FALSE)
 
-plot_cont_indices(indices_list = NULL, select = F, ci_width = 0.95,
-  min_year = NULL, max_year = NULL, species = "", title_size = 20,
-  axis_title_size = 18, axis_text_size = 16, add_observed_means = F)
+plot_cont_indices(indices_list = NULL, select = FALSE,
+  ci_width = 0.95, min_year = NULL, max_year = NULL, species = "",
+  title_size = 20, axis_title_size = 18, axis_text_size = 16,
+  add_observed_means = FALSE)
 
 waic(jags_data = NULL, jags_mod = NULL)
 }

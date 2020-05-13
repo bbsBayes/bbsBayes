@@ -24,6 +24,8 @@
 #' @importFrom progress progress_bar
 #' @importFrom rappdirs app_dir
 #'
+#' @return None
+#'
 #' @export
 #'
 #'

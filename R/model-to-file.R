@@ -7,6 +7,8 @@
 #' @param filename File name to create on disk.
 #' @param heavy_tailed Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution, with heavier tails than the standard normal distribution. Default is currently FALSE, but recent results suggest users should strongly consider setting this to TRUE, even though it requires much longer convergence times
 #'
+#' @return None
+#'
 #' @export
 #'
 #' @examples

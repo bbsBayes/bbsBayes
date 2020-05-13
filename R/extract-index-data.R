@@ -6,6 +6,8 @@
 #'
 #' @importFrom utils read.csv
 #'
+#' @return List of index values produced by JAGS samples
+#'
 #' @keywords internal
 #' @export
 #'
