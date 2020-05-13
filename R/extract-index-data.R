@@ -10,7 +10,9 @@
 #' @export
 #'
 
-extract_index_data <- function(jags_mod = NULL,alt_n = "n",jags_data = NULL)
+extract_index_data <- function(jags_mod = NULL,
+                               alt_n = "n",
+                               jags_data = NULL)
 {
   # Read area weights
   stratify_by <- jags_mod$stratify_by
@@ -29,7 +31,7 @@ extract_index_data <- function(jags_mod = NULL,alt_n = "n",jags_data = NULL)
   y_max <- bugs_data$ymax
   strat_list = unique(data.frame(strat_name = jags_mod$strat_name,
                           strat = bugs_data$strat,
-                          stringsAsFactors = F))
+                          stringsAsFactors = FALSE))
   strat_list = strat_list[order(strat_list$strat),]
 
   # Subset area weights based on strata used and ensure same order as JAGS

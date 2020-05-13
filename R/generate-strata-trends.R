@@ -64,7 +64,7 @@ generate_strata_trends <- function(indices = NULL,
                       End_year = integer(),
                       Region = character(),
                       Trend = double(),
-                      stringsAsFactors = F)
+                      stringsAsFactors = FALSE)
   for(qq in quantiles){
   trend[,paste0("Trend_Q",qq)] <- double()
   }
@@ -106,19 +106,19 @@ generate_strata_trends <- function(indices = NULL,
                         End_year = (indices$startyear+max_year)-1,
                         Region = area_weights[which(area_weights$num == i), ]$region,
                         Trend = median(tr),
-                        stringsAsFactors = F)
+                        stringsAsFactors = FALSE)
     for(qq in quantiles){
-      trend_strata[,paste0("Trend_Q",qq)] <- quantile(tr,qq,names = F)
+      trend_strata[,paste0("Trend_Q",qq)] <- quantile(tr,qq,names = FALSE)
     }
     trend_strata[,"Percent_Change"] <- 100*(median(ch)-1)
     for(qq in quantiles){
-      trend_strata[,paste0("Percent_Change_Q",qq)] <- 100*(quantile(ch,qq,names = F)-1)
+      trend_strata[,paste0("Percent_Change_Q",qq)] <- 100*(quantile(ch,qq,names = FALSE)-1)
     }
 
     if(slope){
       trend_strata[,"Slope_Trend"] <- median(sl.t)
       for(qq in quantiles){
-        trend_strata[,paste0("Slope_Trend_Q",qq)] <- quantile(sl.t,qq,names = F)
+        trend_strata[,paste0("Slope_Trend_Q",qq)] <- quantile(sl.t,qq,names = FALSE)
       }
     }
 

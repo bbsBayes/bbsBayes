@@ -86,7 +86,7 @@ generate_strata_indices <- function(jags_mod = NULL,
   {
     rawst = raw[which(raw$strat == i),c("year","count")]
     yrs = data.frame(year = c(y_min:y_max))
-    rawst = merge(rawst,yrs,by = "year",all = T)
+    rawst = merge(rawst,yrs,by = "year",all = TRUE)
     rawst = rawst[order(rawst$year),]
 
 
@@ -99,7 +99,7 @@ generate_strata_indices <- function(jags_mod = NULL,
     for(qq in quantiles){
       strat_summary[,paste0("Index_q_",qq)] <- apply(n[,i,],2,stats::quantile,probs = qq)
     }
-    strat_summary$obs_mean = non_zero_weight[i]*as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = mean,na.rm = T))
+    strat_summary$obs_mean = non_zero_weight[i]*as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = mean,na.rm = TRUE))
 
     data_summary <- rbind(data_summary, strat_summary)
   }
