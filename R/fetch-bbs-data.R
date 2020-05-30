@@ -24,10 +24,14 @@
 #' @importFrom progress progress_bar
 #' @importFrom rappdirs app_dir
 #'
+#' @return None
+#'
 #' @export
 #'
 #'
-fetch_bbs_data <- function(level = "state", quiet = FALSE, force = FALSE)
+fetch_bbs_data <- function(level = "state",
+                           quiet = FALSE,
+                           force = FALSE)
 {
   if (!level %in% c('state', 'stop')) {
     stop("Invalid level argument: level must be one of 'state' or 'stop'.")

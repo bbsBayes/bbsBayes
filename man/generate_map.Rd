@@ -4,7 +4,7 @@
 \alias{generate_map}
 \title{Generate a map of trends by strata.}
 \usage{
-generate_map(trend = NULL, select = F, stratify_by = NULL,
+generate_map(trend = NULL, select = FALSE, stratify_by = NULL,
   slope = FALSE, species = "")
 }
 \arguments{
@@ -15,7 +15,7 @@ generate_map(trend = NULL, select = F, stratify_by = NULL,
 
 \item{stratify_by}{How were the data stratified?}
 
-\item{slope}{Logical, if TRUE, maps values of the alternative trend metric if slope = T was used in \code{generate_strata_trends}, the slope of a log-linear regression through the annual indices. Default FALSE.}
+\item{slope}{Logical, if TRUE, maps values of the alternative trend metric if slope = TRUE was used in \code{generate_strata_trends}, the slope of a log-linear regression through the annual indices. Default FALSE.}
 
 \item{species}{Text, optional species name to add plot title. if left blank "" no title is added}
 }

@@ -34,7 +34,7 @@ NULL
 #'
 #'
 plot_cont_indices <- function(indices_list = NULL,
-                              select = F,
+                              select = FALSE,
                               ci_width = 0.95,
                               min_year = NULL,
                               max_year = NULL,
@@ -42,7 +42,7 @@ plot_cont_indices <- function(indices_list = NULL,
                               title_size = 20,
                               axis_title_size = 18,
                               axis_text_size = 16,
-                              add_observed_means = F)
+                              add_observed_means = FALSE)
 {
 
   .Deprecated(new = "plot_indices",

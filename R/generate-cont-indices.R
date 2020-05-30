@@ -73,10 +73,10 @@ generate_cont_indices <- function(jags_mod = NULL,
   {
   rawst <- raw[which(raw$strat == j),c("year","count")]
   yrs <- data.frame(year = c(y_min:y_max))
-  rawst <- merge(rawst,yrs,by = "year",all = T)
+  rawst <- merge(rawst,yrs,by = "year",all = TRUE)
   rawst <- rawst[order(rawst$year),]
 
-  o_mns <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = mean,na.rm = T))
+  o_mns <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = mean,na.rm = TRUE))
 
   obs_df_t <- data.frame(year = c(y_min:y_max),
                         strat = j,
@@ -108,7 +108,7 @@ generate_cont_indices <- function(jags_mod = NULL,
   }
 
   data_summary$Year <- as.integer((data_summary$Year - 1) + min(r_year))
-  data_summary$obs_mean <- as.numeric(by(obs_df[,3],INDICES = obs_df[,1],FUN = sum,na.rm = T))
+  data_summary$obs_mean <- as.numeric(by(obs_df[,3],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
 
 
   return(list(data_summary = data_summary,

@@ -13,6 +13,9 @@ model_to_file(model = NULL, filename = NULL, heavy_tailed = FALSE)
 
 \item{heavy_tailed}{Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution, with heavier tails than the standard normal distribution. Default is currently FALSE, but recent results suggest users should strongly consider setting this to TRUE, even though it requires much longer convergence times}
 }
+\value{
+None
+}
 \description{
 \code{model_to_file} allows you to save any of the preloaded hierarchical
   Bayesian models to a text file.

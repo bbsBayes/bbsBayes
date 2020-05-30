@@ -173,7 +173,7 @@ plot_indices <- function(indices_list = NULL,
 
       if(add_number_routes){
 
-      p <- p + ggplot2::geom_dotplot(data = dattc,mapping = ggplot2::aes(x = Year),drop = T,binaxis = "x", stackdir = "up",method = "histodot",binwidth = 1,width = 0.2,inherit.aes = F,fill = grDevices::grey(0.6),colour = grDevices::grey(0.6),alpha = 0.2,dotsize = 0.3)+
+      p <- p + ggplot2::geom_dotplot(data = dattc,mapping = ggplot2::aes(x = Year),drop = TRUE,binaxis = "x", stackdir = "up",method = "histodot",binwidth = 1,width = 0.2,inherit.aes = FALSE,fill = grDevices::grey(0.6),colour = grDevices::grey(0.6),alpha = 0.2,dotsize = 0.3)+
         ggplot2::annotate(geom = "text",x = min(dattc$Year)+5,y = 0,label = annot,alpha = 0.4,colour = grDevices::grey(0.6))
 
       }
@@ -197,7 +197,7 @@ plot_indices <- function(indices_list = NULL,
         ggplot2::scale_y_continuous(limits = c(0,NA))
       if(add_number_routes){
 
-        p <- p + ggplot2::geom_dotplot(data = dattc,mapping = ggplot2::aes(x = Year),drop = T,binaxis = "x", stackdir = "up",method = "histodot",binwidth = 1,width = 0.2,inherit.aes = F,fill = grDevices::grey(0.6),colour = grDevices::grey(0.6),alpha = 0.2,dotsize = 0.3)+
+        p <- p + ggplot2::geom_dotplot(data = dattc,mapping = ggplot2::aes(x = Year),drop = TRUE,binaxis = "x", stackdir = "up",method = "histodot",binwidth = 1,width = 0.2,inherit.aes = FALSE,fill = grDevices::grey(0.6),colour = grDevices::grey(0.6),alpha = 0.2,dotsize = 0.3)+
           ggplot2::annotate(geom = "text",x = min(dattc$Year)+5,y = 0,label = annot,alpha = 0.4,colour = grDevices::grey(0.6))
       }
 
