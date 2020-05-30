@@ -61,6 +61,7 @@ generate_regional_indices <- function(jags_mod = NULL,
                                   max_backcast = NULL,
                                   alt_region_names = NULL)
 {
+
   .Deprecated(new = "generate_indices",
               msg = "generate_regional_indices is deprecated in favour of generate_indices")
 
@@ -149,6 +150,7 @@ generate_regional_indices <- function(jags_mod = NULL,
 
     }
   }
+
   region_names$stratum = region_names$region
   region_names$continental = "Continental"
 
@@ -195,6 +197,11 @@ st_rem <- NULL
 strata_sel <- area_weights[which(area_weights$region %in% st_sela),"num"]
 st_sel <- area_weights[which(area_weights$region %in% st_sela),"region"]
 
+#pz_area <- area_weights[which(area_weights$num %in% strata_sel),"area_sq_km"]*non_zero_weight[strata_sel]
+pz_area <- area_weights[,"area_sq_km"]*non_zero_weight
+#pz_area is the non_zero_weighted area (the area of the stratum * proportion of the routes included)
+# it's designed to estimate the proportional contribution (excluding abundance) of that region to the composite trajectory
+
 if(length(strata_sel)<1){next}
 
 
@@ -215,7 +222,8 @@ obs_df = data.frame(year = integer(),
     o_mns <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = mean,na.rm = TRUE))
     nrts <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = function(x){length(which(!is.na(x)))}))
     nnzero <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = function(x){length(which(x>0))}))
-    strata_p <- (non_zero_weight[j])*(area_weights[which(area_weights$num == j),"area_sq_km"]/sum(area_weights[which(area_weights$num %in% strata_sel),"area_sq_km"]))
+    strata_p <- pz_area[j]/sum(pz_area[strata_sel])
+
 
     if(sum(nnzero[1:max_backcast]) < 1 & as.integer(fyearbystrat[j]) > y_min){ #if no observations of the species in the first 5 years, then remove the strata from trend summaries
        st_rem <- c(st_rem,as.character(area_weights[which(area_weights$num == j),"region"]))
@@ -239,7 +247,7 @@ obs_df = data.frame(year = integer(),
   }
 
 
-if(!is.null(st_rem)){
+  if(!is.null(st_rem)){
   if(drop_exclude){
     strata_sel <- strata_sel[-which(strata_sel %in% area_weights[which(area_weights$region %in% st_rem),"num"])]
     st_sel <- st_sel[-which(st_sel %in% st_rem)]
