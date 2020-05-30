@@ -126,7 +126,7 @@ prepare_jags_data <- function(strat_data = NULL,
                   by = c("statenum",
                          "Route",
                          "Year",
-                         "BCR"),all.x = T)
+                         "BCR"),all.x = TRUE)
 
   spsp.c[which(is.na(spsp.c$TotalInd)),"TotalInd"] <- 0
 
@@ -223,7 +223,7 @@ prepare_jags_data <- function(strat_data = NULL,
     nrts.used <- data.frame(strat_name = names(rts.summary),nroutes.used = as.integer(rts.summary))
     if (!isTRUE(quiet)){pb$tick()}
 
-    spsp.temp.2 <- merge(spsp.2,pR[,c("strat","p.r.ever","meanry.ever","max.nry")], by.x = "strat_name", by.y = "strat",all.x = T)
+    spsp.temp.2 <- merge(spsp.2,pR[,c("strat","p.r.ever","meanry.ever","max.nry")], by.x = "strat_name", by.y = "strat",all.x = TRUE)
     if (!isTRUE(quiet)){pb$tick()}
 
     spsp.2 <- spsp.temp.2
@@ -296,7 +296,7 @@ prepare_jags_data <- function(strat_data = NULL,
 
   fyears <- tapply(spsp_f$Year,spsp_f$rt.uni.ob,min)
   fyr.df <- data.frame(rt.uni.ob = names(fyears),Year = as.integer(fyears),firstyear = 1)
-  spsp_ft <- merge(spsp_f,fyr.df,all.x = T,by = c("rt.uni.ob","Year"))
+  spsp_ft <- merge(spsp_f,fyr.df,all.x = TRUE,by = c("rt.uni.ob","Year"))
   if (!isTRUE(quiet)){pb$tick()}
 
   spsp_f <- spsp_ft

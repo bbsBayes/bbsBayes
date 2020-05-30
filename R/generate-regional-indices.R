@@ -126,7 +126,7 @@ generate_regional_indices <- function(jags_mod = NULL,
                    strat = bugs_data$strat)
   rawnonz = rawall[which(rawall$count > 0),]
 
-  fyearbystrat = tapply(rawnonz$year,rawnonz[,c("strat")],min,na.rm = T)
+  fyearbystrat = tapply(rawnonz$year,rawnonz[,c("strat")],min,na.rm = TRUE)
 
   raw = rawall[which(rawall$year >= y_min),]
 
@@ -137,15 +137,15 @@ generate_regional_indices <- function(jags_mod = NULL,
   n_samples <- dim(n)[1]
 
   if(is.null(alt_region_names)){
-  region_names <- utils::read.csv(system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = F)
+  region_names <- utils::read.csv(system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = FALSE)
   }else{
-    region_names_o <- utils::read.csv(system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = F)
+    region_names_o <- utils::read.csv(system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = FALSE)
 
     region_names <- alt_region_names
     if(nrow(region_names) != nrow(region_names_o)){
       stop("Alt_region_names does not match the original model stratification. Please ensure your alternative regions exactly match the model stratification"); return(NULL)
     }
-    if(all(regions[-which(regions %in% c("continental","stratum"))] %in% names(region_names)) == F){
+    if(all(regions[-which(regions %in% c("continental","stratum"))] %in% names(region_names)) == FALSE){
       stop("desired regions do not match the columns in your alternative regions dataframe"); return(NULL)
 
     }
@@ -162,7 +162,7 @@ generate_regional_indices <- function(jags_mod = NULL,
                               Strata_included = character(),
                               Strata_excluded = character(),
                               Index = double(),
-                             stringsAsFactors = F)
+                             stringsAsFactors = FALSE)
   for(qq in quantiles){
     data_summary[,paste0("Index_q_",qq)] <- double()
   }
@@ -216,10 +216,10 @@ obs_df = data.frame(year = integer(),
   {
     rawst <- raw[which(raw$strat == j),c("year","count")]
     yrs <- data.frame(year = c(y_min:y_max))
-    rawst <- merge(rawst,yrs,by = "year",all = T)
+    rawst <- merge(rawst,yrs,by = "year",all = TRUE)
     rawst <- rawst[order(rawst$year),]
 
-    o_mns <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = mean,na.rm = T))
+    o_mns <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = mean,na.rm = TRUE))
     nrts <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = function(x){length(which(!is.na(x)))}))
     nnzero <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = function(x){length(which(x>0))}))
     strata_p <- pz_area[j]/sum(pz_area[strata_sel])
@@ -292,17 +292,17 @@ n_weight <- n_weight[,strata_sel,]
                               Strata_included = paste(st_sel,collapse = " ; "),
                               Strata_excluded = paste(st_rem,collapse = " ; "),
                               Index = n_median,
-                              stringsAsFactors = F)
+                              stringsAsFactors = FALSE)
   for(qq in quantiles){
     data_summaryr[,paste0("Index_q_",qq)] <- apply(N,2,stats::quantile,probs = qq)
   }
 
   data_summaryr$Year <- as.integer((data_summaryr$Year - 1) + mr_year)
-  data_summaryr$obs_mean <- as.numeric(by(obs_df[,3],INDICES = obs_df[,1],FUN = sum,na.rm = T))
-  data_summaryr$nrts <- as.numeric(by(obs_df[,4],INDICES = obs_df[,1],FUN = sum,na.rm = T))
-  data_summaryr$nnzero <- as.numeric(by(obs_df[,5],INDICES = obs_df[,1],FUN = sum,na.rm = T))
-  data_summaryr$nrts_total <- as.numeric(by(obs_df[,6],INDICES = obs_df[,1],FUN = sum,na.rm = T))
-  data_summaryr$backcast_flag <- 1-as.numeric(by(obs_df[,7],INDICES = obs_df[,1],FUN = sum,na.rm = T))
+  data_summaryr$obs_mean <- as.numeric(by(obs_df[,3],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
+  data_summaryr$nrts <- as.numeric(by(obs_df[,4],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
+  data_summaryr$nnzero <- as.numeric(by(obs_df[,5],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
+  data_summaryr$nrts_total <- as.numeric(by(obs_df[,6],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
+  data_summaryr$backcast_flag <- 1-as.numeric(by(obs_df[,7],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
 
   data_summary = rbind(data_summary,data_summaryr)
 

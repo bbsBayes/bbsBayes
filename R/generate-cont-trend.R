@@ -76,19 +76,19 @@ if(slope){
                               End_year = (indices$startyear+max_year)-1,
                       Region = "Continental",
                       Trend = median(tr),
-                      stringsAsFactors = F)
+                      stringsAsFactors = FALSE)
   for(qq in quantiles){
-  trend[,paste0("Trend_Q",qq)] <- quantile(tr,qq,names = F)
+  trend[,paste0("Trend_Q",qq)] <- quantile(tr,qq,names = FALSE)
   }
   trend[,"Percent_Change"] <- median(ch)
   for(qq in quantiles){
-    trend[,paste0("Percent_Change_Q",qq)] <- 100*(quantile(ch,qq,names = F)-1)
+    trend[,paste0("Percent_Change_Q",qq)] <- 100*(quantile(ch,qq,names = FALSE)-1)
   }
 
   if(slope){
   trend[,"Slope_Trend"] <- median(sl.t)
   for(qq in quantiles){
-    trend[,paste0("Slope_Trend_Q",qq)] <- quantile(sl.t,qq,names = F)
+    trend[,paste0("Slope_Trend_Q",qq)] <- quantile(sl.t,qq,names = FALSE)
   }
   }
 

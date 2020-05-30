@@ -127,7 +127,7 @@ trend <- data.frame(Start_year = integer(),
                     Strata_included = character(),
                     Strata_excluded = character(),
                     Trend = double(),
-                    stringsAsFactors = F)
+                    stringsAsFactors = FALSE)
 for(qq in quantiles){
   trend[,paste0("Trend_Q",qq)] <- double()
 }
@@ -145,7 +145,7 @@ for(rr in regions){ #selecting the type of composite region
 
   for(rrs in regsest){
 
-    reg = gsub(rrs,pattern = paste0(rr,"_"),replacement = "",fixed = T)
+    reg = gsub(rrs,pattern = paste0(rr,"_"),replacement = "",fixed = TRUE)
     w_summary_rows = which(dsum$Region == reg & dsum$Region_type == rr)
 
 
@@ -186,22 +186,22 @@ st_exc = unique(dsum[w_summary_rows,"Strata_excluded"])
                       Strata_included = st_inc,
                       Strata_excluded = st_exc,
                       Trend = median(tr),
-                      stringsAsFactors = F)
+                      stringsAsFactors = FALSE)
   for(qq in quantiles){
-    trendt[,paste0("Trend_Q",qq)] <- stats::quantile(tr,qq,names = F)
+    trendt[,paste0("Trend_Q",qq)] <- stats::quantile(tr,qq,names = FALSE)
   }
 
   ### estimated %change
   trendt[,"Percent_Change"] <- 100*(median(ch)-1)
   for(qq in quantiles){
-    trendt[,paste0("Percent_Change_Q",qq)] <- 100*(stats::quantile(ch,qq,names = F)-1)
+    trendt[,paste0("Percent_Change_Q",qq)] <- 100*(stats::quantile(ch,qq,names = FALSE)-1)
   }
 
   ### optional slope based trends
   if(slope){
     trendt[,"Slope_Trend"] <- median(sl.t)
     for(qq in quantiles){
-      trendt[,paste0("Slope_Trend_Q",qq)] <- stats::quantile(sl.t,qq,names = F)
+      trendt[,paste0("Slope_Trend_Q",qq)] <- stats::quantile(sl.t,qq,names = FALSE)
     }
   }
 

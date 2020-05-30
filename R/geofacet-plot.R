@@ -77,7 +77,7 @@
 
 
 geofacet_plot <- function(indices_list = NULL,
-                          select = F,
+                          select = FALSE,
                           stratify_by = NULL,
                           ci_width = 0.95,
                           multiple = FALSE,
@@ -108,7 +108,7 @@ geofacet_plot <- function(indices_list = NULL,
 
   alpha_ribbon = 0.5
 
-  facets <- utils::read.csv(system.file("geofacet-grids", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = F)
+  facets <- utils::read.csv(system.file("geofacet-grids", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = FALSE)
 
   indices = indices_list$data_summary
   if(select){
@@ -146,9 +146,7 @@ geofacet_plot <- function(indices_list = NULL,
      # indices$code = indices$Region
      #
 
-    region_names <- utils::read.csv(system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = F)
-    #region_names <- read.csv(paste0("C:/Users/smithac/Documents/GitHub/bbsBayes/inst/composite-regions/stratcan.csv"),stringsAsFactors = F)
- #   region_names$region = factor(region_names$region,levels = levels(area_weights$region))
+    region_names <- utils::read.csv(system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = FALSE)
 
     indices = merge(indices,region_names[,c("prov_state","region","bcr")],by.x = "Region",by.y = "region")
     indices$code = indices$prov_state
@@ -165,7 +163,7 @@ geofacet_plot <- function(indices_list = NULL,
       if(slope){
         trends$Trend <- trends$Slope_Trend
       }
-      trends$Trendcat <- cut(trends$Trend, breaks = c(-Inf, breaks, Inf),ordered_result = T)
+      trends$Trendcat <- cut(trends$Trend, breaks = c(-Inf, breaks, Inf),ordered_result = TRUE)
 
       map_palette <- c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
                        "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")
@@ -232,7 +230,7 @@ geofacet_plot <- function(indices_list = NULL,
       if(slope){
         trends$Trend <- trends$Slope_Trend
       }
-      trends$Trendcat <- cut(trends$Trend, breaks = c(-Inf, breaks, Inf),ordered_result = T)
+      trends$Trendcat <- cut(trends$Trend, breaks = c(-Inf, breaks, Inf),ordered_result = TRUE)
 
       map_palette <- c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
                        "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")

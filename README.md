@@ -13,14 +13,12 @@ bbsBayes is a package to perform hierarchical Bayesian analysis of North America
 
 ## Installation
 
-We expect a CRAN release shortly, but for now you can install from Github using the following options:
+As of 27 May 2020, bbsBayes v2.2.1 is officially on CRAN! There are two ways to install bbsBayes:
 
-Option 1: Most recent stable release (currently v2.2.1)
+Option 1: Stable release from CRAN (currently v2.2.1)
 ``` r
-# To install v2.2.1 from Github:
-install.packages("devtools")
-library(devtools)
-devtools::install_github("BrandonEdwards/bbsBayes", ref = "v2.2.1")
+# To install v2.2.1 from CRAN:
+install.packages("bbsBayes")
 ```
 
 Option 2: Less-stable development version
@@ -46,8 +44,8 @@ fetch_bbs_data()
 ### Data Preparation
 #### Stratification
 Stratification plays an important role in trend analysis. Use the `stratify()` function for this job. Set the argument `by` to stratify by the following options:
-* bbs_cws -- Political region X Bird Conservation region intersection (CWS method)
-* bbs_usgs -- Political region X Bird Conservation region intersection (USGS method)
+* bbs_cws -- Political region X Bird Conservation region intersection (Canadian Wildlife Service [CWS] method)
+* bbs_usgs -- Political region X Bird Conservation region intersection (United Status Geological Survey [USGS] method)
 * bcr -- Bird Conservation Region only
 * state -- Political Region only
 * latlong -- Degree blocks (1 degree of latitude X 1 degree of longitude)

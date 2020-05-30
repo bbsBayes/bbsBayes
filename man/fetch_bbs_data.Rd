@@ -19,6 +19,9 @@ the modeling utilities in bbsBayes.}
 
 \item{force}{Logical: if BBS data already exists on computer, should it be overwritten? Defaults to FALSE}
 }
+\value{
+None
+}
 \description{
 \code{fetch_bbs_data} uses File Transfer Protocol (FTP) to fetch Breeding Bird
  Survey data from the United States Geological Survey (USGS) FTP site. This

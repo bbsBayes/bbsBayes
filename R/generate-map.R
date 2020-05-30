@@ -9,7 +9,7 @@
 #'   \code{generate_strata_trends} or \code{generate_regional_trends(..., regions = "stratum")}
 #' @param select logical flag to indicate if the stratum data need to be selected out of an trends object that includes continental, national, or other region-types. Default is FALSE
 #' @param stratify_by How were the data stratified?
-#' @param slope Logical, if TRUE, maps values of the alternative trend metric if slope = T was used in \code{generate_strata_trends}, the slope of a log-linear regression through the annual indices. Default FALSE.
+#' @param slope Logical, if TRUE, maps values of the alternative trend metric if slope = TRUE was used in \code{generate_strata_trends}, the slope of a log-linear regression through the annual indices. Default FALSE.
 #' @param species Text, optional species name to add plot title. if left blank "" no title is added
 #'
 #' @return spplot object
@@ -54,7 +54,7 @@
 #'
 
 generate_map <- function(trend = NULL,
-                         select = F,
+                         select = FALSE,
                          stratify_by = NULL,
                          slope = FALSE,
                          species = "")
@@ -108,15 +108,6 @@ generate_map <- function(trend = NULL,
   }else{
     ptit = ""
   }
-
-
-  #
-  # map@data$row_num <- 1:nrow(map@data)
-  # map@data <- merge(map@data, trend, by.x = "ST_12", by.y = "Region", all = T)
-  # map@data <- map@data[order(map@data$row_num), ]
-  #
-  # map@data$Trend <- cut(map@data$Trend, breaks = c(-Inf, breaks, Inf))
-  # map@data <- subset(map@data, select = c(Trend))
 
   map_palette <- c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
                    "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")
