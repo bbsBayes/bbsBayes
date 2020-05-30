@@ -13,11 +13,11 @@ bbsBayes is a package to perform hierarchical Bayesian analysis of North America
 
 ## Installation
 
-As of 27 May 2020, bbsBayes v2.2.1 is officially on CRAN! There are two ways to install bbsBayes:
+As of 27 May 2020, bbsBayes is officially on CRAN! There are two ways to install bbsBayes:
 
-Option 1: Stable release from CRAN (currently v2.2.1)
+Option 1: Stable release from CRAN:
 ``` r
-# To install v2.2.1 from CRAN:
+# To install from CRAN:
 install.packages("bbsBayes")
 ```
 
