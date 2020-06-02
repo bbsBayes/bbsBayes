@@ -11,6 +11,11 @@
 #' @param quiet Should progress bars be suppressed?
 #' @param bbs_data Raw BBS data saved as a list of 3 data frames.
 #'   Not necessary if you have already run \code{fetch_bbs_data}
+#' @param lump_species_forms Logical, default is TRUE, indicating that for
+#'   species with multiple forms, the "unidentified" form represents
+#'   the sum of observations for all forms. The underlying BBS database also
+#'   includes separate data for each form, and an unidentified category for
+#'   observations that were not specific to a particular form
 #' @param stratify_by Deprecated in favour of 'by'
 #'
 #' @return Large list (3 elements) consisting of:
@@ -53,6 +58,7 @@
 stratify <- function(by = NULL,
                      sample_data = FALSE,
                      bbs_data = NULL,
+                     lump_species_forms = TRUE,
                      quiet = FALSE,
                      stratify_by = NULL)
 {
@@ -96,8 +102,49 @@ stratify <- function(by = NULL,
     load(file = paste0(bbs_dir$data(), "/bbs_raw_data.RData"))
   }
   if (!isTRUE(quiet)){pb$tick()}
+  species <- bbs_data$species
 
-  bird <- bbs_data$bird; if (!isTRUE(quiet)){pb$tick()}
+  bird <- bbs_data$bird
+  if (lump_species_forms){
+    lump_sp <- utils::read.csv(system.file("species-lump-split", "lump.csv", package = "bbsBayes"),stringsAsFactors = FALSE)
+  for(lumpi in 1:nrow(lump_sp)){
+    aou1 <- lump_sp[lumpi,"aou_original"]
+    sp_en <- lump_sp[lumpi,"english_out"]
+    sp_fr <- lump_sp[lumpi,"french_out"]
+    wsp <- which(species$sp.bbs == aou1)
+    species[wsp,"english"] <- sp_en
+    species[wsp,"french"] <- sp_fr
+
+    # replace original unidentified data with combined data from all forms
+    nadd <- lump_sp[lumpi,"n_add"]
+    aoulump <- lump_sp[lumpi,paste0("aou",1:nadd)]
+    tmp1 <- bird[which(bird$AOU %in% aou1),]
+    tmp2 <- bird[which(bird$AOU %in% aoulump),]
+    if(nrow(tmp1) > 0){
+      rem1 <- which(bird$AOU %in% aou1)
+    #bird <- bird[-which(bird$AOU %in% aou1),]
+    tmp <- rbind(tmp1,tmp2)
+    }else{
+      tmp <- tmp2
+    }
+    if(nrow(tmp) > 0){
+     tmp$AOU <- aou1
+    # bird <- rbind(bird,tmp)
+    }
+    if(lumpi == 1){
+      tmp_add <- tmp
+      rem <- rem1
+    }else{
+      tmp_add <- rbind(tmp_add,tmp)
+      rem <- c(rem,rem1)
+    }
+  }
+    bird <- bird[-rem,]
+    bird <- rbind(bird,tmp_add)
+
+  }
+
+  if (!isTRUE(quiet)){pb$tick()}
   route <- bbs_data$route; if (!isTRUE(quiet)){pb$tick()}
 
   if (by == "bbs_usgs")
@@ -153,6 +200,6 @@ stratify <- function(by = NULL,
 
   return(list(bird_strat = bird,
               route_strat = route,
-              species_strat = bbs_data$species,
+              species_strat = species,
               stratify_by = by))
 }

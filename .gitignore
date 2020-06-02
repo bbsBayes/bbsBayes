@@ -15,4 +15,4 @@ jags_mod_full_gam.RData
 temp.geofacet.pdf
 *output/
 *.EX.R
-
+R/*abundance.R
