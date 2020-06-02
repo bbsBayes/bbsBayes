@@ -105,7 +105,13 @@ stratify <- function(by = NULL,
   species <- bbs_data$species
 
   bird <- bbs_data$bird
-  if (lump_species_forms){
+
+  if (isFALSE(sample_data) & isTRUE(lump_species_forms)){
+    rem1 <- NULL
+    rem <- NULL
+    tmp1 <- NULL
+    tmp2 <- NULL
+    tmp <- NULL
     lump_sp <- utils::read.csv(system.file("species-lump-split", "lump.csv", package = "bbsBayes"),stringsAsFactors = FALSE)
   for(lumpi in 1:nrow(lump_sp)){
     aou1 <- lump_sp[lumpi,"aou_original"]
