@@ -20,7 +20,8 @@
 #'
 #'
 #'
-#' @importFrom utils download.file read.csv read.fwf
+#' @importFrom utils download.file read.csv read.fwf unzip
+#' @importFrom sbtools item_get item_file_download
 #' @importFrom progress progress_bar
 #' @importFrom rappdirs app_dir
 #'
@@ -80,7 +81,21 @@ fetch_bbs_data <- function(level = "state",
     }
   }
 
-  bird <- get_counts(level = level, quiet = quiet)
+  if (!isTRUE(quiet))
+  {
+    message("Connecting to USGS ScienceBase...", appendLF = FALSE)
+  }
+
+  connection <- sbtools::item_get(sb_id = get_sb_id())
+  if (!is.null(connection))
+  {
+    if (!isTRUE(quiet))
+    {
+      message("Connected!")
+    }
+  }
+
+  bird <- get_counts(level = level, quiet = quiet, sb_conn = connection)
 
   ################################################################
   # Route List Data
@@ -96,15 +111,19 @@ fetch_bbs_data <- function(level = "state",
     pb$tick(0)
   }
 
-  temp <- tempfile()
-  utils::download.file(paste0(base_url(), "routes.zip"), temp, quiet = TRUE)
+  temp <- tempdir()
+  full_path <- sbtools::item_file_download(sb_id = connection,
+                                           names = "routes.zip",
+                                           destinations = file.path(temp, "routes.zip"))
   tick(pb, quiet)
-  routes <- utils::read.csv(unz(temp, paste0("routes.csv")),
+
+  routes <- utils::read.csv(utils::unzip(zipfile = full_path,
+                                         exdir = temp),
                             stringsAsFactors = FALSE)
   unlink(temp)
   tick(pb, quiet)
 
-  #removes the off-road and water routes, as well as non-random and mini-routes
+  # removes the off-road and water routes, as well as non-random and mini-routes
   routes <- routes[routes$RouteTypeDetailID == 1 & routes$RouteTypeID == 1, ]
   routes$Stratum <- NULL
   tick(pb, quiet)
@@ -113,15 +132,19 @@ fetch_bbs_data <- function(level = "state",
   # Weather Data
   ################################################################
 
-  temp <- tempfile()
-  utils::download.file(paste0(base_url(), "Weather.zip"), temp, quiet = TRUE)
+  temp <- tempdir()
+  full_path <- sbtools::item_file_download(sb_id = connection,
+                                           names = "Weather.zip",
+                                           destinations = file.path(temp, "Weather.zip"))
   tick(pb, quiet)
-  weather <- utils::read.csv(unz(temp, paste0("weather.csv")),
-                             stringsAsFactors = FALSE)
-  tick(pb, quiet)
-  unlink(temp)
 
-  #removes the off-road and water routes, as well as non-random and mini-routes
+  weather <- utils::read.csv(utils::unzip(zipfile = full_path,
+                                          exdir = temp),
+                             stringsAsFactors = FALSE)
+  unlink(temp)
+  tick(pb, quiet)
+
+  # removes the off-road and water routes, as well as non-random and mini-routes
   weather <- weather[weather$RunType == 1, ]
   tick(pb, quiet)
 
@@ -137,7 +160,7 @@ fetch_bbs_data <- function(level = "state",
   regs <- utils::read.csv(system.file("data-import",
                                       "regs.csv",
                                       package="bbsBayes"),
-                   stringsAsFactors = FALSE)
+                          stringsAsFactors = FALSE)
   tick(pb, quiet)
 
   # merge route data into the bird count data frame
@@ -162,9 +185,12 @@ fetch_bbs_data <- function(level = "state",
   }
 
   temp <- tempfile()
-  utils::download.file(paste0(base_url(), "SpeciesList.txt"), temp, quiet = TRUE)
+  full_path <- sbtools::item_file_download(sb_id = connection,
+                                           names = "SpeciesList.txt",
+                                           destinations = temp)
   tick(pb, quiet)
-  species <- utils::read.fwf(temp, skip = 10, strip.white = TRUE, header = FALSE,
+
+  species <- utils::read.fwf(temp, skip = 11, strip.white = TRUE, header = FALSE,
                              colClasses = c("integer",
                                             "character",
                                             "character",
@@ -176,11 +202,10 @@ fetch_bbs_data <- function(level = "state",
                                             "character"),
                              widths = c(6, -1, 5, -1, 50, -1, 50, -1, 50, -1,
                                         50, -1, 50, -1, 50, -1, 50),
-                      fileEncoding = "iso-8859-1")
+                             fileEncoding = "iso-8859-1")
   unlink(temp)
   tick(pb, quiet)
 
-  #species <- species[, -c(4, 5)] # remove french and spanish name
   names(species) <- c("seq","aou","english","french","spanish","order","family","genus","species")
   tick(pb, quiet)
 
@@ -191,6 +216,37 @@ fetch_bbs_data <- function(level = "state",
   bbs_data <- list(bird = bird,
                    route = route,
                    species = species)
+
+  # temp <- tempfile()
+  # utils::download.file(paste0(base_url(), "SpeciesList.txt"), temp, quiet = TRUE)
+  # tick(pb, quiet)
+  # species <- utils::read.fwf(temp, skip = 10, strip.white = TRUE, header = FALSE,
+  #                            colClasses = c("integer",
+  #                                           "character",
+  #                                           "character",
+  #                                           "character",
+  #                                           "character",
+  #                                           "character",
+  #                                           "character",
+  #                                           "character",
+  #                                           "character"),
+  #                            widths = c(6, -1, 5, -1, 50, -1, 50, -1, 50, -1,
+  #                                       50, -1, 50, -1, 50, -1, 50),
+  #                     fileEncoding = "iso-8859-1")
+  # unlink(temp)
+  # tick(pb, quiet)
+
+  #species <- species[, -c(4, 5)] # remove french and spanish name
+  # names(species) <- c("seq","aou","english","french","spanish","order","family","genus","species")
+  # tick(pb, quiet)
+
+  # # this reads in the USGS BBS ftp site species file
+  # species[, "sp.bbs"] <- as.integer(as.character(species[, "aou"]))
+  # tick(pb, quiet)
+  #
+  #   bbs_data <- list(bird = bird,
+  #                    route = route,
+  #                    species = species)
 
   if (level == "state")
   {
@@ -205,14 +261,13 @@ fetch_bbs_data <- function(level = "state",
 }
 
 
-get_counts <- function(level, quiet) {
+get_counts <- function(level, quiet, sb_conn) {
   if (level == "state") {
-    count_ftp_subdir <- "States/"
+    count_zip <- "States.zip"
   }
   if (level == "stop") {
-    count_ftp_subdir <- "50-StopData/1997ToPresent_SurveyWide/"
+    count_zip <- "50-StopData.zip"
   }
-  count_ftp_dir <- paste0(base_url(), count_ftp_subdir)
 
   dir_listing_csv <- system.file("data-import",
                                  paste0(level, "-dir.csv"),
@@ -224,37 +279,47 @@ get_counts <- function(level, quiet) {
     pb <- progress::progress_bar$new(
       format = "\r[:bar] :percent eta: :eta",
       clear = FALSE,
-      total = nrow(bird_count_filenames) + 1,
+      total = nrow(bird_count_filenames) + 5,
       width = 100)
     pb$tick(0)
   }
 
-  bird <- vector(mode = "list", length = nrow(bird_count_filenames))
-  for(i in seq_along(bird_count_filenames$File.Name)) {
-    fname <- bird_count_filenames$File.Name[i]
-    fname_no_ext <- tools::file_path_sans_ext(fname)
-    temp <- tempfile()
-    utils::download.file(paste0(count_ftp_dir, fname_no_ext, ".zip"),
-                         destfile = temp,
-                         quiet = TRUE)
-    dataset_name <- paste0(fname_no_ext, ".csv")
-    if (level == "stop") {
-      # zip files use title case 'Fifty1.zip', but csv filenames are lowercase
-      dataset_name <- gsub("^Fifty", replacement = "fifty", x = dataset_name)
-    }
-    bird[[i]] <- utils::read.csv(unz(temp, dataset_name),
+  temp <- tempdir()
+  full_path <- sbtools::item_file_download(sb_id = sb_conn,
+                                           names = count_zip,
+                                           destinations = file.path(temp, count_zip))
+  tick(pb, quiet)
+
+  unz_path <- utils::unzip(zipfile = full_path,
+                           exdir = temp)
+  tick(pb, quiet)
+
+  bird <- vector(mode = "list", length = length(unz_path))
+  for (i in 1:length(unz_path))
+  {
+    bird[[i]] <- utils::read.csv(utils::unzip(zipfile = unz_path[i],
+                                              exdir = temp),
                                  stringsAsFactors = FALSE)
-    unlink(temp)
     tick(pb, quiet)
   }
+  unlink(temp)
+
+  # Coding around mistakes: 2020 data has countrynum and CountryNum
+  #    in the 10th data frame of bird, so get rid of countrynum.
+  #    Only relevant for level = "state", this will probably be taken out
+  #    next year lol
+  bird[[10]] <- bird[[10]][-c(2)]
 
   # The "StateNum" column is inconsistently named - fix it to be consistent
   bird <- lapply(bird, function(x){
     names(x) <- ifelse(names(x) == "statenum", "StateNum", names(x))
     x
   })
+  tick(pb, quiet)
+
 
   bird <- do.call(rbind, bird)
+  tick(pb, quiet)
 
   # column case conventions differ for state vs. stop level data, so we set:
   to_lower <- c('countrynum', 'statenum')
@@ -263,11 +328,12 @@ get_counts <- function(level, quiet) {
   names(bird)[match(to_upper, tools::toTitleCase(names(bird)))] <- to_upper
   tick(pb, quiet)
   return(bird)
+
 }
 
-
-base_url <- function() {
-  "ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/"
+get_sb_id <- function()
+{
+  return("5ea04e9a82cefae35a129d65")
 }
 
 tick <- function(pb, quiet) {
