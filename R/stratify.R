@@ -12,10 +12,13 @@
 #' @param bbs_data Raw BBS data saved as a list of 3 data frames.
 #'   Not necessary if you have already run \code{fetch_bbs_data}
 #' @param lump_species_forms Logical, default is TRUE, indicating that for
-#'   species with multiple forms, the "unidentified" form represents
-#'   the sum of observations for all forms. The underlying BBS database also
-#'   includes separate data for each form, and an unidentified category for
-#'   observations that were not specific to a particular form
+#'   species with multiple forms, the "unidentified" form is replaced by
+#'   the sum of observations for all forms (including the original unidentified obs).
+#'   The underlying BBS database includes separate data for each form,
+#'   and these separate forms are retained with their original names.
+#'   The original unidentified category for observations that were not specific to
+#'   a particular form are replaced by the combined observations. If the user
+#'   wishes to keep the unidentified form separate, this can be set to FALSE
 #' @param stratify_by Deprecated in favour of 'by'
 #'
 #' @return Large list (3 elements) consisting of:
