@@ -1,8 +1,8 @@
 Package: bbsBayes
 Type: Package
 Title: Hierarchical Bayesian Analysis of North American BBS Data
-Version: 2.3.2.2020
-Date: 2020-06-26
+Version: 2.3.3.2020
+Date: 2020-07-08
 Authors@R: c(person("Brandon P.M.", "Edwards", role = c("aut", "cre"),
                      email = "edwardsb@uoguelph.ca"),
               person("Adam C.", "Smith", role = "aut",
