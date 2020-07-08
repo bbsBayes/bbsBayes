@@ -3,7 +3,8 @@
 #' \code{fetch_bbs_data} uses File Transfer Protocol (FTP) to fetch Breeding Bird
 #'  Survey data from the United States Geological Survey (USGS) FTP site. This
 #'  is the raw data that is uploaded to the site before any analyses are performed.
-#'  A package-specific directory is created on the user's computer and the BBS
+#'  A package-specific directory is created on the user's computer (see documentation of
+#'  \code{rappdirs::appdir} for details of where this directory lives), and the BBS
 #'  data is saved to that directory for use by other functions.
 #'  Before downloading any data, the user must thoroughly read through the terms
 #'  and conditions of the user of the data and type the word "yes" to agree.
@@ -17,8 +18,6 @@
 #' the modeling utilities in bbsBayes.
 #' @param quiet Logical: should progress bars be suppressed? Defaults to FALSE
 #' @param force Logical: if BBS data already exists on computer, should it be overwritten? Defaults to FALSE
-#'
-#'
 #'
 #' @importFrom utils download.file read.csv read.fwf unzip
 #' @importFrom sbtools item_get item_file_download
@@ -55,12 +54,15 @@ fetch_bbs_data <- function(level = "state",
     return(NULL)
   }
 
-  bbs_dir <- app_dir(appname = "bbsBayes")
+  bbs_dir <- rappdirs::app_dir(appname = "bbsBayes")
 
   if (isFALSE(file.exists(bbs_dir$data())))
   {
     message(paste0("Creating data directory at ", bbs_dir$data()))
     dir.create(bbs_dir$data(), recursive = TRUE)
+  }else
+  {
+    message(paste0("Using data directory at ", bbs_dir$data()))
   }
 
   if (level == "state")
