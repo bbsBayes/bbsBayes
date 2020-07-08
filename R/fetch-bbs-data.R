@@ -306,9 +306,13 @@ get_counts <- function(level, quiet, sb_conn) {
 
   # Coding around mistakes: 2020 data has countrynum and CountryNum
   #    in the 10th data frame of bird, so get rid of countrynum.
-  #    Only relevant for level = "state", this will probably be taken out
+  #    Only relevant for level = "stop", this will probably be taken out
   #    next year lol
-  bird[[10]] <- bird[[10]][-c(2)]
+  if (level == "stop")
+  {
+    bird[[10]] <- bird[[10]][-c(2)]
+  }
+
 
   # The "StateNum" column is inconsistently named - fix it to be consistent
   bird <- lapply(bird, function(x){
