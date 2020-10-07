@@ -236,7 +236,7 @@ prepare_jags_data <- function(strat_data = NULL,
     if (!isTRUE(quiet)){pb$tick()}
   }else
   {
-    for(p in unique(spsp.c$strat_name) + 6)
+    for(p in length(unique(spsp.c$strat_name)) + 6)
     {
       if (!isTRUE(quiet)){pb$tick()}
     }
