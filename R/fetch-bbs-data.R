@@ -310,10 +310,10 @@ get_counts <- function(level, quiet, sb_conn) {
   #    in the 10th data frame of bird, so get rid of countrynum.
   #    Only relevant for level = "stop", this will probably be taken out
   #    next year lol
-  if (level == "stop")
-  {
-    bird[[10]] <- bird[[10]][-c(2)]
-  }
+  #if (level == "stop") # issue appears to be fixed; throws an error with do.call(rbind) below.
+  #{
+  #  bird[[10]] <- bird[[10]][-c(2)]
+  #}
 
 
   # The "StateNum" column is inconsistently named - fix it to be consistent
