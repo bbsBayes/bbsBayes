@@ -4,7 +4,8 @@
 \name{route_sample}
 \alias{route_sample}
 \title{Sample route data per year run (Pacific Wren only)}
-\format{A data frame with 20 rows and 32 variables:
+\format{
+A data frame with 20 rows and 32 variables:
 \describe{
   \item{countrynum}{Numerical representation of the country}
   \item{statenum}{Numerical representation of state or province}
@@ -38,7 +39,8 @@
   \item{State}{String representation of state or province}
   \item{St_Abrev}{Abbreviated state or province}
   \item{Country}{Abbreviated country}
-}}
+}
+}
 \usage{
 route_sample
 }

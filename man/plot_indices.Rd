@@ -4,10 +4,18 @@
 \alias{plot_indices}
 \title{Generate plots of index trajectories by stratum}
 \usage{
-plot_indices(indices_list = NULL, ci_width = 0.95, min_year = NULL,
-  max_year = NULL, species = "", title_size = 20,
-  axis_title_size = 18, axis_text_size = 16,
-  add_observed_means = FALSE, add_number_routes = FALSE)
+plot_indices(
+  indices_list = NULL,
+  ci_width = 0.95,
+  min_year = NULL,
+  max_year = NULL,
+  species = "",
+  title_size = 20,
+  axis_title_size = 18,
+  axis_text_size = 16,
+  add_observed_means = FALSE,
+  add_number_routes = FALSE
+)
 }
 \arguments{
 \item{indices_list}{List of indices of annual abundance and other results produced by
