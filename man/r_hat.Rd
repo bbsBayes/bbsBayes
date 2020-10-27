@@ -26,7 +26,7 @@ R-hat, also known as the potential scale reduction factor (PSRF) was described b
   Gelman & Rubin (1992) as a way of calculating convergence of parameters given
   2 or more chains. See citation below for details.
 
-Gelman, Andrew; Rubin, Donald B. Inference from Iterative Simulation Using Multiple
+  Gelman, Andrew; Rubin, Donald B. Inference from Iterative Simulation Using Multiple
   Sequences. Statist. Sci. 7 (1992), no. 4, 457--472. doi:10.1214/ss/1177011136.
   https://projecteuclid.org/euclid.ss/1177011136
 }

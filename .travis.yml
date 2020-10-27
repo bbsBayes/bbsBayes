@@ -22,10 +22,17 @@ env:
    - R_CHECK_ARGS=--no-manual --as-cran
 
 r_packages:
-  - jagsUI
-  - progress
-  - ggplot2
-  - stringr
-  - grDevices
-  - rgdal
-  - sp
+   - progress
+   - jagsUI
+   - ggrepel
+   - geofacet
+   - ggplot2
+   - stringr
+   - grDevices
+   - rgdal
+   - dplyr
+   - sf
+   - tools
+   - latticeExtra
+   - rappdirs
+   - sbtools

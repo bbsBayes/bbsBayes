@@ -4,7 +4,8 @@
 \name{bird_sample}
 \alias{bird_sample}
 \title{Sample point count data per species (Pacific Wren only)}
-\format{A data frame with 20 rows and 15 variables:
+\format{
+A data frame with 20 rows and 15 variables:
 \describe{
   \item{statenum}{Numerical representation of state or province}
   \item{Route}{Numerican representation of the route the species was observed}
@@ -21,7 +22,8 @@
   \item{StopTotal}{Count for all stops}
   \item{SpeciesTotal}{Total count for the species on the route run}
   \item{BCR}{Bird Conservation Region the route was run in}
-}}
+}
+}
 \usage{
 bird_sample
 }

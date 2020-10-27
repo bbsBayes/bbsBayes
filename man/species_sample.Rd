@@ -4,7 +4,8 @@
 \name{species_sample}
 \alias{species_sample}
 \title{Sample North American bird species list (Pacific Wren only)}
-\format{A data frame with 20 rows and 10 variables:
+\format{
+A data frame with 20 rows and 10 variables:
 \describe{
   \item{seq}{Sequence - USGS use}
   \item{aou}{Numerical representation of the species, designated by American Ornithological Union}
@@ -14,7 +15,8 @@
   \item{genus}{Taxonomic genus}
   \item{species}{Taxonomic species}
   \item{sp.bbs}{Same as aou, no leading 0}
-}}
+}
+}
 \usage{
 species_sample
 }

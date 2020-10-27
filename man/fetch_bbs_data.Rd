@@ -26,7 +26,8 @@ None
 \code{fetch_bbs_data} uses File Transfer Protocol (FTP) to fetch Breeding Bird
  Survey data from the United States Geological Survey (USGS) FTP site. This
  is the raw data that is uploaded to the site before any analyses are performed.
- A package-specific directory is created on the user's computer and the BBS
+ A package-specific directory is created on the user's computer (see documentation of
+ \code{rappdirs::appdir} for details of where this directory lives), and the BBS
  data is saved to that directory for use by other functions.
  Before downloading any data, the user must thoroughly read through the terms
  and conditions of the user of the data and type the word "yes" to agree.

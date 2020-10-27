@@ -89,13 +89,23 @@ stratify <- function(by = NULL,
     }
   }
 
+  # Read lump table prior to analysis to determine progress bar length
+  lump_sp <- utils::read.csv(system.file("species-lump-split",
+                                         "lump.csv",
+                                         package = "bbsBayes"),
+                             stringsAsFactors = FALSE)
+  pb_len <- 8
+  if (isTRUE(lump_species_forms))
+  {
+    pb_len <- pb_len + nrow(lump_sp)
+  }
   if (!isTRUE(quiet))
   {
     message("Stratifying data")
     pb <- progress::progress_bar$new(
       format = "\r[:bar] :percent eta: :eta",
       clear = FALSE,
-      total = 8,
+      total = pb_len,
       width = 80)
     pb$tick(0)
   }
@@ -115,7 +125,7 @@ stratify <- function(by = NULL,
     tmp1 <- NULL
     tmp2 <- NULL
     tmp <- NULL
-    lump_sp <- utils::read.csv(system.file("species-lump-split", "lump.csv", package = "bbsBayes"),stringsAsFactors = FALSE)
+
   for(lumpi in 1:nrow(lump_sp)){
     aou1 <- lump_sp[lumpi,"aou_original"]
     sp_en <- lump_sp[lumpi,"english_out"]
@@ -147,6 +157,8 @@ stratify <- function(by = NULL,
       tmp_add <- rbind(tmp_add,tmp)
       rem <- c(rem,rem1)
     }
+
+    if (!isTRUE(quiet)){pb$tick()}
   }
     bird <- bird[-rem,]
     bird <- rbind(bird,tmp_add)

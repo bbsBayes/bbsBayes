@@ -4,11 +4,23 @@
 \alias{run_model}
 \title{Run JAGS model for prepared species data}
 \usage{
-run_model(jags_data = NULL, model_file_path = NULL, inits = NULL,
-  parameters_to_save = c("n"), track_n = TRUE, n_chains = 3,
-  n_adapt = NULL, n_burnin = 20000, n_thin = 10,
-  n_saved_steps = 2000, n_iter = 10000, parallel = FALSE,
-  quiet = FALSE, modules = NULL, ...)
+run_model(
+  jags_data = NULL,
+  model_file_path = NULL,
+  inits = NULL,
+  parameters_to_save = c("n"),
+  track_n = TRUE,
+  n_chains = 3,
+  n_adapt = NULL,
+  n_burnin = 20000,
+  n_thin = 10,
+  n_saved_steps = 2000,
+  n_iter = 10000,
+  parallel = FALSE,
+  quiet = FALSE,
+  modules = NULL,
+  ...
+)
 }
 \arguments{
 \item{jags_data}{List or environment containing the data to model, as output
