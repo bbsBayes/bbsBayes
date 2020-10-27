@@ -614,13 +614,41 @@ These values can be useful for deriving statements such as "our model suggests t
 
 ## Custom regional summaries
 
-Yes, you can calculate the trend and trajectories for custom combinations of strata, such as the trends for Eastern and Western populations of Bobolinks.
+Yes, you can calculate the trend and trajectories for custom combinations of strata, such as the trends for Eastern and Western populations of Lincoln's Sparrow.
 
 ``` {.r}
-get_composite_regions()
+    #stratification <- "bbs_cws"
+    #strat_data <- stratify(by = stratification, sample_data = TRUE)
+    #jags_data <- prepare_jags_data(strat_data, 
+    #                           species_to_run = "Lincoln's Sparrow",
+    #                           model = "gamye")
+
+    #jags_mod <- run_model(jags_data = jags_data)
 ```
 
-Details coming soon...
+Assuming the above setup has been run.
+The user could then generate population trajectories using a customized grouping of the original strata.
+
+First extract a dataframe that defines the original strata used in the analysis.
+
+``` {.r}
+st_comp_regions <- get_composite_regions(strata_type = stratification)
+```
+The add a column to the dataframe that groups the original strata into the desired custom regions.
+``` {.r}
+st_comp_regions$East_West <- ifelse(st_comp_regions$bcr %in% c(7,8,12:14,22:31),"East","West")
+```
+
+st_comp_regions can now be used as the dataframe input to the argument alt_region_names in `generate_indices()`, with "East_West" as the value for the argument regions.
+The relevant trends can be calculated using just the `generate_trends()` function.
+
+``` {.r}
+east_west_indices <- generate_indices(jags_mod = jags_mod,
+                                      jags_data = jags_data,
+                                      alt_region_names = st_comp_regions,
+                                      regions = "East_West")
+east_west_trends <- generate_trends(indices = east_west_indices)
+```
 
 ## Exporting the JAGS model
 
@@ -652,8 +680,9 @@ We'll add some more details and examples soon.
 Finally, bbsBayes can be used to run Bayesian cross-validations.
 For example, the `get_final_values()` function is useful to provide an efficient starting point for a cross-validation runs, without having to wait for another full burn-in period.
 
-The archived supplement to this pre-print provides an example of how to implement a cross-validation using bbsBayes.
+Paper that includes an example of how to implement a cross-validation using bbsBayes.
+
 Pre-print: <https://doi.org/10.1101/2020.03.26.010215> Supplement: [![DOI](https://zenodo.org/badge/228419725.svg)](https://zenodo.org/badge/latestdoi/228419725)
 
 NOTE: although bbsBayes includes functions to calculate WAIC, recent work has shown that WAIC performs very poorly with the BBS data (<https://doi.org/10.1650/CONDOR-17-1.1>).
-We recommend a k-fold cross-validation approach.
+We recommend a k-fold cross-validation approach, as in the above zenodo archive.
