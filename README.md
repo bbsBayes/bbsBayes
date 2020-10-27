@@ -119,6 +119,13 @@ S <- ggmcmc::ggs(jags_mod$samples,family = "B.X") #samples object is an mcmc.lis
 ggmcmc::ggmcmc(S,family = "B.X") ## this will output a pdf with a series of plots useful for assessing convergence. Be warned this function will be overwhelmed if trying to handle all of the n values from a BBS analysis of a broad-ranged species
 ```
 
+Alternatively, the shinystan package has some wonderful interactive tools for better understanding convergence issues with MCMC output.
+
+``` {.r}
+install.packages("shinystan")
+my_sso <- shinystan::launch_shinystan(shinystan::as.shinystan(jags_mod$samples, model_name = "My_tricky_model"))
+```
+
 bbsBayes also includes a function to help re-start an MCMC chain, so that you avoid having to wait for an additional burn-in period.
 
 ``` {.r}
