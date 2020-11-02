@@ -157,6 +157,7 @@ stratify <- function(by = NULL,
       tmp_add <- rbind(tmp_add,tmp)
       rem <- c(rem,rem1)
     }
+
     if (!isTRUE(quiet)){pb$tick()}
   }
     bird <- bird[-rem,]
