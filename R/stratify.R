@@ -192,19 +192,21 @@ stratify <- function(by = NULL,
   {
     # Combine all BCR 7
     route[which(route$BCR == 7),"St_Abrev"] <- "BCR7"
-    route[which(route$BCR == 7), "Route"] <- route[which(route$BCR == 7), "Route"]+route[which(route$BCR == 7), "statenum"]
-    bird[which(bird$BCR == 7), "Route"] <- bird[which(bird$BCR == 7), "Route"]+bird[which(bird$BCR == 7), "statenum"]
+    route[which(route$BCR == 7), "Route"] <- route[which(route$BCR == 7), "Route"]+(1000*route[which(route$BCR == 7), "statenum"])
+    bird[which(bird$BCR == 7), "Route"] <- bird[which(bird$BCR == 7), "Route"]+(1000*bird[which(bird$BCR == 7), "statenum"])
     route[which(route$BCR == 7), "statenum"] <- 777
     bird[which(bird$BCR == 7), "statenum"] <- 777
 
     # Combine NS and PEI
     route[which(route$State == "Nova Scotia"), "State"] <- "Nova Scotia Prince Edward Island"
+    ## adding 200 to hte PEI route numbers, so they remain distinct from the Nova Scotia routes (1, 5, 9, and 13)
+    route[which(route$State == "Prince Edward Island"), "Route"] <- route[which(route$State == "Prince Edward Island"), "Route"]+ (1000*route[which(route$State == "Prince Edward Island"), "statenum"])
     route[which(route$State == "Prince Edward Island"), "State"] <- "Nova Scotia Prince Edward Island"
     route[which(route$State == "Nova Scotia Prince Edward Island"), "St_Abrev"] <- "NSPE"
     route[which(route$St_Abrev == "NSPE"), "statenum"] <- 765
     bird[which(bird$statenum == 65), "statenum"] <- 765
-    ## adding 200 to hte PEI route numbers, so they remain distinct from the Nova Scotia routes (1, 5, 9, and 13)
-    bird[which(bird$statenum == 75), "Route"] <- bird[which(bird$statenum == 75), "Route"]+200
+    ## adding statevalue*1000 to hte PEI route numbers, so they remain distinct from the Nova Scotia routes (1, 5, 9, and 13)
+    bird[which(bird$statenum == 75), "Route"] <- bird[which(bird$statenum == 75), "Route"]+ (1000* bird[which(bird$statenum == 75), "statenum"])
     bird[which(bird$statenum == 75), "statenum"] <- 765
 
     route[,"strat_name"] <- paste(route[,"Country"],
