@@ -12,10 +12,13 @@
 #' @param bbs_data Raw BBS data saved as a list of 3 data frames.
 #'   Not necessary if you have already run \code{fetch_bbs_data}
 #' @param lump_species_forms Logical, default is TRUE, indicating that for
-#'   species with multiple forms, the "unidentified" form represents
-#'   the sum of observations for all forms. The underlying BBS database also
-#'   includes separate data for each form, and an unidentified category for
-#'   observations that were not specific to a particular form
+#'   species with multiple forms, the "unidentified" form is replaced by
+#'   the sum of observations for all forms (including the original unidentified obs).
+#'   The underlying BBS database includes separate data for each form,
+#'   and these separate forms are retained with their original names.
+#'   The original unidentified category for observations that were not specific to
+#'   a particular form are replaced by the combined observations. If the user
+#'   wishes to keep the unidentified form separate, this can be set to FALSE
 #' @param stratify_by Deprecated in favour of 'by'
 #'
 #' @return Large list (3 elements) consisting of:
@@ -86,13 +89,23 @@ stratify <- function(by = NULL,
     }
   }
 
+  # Read lump table prior to analysis to determine progress bar length
+  lump_sp <- utils::read.csv(system.file("species-lump-split",
+                                         "lump.csv",
+                                         package = "bbsBayes"),
+                             stringsAsFactors = FALSE)
+  pb_len <- 8
+  if (isTRUE(lump_species_forms))
+  {
+    pb_len <- pb_len + nrow(lump_sp)
+  }
   if (!isTRUE(quiet))
   {
     message("Stratifying data")
     pb <- progress::progress_bar$new(
       format = "\r[:bar] :percent eta: :eta",
       clear = FALSE,
-      total = 8,
+      total = pb_len,
       width = 80)
     pb$tick(0)
   }
@@ -112,7 +125,7 @@ stratify <- function(by = NULL,
     tmp1 <- NULL
     tmp2 <- NULL
     tmp <- NULL
-    lump_sp <- utils::read.csv(system.file("species-lump-split", "lump.csv", package = "bbsBayes"),stringsAsFactors = FALSE)
+
   for(lumpi in 1:nrow(lump_sp)){
     aou1 <- lump_sp[lumpi,"aou_original"]
     sp_en <- lump_sp[lumpi,"english_out"]
@@ -144,6 +157,8 @@ stratify <- function(by = NULL,
       tmp_add <- rbind(tmp_add,tmp)
       rem <- c(rem,rem1)
     }
+
+    if (!isTRUE(quiet)){pb$tick()}
   }
     bird <- bird[-rem,]
     bird <- rbind(bird,tmp_add)

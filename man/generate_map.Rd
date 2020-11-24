@@ -4,8 +4,13 @@
 \alias{generate_map}
 \title{Generate a map of trends by strata.}
 \usage{
-generate_map(trend = NULL, select = FALSE, stratify_by = NULL,
-  slope = FALSE, species = "")
+generate_map(
+  trend = NULL,
+  select = FALSE,
+  stratify_by = NULL,
+  slope = FALSE,
+  species = ""
+)
 }
 \arguments{
 \item{trend}{Dataframe of strata trends produced by
