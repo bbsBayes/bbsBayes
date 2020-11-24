@@ -188,6 +188,8 @@ stratify <- function(by = NULL,
     route[which(route$State == "Nova Scotia Prince Edward Island"), "St_Abrev"] <- "NSPE"
     route[which(route$St_Abrev == "NSPE"), "statenum"] <- 765
     bird[which(bird$statenum == 65), "statenum"] <- 765
+    ## adding 200 to hte PEI route numbers, so they remain distinct from the Nova Scotia routes (1, 5, 9, and 13)
+    bird[which(bird$statenum == 75), "Route"] <- bird[which(bird$statenum == 75), "Route"]+200
     bird[which(bird$statenum == 75), "statenum"] <- 765
 
     route[,"strat_name"] <- paste(route[,"Country"],
