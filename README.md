@@ -332,7 +332,7 @@ The slope option estimates the time series as a log-linear regression with rando
 
 ### gam
 
-The gam option models the time series as a semiparametric smooth using a Generalized Additive Model (GAM) structure. See <https://github.com/AdamCSmithCWS/GAM_Paper_Script> for more information (full publication coming soon)
+The gam option models the time series as a semiparametric smooth using a Generalized Additive Model (GAM) structure. See <https://github.com/AdamCSmithCWS/Smith_Edwards_GAM_BBS> for more information (full publication coming soon)
 
 ``` {.r}
     #stratified_data <- stratify(by = "bbs_usgs")
