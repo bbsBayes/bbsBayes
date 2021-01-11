@@ -146,7 +146,8 @@ for(rr in regions){ #selecting the type of composite region
   for(rrs in regsest){
 
     reg = gsub(rrs,pattern = paste0(rr,"_"),replacement = "",fixed = TRUE)
-    w_summary_rows = which(dsum$Region == reg & dsum$Region_type == rr)
+    w_summary_rows = which(dsum$Region == reg & dsum$Region_type == rr &
+                             dsum$Year %in% c(((indices$startyear+minyn)-1):((indices$startyear+maxyn)-1)))
 
 
 n = n_all[[rrs]]
