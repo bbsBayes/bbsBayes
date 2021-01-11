@@ -140,10 +140,15 @@ plot_indices <- function(indices_list = NULL,
         ncby_y = ceiling(to_plot$nrts/50)
         annot = c("each dot ~ 50 routes")
       }else{
+        if(max(to_plot$nrts) > 100){
+          ncby_y = ceiling(to_plot$nrts/10)
+          annot = c("each dot ~ 10 routes")
+        }else{
         ncby_y = to_plot$nrts
         annot = c("each dot = 1 route")
-
+        }
       }
+
       names(ncby_y) <- to_plot$Year
       dattc = data.frame(Year = rep(as.integer(names(ncby_y)),times = ncby_y))
     }
