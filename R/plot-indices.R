@@ -166,7 +166,7 @@ plot_indices <- function(indices_list = NULL,
             plot.title = ggplot2::element_text(size = title_size),
             axis.title = ggplot2::element_text(size = axis_title_size),
             axis.text = ggplot2::element_text(size = axis_text_size)) +
-      ggplot2::labs(title = paste(species, " Trajectory ", i, sep = ""),
+      ggplot2::labs(title = paste(species, " ", i, sep = ""),
            x = "Year",
            y = "Annual index of abundance (mean count)") +
       ggplot2::geom_point(data = to_plot,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6))+
@@ -193,7 +193,7 @@ plot_indices <- function(indices_list = NULL,
                        plot.title = ggplot2::element_text(size = title_size),
                        axis.title = ggplot2::element_text(size = axis_title_size),
                        axis.text = ggplot2::element_text(size = axis_text_size)) +
-        ggplot2::labs(title = paste(species, " Trajectory ", i, sep = ""),
+        ggplot2::labs(title = paste(species, " ", i, sep = ""),
                       x = "Year",
                       y = "Annual index of abundance (mean count)") +
         ggplot2::geom_line(data = to_plot, ggplot2::aes(x = Year, y = Index), colour = cl) +
