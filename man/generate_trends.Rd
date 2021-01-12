@@ -51,9 +51,9 @@ Dataframe with one row for each region included in indices object, and columns i
   \item{Number_of_Strata}{The number of strata included in the region}
   \item{Width_of_X_percent_Credible_Interval}{Width (in percent/year) of the credible interval on the Trend calculation. Calculated for the widest credible interval requested in quantiles argument. Default is 95 percent CI (i.e., Trend_Q0.975 - Trend_Q0.025)}
   \item{Width_of_X_percent_Credible_Interval_Slope}{Width (in percent/year) of the credible interval on the Trend calculation for the slope-based trend. Calculated for the widest credible interval requested in quantiles argument. Default is 95 percent CI (i.e., Slope_Trend_Q0.975 - Slope_Trend_Q0.025)}
-  \item{Number_of_Routes}{The number of unique BBS routes included in the trend calculation for this region and species}
+  \item{Number_of_Routes}{The number of unique BBS routes included in the annual indices for this region and species, i.e., number of routes for this region and species for the years since \code{generate_indices(startyear)}}
   \item{Mean_Number_of_Routes}{The average number of BBS routes across years contributing data for this region and species}
-  \item{backcast_flag}{approximate proportion of the included species range*years that are free of extrapolated population trajectories e.g., 1.0 = data cover full time-series, 0.75 = data cover 75 percent of time-series. Only calculated if max_backcast != NULL}
+  \item{backcast_flag}{approximate proportion of the included species range*years that are supported by data in a given region and year, e.g., 1.0 = data cover full time-series, 0.75 = data cover 75 percent of time-series. Only calculated if max_backcast != NULL}
 }
 \description{
 \code{generate_trends} calculates the geometric mean annual changes in population size for composite regions.
