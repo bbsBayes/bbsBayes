@@ -4,10 +4,6 @@
 \alias{stratify}
 \title{Stratify raw Breeding Bird Survey data}
 \usage{
-<<<<<<< HEAD
-stratify(by = NULL, sample_data = FALSE, bbs_data = NULL,
-  lump_species_forms = TRUE, quiet = FALSE, stratify_by = NULL)
-=======
 stratify(
   by = NULL,
   sample_data = FALSE,
@@ -16,7 +12,6 @@ stratify(
   quiet = FALSE,
   stratify_by = NULL
 )
->>>>>>> b936b577ffc99d000a91b3f228d6933573653df4
 }
 \arguments{
 \item{by}{String argument of stratification type.
@@ -29,7 +24,6 @@ Defaults to FALSE.}
 Not necessary if you have already run \code{fetch_bbs_data}}
 
 \item{lump_species_forms}{Logical, default is TRUE, indicating that for
-
 species with multiple forms, the "unidentified" form is replaced by
 the sum of observations for all forms (including the original unidentified obs).
 The underlying BBS database includes separate data for each form,
@@ -37,7 +31,6 @@ and these separate forms are retained with their original names.
 The original unidentified category for observations that were not specific to
 a particular form are replaced by the combined observations. If the user
 wishes to keep the unidentified form separate, this can be set to FALSE}
-
 
 \item{quiet}{Should progress bars be suppressed?}
 

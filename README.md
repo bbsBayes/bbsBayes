@@ -1,6 +1,6 @@
 # bbsBayes <img src="man/figures/logo.png" align="right"/>
 
-[![Build Status](https://travis-ci.org/BrandonEdwards/bbsBayes.svg?branch=master)](https://travis-ci.org/BrandonEdwards/bbsBayes) [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/bbsBayes)](https://cran.r-project.org/package=bbsBayes) [![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/bbsBayes)](https://cran.r-project.org/package=bbsBayes) [![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 
 ## Overview
 
@@ -10,12 +10,10 @@ bbsBayes is a package to perform hierarchical Bayesian analysis of North America
 
 ## Installation
 
-As of 27 May 2020, bbsBayes v2.2.1 is officially on CRAN! There are two ways to install bbsBayes:
-
-Option 1: Stable release from CRAN (currently v2.2.1)
+Option 1: Stable release from CRAN (currently v2.3.5.2020)
 
 ``` {.r}
-# To install v2.2.1 from CRAN:
+# To install v2.3.5.2020 from CRAN:
 install.packages("bbsBayes")
 ```
 
@@ -334,7 +332,7 @@ The slope option estimates the time series as a log-linear regression with rando
 
 ### gam
 
-The gam option models the time series as a semiparametric smooth using a Generalized Additive Model (GAM) structure. See <https://github.com/AdamCSmithCWS/GAM_Paper_Script> for more information (full publication coming soon)
+The gam option models the time series as a semiparametric smooth using a Generalized Additive Model (GAM) structure. See <https://github.com/AdamCSmithCWS/Smith_Edwards_GAM_BBS> for more information (full publication coming soon)
 
 ``` {.r}
     #stratified_data <- stratify(by = "bbs_usgs")
