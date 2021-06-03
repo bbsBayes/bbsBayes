@@ -138,6 +138,8 @@ run_model <- function(jags_data = NULL,
     }
   }
 
+  message("Console output messages for JAGS models are supplied by jagsUI package.")
+
   jags_job <- jagsUI::jags(data = jags_data,
                            inits = inits,
                            parameters.to.save = parameters_to_save,
