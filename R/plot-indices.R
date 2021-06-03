@@ -11,6 +11,7 @@
 #' @param title_size Specify font size of plot title. Defaults to 20
 #' @param axis_title_size Specify font size of axis titles. Defaults to 18
 #' @param axis_text_size Specify font size of axis text. Defaults to 16
+#' @param line_width Specify the size of the trajectory line. Defaults to 1
 #' @param add_observed_means Should the plot include points indicated the observed mean counts. Defaults to FALSE. Note: scale of observed means and annual indices may not match due to imbalanced sampling among routes
 #' @param add_number_routes Should the plot be superimposed over a dotplot showing the number of BBS routes included in each year. This is useful as a visual check on the relative data-density through time because in most cases the number of observations increases over time
 #'
@@ -87,6 +88,7 @@ plot_indices <- function(indices_list = NULL,
                          title_size = 20,
                          axis_title_size = 18,
                          axis_text_size = 16,
+                         line_width = 1,
                          add_observed_means = FALSE,
                          add_number_routes = FALSE)
 {
@@ -170,7 +172,7 @@ plot_indices <- function(indices_list = NULL,
            x = "Year",
            y = "Annual index of abundance (mean count)") +
       ggplot2::geom_point(data = to_plot,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6))+
-      ggplot2::geom_line(data = to_plot, ggplot2::aes(x = Year, y = Index), colour = cl) +
+      ggplot2::geom_line(data = to_plot, ggplot2::aes(x = Year, y = Index), colour = cl, size = line_width) +
       ggplot2::geom_ribbon(data = to_plot, ggplot2::aes(x = Year, ymin = lci, ymax = uci),fill = cl,alpha = 0.3)+
       ggplot2::scale_x_continuous(breaks = yys)+
       ggplot2::scale_y_continuous(limits = c(0,NA))+
@@ -196,7 +198,7 @@ plot_indices <- function(indices_list = NULL,
         ggplot2::labs(title = paste(species, " ", i, sep = ""),
                       x = "Year",
                       y = "Annual index of abundance (mean count)") +
-        ggplot2::geom_line(data = to_plot, ggplot2::aes(x = Year, y = Index), colour = cl) +
+        ggplot2::geom_line(data = to_plot, ggplot2::aes(x = Year, y = Index), colour = cl, size = line_width) +
         ggplot2::geom_ribbon(data = to_plot, ggplot2::aes(x = Year, ymin = lci, ymax = uci),fill = cl, alpha = 0.3)+
         ggplot2::scale_x_continuous(breaks = yys)+
         ggplot2::scale_y_continuous(limits = c(0,NA))
