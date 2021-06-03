@@ -31,7 +31,7 @@
 #'   \item{nonzeroweight}{Proportion of routes in each strata with species obervation}
 #'   \item{count}{Vector of counts for the species}
 #'   \item{strat}{Vector of strata to be used in the analysis}
-#'   \item{osber}{Vector of unique observer-route pairings}
+#'   \item{obser}{Vector of unique observer-route pairings}
 #'   \item{year}{Vector of years for each count}
 #'   \item{firstyr}{Vector of indicator variables as to whether an observer was a first year}
 #'   \item{month}{vector of numeric month of observation}
