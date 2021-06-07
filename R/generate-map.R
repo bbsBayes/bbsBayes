@@ -11,6 +11,7 @@
 #' @param stratify_by How were the data stratified?
 #' @param slope Logical, if TRUE, maps values of the alternative trend metric if slope = TRUE was used in \code{generate_strata_trends}, the slope of a log-linear regression through the annual indices. Default FALSE.
 #' @param species Text, optional species name to add plot title. if left blank "" no title is added
+#' @param col_viridis Logical flag to use "viridis" colour-blind friendly palette. Default is FALSE
 #'
 #' @return spplot object
 #'
@@ -57,7 +58,8 @@ generate_map <- function(trend = NULL,
                          select = FALSE,
                          stratify_by = NULL,
                          slope = FALSE,
-                         species = "")
+                         species = "",
+                         col_viridis = FALSE)
 {
   # Silly things to remove "visible binding" note in check
   Trend <- NULL
@@ -109,8 +111,16 @@ generate_map <- function(trend = NULL,
     ptit = ""
   }
 
-  map_palette <- c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
-                   "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")
+  if (col_viridis)
+  {
+    map_palette <- c("#fde725", "#dce319", "#b8de29", "#95d840", "#73d055", "#55c667",
+                     "#238a8d", "#2d708e", "#39568c", "#453781", "#481567")
+  }else
+  {
+    map_palette <- c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
+                     "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")
+  }
+
   names(map_palette) <- labls
 
   mp.plot = ggplot2::ggplot()+

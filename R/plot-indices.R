@@ -110,7 +110,7 @@ plot_indices <- function(indices_list = NULL,
   indices$lci = indices[,lqc]
   indices$uci = indices[,uqc]
 
-  cl = "cornflowerblue"
+  cl = "#39568c"
 
   plot_list <- list()
 
