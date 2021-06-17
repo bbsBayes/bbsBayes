@@ -24,6 +24,10 @@
 load_map <- function(stratify_by = NULL)
 {
 
+  if (is.null(stratify_by))
+  {
+    stop("No stratification specified."); return(NULL)
+  }
 
   if(isFALSE(is.element(stratify_by, c("state", "bcr", "latlong", "bbs_cws", "bbs_usgs"))))
   {

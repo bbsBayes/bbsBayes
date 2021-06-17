@@ -68,6 +68,10 @@ generate_map <- function(trend = NULL,
   if(select){
     trend = trend[which(trend$Region_type == "stratum"),]
   }
+  if (is.null(stratify_by))
+  {
+    stop("No stratification specified."); return(NULL)
+  }
 
   if(isFALSE(is.element(stratify_by, c("state", "bcr", "latlong", "bbs_cws", "bbs_usgs"))))
   {
