@@ -69,9 +69,9 @@ generate_map <- function(trend = NULL,
     trend = trend[which(trend$Region_type == "stratum"),]
   }
 
-  if (is.null(stratify_by))
+  if(isFALSE(is.element(stratify_by, c("state", "bcr", "latlong", "bbs_cws", "bbs_usgs"))))
   {
-    stop("Argument stratify_by is empty."); return(NULL)
+    stop("Invalid stratification specified, choose one of state, bcr, latlong, bbs_cws, or bbs_usgs"); return(NULL)
   }
 
   if (is.null(trend))
