@@ -5,8 +5,8 @@
 This README file provides an overview of the functionality that can be accomplished with 'bbsBayes'. It is intended to provide enough information for users to perform, at the very least, replications of status and trend estimates from the Canadian Wildlife Service and/or United States Geological Survey. However, it provides more in-depth and advanced examples for subsetting data, custom regional summaries, and more.
 
 Additional resources:
-[Introductory bbsBayes Workshop](https://github.com/AdamCSmithCWS/bbsBayes_Intro_Workshop)
-[Journal Article with worked example (preprint)](https://www.biorxiv.org/content/10.1101/2020.05.27.118901v1)
+* [Introductory bbsBayes Workshop](https://github.com/AdamCSmithCWS/bbsBayes_Intro_Workshop)
+* [Journal Article with worked example](http://doi.org/10.5334/jors.329)
 
 ## Overview
 
