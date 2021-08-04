@@ -9,7 +9,7 @@ citEntry(
   issue = "1",
   url = "https://doi.org/10.5334/jors.329",
   author = "Edwards, Brandon PM and Smith, Adam C",
-  textVersion = "Edwards, B.P.M and A.C. Smith. (2021). bbsBayes: An R Package for Hierarchical Bayesian Analysis of North American Breeding Bird Survey Data. Journal of Open Research Software 9(1). https://doi.org/10.5334/jors.329"
+  textVersion = "Edwards, B.P.M and A.C. Smith. (2021). bbsBayes: An R Package for Hierarchical Bayesian Analysis of North American Breeding Bird Survey Data. Journal of Open Research Software 9(1), p.19. https://doi.org/10.5334/jors.329"
 )
 
 
