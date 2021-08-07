@@ -9,7 +9,8 @@ generate_map(
   select = FALSE,
   stratify_by = NULL,
   slope = FALSE,
-  species = ""
+  species = "",
+  col_viridis = FALSE
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ generate_map(
 \item{slope}{Logical, if TRUE, maps values of the alternative trend metric if slope = TRUE was used in \code{generate_strata_trends}, the slope of a log-linear regression through the annual indices. Default FALSE.}
 
 \item{species}{Text, optional species name to add plot title. if left blank "" no title is added}
+
+\item{col_viridis}{Logical flag to use "viridis" colour-blind friendly palette. Default is FALSE}
 }
 \value{
 spplot object

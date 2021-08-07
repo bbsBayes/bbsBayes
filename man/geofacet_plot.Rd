@@ -13,7 +13,8 @@ geofacet_plot(
   trends = NULL,
   slope = FALSE,
   add_observed_means = FALSE,
-  species = ""
+  species = "",
+  col_viridis = FALSE
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ colour scale used in \code{generate_map}}
 \item{add_observed_means}{Should the facet plots include points indicating the observed mean counts. Defaults to FALSE.  Note: scale of observed means and annual indices may not match due to imbalanced sampling among strata}
 
 \item{species}{Species name to be added onto the plot}
+
+\item{col_viridis}{Logical flag to use "viridis" colour-blind friendly palette. Default is FALSE}
 }
 \value{
 ggplot object

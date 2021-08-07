@@ -1,6 +1,12 @@
 # bbsBayes <img src="man/figures/logo.png" align="right"/>
 
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/bbsBayes)](https://cran.r-project.org/package=bbsBayes) [![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/bbsBayes)](https://cran.r-project.org/package=bbsBayes)
+
+This README file provides an overview of the functionality that can be accomplished with 'bbsBayes'. It is intended to provide enough information for users to perform, at the very least, replications of status and trend estimates from the Canadian Wildlife Service and/or United States Geological Survey. However, it provides more in-depth and advanced examples for subsetting data, custom regional summaries, and more.
+
+Additional resources:
+* [Introductory bbsBayes Workshop](https://github.com/AdamCSmithCWS/bbsBayes_Intro_Workshop)
+* [Journal Article with worked example](http://doi.org/10.5334/jors.329)
 
 ## Overview
 
@@ -10,10 +16,10 @@ bbsBayes is a package to perform hierarchical Bayesian analysis of North America
 
 ## Installation
 
-Option 1: Stable release from CRAN (currently v2.3.6.2020)
+Option 1: Stable release from CRAN (currently v2.3.8.2020)
 
 ``` {.r}
-# To install v2.3.6.2020 from CRAN:
+# To install v2.3.8.2020 from CRAN:
 install.packages("bbsBayes")
 ```
 
@@ -304,7 +310,7 @@ The package has (currently) four status and trend models that differ somewhat in
 
 ### slope
 
-The slope option estimates the time series as a log-linear regression with random year-effect terms that allow the trajectory to depart from the smooth regression line. It is the model used by the USGS and CWS to estimate bbs trends since 2011. The basic model was first described in 2002 (Link and Sauer 2002; [https://doi.org/10.1890/0012-9658(2002)083[2832:AHAOPC]2.0.CO;2](https://doi.org/10.1890/0012-9658(2002)083%5B2832:AHAOPC%5D2.0.CO;2){.uri}) and its application to the annual status and trend estimates is documented in Sauer and Link (2011; <https://doi.org/10.1525/auk.2010.09220>) and Smith et al. (2014; <http://dx.doi.org/10.22621/cfn.v128i2.1565>).
+The slope option estimates the time series as a log-linear regression with random year-effect terms that allow the trajectory to depart from the smooth regression line. It is the model used by the USGS and CWS to estimate bbs trends since 2011. The basic model was first described in 2002 (Link and Sauer 2002; [https://doi.org/10.1890/0012-9658(2002)083[2832:AHAOPC]2.0.CO;2](https://doi.org/10.1890/0012-9658(2002)083%5B2832:AHAOPC%5D2.0.CO;2){.uri}) and its application to the annual status and trend estimates is documented in Sauer and Link (2011; <https://doi.org/10.1525/auk.2010.09220>) and Smith et al. (2014; <https://doi.org/10.22621/cfn.v128i2.1565>).
 
 ``` {.r}
     #stratified_data <- stratify(by = "bbs_usgs")

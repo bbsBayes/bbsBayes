@@ -19,6 +19,7 @@
 #' @param add_observed_means Should the facet plots include points indicating the observed mean counts. Defaults to FALSE.  Note: scale of observed means and annual indices may not match due to imbalanced sampling among strata
 #' @param species Species name to be added onto the plot
 #' @param ci_width quantile to define the width of the plotted credible interval. Defaults to 0.95, lower = 0.025 and upper = 0.975
+#' @param col_viridis Logical flag to use "viridis" colour-blind friendly palette. Default is FALSE
 #'
 #'
 #'
@@ -84,7 +85,8 @@ geofacet_plot <- function(indices_list = NULL,
                           trends = NULL,
                           slope = FALSE,
                           add_observed_means = FALSE,
-                          species = "")
+                          species = "",
+                          col_viridis = FALSE)
 {
   # Annoying thing to get rid of check notes
   Year <- NULL; rm(Year)
@@ -151,7 +153,7 @@ geofacet_plot <- function(indices_list = NULL,
     indices = merge(indices,region_names[,c("prov_state","region","bcr")],by.x = "Region",by.y = "region")
     indices$code = indices$prov_state
 
-    map_palette <- c("#313695")
+    map_palette <- c("#39568c")
 
     if(!is.null(trends)){
 
@@ -165,8 +167,16 @@ geofacet_plot <- function(indices_list = NULL,
       }
       trends$Trendcat <- cut(trends$Trend, breaks = c(-Inf, breaks, Inf),ordered_result = TRUE)
 
-      map_palette <- c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
-                       "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")
+      if (col_viridis)
+      {
+        map_palette <- c("#fde725", "#dce319", "#b8de29", "#95d840", "#73d055", "#55c667",
+                         "#238a8d", "#2d708e", "#39568c", "#453781", "#481567")
+      }else
+      {
+        map_palette <- c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
+                         "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")
+      }
+
       names(map_palette) <- levels(trends$Trendcat)
       indices <- merge(indices,trends[,c("Region","Trend","Trendcat")],by = "Region")
       indices = indices[order(indices$Region,indices$Year),]

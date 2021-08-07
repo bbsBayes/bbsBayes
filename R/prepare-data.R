@@ -1,7 +1,7 @@
-#' Wrangle data to use for JAGS input
+#' Wrangle data to use for modelling input
 #'
-#' \code{prepare_jags_data} subsets raw BBS data by selected species and
-#'    and wrangles stratified data for use as input to run JAGS models.
+#' \code{prepare_data} subsets raw BBS data by selected species and
+#'    and wrangles stratified data for use as input for models.
 #'
 #' @param strat_data Large list of stratified data returned by \code{stratify()}
 #' @param species_to_run Character string of the English name of the species to run
@@ -19,10 +19,12 @@
 #'   species observed. Defaults to 1.
 #' @param strata_rem Strata to remove from analysis. Defaults to NULL
 #' @param quiet Should progress bars be suppressed?
+#' @param sampler Which MCMC sampling software to use. Currently bbsBayes only
+#'   supports "jags".
 #' @param ... Additional arguments
 #'
-#' @return List of data to be used in JAGS, including:
-#'   \item{model}{The model to be used in JAGS}
+#' @return List of data to be used for modelling, including:
+#'   \item{model}{The model to be used}
 #'   \item{heavy_tailed}{Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution}
 #'   \item{ncounts}{The number of counts containing useful data for the species}
 #'   \item{nstrata}{The number of strata used in the analysis}
@@ -43,17 +45,6 @@
 #'
 #' @importFrom stats median
 #' @importFrom progress progress_bar
-#'
-#' @name bbsBayes-deprecated
-#' @seealso \code{\link{prepare_jags_data}}
-#' @keywords internal
-NULL
-
-#' @rdname bbsBayes-deprecated
-#' @section \code{prepare_jags_data}:
-#'   For \code{prepare_jags_data()}, use
-#'   \code{prepare_data(sampler = "jags", ...)}.
-#'
 #' @export
 #'
 #' @examples
@@ -62,48 +53,46 @@ NULL
 #'
 #' strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
 #'
-#' # Prepare the stratified data for use in a JAGS model. In this
+#' # Prepare the stratified data for use in a model. In this
 #' #   toy example, we will set the minimum year as 2009 and
 #' #   maximum year as 2018, effectively only setting up to
 #' #   model 10 years of data. We will use the "first difference
 #' #   model.
-#' jags_data <- prepare_jags_data(strat_data = strat_data,
-#'                                species_to_run = "Pacific Wren",
-#'                                model = "firstdiff",
-#'                                min_year = 2009,
-#'                                max_year = 2018)
+#' model_data <- prepare_data(strat_data = strat_data,
+#'                            species_to_run = "Pacific Wren",
+#'                            model = "firstdiff",
+#'                            min_year = 2009,
+#'                            max_year = 2018)
 #'
 #' # You can also specify the GAM model, with an optional number of
 #' # knots to use for the GAM basis.
 #' # By default, the number of knots will be equal to the floor
 #' # of the total unique years for the species / 4
-#' jags_data <- prepare_jags_data(strat_data = strat_data,
-#'                                species_to_run = "Pacific Wren",
-#'                                model = "gam",
-#'                                n_knots = 9)
+#' model_data <- prepare_data(strat_data = strat_data,
+#'                            species_to_run = "Pacific Wren",
+#'                            model = "gam",
+#'                            n_knots = 9)
 #'
 #'
 
-prepare_jags_data <- function(strat_data = NULL,
-                              species_to_run = NULL,
-                              model = NULL,
-                              heavy_tailed = FALSE,
-                              n_knots = NULL,
-                              min_year = NULL,
-                              max_year = NULL,
-                              min_n_routes = 3,
-                              min_max_route_years = 3,
-                              min_mean_route_years = 1,
-                              strata_rem = NULL,
-                              quiet = FALSE,
-                              ...)
+prepare_data <- function(strat_data = NULL,
+                         species_to_run = NULL,
+                         model = NULL,
+                         heavy_tailed = FALSE,
+                         n_knots = NULL,
+                         min_year = NULL,
+                         max_year = NULL,
+                         min_n_routes = 3,
+                         min_max_route_years = 3,
+                         min_mean_route_years = 1,
+                         strata_rem = NULL,
+                         quiet = FALSE,
+                         sampler = "jags",
+                         ...)
 {
-  .Deprecated(new = "prepare_data",
-              msg = "prepare_jags_data is deprecated in favour of prepare_data(sampler = \"jags\", ...)")
-
   if (is.null(strat_data))
   {
-    stop("No data supplied to prepare_jags_data()."); return(NULL)
+    stop("No data supplied to prepare_data()."); return(NULL)
   }
   if (is.null(species_to_run))
   {
@@ -161,7 +150,7 @@ prepare_jags_data <- function(strat_data = NULL,
 
   if (!isTRUE(quiet))
   {
-    message("Preparing JAGS data")
+    message("Preparing data")
     pb <- progress::progress_bar$new(
       format = "\r[:bar] :percent eta: :eta",
       clear = FALSE,

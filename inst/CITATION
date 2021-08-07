@@ -3,10 +3,13 @@ citHeader("To cite the bbsBayes in publication, please use:")
 citEntry(
   entry = "article",
   title = "bbsBayes: An R Package for Hierarchical Bayesian Analysis of North American Breeding Bird Survey Data",
-  year = "2020",
-  journal = "bioRxiv",
+  year = "2021",
+  journal = "Journal of Open Research Software",
+  volume = "9",
+  issue = "1",
+  url = "https://doi.org/10.5334/jors.329",
   author = "Edwards, Brandon PM and Smith, Adam C",
-  textVersion = "Edwards, B.P.M and A.C. Smith. 2020. bbsBayes: An R Package for Hierarchical Bayesian Analysis of North American Breeding Bird Survey Data. bioRxiv 2020.05.27.118901. https://doi.org/10.1101/2020.05.27.118901"
+  textVersion = "Edwards, B.P.M and A.C. Smith. (2021). bbsBayes: An R Package for Hierarchical Bayesian Analysis of North American Breeding Bird Survey Data. Journal of Open Research Software 9(1), p.19. https://doi.org/10.5334/jors.329"
 )
 
 

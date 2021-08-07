@@ -13,6 +13,7 @@ plot_indices(
   title_size = 20,
   axis_title_size = 18,
   axis_text_size = 16,
+  line_width = 1,
   add_observed_means = FALSE,
   add_number_routes = FALSE
 )
@@ -34,6 +35,8 @@ plot_indices(
 \item{axis_title_size}{Specify font size of axis titles. Defaults to 18}
 
 \item{axis_text_size}{Specify font size of axis text. Defaults to 16}
+
+\item{line_width}{Specify the size of the trajectory line. Defaults to 1}
 
 \item{add_observed_means}{Should the plot include points indicated the observed mean counts. Defaults to FALSE. Note: scale of observed means and annual indices may not match due to imbalanced sampling among routes}
 
