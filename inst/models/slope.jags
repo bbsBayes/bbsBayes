@@ -99,12 +99,14 @@ model
 
 	for( i in 1 : nstrata )
 	{
+		 sdyear_ret[i] <- 0.5*sdyear[i]*sdyear[i]
+
 		for( t in ymin : ymax )
 		{
 			for(o in 1 : nobservers[i])
 			{
 				no[i,t,o] <- exp(strata[i] + beta[i]*(t-fixedyear) + yeareffect[i,t] + obs[i,o]+sdn_ret)
-				no3[i,t,o] <- exp(strata[i] + beta[i]*(t-fixedyear) + obs[i,o]+sdn_ret)
+				no3[i,t,o] <- exp(strata[i] + beta[i]*(t-fixedyear) + sdyear_ret[i] + obs[i,o]+sdn_ret)
 
 			}
 
@@ -114,7 +116,7 @@ model
 			n3[i,t] <- nonzeroweight[i]*(mn3[i,t])
 
 			n2[i,t] <- nonzeroweight[i]*exp(strata[i] + beta[i]*(t-fixedyear) + yeareffect[i,t] + sdn_ret + sdobs_ret)
-			n4[i,t] <- nonzeroweight[i]*exp(strata[i] + beta[i]*(t-fixedyear) + sdn_ret + sdobs_ret)
+			n4[i,t] <- nonzeroweight[i]*exp(strata[i] + beta[i]*(t-fixedyear) + sdyear_ret[i] + sdn_ret + sdobs_ret)
 		}
 	}
 
