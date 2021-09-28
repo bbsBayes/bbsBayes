@@ -156,12 +156,14 @@ sdobs_ret <- 0.5*pow(sdobs,2)
 
 	for( i in 1 : nstrata )
 	{
+	 sdyy_ret[i] <- 0.5*sdyy[i]*sdyy[i]
+
 		for( t in ymin : ymax )
 		{
 			for(o in 1 : nobservers[i])
 			{
 				no[i,t,o] <- exp(strata[i]+yeareffect[i,t] + yy[i,t] + obs[i,o] + sdn_ret)
-				no3[i,t,o] <- exp(strata[i]+yeareffect[i,t] + obs[i,o] + sdn_ret)
+				no3[i,t,o] <- exp(strata[i]+yeareffect[i,t] + obs[i,o] + sdn_ret + sdyy_ret[i])
 			}
 
 			mn[i,t] <- mean(no[i,t,(1 : nobservers[i])])
@@ -170,8 +172,7 @@ sdobs_ret <- 0.5*pow(sdobs,2)
 			n3[i,t] <- nonzeroweight[i]*(mn3[i,t])
 
 			n2[i,t] <- nonzeroweight[i]*exp(strata[i]+yeareffect[i,t] + yy[i,t] + sdn_ret + sdobs_ret) #n2 is an alternative way of calculating n
-			n4[i,t] <- nonzeroweight[i]*exp(strata[i]+yeareffect[i,t] + sdn_ret + sdobs_ret) #n4 is an alternative way of calculating n3
-
+			n4[i,t] <- nonzeroweight[i]*exp(strata[i]+yeareffect[i,t] + sdn_ret + sdobs_ret + sdyy_ret[i]) #n4 is an alternative way of calculating n3
 		}
 	}
 
