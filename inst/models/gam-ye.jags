@@ -28,6 +28,8 @@ model
 	taulogtauyeareffect ~ dgamma(2,0.2)
 	eta ~ dnorm( 0.0,0.01)
 	STRATA ~ dnorm( 0.0,0.01)
+	taustrata ~ dgamma(0.001,0.0001)
+	sdstrata <- 1/pow(taustrata,0.5)
 
   sdobs <- 1/pow(tauobs, 0.5)
   tauobs ~ dgamma(0.001,0.0001)

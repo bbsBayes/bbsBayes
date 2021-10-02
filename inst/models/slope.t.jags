@@ -79,19 +79,22 @@ model
 
 
 	#### summary statistics  ######
-	sdn_ret <- 0.5*sdnoise*sdnoise
+  ## rescaling factor for t-distribution noise, from Link and Sauer, unpublished
+  adj <- (1.422*pow(nu,0.906))/(1+(1.422*pow(nu,0.906)))
+  sdnoise.adj <- sdnoise/adj
+  sdn_ret <- 0.5*pow(sdnoise.adj,2)
 	sdobs_ret <- 0.5*sdobs*sdobs
 
 	for( i in 1 : nstrata )
 	{
-		 sdyear_ret[i] <- 0.5*sdyear[i]*sdyear[i]
+		 sdyeareffect_ret[i] <- 0.5*sdyeareffect[i]*sdyeareffect[i]
 
 		for( t in ymin : ymax )
 		{
 			for(o in 1 : nobservers[i])
 			{
 				no[i,t,o] <- exp(strata[i] + beta[i]*(t-fixedyear) + yeareffect[i,t] + obs[i,o]+sdn_ret)
-				no3[i,t,o] <- exp(strata[i] + beta[i]*(t-fixedyear) + sdyear_ret[i] + obs[i,o]+sdn_ret)
+				no3[i,t,o] <- exp(strata[i] + beta[i]*(t-fixedyear) + sdyeareffect_ret[i] + obs[i,o]+sdn_ret)
 
 			}
 
@@ -101,7 +104,7 @@ model
 			n3[i,t] <- nonzeroweight[i]*(mn3[i,t])
 
 			n2[i,t] <- nonzeroweight[i]*exp(strata[i] + beta[i]*(t-fixedyear) + yeareffect[i,t] + sdn_ret + sdobs_ret)
-			n4[i,t] <- nonzeroweight[i]*exp(strata[i] + beta[i]*(t-fixedyear) + sdyear_ret[i] + sdn_ret + sdobs_ret)
+			n4[i,t] <- nonzeroweight[i]*exp(strata[i] + beta[i]*(t-fixedyear) + sdyeareffect_ret[i] + sdn_ret + sdobs_ret)
 		}
 	}
 
