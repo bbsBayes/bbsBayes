@@ -1,39 +1,38 @@
 model
 {
 	#### counts and overdispersion effects  ###### Link-Sauer model with nested observer-route effect
+
 	for( k in 1 : ncounts )
 	{
-		log(lambda[k]) <- beta[strat[k]] * (year[k] - fixedyear) + eta*firstyr[k] + obs[strat[k],obser[k]] + strata[strat[k]] + yeareffect[strat[k],year[k]] + noise[k]
-	#	noise[k] ~ dnorm(0, taunoise)
-    noise[k] ~ dt(0, taunoise, nu) #alternative t-distributed noise = heavy-tailed overdispersion
-
+		Eloglambda[k] <- beta[strat[k]] * (year[k] - fixedyear) + obs[strat[k],obser[k]] + eta*firstyr[k] + yeareffect[strat[k],year[k]]
+	 	loglambda[k] ~ dt(Eloglambda[k], taunoise, nu)
+	 	log(lambda[k]) <- loglambda[k]
 		count[k] ~ dpois(lambda[k])
-		#----------------------------------#
-		#fcount[k] ~ dpois(lambda[k])
-		#err[k] <- pow(count[k]-lambda[k],2)/lambda[k]
-		#ferr[k] <- pow(fcount[k]-lambda[k],2)/lambda[k]
-		#fzero[k] <- equals(fcount[k],0)
-		#loglik[k] <- logdensity.pois(count[k], lambda[k])
-		#----------------------------------#
+
 	}
 
-	#nfzero <- sum(fzero[1:ncounts])
-	#gof <- sum(err[1:ncounts])
-	#fgof <- sum(ferr[1:ncounts])
-	#diffgof <- gof-fgof
-	#posdiff <- step(diffgof)
-
-	nu ~ dgamma(2, 0.1) #degrees of freedom (i.e., the heavy-tail component of the t-distribution), if nu is large (infinite) this is equivalent to the normal distribution noise
 	taunoise ~ dgamma(0.001,0.001)
 	sdnoise <- 1 / pow(taunoise, 0.5)
-	sdobs <- 1 / pow(tauobs, 0.5)
+	nu ~ dgamma(2, 0.1) #degrees of freedom (i.e., the heavy-tail component of the t-distribution), if nu is large (infinite) this is equivalent to the normal distribution noise
 	tauobs ~ dgamma(0.001,0.001)
+	sdobs <- 1 / pow(tauobs, 0.5)
 	eta ~ dnorm( 0.0,0.01)
 	STRATA ~ dnorm( 0.0,0.01)
-	taustrata ~ dgamma(0.001,0.0001) #<- 1/pow(sdbeta,2)#
-	sdstrata <- 1/pow(taustrata,0.5)#~ dunif(0.001,10)
+	taustrata ~ dgamma(0.001,0.0001)
+	sdstrata <- 1/pow(taustrata,0.5)
 	mulogtauyear ~ dnorm(0.0,0.5)
 	taulogtauyear ~ dgamma(2,0.2)
+	BETA ~ dnorm(0,0.01)
+  taubeta ~ dgamma(1,0.0001) #
+	### informative taubeta, parameterized so that:
+	### mean of taubeta = ~10000
+	### the mean of sdbeta =~ 0.02
+	### there is <5% prob of sdbeta > 0.04 (i.e., there is a small, but non-zero probability that the SD of the stratum beta
+	### terms is large enough to to encompass trends that vary from -8%/year to 8%/year with a continental trend = 0)
+	### this informative prior should only be useful when there are few strata
+
+	sdbeta <- 1/pow(taubeta,0.5)#
+
 
 	#---------------------------------------------------------#
 
@@ -50,28 +49,24 @@ model
 
 		#### end observer effects  ######
 
-		beta.p[i] ~ dnorm(0,taubeta)
-		beta[i] <- BETA + beta.p[i]
-		strata.p[i] ~ dnorm(0,taustrata)
-		strata[i] <- STRATA + strata.p[i]
-		#sdyear[i] <- 1/pow(tauyear[i],0.5)
-		#tauyear[i] ~ dgamma(0.001,0.001) #
+		beta[i] ~ dnorm(BETA,taubeta)
+		strata[i] ~ dnorm(STRATA,taustrata)
+
 
 		#### stratum specific year effects  ######
 
 
-		log(tauyear[i]) <- logtauyear[i]
-		logtauyear[i] ~ dnorm(mulogtauyear,taulogtauyear)
-		sdyear[i] <- 1/pow(tauyear[i],0.5)
 
-		for( t in ymin : ymax )
+	for( t in ymin : ymax )
 		{
-			yeareffect[i,t] ~ dnorm( 0.0, tauyear[i])
+			yeareffect[i,t] ~ dnorm(0,tauyeareffect[i])
 		}
+		log(tauyeareffect[i]) <- logtauyeareffect[i]
+			logtauyeareffect[i] ~ dnorm(mulogtauyeareffect,taulogtauyeareffect)
+		sdyeareffect[i] <- 1/pow(tauyeareffect[i],0.5)
 
-		expstrata[i] <- exp(strata[i])
-		overdisp[i] <- 1 + 1/(expstrata[i]*taunoise)
-		#-------------------------------------------------#
+
+
 
 	}# end s strata loop
 
@@ -80,34 +75,22 @@ model
 	#### hierarchical trend effects  ######
 
 
-	BETA ~ dnorm(0,0.01)
-  taubeta ~ dgamma(1,0.0001) #
-	### informative taubeta, parameterized so that:
-	### mean of taubeta = ~10000
-	### the mean of sdbeta =~ 0.02
-	### there is <5% prob of sdbeta > 0.04 (i.e., there is a small, but non-zero probability that the SD of the stratum beta
-	### terms is large enough to to encompass trends that vary from -8%/year to 8%/year with a continental trend = 0)
-	### this informative prior should only be useful when there are few strata
-
-	sdbeta <- 1/pow(taubeta,0.5)#
 
 
 
 	#### summary statistics  ######
-adj <- (1.422*pow(nu,0.906))/(1+(1.422*pow(nu,0.906)))
-sdnoise.adj <- sdnoise/adj
-sdn_ret <- 0.5*pow(sdnoise.adj,2)
-sdobs_ret <- 0.5*pow(sdobs,2)
+	sdn_ret <- 0.5*sdnoise*sdnoise
+	sdobs_ret <- 0.5*sdobs*sdobs
 
 	for( i in 1 : nstrata )
 	{
-			 sdyear_ret[i] <- 0.5*sdyear[i]*sdyear[i]
-	for( t in ymin : ymax )
+		 sdyear_ret[i] <- 0.5*sdyear[i]*sdyear[i]
+
+		for( t in ymin : ymax )
 		{
 			for(o in 1 : nobservers[i])
 			{
-				no[i,t,o] <- exp(strata[i] + beta[i]*(t-fixedyear) + yeareffect[i,t] + obs[i,o] + sdn_ret)
-
+				no[i,t,o] <- exp(strata[i] + beta[i]*(t-fixedyear) + yeareffect[i,t] + obs[i,o]+sdn_ret)
 				no3[i,t,o] <- exp(strata[i] + beta[i]*(t-fixedyear) + sdyear_ret[i] + obs[i,o]+sdn_ret)
 
 			}
@@ -119,7 +102,6 @@ sdobs_ret <- 0.5*pow(sdobs,2)
 
 			n2[i,t] <- nonzeroweight[i]*exp(strata[i] + beta[i]*(t-fixedyear) + yeareffect[i,t] + sdn_ret + sdobs_ret)
 			n4[i,t] <- nonzeroweight[i]*exp(strata[i] + beta[i]*(t-fixedyear) + sdyear_ret[i] + sdn_ret + sdobs_ret)
-
 		}
 	}
 
