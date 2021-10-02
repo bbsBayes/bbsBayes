@@ -11,7 +11,7 @@ model
 
 	for( k in 1 : ncounts )
 	{
-		Eloglambda1[k] <- obs[strat[k],obser[k]] + eta*firstyr[k] + strata[strat[k]] + smooth[strat[k],year[k]] + yeareffect[strat[k],year[k]]
+		Eloglambda[k] <- obs[strat[k],obser[k]] + eta*firstyr[k] + strata[strat[k]] + smooth[strat[k],year[k]] + yeareffect[strat[k],year[k]]
 	 	loglambda[k] ~ dnorm(Eloglambda[k], taunoise)
 	 	log(lambda[k]) <- loglambda[k]
 		count[k] ~ dpois(lambda[k])

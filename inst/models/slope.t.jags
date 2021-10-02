@@ -20,8 +20,8 @@ model
 	STRATA ~ dnorm( 0.0,0.01)
 	taustrata ~ dgamma(0.001,0.0001)
 	sdstrata <- 1/pow(taustrata,0.5)
-	mulogtauyear ~ dnorm(0.0,0.5)
-	taulogtauyear ~ dgamma(2,0.2)
+	mulogtauyeareffect ~ dnorm(0.0,0.5)
+	taulogtauyeareffect ~ dgamma(2,0.2)
 	BETA ~ dnorm(0,0.01)
   taubeta ~ dgamma(1,0.0001) #
 	### informative taubeta, parameterized so that:
