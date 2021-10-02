@@ -26,6 +26,7 @@
 #' @return List of data to be used for modelling, including:
 #'   \item{model}{The model to be used}
 #'   \item{heavy_tailed}{Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution}
+#'   \item{min_nu}{if heavy_tailed is TRUE, minimum value for truncated gamma on DF of t-distribution noise default is 0 and user must change manually after function is run}
 #'   \item{ncounts}{The number of counts containing useful data for the species}
 #'   \item{nstrata}{The number of strata used in the analysis}
 #'   \item{ymin}{Minimum year used}
@@ -392,7 +393,8 @@ prepare_data <- function(strat_data = NULL,
     if (heavy_tailed)
     {
       to_return <- c(to_return,
-                     list(heavy_tailed = TRUE))
+                     list(heavy_tailed = TRUE,
+                          min_nu = 0))
     }else{
       to_return <- c(to_return,
                      list(heavy_tailed = FALSE))

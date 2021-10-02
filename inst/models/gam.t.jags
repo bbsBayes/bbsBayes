@@ -25,7 +25,7 @@ model
 
   taunoise ~ dgamma(0.001,0.001)
 	sdnoise <- 1 / pow(taunoise, 0.5)
-	nu ~ dgamma(2, 0.1) #degrees of freedom (i.e., the heavy-tail component of the t-distribution), if nu is large (infinite) this is equivalent to the normal distribution noise
+	nu ~ dgamma(2, 0.1) T(min_nu,)  #degrees of freedom (i.e., the heavy-tail component of the t-distribution), if nu is large (infinite) this is equivalent to the normal distribution noise
 
 	eta ~ dnorm( 0.0,0.01)
 	STRATA ~ dnorm( 0.0,0.01)
