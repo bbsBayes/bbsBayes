@@ -368,7 +368,7 @@ prepare_data <- function(strat_data = NULL,
                     day = spsp_f$Day)
   if (!is.null(model))
   {
-    if (tolower(model) == "slope")
+    if (tolower(model) %in% c("slope","firstdiff"))
     {
       to_return <- c(to_return,
                      list(fixedyear = floor(stats::median(unique(spsp_f$year)))))
