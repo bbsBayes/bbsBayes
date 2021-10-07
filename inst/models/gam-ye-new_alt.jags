@@ -2,17 +2,17 @@ model
 {
 
 	###### Hierarchical GAM model with additional random year-effects
-	####  original priors with small improvements to parameterization to speed convergence
-	####  uses original Crainiceanu et al basis function
-	#### changed parameter names to better match model description
-	#### yeareffects = random annual fluctuations
-	#### smooth = GAM-based smooth
+	####  new priors for many parameters, and new basis function for smooth
+	#### most variance priors now set as half-normal or half-t distributions on SD
+	#### new basis function from mgcv package, using same basis that is default in
+	#### brms and rstanarm,
+	#### also now has separate variance terms for each set of nknots beta parameters
 
 
 	for( k in 1 : ncounts )
 	{
 		Eloglambda[k] <- obs[strat[k],obser[k]] + eta*firstyr[k] + strata[strat[k]] + smooth[strat[k],year[k]] + yeareffect[strat[k],year[k]]
-	 	loglambda[k] ~ dt(Eloglambda[k], taunoise,nu)
+	 	loglambda[k] ~ dnorm(Eloglambda[k], taunoise)
 	 	log(lambda[k]) <- loglambda[k]
 		count[k] ~ dpois(lambda[k])
 
@@ -23,19 +23,18 @@ model
 
 	### fixed effect priors
 
-  taunoise ~ dgamma(0.001,0.001)
-	sdnoise <- 1 / pow(taunoise, 0.5)
-	nu ~ dgamma(2, 0.1) T(min_nu,)  #degrees of freedom (i.e., the heavy-tail component of the t-distribution), if nu is large (infinite) this is equivalent to the normal distribution noise
+   sdnoise ~ dt(0, 1, 3) T(0,)
+   taunoise <- 1 / pow(sdnoise, 2)
 
+	eta ~ dnorm( 0,1)
+	STRATA ~ dnorm( 0,1)
+	sdstrata ~ dt(0, 1, 3) T(0,)
+	taustrata <- 1/pow(sdstrata,2)
+
+  sdobs ~ dnorm(0,4) T(0,)
+  tauobs <- 1/pow(sdobs, 2)
 	mulogtauyeareffect ~ dnorm(0.0,2)
 	taulogtauyeareffect ~ dgamma(2,0.2)
-	eta ~ dnorm( 0.0,0.01)
-	STRATA ~ dnorm( 0.0,0.01)
-	taustrata ~ dgamma(0.001,0.0001)
-	sdstrata <- 1/pow(taustrata,0.5)
-
-  sdobs <- 1/pow(tauobs, 0.5)
-  tauobs ~ dgamma(0.001,0.0001)
 
 	#### stratum-level effects  ######
 	for( i in 1 : nstrata )
@@ -55,45 +54,50 @@ model
 
 
 		strata[i] ~ dnorm(STRATA,taustrata)
-
+	  sdbeta[i] ~ dgamma(2,1)#
+	  taubeta[i] <- 1/(pow(sdbeta[i],2))
 	}# end s strata loop and stratum-level effects
 
 
 
 
 	###########COMPUTING GAMs for smooths##############
-	# Following Crainiceanu, C. M., Ruppert, D. & Wand, M. P. (2005). Bayesian Analysis for Penalized Spline Regression Using WinBUGS. Journal of Statistical Softare, 14 (14), 1-24.
-	# X.basis is data computed in R
+  sdBETA ~ dgamma(2,1)#
+  tauBETA <- 1/pow(sdBETA,2) #
+  #### instead of hierarchical centering of the betas, this approach
+  #### fits a global smooth
+  #### the stratum smooth is an additive function of the global smooth
+  #### plus and an additional stratum-level smooth
 
-	tauX~dgamma(1.0E-2,1.0E-4) #alternate prior, original from Cainiceanu et al.
-	sdX <- 1/(pow(tauX,0.5)) #
-	taubeta ~ dgamma(2,0.2) # prior on precision of gam coefficients among strata
-	sdbeta <- 1/(pow(taubeta,0.5))
 
 	for(k in 1:nknots)
 	{
-		# Computation of GAM components
-		B.X[k] ~ dnorm(0,tauX)
+	  BETA[k] ~ dnorm(0,tauBETA)
 
+	  for(t in ymin:ymax){
+    SMOOTH.part[k,t] <- BETA[k]*(X.basis[t,k])
+    }
 		for(i in 1:nstrata)
 		{
-			#beta.X.p[i,k] ~ dnorm(0,taubeta) #alternative non-centered parameterization
-      #beta.X[i,k] <- B.X[k]+beta.X.p[i,k]
-      beta.X[i,k] ~ dnorm(B.X[k],taubeta)
+	    beta[i,k] ~ dnorm(0,taubeta[i])
 
 
 			for ( t in ymin : ymax )
 			{
-				X.part[i,k,t] <- beta.X[i,k]*(X.basis[t,k])
+				X.part[i,k,t] <- beta[i,k]*(X.basis[t,k])
 			}#t
 		}#i
 	}#k
+
+	  for(t in ymin:ymax){
+    SMOOTH[t] <- sum(SMOOTH.part[1:nknots,t])
+    }
 
 		for(i in 1:nstrata)
 		{
 		for (t in ymin : ymax )
 	{
-			smooth[i,t] <- sum(X.part[i,1:nknots,t])
+			smooth[i,t] <- sum(X.part[i,1:nknots,t]) + SMOOTH[t]
 		}#t
 	}#i
 
@@ -110,8 +114,10 @@ model
 		{
 			yeareffect[i,t] ~ dnorm(0,tauyeareffect[i])
 		}
-		log(tauyeareffect[i]) <- logtauyeareffect[i]
-		logtauyeareffect[i] ~ dnorm(mulogtauyeareffect,taulogtauyeareffect)
+	#	sdyeareffect[i] ~ dgamma(2,2)
+   # tauyeareffect[i] <- 1/pow(sdyeareffect[i],2)
+   log(tauyeareffect[i]) <- logtauyeareffect[i]
+			logtauyeareffect[i] ~ dnorm(mulogtauyeareffect,taulogtauyeareffect)
 		sdyeareffect[i] <- 1/pow(tauyeareffect[i],0.5)
 
 	}
@@ -121,10 +127,7 @@ model
 
 
 	#### summary statistics  ######
-  ## rescaling factor for t-distribution noise, from Link and Sauer, 2020
-  adj <- (1.422*pow(nu,0.906))/(1+(1.422*pow(nu,0.906)))
-  sdnoise.adj <- sdnoise/adj
-  sdn_ret <- 0.5*pow(sdnoise.adj,2)
+	sdn_ret <- 0.5*sdnoise*sdnoise
 	sdobs_ret <- 0.5*sdobs*sdobs
 
 	for( i in 1 : nstrata )
@@ -145,7 +148,7 @@ model
 			nsmooth[i,t] <- nonzeroweight[i]*(mnsmooth[i,t])
 
 			n2[i,t] <- nonzeroweight[i]*exp(strata[i]+smooth[i,t] + yeareffect[i,t] + sdn_ret + sdobs_ret) #n2 is an alternative way of calculating n
-			nsmooth2[i,t] <- nonzeroweight[i]*exp(strata[i]+smooth[i,t] + sdn_ret + sdobs_ret + sdyeareffect_ret[i]) #nsmooth2 is an alternative way of calculating nsmooth
+			nsmooth2[i,t] <- nonzeroweight[i]*exp(strata[i]+smooth[i,t] + sdn_ret + sdobs_ret + sdyeareffect_ret[i]) #n4 is an alternative way of calculating nsmooth
 		}
 	}
 
