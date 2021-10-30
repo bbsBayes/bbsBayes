@@ -1,6 +1,8 @@
 model
 {
-	#### counts and overdispersion effects  ###### Link-Sauer model with nested observer-route effect
+	###### Link-Sauer 2011 model
+
+#### counts and overdispersion effects
 
 	for( k in 1 : ncounts )
 	{
@@ -14,6 +16,8 @@ model
 	taunoise ~ dgamma(0.001,0.001)
 	sdnoise <- 1 / pow(taunoise, 0.5)
 	nu ~ dgamma(2, 0.1) T(min_nu,) #degrees of freedom (i.e., the heavy-tail component of the t-distribution), if nu is large (infinite) this is equivalent to the normal distribution noise
+	# the data value min_nu (default == 0) allows the user to set a lower limit to the df parameter, which can help with convergence (e.g., setting min_nu to 1 ensures a finite mean for the t distribution)
+
 	tauobs ~ dgamma(0.001,0.001)
 	sdobs <- 1 / pow(tauobs, 0.5)
 	eta ~ dnorm( 0.0,0.01)
@@ -94,17 +98,17 @@ model
 			for(o in 1 : nobservers[i])
 			{
 				no[i,t,o] <- exp(strata[i] + beta[i]*(t-fixedyear) + yeareffect[i,t] + obs[i,o]+sdn_ret)
-				no3[i,t,o] <- exp(strata[i] + beta[i]*(t-fixedyear) + sdyeareffect_ret[i] + obs[i,o]+sdn_ret)
+				noslope[i,t,o] <- exp(strata[i] + beta[i]*(t-fixedyear) + sdyeareffect_ret[i] + obs[i,o]+sdn_ret)
 
 			}
 
 			mn[i,t] <- mean(no[i,t,1 : nobservers[i]])
-			mn3[i,t] <- mean(no3[i,t,1 : nobservers[i]])
+			mnslope[i,t] <- mean(noslope[i,t,1 : nobservers[i]])
 			n[i,t] <- nonzeroweight[i]*(mn[i,t])
-			n3[i,t] <- nonzeroweight[i]*(mn3[i,t])
+			nslope[i,t] <- nonzeroweight[i]*(mnslope[i,t])
 
 			n2[i,t] <- nonzeroweight[i]*exp(strata[i] + beta[i]*(t-fixedyear) + yeareffect[i,t] + sdn_ret + sdobs_ret)
-			n4[i,t] <- nonzeroweight[i]*exp(strata[i] + beta[i]*(t-fixedyear) + sdyeareffect_ret[i] + sdn_ret + sdobs_ret)
+			nslope2[i,t] <- nonzeroweight[i]*exp(strata[i] + beta[i]*(t-fixedyear) + sdyeareffect_ret[i] + sdn_ret + sdobs_ret)
 		}
 	}
 

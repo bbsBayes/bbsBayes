@@ -9,7 +9,7 @@
 #'   Options are "slope", "firstdiff", "gam", "gamye.
 #' @param heavy_tailed Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution, with heavier tails than the standard normal distribution. Default is currently FALSE, but recent results suggest users should strongly consider setting this to TRUE, even though it requires much longer convergence times
 #' @param n_knots Number of knots to be used in GAM functionPoisson error distribution should be modeled as a t-distribution, with heavier tails than the standard normal distribution. Default is currently FALSE, but recent results suggest users should strongly consider setting this to TRUE, even though it requires much longer convergence times
-#' @param basis Which version of the basis-function to use for the GAM smooth, the defaul is "original" the same basis used in Smith and Edwards 2020 and an alternate is the default "tp" basis used in the packages mgcv, brms, and rstanarm. If using the "mgcv" option, the user may want to consider adjusting the prior distributions for the parameters and their precision
+#' @param basis Which version of the basis-function to use for the GAM smooth, the default is "original" the same basis used in Smith and Edwards 2020 and "mgcv" is an alternate that uses the "tp" basis from the packages mgcv (also used in brms, and rstanarm). If using the "mgcv" option, the user may want to consider adjusting the prior distributions for the parameters and their precision
 #' @param min_year Minimum year to keep in analysis
 #' @param max_year Maximum year to keep in analysis
 #' @param min_n_routes Minimum routes per strata where species has been observed.

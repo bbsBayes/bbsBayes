@@ -27,6 +27,8 @@ model
 	sdnoise <- 1 / pow(taunoise, 0.5)
 	nu ~ dgamma(2, 0.1) T(min_nu,)  #degrees of freedom (i.e., the heavy-tail component of the t-distribution), if nu is large (infinite) this is equivalent to the normal distribution noise
 
+	# the data value min_nu (default == 0) allows the user to set a lower limit to the df parameter, which can help with convergence (e.g., setting min_nu to 1 ensures a finite mean for the t distribution)
+
 	mulogtauyeareffect ~ dnorm(0.0,2)
 	taulogtauyeareffect ~ dgamma(2,0.2)
 	eta ~ dnorm( 0.0,0.01)
