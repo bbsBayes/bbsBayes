@@ -16,5 +16,3 @@ temp.geofacet.pdf
 *output/
 *.EX.R
 R/*abundance.R
-arch/
-
