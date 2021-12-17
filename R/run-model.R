@@ -117,9 +117,6 @@ run_model <- function(jags_data = NULL,
   jags_data[["r_year"]] <- NULL
 
   jags_data[["route"]] <- NULL
-  jags_data[["basis"]] <- NULL
-  jags_data[["month"]] <- NULL
-  jags_data[["day"]] <- NULL
 
   # The case where the user DOES NOT want to track n
   if (isFALSE(track_n))
