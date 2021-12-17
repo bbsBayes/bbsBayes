@@ -1,39 +1,28 @@
 model
 {
+#### first difference model re-parameterized from earlier bbsBayes versions
+#### changed to better match the priors and parameterizations in Link and Sauer 2020
+#### also corrects an error in the previous versions where n2 was calculated incorrectly (missing the intercept term)
 	for( k in 1 : ncounts )
 	{
-		log(lambda[k]) <-  obs[strat[k],obser[k]] + eta*firstyr[k] + strata[strat[k]] + yeareffect[strat[k],year[k]] +noise[k]
-	 	noise[k] ~ dnorm(0, taunoise)
-    #noise[k] ~ dt(0, taunoise, nu) #alternative t-distributed noise = heavy-tailed overdispersion
-
+		Eloglambda[k] <- obs[strat[k],obser[k]] + eta*firstyr[k] + yeareffect[strat[k],year[k]]
+	 	loglambda[k] ~ dnorm(Eloglambda[k], taunoise)
+	 	log(lambda[k]) <- loglambda[k]
 		count[k] ~ dpois(lambda[k])
-		#----------------------------------#
-		#fcount[k] ~ dpois(lambda[k])
-		#err[k] <- pow(count[k]-lambda[k],2)/lambda[k]
-		#ferr[k] <- pow(fcount[k]-lambda[k],2)/lambda[k]
-		#fzero[k] <- equals(fcount[k],0)
-		#loglik[k] <- logdensity.pois(count[k], lambda[k])
-		#----------------------------------#
+
 	}
 
 
-	#nfzero <- sum(fzero[1:ncounts]) # number of zeros in the posterior prediction
-	#gof <- sum(err[1:ncounts])
-	#fgof <- sum(ferr[1:ncounts])
-	#diffgof <- gof-fgof
-	#posdiff <- step(diffgof) #Bayesian p-value assessing overall model-fit
 
-#	nu ~ dgamma(2, 0.1) #degrees of freedom (i.e., the heavy-tail component of the t-distribution), if nu is large (infinite) this is equivalent to the normal distribution noise
+
 	taunoise ~ dgamma(0.001,0.001)
 	sdnoise <- 1 / pow(taunoise, 0.5)
 	tauobs ~ dgamma(0.001,0.001)
 	sdobs <- 1 / pow(tauobs, 0.5)
 	eta ~ dnorm( 0.0,0.01)
 	STRATA ~ dnorm( 0.0,0.01)
-	taustrata ~ dgamma(0.001,0.0001) #<- 1/pow(sdbeta,2)#
-	sdstrata <- 1/pow(taustrata,0.5)#~ dunif(0.001,10)
-	mulogtauyear ~ dnorm(0.0,0.5)
-	taulogtauyear ~ dgamma(2,0.2)
+	taustrata ~ dgamma(0.001,0.0001)
+	sdstrata <- 1/pow(taustrata,0.5)
 
 
 
@@ -55,32 +44,26 @@ model
 		#### end observer effects  ######
 
 
-		sdyear.eps[i] <- 1/pow(tauyear.eps[i],0.5)
-		#tauyear[i] ~ dgamma(0.001,0.001)
-		tauyear.eps[i] <- tauyear[i]*0.0001
-
 		### stratum-level priors
 
-		strata.p[i] ~ dnorm(0,taustrata)
-		strata[i] <- STRATA + strata.p[i]
-		#tauyear[i] <- 1/pow(sdyear[i],2)
-		#sdyear[i] ~ dunif(0.00001,5)
-		expstrata[i] <- exp(strata[i])
-		overdisp[i] <- 1 + 1/(expstrata[i]*taunoise)
+		strata[i] ~ dnorm(STRATA,taustrata)
 
 		#### stratum specific year effects  ######
 
-		yeareffect[i,ymin] ~ dnorm(0,tauyear.eps[i])
+		yeareffect[i,fixedyear] <- strata[i]
 
-		for( t in (ymin+1) : ymax )
+		for( t in ymin : (fixedyear-1) )
+		{
+			yeareffect[i,t] ~ dnorm(yeareffect[i,t+1],tauyear[i])
+		}
+				for( t in (fixedyear+1) :  ymax)
 		{
 			yeareffect[i,t] ~ dnorm(yeareffect[i,t-1],tauyear[i])
 		}
 
 
-		log(tauyear[i]) <- logtauyear[i]
-		logtauyear[i] ~ dnorm(mulogtauyear,taulogtauyear)
-		sdyear[i] <- 1/pow(tauyear[i],0.5)
+		tauyear[i] ~ dgamma(0.001,0.001)
+
 
 
 
@@ -99,7 +82,7 @@ model
 		{
 			for(o in 1 : nobservers[i])
 			{
-				no[i,t,o] <- exp(strata[i]+yeareffect[i,t] + obs[i,o] + sdn_ret)
+				no[i,t,o] <- exp(yeareffect[i,t] + obs[i,o] + sdn_ret)
 			}
 
 			mn[i,t] <- mean(no[i,t,1 : nobservers[i]])
