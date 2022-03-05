@@ -141,7 +141,8 @@ prepare_jags_data <- function(strat_data = NULL,
                   by = c("statenum",
                          "Route",
                          "Year",
-                         "BCR"),all.x = TRUE)
+                         "BCR",
+                         "RouteDataID"),all.x = TRUE)
 
   spsp.c[which(is.na(spsp.c$TotalInd)),"TotalInd"] <- 0
 
