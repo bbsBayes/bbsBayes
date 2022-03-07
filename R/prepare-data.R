@@ -9,6 +9,7 @@
 #'   Options are "slope", "firstdiff", "gam", "gamye.
 #' @param heavy_tailed Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution, with heavier tails than the standard normal distribution. Default is currently FALSE, but recent results suggest users should strongly consider setting this to TRUE, even though it requires much longer convergence times
 #' @param n_knots Number of knots to be used in GAM function
+#' @param basis Which version of the basis-function to use for the GAM smooth, the default is "original" the same basis used in Smith and Edwards 2020 and "mgcv" is an alternate that uses the "tp" basis from the packages mgcv (also used in brms, and rstanarm). If using the "mgcv" option, the user may want to consider adjusting the prior distributions for the parameters and their precision
 #' @param min_year Minimum year to keep in analysis
 #' @param max_year Maximum year to keep in analysis
 #' @param min_n_routes Minimum routes per strata where species has been observed.
@@ -26,6 +27,7 @@
 #' @return List of data to be used for modelling, including:
 #'   \item{model}{The model to be used}
 #'   \item{heavy_tailed}{Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution}
+#'   \item{min_nu}{if heavy_tailed is TRUE, minimum value for truncated gamma on DF of t-distribution noise default is 0 and user must change manually after function is run}
 #'   \item{ncounts}{The number of counts containing useful data for the species}
 #'   \item{nstrata}{The number of strata used in the analysis}
 #'   \item{ymin}{Minimum year used}
@@ -45,6 +47,8 @@
 #'
 #' @importFrom stats median
 #' @importFrom progress progress_bar
+#' @importFrom mgcv s
+#' @importFrom mgcv smoothCon
 #' @export
 #'
 #' @examples
@@ -88,6 +92,7 @@ prepare_data <- function(strat_data = NULL,
                          strata_rem = NULL,
                          quiet = FALSE,
                          sampler = "jags",
+                         basis = "original",
                          ...)
 {
   if (is.null(strat_data))
@@ -129,7 +134,8 @@ prepare_data <- function(strat_data = NULL,
                   by = c("statenum",
                          "Route",
                          "Year",
-                         "BCR"),all.x = TRUE)
+                         "BCR",
+                         "RouteDataID"),all.x = TRUE)
 
   spsp.c[which(is.na(spsp.c$TotalInd)),"TotalInd"] <- 0
 
@@ -319,32 +325,9 @@ prepare_data <- function(strat_data = NULL,
   ymin = range(spsp_f$year)[1]
   ymax = range(spsp_f$year)[2]
   nyears = length(ymin:ymax)
+  years = c(ymin:ymax)
   if (!isTRUE(quiet)){pb$tick()}
 
-  recenter = floor(diff(c(1,ymax))/2)
-  rescale = ymax # this generates a year variable with range = 1, this rescaling helps the convergence for the GAM beta parameters
-  spsp_f$yearscale = (spsp_f$year-recenter)/ymax
-  if (!isTRUE(quiet)){pb$tick()}
-
-  scaledyear = seq(min(spsp_f$yearscale),max(spsp_f$yearscale),length = nyears)
-  names(scaledyear) <- ymin:ymax
-  if(ymin != 1)
-  {
-    newys = 1:(ymin-1)
-    newyscale = (newys-recenter)/rescale
-    names(newyscale) <- newys
-    scaledyear = c(newyscale,scaledyear)
-  }
-  if (!isTRUE(quiet)){pb$tick()}
-
-  yminsc = scaledyear[as.character(ymin)]
-  ymaxsc = scaledyear[as.character(ymax)]
-  if(ymin != 1)
-  {
-    yminpred = 1
-    yminscpred = scaledyear[as.character(1)]
-  }
-  if (!isTRUE(quiet)){pb$tick()}
 
   nstrata=length(unique(spsp_f$strat))
 
@@ -368,7 +351,7 @@ prepare_data <- function(strat_data = NULL,
                     day = spsp_f$Day)
   if (!is.null(model))
   {
-    if (tolower(model) == "slope")
+    if (tolower(model) %in% c("slope","firstdiff"))
     {
       to_return <- c(to_return,
                      list(fixedyear = floor(stats::median(unique(spsp_f$year)))))
@@ -380,19 +363,60 @@ prepare_data <- function(strat_data = NULL,
       {
         n_knots <- floor(length(unique((spsp_f$year)))/4)
       }
-      knotsX<- seq(yminsc,ymaxsc,length=(n_knots+2))[-c(1,n_knots+2)]
-      X_K<-(abs(outer(seq(yminsc,ymaxsc,length = nyears),knotsX,"-")))^3
-      X_OMEGA_all<-(abs(outer(knotsX,knotsX,"-")))^3
-      X_svd.OMEGA_all<-svd(X_OMEGA_all)
-      X_sqrt.OMEGA_all<-t(X_svd.OMEGA_all$v  %*% (t(X_svd.OMEGA_all$u)*sqrt(X_svd.OMEGA_all$d)))
-      X_basis<-t(solve(X_sqrt.OMEGA_all,t(X_K)))
 
-      to_return <- c(to_return, list(nknots = n_knots, X.basis = X_basis))
+      if(tolower(basis) == "mgcv"){
+        data_pred <- data.frame(x = years)
+        smooth_basis = mgcv::smoothCon(mgcv::s(x,k = n_knots+1, bs = "tp"),data = data_pred,
+                                       absorb.cons=TRUE,#this drops the constant and absorbs the identifiability constraints into the basis
+                                       diagonal.penalty=TRUE) ## If TRUE then the smooth is reparameterized to turn the penalty into an identity matrix, with the final diagonal elements zeroed (corresponding to the penalty nullspace).
+
+        X_basis = smooth_basis[[1]]$X
+        #to_return$model <- paste0(to_return$model,"_new")
+
+      }else{
+        recenter = floor(diff(c(1,ymax))/2)
+        rescale = ymax # this generates a year variable with range = 1, this rescaling helps the convergence for the GAM beta parameters
+        spsp_f$yearscale = (spsp_f$year-recenter)/ymax
+        if (!isTRUE(quiet)){pb$tick()}
+
+        scaledyear = seq(min(spsp_f$yearscale),max(spsp_f$yearscale),length = nyears)
+        names(scaledyear) <- ymin:ymax
+        if(ymin != 1)
+        {
+          newys = 1:(ymin-1)
+          newyscale = (newys-recenter)/rescale
+          names(newyscale) <- newys
+          scaledyear = c(newyscale,scaledyear)
+        }
+        if (!isTRUE(quiet)){pb$tick()}
+
+        yminsc = scaledyear[as.character(ymin)]
+        ymaxsc = scaledyear[as.character(ymax)]
+        if(ymin != 1)
+        {
+          yminpred = 1
+          yminscpred = scaledyear[as.character(1)]
+        }
+        if (!isTRUE(quiet)){pb$tick()}
+
+
+        knotsX<- seq(yminsc,ymaxsc,length=(n_knots+2))[-c(1,n_knots+2)]
+        X_K<-(abs(outer(seq(yminsc,ymaxsc,length = nyears),knotsX,"-")))^3
+        X_OMEGA_all<-(abs(outer(knotsX,knotsX,"-")))^3
+        X_svd.OMEGA_all<-svd(X_OMEGA_all)
+        X_sqrt.OMEGA_all<-t(X_svd.OMEGA_all$v  %*% (t(X_svd.OMEGA_all$u)*sqrt(X_svd.OMEGA_all$d)))
+        X_basis<-t(solve(X_sqrt.OMEGA_all,t(X_K)))
+
+
+      }
+
+      to_return <- c(to_return, list(nknots = n_knots, X.basis = X_basis, basis = basis))
     }
     if (heavy_tailed)
     {
       to_return <- c(to_return,
-                     list(heavy_tailed = TRUE))
+                     list(heavy_tailed = TRUE,
+                          min_nu = 0))
     }else{
       to_return <- c(to_return,
                      list(heavy_tailed = FALSE))
@@ -403,4 +427,3 @@ prepare_data <- function(strat_data = NULL,
 
   return(to_return)
 }
-

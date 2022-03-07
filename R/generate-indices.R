@@ -8,7 +8,7 @@
 #' @param jags_data data object used in \code{run_model}
 #' @param quantiles vector of quantiles to be sampled from the posterior distribution Defaults to c(0.025,0.05,0.25,0.5,0.75,0.95,0.975)
 #' @param regions vector selecting regional compilation(s) to calculate. Default is "continental","stratum", options also include "national", "prov_state", "bcr", and "bcr_by_country" for the stratifications that include areas that align with those regions.
-#' @param alternate_n text string indicating the name of the alternative annual index parameter in a model, Default is "n"
+#' @param alternate_n text string indicating the name of the alternative annual index parameter in a model, Default is "n", alternatives are "n2" which involves a different way of scaling the annual indices, "nsmooth" for the gam and gamye models which show only the smooth component of the trajectory, and "nslope" for the slope models which track only the linear slope component of the model
 #' @param max_backcast an optional integer indicating the maximum number of years to backcast the stratum-level estimates before the first year in which the species was observed on any route in that stratum. 5 is used in the CWS national estimates. If the observed data in a given stratum do not include at least one non-zero observation of the species between the first year of the BBS and startyear+max_backcast, the stratum is flagged within the relevant regional summary. Default value, NULL ignores any backcasting limit (i.e., generates annual indices for the entire time series, regardless of when the species was first observed)
 #' @param drop_exclude logical indicating if the strata that exceed the max_backcast threshold should be excluded from the calculations, Default is FALSE (regions are flagged and listed but not dropped)
 #' @param startyear Optional first year for which to calculate the annual indices if a trajectory for only the more recent portion of the time series is desired. This is probably most relevant if max_backcast is set and so trajectories for different time-periods could include a different subset of strata (i.e., strata removed)
@@ -92,14 +92,14 @@ generate_indices <- function(jags_mod = NULL,
   }
 
   if(!is.null(jags_data)){
-  data_list <- extract_index_data(jags_mod = jags_mod,alt_n = alternate_n,jags_data = jags_data)
+    data_list <- extract_index_data(jags_mod = jags_mod,alt_n = alternate_n,jags_data = jags_data)
   }else{
     data_list <- extract_index_data(jags_mod = jags_mod,alt_n = alternate_n)
 
   }
   n <- data_list$n
   stratify_by <- jags_mod$stratify_by
- original_data = data_list$original_data
+  original_data = data_list$original_data
 
   if(stratify_by %in% c("bcr", "latlong") & ( "national" %in% regions | "prov_state" %in% regions)){
     stop("Stratification of model does not match desired regions. BCRs and latlong degree blocks can not be divided by political boundaries"); return(NULL)
@@ -125,9 +125,9 @@ generate_indices <- function(jags_mod = NULL,
     }
 
   }else{
-  y_min <- data_list$y_min
-  y_max <- data_list$y_max
-  mr_year <- min(data_list$r_year)
+    y_min <- data_list$y_min
+    y_max <- data_list$y_max
+    mr_year <- min(data_list$r_year)
   }
 
 
@@ -138,8 +138,8 @@ generate_indices <- function(jags_mod = NULL,
   bugs_data = data_list$bugs_data
 
   rawall = data.frame(year = bugs_data$year,
-                   count = bugs_data$count,
-                   strat = bugs_data$strat)
+                      count = bugs_data$count,
+                      strat = bugs_data$strat)
   rawnonz = rawall[which(rawall$count > 0),]
 
   fyearbystrat = tapply(rawnonz$year,rawnonz[,c("strat")],min,na.rm = TRUE)
@@ -153,7 +153,7 @@ generate_indices <- function(jags_mod = NULL,
   n_samples <- dim(n)[1]
 
   if(is.null(alt_region_names)){
-  region_names <- utils::read.csv(system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = FALSE)
+    region_names <- utils::read.csv(system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = FALSE)
   }else{
     region_names_o <- utils::read.csv(system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = FALSE)
 
@@ -172,12 +172,12 @@ generate_indices <- function(jags_mod = NULL,
 
 
   data_summary <- data.frame(Year = integer(),
-                              Region = character(),
-                              Region_alt = character(),
+                             Region = character(),
+                             Region_alt = character(),
                              Region_type = character(),
-                              Strata_included = character(),
-                              Strata_excluded = character(),
-                              Index = double(),
+                             Strata_included = character(),
+                             Strata_excluded = character(),
+                             Index = double(),
                              stringsAsFactors = FALSE)
   for(qq in quantiles){
     data_summary[,paste0("Index_q_",qq)] <- double()
@@ -205,126 +205,126 @@ generate_indices <- function(jags_mod = NULL,
     for(rrs in rrall){ # for each of the composite regions
 
       region_alt_name <- as.character(unique(region_names[which(region_names[,rr] == rrs),col_region_name]))
-  if(rr == "bcr"){region_alt_name = paste("BCR",region_alt_name,sep = "_")}
+      if(rr == "bcr"){region_alt_name = paste("BCR",region_alt_name,sep = "_")}
 
-st_sela <- as.character(region_names[which(region_names[,rr] == rrs),"region"])
+      st_sela <- as.character(region_names[which(region_names[,rr] == rrs),"region"])
 
-st_rem <- NULL
-strata_sel <- area_weights[which(area_weights$region %in% st_sela),"num"]
-st_sel <- area_weights[which(area_weights$region %in% st_sela),"region"]
-pz_area <- area_weights[,"area_sq_km"]*non_zero_weight
-#pz_area is the non_zero_weighted area (the area of the stratum * proportion of the routes included)
-# it's designed to estimate the proportional contribution (excluding abundance) of that region to the composite trajectory
+      st_rem <- NULL
+      strata_sel <- area_weights[which(area_weights$region %in% st_sela),"num"]
+      st_sel <- area_weights[which(area_weights$region %in% st_sela),"region"]
+      pz_area <- area_weights[,"area_sq_km"]*non_zero_weight
+      #pz_area is the non_zero_weighted area (the area of the stratum * proportion of the routes included)
+      # it's designed to estimate the proportional contribution (excluding abundance) of that region to the composite trajectory
 
-if(length(strata_sel)<1){next}
-
-
-obs_df = data.frame(year = integer(),
-                    strat = integer(),
-                    obs_mean = double(),
-                    nrts = integer(),
-                    nnzero = integer(),
-                    nrts_total = integer(),
-                    strata_rem_flag = double())
-  for (j in strata_sel)
-  {
-    rawst <- raw[which(raw$strat == j),c("year","count")]
-    yrs <- data.frame(year = c(y_min:y_max))
-    rawst <- merge(rawst,yrs,by = "year",all = TRUE)
-    rawst <- rawst[order(rawst$year),]
-
-    o_mns <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = mean,na.rm = TRUE))
-    nrts <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = function(x){length(which(!is.na(x)))}))
-    nnzero <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = function(x){length(which(x>0))}))
-    strata_p <- pz_area[j]/sum(pz_area[strata_sel])
-
-    if(sum(nnzero[1:max_backcast]) < 1 & as.integer(fyearbystrat[j]) > y_min){ #if no observations of the species in the first 5 years, then remove the strata from trend summaries
-       st_rem <- c(st_rem,as.character(area_weights[which(area_weights$num == j),"region"]))
-       strem_flag <- c(rep(strata_p,fyearbystrat[j]-(y_min-1)),rep(0,y_max-fyearbystrat[j]))
-    #if(length(strata_sel) == 1){break}
-    }else{
-      strem_flag <- rep(0,length(y_max:y_min))
-
-     }
+      if(length(strata_sel)<1){next}
 
 
-     obs_df_t <- data.frame(year = c(y_min:y_max),
-                           strat = j,
-                           obs_mean = o_mns*((area_weights$area_sq_km[which(area_weights$num == j)])/ sum(area_weights[which(area_weights$num %in% strata_sel),"area_sq_km"]))*(non_zero_weight[j]),
-                           nrts = nrts,
-                           nnzero = nnzero,
-                           nrts_total = as.integer(nrts_total_by_strat[j]),
-                           strata_rem_flag = strem_flag)
+      obs_df = data.frame(year = integer(),
+                          strat = integer(),
+                          obs_mean = double(),
+                          nrts = integer(),
+                          nnzero = integer(),
+                          nrts_total = integer(),
+                          strata_rem_flag = double())
+      for (j in strata_sel)
+      {
+        rawst <- raw[which(raw$strat == j),c("year","count")]
+        yrs <- data.frame(year = c(y_min:y_max))
+        rawst <- merge(rawst,yrs,by = "year",all = TRUE)
+        rawst <- rawst[order(rawst$year),]
 
-    obs_df <- rbind(obs_df,obs_df_t)
-  }
+        o_mns <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = mean,na.rm = TRUE))
+        nrts <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = function(x){length(which(!is.na(x)))}))
+        nnzero <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = function(x){length(which(x>0))}))
+        strata_p <- pz_area[j]/sum(pz_area[strata_sel])
+
+        if(sum(nnzero[1:max_backcast]) < 1 & as.integer(fyearbystrat[j]) > y_min){ #if no observations of the species in the first 5 years, then remove the strata from trend summaries
+          st_rem <- c(st_rem,as.character(area_weights[which(area_weights$num == j),"region"]))
+          strem_flag <- c(rep(strata_p,fyearbystrat[j]-(y_min-1)),rep(0,y_max-fyearbystrat[j]))
+          #if(length(strata_sel) == 1){break}
+        }else{
+          strem_flag <- rep(0,length(y_max:y_min))
+
+        }
 
 
-if(!is.null(st_rem)){
-  if(drop_exclude){
-    strata_sel <- strata_sel[-which(strata_sel %in% area_weights[which(area_weights$region %in% st_rem),"num"])]
-    st_sel <- st_sel[-which(st_sel %in% st_rem)]
-  }
-}
+        obs_df_t <- data.frame(year = c(y_min:y_max),
+                               strat = j,
+                               obs_mean = o_mns*((area_weights$area_sq_km[which(area_weights$num == j)])/ sum(area_weights[which(area_weights$num %in% strata_sel),"area_sq_km"]))*(non_zero_weight[j]),
+                               nrts = nrts,
+                               nnzero = nnzero,
+                               nrts_total = as.integer(nrts_total_by_strat[j]),
+                               strata_rem_flag = strem_flag)
 
-if(length(strata_sel)<1){next}
-
-#n_weight <- n[,,y_min:y_max]
-#
-
+        obs_df <- rbind(obs_df,obs_df_t)
+      }
 
 
-n_weight <- array(NA,dim = c(dim(n)[c(1,2)],length(y_min:y_max)))
-n_weight[,,1:length(y_min:y_max)] <- n[,,y_min:y_max]
+      if(!is.null(st_rem)){
+        if(drop_exclude){
+          strata_sel <- strata_sel[-which(strata_sel %in% area_weights[which(area_weights$region %in% st_rem),"num"])]
+          st_sel <- st_sel[-which(st_sel %in% st_rem)]
+        }
+      }
+
+      if(length(strata_sel)<1){next}
+
+      #n_weight <- n[,,y_min:y_max]
+      #
 
 
-  # Weight each sampled n
-  for (i in 1:n_samples)
-  {
-    for (j in strata_sel)
-    {
-      n_weight[i,j,] <- (n_weight[i,j,] * area_weights$area_sq_km[which(area_weights$num == j)])/ sum(area_weights[which(area_weights$num %in% strata_sel),"area_sq_km"])
+
+      n_weight <- array(NA,dim = c(dim(n)[c(1,2)],length(y_min:y_max)))
+      n_weight[,,1:length(y_min:y_max)] <- n[,,y_min:y_max]
+
+
+      # Weight each sampled n
+      for (i in 1:n_samples)
+      {
+        for (j in strata_sel)
+        {
+          n_weight[i,j,] <- (n_weight[i,j,] * area_weights$area_sq_km[which(area_weights$num == j)])/ sum(area_weights[which(area_weights$num %in% strata_sel),"area_sq_km"])
+        }
+      }
+      n_weight <- n_weight[,strata_sel,]
+
+      if(length(strata_sel) > 1){
+        N <- apply(n_weight, c(1,3),sum)
+      }else{
+        N <- n_weight
+      }
+      n_index <- n_index+1
+      N_all[[n_index]] <- N
+      names(N_all)[n_index] <- paste(rr,rrs,sep = "_")
+
+      n_median <- apply(N, 2, median)
+      data_summaryr <- data.frame(Year = seq(y_min:y_max),
+                                  Region = rrs,
+                                  Region_alt = region_alt_name,
+                                  Region_type = rr,
+                                  Strata_included = paste(st_sel,collapse = " ; "),
+                                  Strata_excluded = paste(st_rem,collapse = " ; "),
+                                  Index = n_median,
+                                  stringsAsFactors = FALSE)
+      for(qq in quantiles){
+        data_summaryr[,paste0("Index_q_",qq)] <- apply(N,2,stats::quantile,probs = qq)
+      }
+
+      data_summaryr$Year <- as.integer((data_summaryr$Year - 1) + mr_year)
+      data_summaryr$obs_mean <- as.numeric(by(obs_df[,3],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
+      data_summaryr$nrts <- as.numeric(by(obs_df[,4],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
+      data_summaryr$nnzero <- as.numeric(by(obs_df[,5],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
+      data_summaryr$nrts_total <- as.numeric(by(obs_df[,6],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
+      data_summaryr$backcast_flag <- 1-as.numeric(by(obs_df[,7],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
+
+      data_summary = rbind(data_summary,data_summaryr)
+
+
     }
   }
-n_weight <- n_weight[,strata_sel,]
-
-  if(length(strata_sel) > 1){
-      N <- apply(n_weight, c(1,3),sum)
-    }else{
-      N <- n_weight
-}
-  n_index <- n_index+1
-  N_all[[n_index]] <- N
-  names(N_all)[n_index] <- paste(rr,rrs,sep = "_")
-
-  n_median <- apply(N, 2, median)
-  data_summaryr <- data.frame(Year = seq(y_min:y_max),
-                              Region = rrs,
-                              Region_alt = region_alt_name,
-                              Region_type = rr,
-                              Strata_included = paste(st_sel,collapse = " ; "),
-                              Strata_excluded = paste(st_rem,collapse = " ; "),
-                              Index = n_median,
-                              stringsAsFactors = FALSE)
-  for(qq in quantiles){
-    data_summaryr[,paste0("Index_q_",qq)] <- apply(N,2,stats::quantile,probs = qq)
-  }
-
-  data_summaryr$Year <- as.integer((data_summaryr$Year - 1) + mr_year)
-  data_summaryr$obs_mean <- as.numeric(by(obs_df[,3],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
-  data_summaryr$nrts <- as.numeric(by(obs_df[,4],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
-  data_summaryr$nnzero <- as.numeric(by(obs_df[,5],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
-  data_summaryr$nrts_total <- as.numeric(by(obs_df[,6],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
-  data_summaryr$backcast_flag <- 1-as.numeric(by(obs_df[,7],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
-
-  data_summary = rbind(data_summary,data_summaryr)
 
 
-    }
-  }
-
-
-   return(list(data_summary = data_summary,
+  return(list(data_summary = data_summary,
               samples = N_all,
               area_weights = area_weights,
               y_min = y_min,
