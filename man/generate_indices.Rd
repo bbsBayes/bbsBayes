@@ -25,7 +25,7 @@ generate_indices(
 
 \item{regions}{vector selecting regional compilation(s) to calculate. Default is "continental","stratum", options also include "national", "prov_state", "bcr", and "bcr_by_country" for the stratifications that include areas that align with those regions.}
 
-\item{alternate_n}{text string indicating the name of the alternative annual index parameter in a model, Default is "n"}
+\item{alternate_n}{text string indicating the name of the alternative annual index parameter in a model, Default is "n", alternatives are "n2" which involves a different way of scaling the annual indices, "nsmooth" for the gam and gamye models which show only the smooth component of the trajectory, and "nslope" for the slope models which track only the linear slope component of the model}
 
 \item{startyear}{Optional first year for which to calculate the annual indices if a trajectory for only the more recent portion of the time series is desired. This is probably most relevant if max_backcast is set and so trajectories for different time-periods could include a different subset of strata (i.e., strata removed)}
 

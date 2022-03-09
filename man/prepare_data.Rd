@@ -18,6 +18,7 @@ prepare_data(
   strata_rem = NULL,
   quiet = FALSE,
   sampler = "jags",
+  basis = "original",
   ...
 )
 }
@@ -53,12 +54,15 @@ species observed. Defaults to 1.}
 \item{sampler}{Which MCMC sampling software to use. Currently bbsBayes only
 supports "jags".}
 
+\item{basis}{Which version of the basis-function to use for the GAM smooth, the default is "original" the same basis used in Smith and Edwards 2020 and "mgcv" is an alternate that uses the "tp" basis from the packages mgcv (also used in brms, and rstanarm). If using the "mgcv" option, the user may want to consider adjusting the prior distributions for the parameters and their precision}
+
 \item{...}{Additional arguments}
 }
 \value{
 List of data to be used for modelling, including:
   \item{model}{The model to be used}
   \item{heavy_tailed}{Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution}
+  \item{min_nu}{if heavy_tailed is TRUE, minimum value for truncated gamma on DF of t-distribution noise default is 0 and user must change manually after function is run}
   \item{ncounts}{The number of counts containing useful data for the species}
   \item{nstrata}{The number of strata used in the analysis}
   \item{ymin}{Minimum year used}
@@ -72,7 +76,7 @@ List of data to be used for modelling, including:
   \item{month}{vector of numeric month of observation}
   \item{day}{vector of numeric day of observation}
   \item{nobservers}{Total number of observer-route pairings}
-  \item{fixedyear}{Median of all years (ymin:ymax), included only with slope model}
+  \item{fixedyear}{Median of all years (ymin:ymax), included only with slope and firstdiff models}
   \item{nknots}{Number of knots to use for smooting functions, included only with GAM}
   \item{X.basis}{Basis function for n smoothing functions, included only with GAM}
 }

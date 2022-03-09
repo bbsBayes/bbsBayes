@@ -95,6 +95,7 @@ prepare_data <- function(strat_data = NULL,
                          basis = "original",
                          ...)
 {
+  x <- NULL; rm(x)
   if (is.null(strat_data))
   {
     stop("No data supplied to prepare_data()."); return(NULL)

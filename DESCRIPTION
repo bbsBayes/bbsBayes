@@ -21,7 +21,8 @@ Imports:
   tools,
   latticeExtra,
   rappdirs,
-  sbtools
+  sbtools,
+  mgcv
 Depends: R (>= 3.5)
 SystemRequirements: JAGS 4.3.0 (https://sourceforge.net/projects/mcmc-jags/)
 URL: https://github.com/BrandonEdwards/bbsBayes
