@@ -141,6 +141,100 @@ run_model <- function(jags_data = NULL,
     }
   }
 
+  # Deprecated model parameter name check. Adding this in for the next few versions
+  if ("n3" %in% parameters_to_save)
+  {
+    if (model %in% c("gam", "gamye", "gam_heavy", "gamye_heavy"))
+    {
+      warning("The parameter \"n3\" is now \"nsmooth\" in GAM models as of bbsBayes v2.4.0.2020, and will be output as such.")
+    }else if (model %in% c("slope", "slope_heavy"))
+    {
+      warning("The parameter \"n3\" is now \"nslope\" in slope models as of bbsBayes v2.4.0.2020, and will be output as such.")
+    }
+  }
+  if ("n4" %in% parameters_to_save)
+  {
+    if (model %in% c("gam", "gamye", "gam_heavy", "gamye_heavy"))
+    {
+      warning("The parameter \"n4\" is now \"nsmooth2\" in GAM models as of bbsBayes v2.4.0.2020, and will be output as such.")
+    }else if (model %in% c("slope", "slope_heavy"))
+    {
+      warning("The parameter \"n4\" is now \"nslope2\" in slope models as of bbsBayes v2.4.0.2020, and will be output as such.")
+    }
+  }
+  if ("yeareffect" %in% parameters_to_save)
+  {
+    if (model %in% c("gam", "gamye", "gam_heavy", "gamye_heavy"))
+    {
+      warning("The parameter \"yeareffect\" is now \"smooth\" in GAM models as of bbsBayes v2.4.0.2020, and will be output as such.")
+    }
+  }
+  if ("yy" %in% parameters_to_save)
+  {
+    if (model %in% c("gamye", "gamye_heavy"))
+    {
+      warning("The parameter \"yy\" is now \"yeareffect\" in GAMYE models as of bbsBayes v2.4.0.2020, and will be output as such.")
+    }
+  }
+  if ("tauyy" %in% parameters_to_save)
+  {
+    if (model %in% c("gamye", "gamye_heavy"))
+    {
+      warning("The parameter \"tauyy\" is now \"tauyeareffect\" in GAMYE models as of bbsBayes v2.4.0.2020, and will be output as such.")
+    }
+  }
+  if ("mulogtauyy" %in% parameters_to_save)
+  {
+    if (model %in% c("gamye", "gamye_heavy"))
+    {
+      warning("The parameter \"mulogtauyy\" is now \"mulogtauyeareffect\" in GAMYE models as of bbsBayes v2.4.0.2020, and will be output as such.")
+    }
+  }
+  if ("taulogtauyy" %in% parameters_to_save)
+  {
+    if (model %in% c("gamye", "gamye_heavy"))
+    {
+      warning("The parameter \"taulogtauyy\" is now \"taulogtauyeareffect\" in GAMYE models as of bbsBayes v2.4.0.2020, and will be output as such.")
+    }
+  }
+  if ("logtauyy" %in% parameters_to_save)
+  {
+    if (model %in% c("gamye", "gamye_heavy"))
+    {
+      warning("The parameter \"logtauyy\" is now \"logtauyeareffect\" in GAMYE models as of bbsBayes v2.4.0.2020, and will be output as such.")
+    }
+  }
+  if ("tauyear" %in% parameters_to_save)
+  {
+    if (model %in% c("slope", "slope_heavy"))
+    {
+      warning("The parameter \"tauyear\" is now \"tauyeareffect\" in Slope models as of bbsBayes v2.4.0.2020, and will be output as such.")
+    }
+  }
+  if ("strata.p" %in% parameters_to_save)
+  {
+    if (model %in% c("firstdiff", "firstdiff_heavy"))
+    {
+      warning("The parameter \"strata.p\" is no longer used in the First Difference model and will be dropped.")
+      parameters_to_save <- parameters_to_save[!parameters_to_save == "strata.p"]
+    }
+  }
+  if ("mulogtauyear" %in% parameters_to_save)
+  {
+    if (model %in% c("firstdiff", "firstdiff_heavy"))
+    {
+      warning("The parameter \"mulogtauyear\" is no longer used in the First Difference model and will be dropped.")
+      parameters_to_save <- parameters_to_save[!parameters_to_save == "mulogtauyear"]
+    }
+  }
+  if ("taulogtauyear" %in% parameters_to_save)
+  {
+    if (model %in% c("firstdiff", "firstdiff_heavy"))
+    {
+      warning("The parameter \"taulogtauyear\" is no longer used in the First Difference model and will be dropped.")
+      parameters_to_save <- parameters_to_save[!parameters_to_save == "taulogtauyear"]
+    }
+  }
   message("Console output messages for JAGS models are supplied by jagsUI package.")
 
   jags_job <- jagsUI::jags(data = jags_data,

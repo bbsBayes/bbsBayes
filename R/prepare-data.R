@@ -41,7 +41,7 @@
 #'   \item{month}{vector of numeric month of observation}
 #'   \item{day}{vector of numeric day of observation}
 #'   \item{nobservers}{Total number of observer-route pairings}
-#'   \item{fixedyear}{Median of all years (ymin:ymax), included only with slope model}
+#'   \item{fixedyear}{Median of all years (ymin:ymax), included only with slope and firstdiff models}
 #'   \item{nknots}{Number of knots to use for smooting functions, included only with GAM}
 #'   \item{X.basis}{Basis function for n smoothing functions, included only with GAM}
 #'
