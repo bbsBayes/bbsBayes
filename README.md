@@ -6,7 +6,7 @@ This README file provides an overview of the functionality that can be accomplis
 
 Additional resources:
 * [Introductory bbsBayes Workshop](https://github.com/AdamCSmithCWS/bbsBayes_Intro_Workshop)
-* [Journal Article with worked example](http://doi.org/10.5334/jors.329)
+* [Journal Article with worked example](https://doi.org/10.5334/jors.329)
 
 ## Overview
 
