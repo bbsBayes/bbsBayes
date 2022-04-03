@@ -6,7 +6,7 @@ model
 
 	for( k in 1 : ncounts )
 	{
-		Eloglambda[k] <- beta[strat[k]] * (year[k] - fixedyear) + obs[strat[k],obser[k]] + eta*firstyr[k] + yeareffect[strat[k],year[k]]
+		Eloglambda[k] <- strata[strat[k]] + beta[strat[k]] * (year[k] - fixedyear) + obs[strat[k],obser[k]] + eta*firstyr[k] + yeareffect[strat[k],year[k]]
 	 	loglambda[k] ~ dt(Eloglambda[k], taunoise, nu)
 	 	log(lambda[k]) <- loglambda[k]
 		count[k] ~ dpois(lambda[k])
