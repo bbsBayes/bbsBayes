@@ -199,7 +199,10 @@ fetch_bbs_data <- function(level = "state",
                                            destinations = temp)
   tick(pb, quiet)
 
-  species <- utils::read.fwf(temp, skip = 11, strip.white = TRUE, header = FALSE,
+  if(release == 2022){lskip <- 14} #silly differences in file structure
+  if(release == 2020){lskip <- 11}
+
+  species <- utils::read.fwf(temp, skip = lskip, strip.white = TRUE, header = FALSE,
                              colClasses = c("integer",
                                             "character",
                                             "character",
