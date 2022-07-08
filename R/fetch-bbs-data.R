@@ -90,7 +90,7 @@ fetch_bbs_data <- function(level = "state",
     message("Connecting to USGS ScienceBase...", appendLF = FALSE)
   }
 
-  connection <- sbtools::item_get(sb_id = get_sb_id(r = release))
+  connection <- sbtools::item_get(sb_id = get_sb_id(rel_date = release))
   if (!is.null(connection))
   {
     if (!isTRUE(quiet))

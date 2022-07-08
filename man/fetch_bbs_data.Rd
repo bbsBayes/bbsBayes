@@ -4,7 +4,7 @@
 \alias{fetch_bbs_data}
 \title{Fetch Breeding Bird Survey dataset}
 \usage{
-fetch_bbs_data(level = "state", quiet = FALSE, force = FALSE)
+fetch_bbs_data(level = "state", release = 2022, quiet = FALSE, force = FALSE)
 }
 \arguments{
 \item{level}{A string, either "state" or "stop", specifying which counts to
@@ -14,6 +14,8 @@ the 50 stops along a route. Specifying "stop" provides stop-level data
 beginning in 1997, which includes counts for each stop along routes
 individually. Note that stop-level data is not currently supported by
 the modeling utilities in bbsBayes.}
+
+\item{release}{Integer: what yearly release is desired? options are 2022 (default including data through 2021 field season) or 2020 (including data through 2019)}
 
 \item{quiet}{Logical: should progress bars be suppressed? Defaults to FALSE}
 
