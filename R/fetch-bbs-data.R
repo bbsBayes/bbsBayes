@@ -16,6 +16,7 @@
 #' beginning in 1997, which includes counts for each stop along routes
 #' individually. Note that stop-level data is not currently supported by
 #' the modeling utilities in bbsBayes.
+#' @param release Integer: what yearly release is desired? options are 2022 (default including data through 2021 field season) or 2020 (including data through 2019)
 #' @param quiet Logical: should progress bars be suppressed? Defaults to FALSE
 #' @param force Logical: if BBS data already exists on computer, should it be overwritten? Defaults to FALSE
 #'
@@ -30,6 +31,7 @@
 #'
 #'
 fetch_bbs_data <- function(level = "state",
+                           release = 2022,
                            quiet = FALSE,
                            force = FALSE)
 {
@@ -40,9 +42,9 @@ fetch_bbs_data <- function(level = "state",
   stopifnot(is.logical(quiet))
 
   # Print Terms of Use
-  terms <- readChar(system.file("data-terms",
+  terms <- readChar(system.file(paste0("data-terms-",release),
                                 package = "bbsBayes"),
-                    file.info(system.file("data-terms",
+                    file.info(system.file(paste0("data-terms-",release),
                                           package = "bbsBayes"))$size)
 
   cat(terms)
@@ -88,7 +90,7 @@ fetch_bbs_data <- function(level = "state",
     message("Connecting to USGS ScienceBase...", appendLF = FALSE)
   }
 
-  connection <- sbtools::item_get(sb_id = get_sb_id())
+  connection <- sbtools::item_get(sb_id = get_sb_id(r = release))
   if (!is.null(connection))
   {
     if (!isTRUE(quiet))
@@ -114,9 +116,14 @@ fetch_bbs_data <- function(level = "state",
   }
 
   temp <- tempdir()
+  if(release == 2020){
+    rtsfl <- "routes.zip" # if necessary because file name changed between 2020 and 2022 releases
+  }else{
+    rtsfl <- "Routes.zip"
+  }
   full_path <- sbtools::item_file_download(sb_id = connection,
-                                           names = "routes.zip",
-                                           destinations = file.path(temp, "routes.zip"))
+                                           names = rtsfl,
+                                           destinations = file.path(temp, rtsfl))
   tick(pb, quiet)
 
   routes <- utils::read.csv(utils::unzip(zipfile = full_path,
@@ -192,7 +199,10 @@ fetch_bbs_data <- function(level = "state",
                                            destinations = temp)
   tick(pb, quiet)
 
-  species <- utils::read.fwf(temp, skip = 11, strip.white = TRUE, header = FALSE,
+  if(release == 2022){lskip <- 14} #silly differences in file structure
+  if(release == 2020){lskip <- 11}
+
+  species <- utils::read.fwf(temp, skip = lskip, strip.white = TRUE, header = FALSE,
                              colClasses = c("integer",
                                             "character",
                                             "character",
@@ -337,9 +347,15 @@ get_counts <- function(level, quiet, sb_conn) {
 
 }
 
-get_sb_id <- function()
+get_sb_id <- function(rel_date)
 {
-  return("5ea04e9a82cefae35a129d65")
+  if(rel_date == 2022){
+    id_strng <- "625f151ed34e85fa62b7f926"
+  }else{
+    id_strng <- "5ea04e9a82cefae35a129d65"
+  }
+  return(id_strng)
+
 }
 
 tick <- function(pb, quiet) {
