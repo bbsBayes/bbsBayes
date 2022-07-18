@@ -213,8 +213,7 @@ fetch_bbs_data <- function(level = "state",
                                             "character",
                                             "character"),
                              widths = c(6, -1, 5, -1, 50, -1, 50, -1, 50, -1,
-                                        50, -1, 50, -1, 50, -1, 50),
-                             fileEncoding = "iso-8859-1")
+                                        50, -1, 50, -1, 50, -1, 50))
   unlink(temp)
   tick(pb, quiet)
 
