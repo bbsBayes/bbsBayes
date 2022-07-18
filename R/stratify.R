@@ -46,13 +46,12 @@
 #' # Stratify by blocks of 1 degree of latitude X 1 degree of longitude
 #' data_strat <- stratify(by = "latlong", sample_data = TRUE)
 #'
-#' \donttest{
-#' # Requires fetch_bbs_data() to have been run (takes about 10 minutes).
-#'
-#' # Stratify the entire data set, may take a minute or so
-#' data_strat <- stratify(by = "bbs_cws")
-#' }
 
+#' # To stratify the entire dataset, simply set the sample_data = FALSE,
+#' # or drop that argument altogher. The function then requires fetch_bbs_data()
+#' # to have been run (takes about 10 minutes). Stratification of the entire dataset
+#' # may take up to 3 minutes.
+#'
 #' @importFrom progress progress_bar
 #' @importFrom rappdirs app_dir
 #' @export
