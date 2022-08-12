@@ -17,6 +17,7 @@ run_model(
   n_saved_steps = 2000,
   n_iter = 10000,
   parallel = FALSE,
+  n_cores = NULL,
   quiet = FALSE,
   modules = NULL,
   ...
@@ -59,8 +60,10 @@ Defaults to 2000.}
 
 \item{n_iter}{Optional number of iterations per chain. Defaults to 10000.}
 
-\item{parallel}{Should each chain be run parallel on separate cores?
-If TRUE, the number of cores used will be the minimum of the
+\item{parallel}{Should each chain be run parallel on separate cores?}
+
+\item{n_cores}{Number of cores to use if running in parallel. If NULL (default),
+and parallel = TRUE, the number of cores used will be the minimum of the
 \code{n_chains} specified and the number of cores on your computer}
 
 \item{quiet}{Should JAGS output be suppressed?}
