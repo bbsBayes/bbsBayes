@@ -1,12 +1,13 @@
 Package: bbsBayes
 Type: Package
 Title: Hierarchical Bayesian Analysis of North American BBS Data
-Version: 2.5.1
-Date: 2022-07-18
+Version: 3.0.0
 Authors@R: c(person("Brandon P.M.", "Edwards", role = c("aut", "cre"),
                      email = "brandonedwards3@cmail.carleton.ca"),
               person("Adam C.", "Smith", role = "aut",
-                      email = "adam.smith2@canada.ca"))
+                      email = "adam.smith2@canada.ca"),
+              person("Steffi", "LaZerte", role = "aut",
+                      email = "steffi@steffi.ca"))
 Imports:
   progress,
   jagsUI,
@@ -41,4 +42,10 @@ Description: The North American Breeding Bird Survey (BBS) is a long-running
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.0
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+VignetteBuilder: knitr

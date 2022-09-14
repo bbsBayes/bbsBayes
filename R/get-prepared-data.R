@@ -56,3 +56,13 @@ get_prepared_data <- function(jags_data = NULL)
 
   return(to_return)
 }
+
+get_prepared_data_stan <- function(model_data = NULL) {
+  data.frame(Year = model_data$r_year,
+             Year_Factored = model_data$year,
+             Count = model_data$count,
+             Stratum = model_data$strat_name,
+             Stratum_Factored = model_data$strat,
+             Observer_Factored = model_data$obser,
+             First_Year = model_data$firstyr)
+}

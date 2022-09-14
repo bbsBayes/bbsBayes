@@ -10,3 +10,4 @@ ISSUES_TEMPLATE.md
 PULL_REQUEST_TEMPLATE.md
 generate-map-abundance.R
 
+^data-raw$
