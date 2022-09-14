@@ -104,7 +104,7 @@ extract_index_data_tidy <- function(jags_mod = NULL,
   area_weights$num <- strata_num
 
   if(!is.null(jags_data)){
-    original_data = get_prepared_data_orig(jags_data = jags_data)
+    original_data = get_prepared_data(jags_data = jags_data)
   }else{
     original_data = NULL
   }
