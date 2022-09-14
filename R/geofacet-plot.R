@@ -88,15 +88,6 @@ geofacet_plot <- function(indices_list = NULL,
                           species = "",
                           col_viridis = FALSE)
 {
-  # Annoying thing to get rid of check notes
-  Year <- NULL; rm(Year)
-  Index <- NULL; rm(Index)
-  Region <- NULL; rm(Region)
-  lci <- NULL; rm(lci)
-  uci <- NULL; rm(uci)
-  Trendcat <- NULL; rm(Trendcat)
-  lbl <- NULL; rm(lbl)
-  obs_mean <- NULL; rm(obs_mean)
 
   if (is.null(stratify_by))
   {
@@ -131,8 +122,8 @@ geofacet_plot <- function(indices_list = NULL,
     stop("Desired quantiles are not included in the indices_list object. Re-run generate_x_indices() funtion with desired quantiles."); return(NULL)
   }
 
-  indices$lci = indices[,lqc]
-  indices$uci = indices[,uqc]
+  indices$lci = indices[[lqc]]
+  indices$uci = indices[[uqc]]
 
 
   mny = min(indices$Year)

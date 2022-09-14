@@ -55,11 +55,11 @@
 #'
 
 generate_map <- function(trend = NULL,
-                         select = FALSE,
-                         stratify_by = NULL,
-                         slope = FALSE,
-                         species = "",
-                         col_viridis = FALSE)
+                              select = FALSE,
+                              stratify_by = NULL,
+                              slope = FALSE,
+                              species = "",
+                              col_viridis = FALSE)
 {
   # Silly things to remove "visible binding" note in check
   Trend <- NULL
@@ -135,11 +135,11 @@ generate_map <- function(trend = NULL,
     ggplot2::labs(title = ptit)+
     ggplot2::theme(legend.position = "right", line = ggplot2::element_line(size = 0.4),
                    rect = ggplot2::element_rect(size = 0.1),
-          axis.text = ggplot2::element_blank(),
-          axis.line = ggplot2::element_blank())+
+                   axis.text = ggplot2::element_blank(),
+                   axis.line = ggplot2::element_blank())+
     ggplot2::scale_colour_manual(values = map_palette, aesthetics = c("fill"),
-                        guide = ggplot2::guide_legend(reverse=TRUE),
-                        name = paste0("Trend\n",fyr,"-",lyr))
+                                 guide = ggplot2::guide_legend(reverse=TRUE),
+                                 name = paste0("Trend\n",fyr,"-",lyr))
 
 
   return(mp.plot)
