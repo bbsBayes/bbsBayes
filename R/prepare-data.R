@@ -332,6 +332,8 @@ prepare_data <- function(strat_data = NULL,
 
   nstrata=length(unique(spsp_f$strat))
 
+  spsp_f <- dplyr::arrange(spsp_f, strat, route, rYear)
+
   to_return <- list(model = model,
                     ncounts = nrow(spsp_f),
                     nstrata=length(unique(spsp_f$strat)),
@@ -994,6 +996,8 @@ prepare_data_stan1 <- function(strat_data = NULL,
   spsp_f$site <- as.integer(factor(spsp_f$route))
 
 
+
+  spsp_f <- dplyr::arrange(spsp_f, .data$strat, .data$route, .data$rYear)
 
   # Observer route combinations for retransformations -----------------------
 
