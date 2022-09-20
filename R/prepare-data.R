@@ -431,6 +431,248 @@ prepare_data <- function(strat_data = NULL,
 
 
 
+#' Wrangle data to use for modelling input (TIDY)
+#'
+#' \code{prepare_data} subsets raw BBS data by selected species and
+#'    and wrangles stratified data for use as input for models.
+#'
+#' @param strat_data Large list of stratified data returned by \code{stratify()}
+#' @param species_to_run Character string of the English name of the species to run
+#' @param model Character string of model to be used.
+#'   Options are "slope", "firstdiff", "gam", "gamye.
+#' @param heavy_tailed Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution, with heavier tails than the standard normal distribution. Default is currently FALSE, but recent results suggest users should strongly consider setting this to TRUE, even though it requires much longer convergence times
+#' @param n_knots Number of knots to be used in GAM function
+#' @param basis Which version of the basis-function to use for the GAM smooth, the default is "original" the same basis used in Smith and Edwards 2020 and "mgcv" is an alternate that uses the "tp" basis from the packages mgcv (also used in brms, and rstanarm). If using the "mgcv" option, the user may want to consider adjusting the prior distributions for the parameters and their precision
+#' @param min_year Minimum year to keep in analysis
+#' @param max_year Maximum year to keep in analysis
+#' @param min_n_routes Minimum routes per strata where species has been observed.
+#'   Defaults to 3
+#' @param min_max_route_years Minimum number of years with non-zero observations
+#'   of species on at least 1 route. Defaults to 3
+#' @param min_mean_route_years Minimum average of years per route with the
+#'   species observed. Defaults to 1.
+#' @param strata_rem Strata to remove from analysis. Defaults to NULL
+#' @param quiet Should progress bars be suppressed?
+#' @param sampler Which MCMC sampling software to use. Currently bbsBayes only
+#'   supports "jags".
+#' @param ... Additional arguments
+#'
+#' @return List of data to be used for modelling, including:
+#'   \item{model}{The model to be used}
+#'   \item{heavy_tailed}{Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution}
+#'   \item{min_nu}{if heavy_tailed is TRUE, minimum value for truncated gamma on DF of t-distribution noise default is 0 and user must change manually after function is run}
+#'   \item{ncounts}{The number of counts containing useful data for the species}
+#'   \item{nstrata}{The number of strata used in the analysis}
+#'   \item{ymin}{Minimum year used}
+#'   \item{ymax}{Maximum year used}
+#'   \item{nonzeroweight}{Proportion of routes in each strata with species obervation}
+#'   \item{count}{Vector of counts for the species}
+#'   \item{strat}{Vector of strata to be used in the analysis}
+#'   \item{obser}{Vector of unique observer-route pairings}
+#'   \item{year}{Vector of years for each count}
+#'   \item{firstyr}{Vector of indicator variables as to whether an observer was a first year}
+#'   \item{month}{vector of numeric month of observation}
+#'   \item{day}{vector of numeric day of observation}
+#'   \item{nobservers}{Total number of observer-route pairings}
+#'   \item{fixedyear}{Median of all years (ymin:ymax), included only with slope and firstdiff models}
+#'   \item{nknots}{Number of knots to use for smooting functions, included only with GAM}
+#'   \item{X.basis}{Basis function for n smoothing functions, included only with GAM}
+#'
+#' @importFrom stats median
+#' @importFrom progress progress_bar
+#' @importFrom mgcv s
+#' @importFrom mgcv smoothCon
+#' @export
+#'
+#' @examples
+#' # Toy example with Pacific Wren sample data
+#' # First, stratify the sample data
+#'
+#' strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
+#'
+#' # Prepare the stratified data for use in a model. In this
+#' #   toy example, we will set the minimum year as 2009 and
+#' #   maximum year as 2018, effectively only setting up to
+#' #   model 10 years of data. We will use the "first difference
+#' #   model.
+#' model_data <- prepare_data(strat_data = strat_data,
+#'                            species_to_run = "Pacific Wren",
+#'                            model = "firstdiff",
+#'                            min_year = 2009,
+#'                            max_year = 2018)
+#'
+#' # You can also specify the GAM model, with an optional number of
+#' # knots to use for the GAM basis.
+#' # By default, the number of knots will be equal to the floor
+#' # of the total unique years for the species / 4
+#' model_data <- prepare_data(strat_data = strat_data,
+#'                            species_to_run = "Pacific Wren",
+#'                            model = "gam",
+#'                            n_knots = 9)
+#'
+#'
+
+prepare_data_tidy <- function(strat_data = NULL,
+                              species_to_run = NULL,
+                              model = NULL,
+                              heavy_tailed = FALSE,
+                              n_knots = NULL,
+                              min_year = NULL,
+                              max_year = NULL,
+                              min_n_routes = 3,
+                              min_max_route_years = 3,
+                              min_mean_route_years = 1,
+                              strata_rem = NULL,
+                              quiet = FALSE,
+                              sampler = "jags",
+                              basis = "original",
+                              ...) {
+  if(is.null(strat_data)) stop("No data supplied", call. = FALSE)
+  if(is.null(species_to_run)) stop("No species specified", call. = FALSE)
+  if(is.null(model)) stop("No model specified", call. = FALSE)
+  if(isFALSE(is.element(model, c("slope", "firstdiff", "gam", "gamye")))) {
+    stop("Invalid model specified", call. = FALSE)
+  }
+
+  # Specify species
+  sp_aou <- get_species_aou(strat_data$species_strat, species_to_run)
+
+  # Get observations of interest
+  obs <- strat_data$bird_strat %>%
+    dplyr::filter(AOU == .env$sp_aou) %>%
+    dplyr::rename(count = "SpeciesTotal") %>%
+    dplyr::select("statenum", "Route", "BCR", "RouteDataID", "count", "Year")
+
+  # Add in routes
+  obs <- strat_data$route_strat %>%
+    dplyr::select(
+      "countrynum", "statenum", "Route", "Year", "Month", "Day",
+      "State", "BCR", "RouteDataID", "strat_name", "rt.uni", "ObsN") %>%
+    dplyr::left_join(obs, by = c("statenum", "Route", "Year",
+                                 "BCR", "RouteDataID")) %>% #spsp.c
+    dplyr::mutate(count = tidyr::replace_na(.data$count, 0))
+
+  # Filter observations
+  if(!is.null(strata_rem)) {
+    obs <- dplyr::filter(obs, !.data$strat_name %in% .env$strata_rem)
+  }
+  if(!is.null(min_year)) obs <- dplyr::filter(obs, .data$Year >= .env$min_year)
+  if(!is.null(max_year)) obs <- dplyr::filter(obs, .data$Year <= .env$max_year)
+
+  if(!quiet) {
+    message("Preparing data")
+    pb <- progress::progress_bar$new(
+      format = "\r[:bar] :percent eta: :eta",
+      clear = FALSE,
+      total = length(unique(obs$strat_name)) + 26,
+      width = 80)
+    pb$tick(0)
+  }
+
+  if(!quiet) pb$tick()
+
+  routes_meta <- obs %>%
+    dplyr::group_by(.data$strat_name, .data$rt.uni) %>%
+    dplyr::summarize(first_year = min(Year), # First year each route was run
+                     n = dplyr::n(),
+                     n_obs = length(count[count > 0]),   # At least 1 counted
+                     .groups = "drop")
+
+  routes_ever <- routes_meta %>%
+    dplyr::filter(n_obs > 0)
+
+  routes_never <- routes_meta %>%
+    dplyr::filter(n_obs == 0)
+
+  if(nrow(routes_ever) > 0) {
+
+    strat_meta <- routes_meta %>%
+      dplyr::group_by(.data$strat_name) %>%
+      dplyr::summarize(nr = dplyr::n(),
+                       nr_ever = sum(n_obs > 0),
+                       nr_never = sum(n_obs == 0),
+                       pr_ever = nr_ever / nr,
+                       pr_never = nr_never / nr,
+                       first_year = min(first_year),
+                       max_nry = max(n_obs),
+                       n_obs = sum(n_obs),
+                       mean_obs = n_obs / nr_ever,
+                       .groups = "drop") %>%
+      dplyr::mutate(
+        first_year = dplyr::if_else(first_year > 2100, NA_integer_, first_year),
+        max_nry = dplyr::if_else(max_nry < 0, NA_integer_, max_nry)) %>%
+      dplyr::filter(.data$nr_ever >= .env$min_n_routes,
+                    .data$max_nry >= .env$min_max_route_years,
+                    .data$mean_obs >= .env$min_mean_route_years)
+
+
+
+    # Only keep obs where route ever had that species
+    obs_ever <- dplyr::semi_join(obs, routes_ever, by = "rt.uni") %>%
+      # Only keep obs where strata meets minimum requirements
+      dplyr::inner_join(strat_meta, by = "strat_name") %>%
+      # Create numeric years from start
+      dplyr::mutate(yr = .data$Year - min(.data$Year) + 1)
+
+  } else {
+    obs_ever <- dplyr::slice(obs, 0)
+  }
+
+  obs_final <- obs_ever %>%
+    dplyr::mutate(
+      stratcode = .data$strat_name,
+      strat = as.numeric(factor(.data$strat_name)),
+      rt.uni.ob = paste0(.data$rt.uni, " - ", .data$ObsN)) %>%
+    dplyr::arrange(.data$strat, .data$rt.uni, .data$Year) %>%
+    dplyr::group_by(.data$strat_name) %>%
+    dplyr::mutate(obser = as.numeric(factor(rt.uni.ob))) %>%
+    dplyr::group_by(.data$rt.uni.ob) %>%
+    dplyr::mutate(first_year = dplyr::if_else(Year == min(Year), 1, 0)) %>%
+    dplyr::ungroup()
+
+  nobservers <- obs_final %>%
+    dplyr::group_by(.data$strat) %>%
+    dplyr::summarize(n = dplyr::n_distinct(.data$rt.uni.ob)) %>%
+    dplyr::pull(.data$n)
+
+  weights <- obs_final %>%
+    dplyr::select("strat", "pr_ever") %>%
+    dplyr::distinct() %>%
+    dplyr::pull(.data$pr_ever)
+
+
+  to_return <- list(model = model,
+
+                    ncounts = nrow(obs_final),
+                    nstrata = length(unique(obs_final$strat)),
+
+                    ymin = min(obs_final$yr),
+                    ymax = max(obs_final$yr),
+                    nonzeroweight = weights,
+                    count = as.integer(obs_final$count),
+                    strat_name = obs_final$strat_name,
+                    strat = as.integer(obs_final$strat),
+                    obser = as.integer(obs_final$obser),
+                    year = obs_final$yr,
+                    firstyr = obs_final$first_year,
+                    nobservers = nobservers,
+                    stratify_by = strat_data$stratify_by,
+                    route = obs_final$rt.uni,
+                    r_year = obs_final$Year,
+                    month = obs_final$Month,
+                    day = obs_final$Day)
+
+  if(!is.null(model)) to_return <- append(
+    to_return,
+    prepare_model(model, basis, obs_final, n_knots, heavy_tailed))
+
+  to_return
+}
+
+
+
+
+
 #' Wrangle data to use for modelling input (STAN)
 #'
 #' \code{prepare_data} subsets raw BBS data by selected species and
@@ -512,7 +754,7 @@ prepare_data <- function(strat_data = NULL,
 #'
 #'
 
-prepare_data_stan <- function(strat_data = NULL,
+prepare_data_stan1 <- function(strat_data = NULL,
                               species_to_run = NULL,
                               model = NULL,
                               heavy_tailed = TRUE,
@@ -530,28 +772,17 @@ prepare_data_stan <- function(strat_data = NULL,
                               calculate_nu = FALSE,
                               calculate_log_lik = FALSE,
                               calculate_CV = FALSE,
-                              ...)
-{
-  x <- NULL; rm(x)
-  if (is.null(strat_data))
-  {
-    stop("No data supplied to prepare_data()."); return(NULL)
+                              ...) {
+
+  if(is.null(strat_data)) stop("No data supplied", call. = FALSE)
+  if(is.null(species_to_run)) stop("No species specified", call. = FALSE)
+  if(is.null(model)) stop("No model specified", call. = FALSE)
+  if(isFALSE(is.element(model, c("slope", "firstdiff", "gam", "gamye")))) {
+    stop("Invalid model specified", call. = FALSE)
   }
-  if (is.null(species_to_run))
-  {
-    stop("No species specified."); return(NULL)
-  }
-  if (is.null(model))
-  {
-    stop("No model specified."); return(NULL)
-  }
-  if (isFALSE(is.element(model, c("slope", "firstdiff", "gam", "gamye"))))
-  {
-    stop("Invalid model specified"); return(NULL)
-  }
-  if (isFALSE(heavy_tailed) & isFALSE(use_pois))
-  {
-    stop("Heavy-tailed models are implied with Negative Binomial (use_pois == FALSE)"); return(NULL)
+  if(isFALSE(heavy_tailed) & isFALSE(use_pois)) {
+    stop("Heavy-tailed models are implied with Negative Binomial ",
+         "(use_pois == FALSE)",  call. = FALSE)
   }
 
 
@@ -569,10 +800,11 @@ prepare_data_stan <- function(strat_data = NULL,
   spsp <- birds[which(birds$AOU == sp_aou),] # Gets all observations of the species of interest
   names(spsp)[which(names(spsp) == "SpeciesTotal")] <- "TotalInd" # change header to totalInd
 
-  spsp.c <- merge(route,spsp[,-which(names(spsp) %in% c("countrynum",
+
+  spsp.c <- merge(route,spsp[,!names(spsp) %in% c("countrynum",
                                                         "rt.uni.y",
                                                         "rt.uni",
-                                                        "RPID"))],
+                                                        "RPID")],
                   by = c("statenum",
                          "Route",
                          "Year",
@@ -966,4 +1198,457 @@ prepare_data_stan <- function(strat_data = NULL,
   if (!isTRUE(quiet)){pb$tick()}
 
   return(to_return)
+}
+
+#' Wrangle data to use for modelling input (STAN TIDY)
+#'
+#' Subset raw BBS data by selected species and and wrangle stratified data for
+#' use as input for models.
+#'
+#' @param strat_data List. Stratified data returned by `stratify()`
+#' @param species_to_run Character. English name of the species to run
+#' @param model Character. Model to use. One of `"slope", "firstdiff", "gam",
+#'   "gamye"`
+#' @param heavy_tailed Logical. Whether the extra-Poisson error distribution
+#'   should be modeled as a t-distribution, with heavier tails than the standard
+#'   normal distribution. Default is `FALSE`, but recent results suggest users
+#'   should strongly consider setting this to `TRUE`, even though it requires
+#'   much longer convergence times
+#' @param n_knots Numeric. Number of knots to be used in GAM function
+#' @param basis Character. Which version of the basis-function to use for the
+#'   GAM smooth. Default is `"original"`, the same basis used in Smith and
+#'   Edwards 2020. `"mgcv"` is an alternate that uses the "tp" basis from the
+#'   `mgcv` package (also used in `brms`, and `rstanarm`). If using `"mgcv"`,
+#'   the user may want to consider adjusting the prior distributions for the
+#'   parameters and their precision.
+#' @param min_year Numeric. Minimum year to keep in analysis
+#' @param max_year Numeric. Maximum year to keep in analysis
+#' @param min_n_routes Numeric. Required minimum routes per strata where species
+#'   has been observed. Defaults to 3
+#' @param min_max_route_years Required minimum number of years with non-zero
+#'   observations of species on at least 1 route. Defaults to 3
+#' @param min_mean_route_years Required minimum average of years per route with
+#'   the species observed. Defaults to 1.
+#' @param strata_rem Character vector. Strata to remove from analysis.
+#' @param quiet Should progress bars be suppressed?
+#'
+#' @return List of data to be used for modelling as input to `run_model()`.
+#'
+#' @export
+#'
+#' @examples
+#' # Toy example with Pacific Wren sample data
+#'
+#' # First, stratify the sample data
+#'
+#' strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
+#'
+#' # Prepare the stratified data for use in a model. In this
+#' #   toy example, we will set the minimum year as 2009 and
+#' #   maximum year as 2018, effectively only setting up to
+#' #   model 10 years of data. We will use the "first difference
+#' #   model.
+#' model_data <- prepare_data(strat_data = strat_data,
+#'                            species_to_run = "Pacific Wren",
+#'                            model = "firstdiff",
+#'                            min_year = 2009,
+#'                            max_year = 2018)
+#'
+#' # You can also specify the GAM model, with an optional number of
+#' # knots to use for the GAM basis.
+#' # By default, the number of knots will be equal to the floor
+#' # of the total unique years for the species / 4
+#' model_data <- prepare_data(strat_data = strat_data,
+#'                            species_to_run = "Pacific Wren",
+#'                            model = "gam",
+#'                            n_knots = 9)
+#'
+#'
+
+prepare_data_stan2 <- function(strat_data = NULL,
+                               species_to_run = NULL,
+                               model = NULL,
+                               heavy_tailed = TRUE,
+                               n_knots = NULL,
+                               min_year = NULL,
+                               max_year = NULL,
+                               min_n_routes = 3,
+                               min_max_route_years = 3,
+                               min_mean_route_years = 1,
+                               strata_rem = NULL,
+                               quiet = FALSE,
+                               sampler = "Stan",
+                               basis = "mgcv",
+                               use_pois = FALSE,
+                               calculate_nu = FALSE,
+                               calculate_log_lik = FALSE,
+                               calculate_CV = FALSE) {
+
+  # Checks
+  if(is.null(strat_data)) stop("No data supplied", call. = FALSE)
+  if(is.null(species_to_run)) stop("No species specified", call. = FALSE)
+
+  model <- check_model(model)
+  basis <- check_basis(basis)
+
+  if(!heavy_tailed & !use_pois) {
+    stop("Heavy-tailed models are implied with Negative Binomial ",
+         "(`use_pois == FALSE`). Set `heavy_tailed = TRUE`",  call. = FALSE)
+  }
+
+  # More checks...
+
+
+
+
+  # Get observations of interest
+  sp_aou <- get_species_aou(strat_data$species_strat, species_to_run)
+
+  obs <- strat_data$bird_strat %>%
+    dplyr::filter(AOU == .env$sp_aou) %>%
+    dplyr::rename(count = "SpeciesTotal") %>%
+    dplyr::select("statenum", "Route", "BCR", "RouteDataID", "count", "Year")
+
+  # Add in routes
+  obs <- strat_data$route_strat %>%
+    dplyr::select(
+      "countrynum", "statenum", "Route", "Year", "Month", "Day",
+      "State", "BCR", "RouteDataID", "strat_name", "rt.uni", "ObsN") %>%
+    dplyr::left_join(obs, by = c("statenum", "Route", "Year",
+                                 "BCR", "RouteDataID")) %>% #spsp.c
+    dplyr::mutate(count = tidyr::replace_na(.data$count, 0))
+
+  # Filter observations
+  if(!is.null(strata_rem)) {
+    obs <- dplyr::filter(obs, !.data$strat_name %in% .env$strata_rem)
+  }
+  if(!is.null(min_year)) obs <- dplyr::filter(obs, .data$Year >= .env$min_year)
+  if(!is.null(max_year)) obs <- dplyr::filter(obs, .data$Year <= .env$max_year)
+
+  if(!quiet) {
+    message("Preparing data")
+    pb <- progress::progress_bar$new(
+      format = "\r[:bar] :percent eta: :eta",
+      clear = FALSE,
+      total = length(unique(obs$strat_name)) + 26,
+      width = 80)
+    pb$tick(0)
+  }
+
+  if(!quiet) pb$tick()
+
+  routes_meta <- obs %>%
+    dplyr::group_by(.data$strat_name, .data$rt.uni) %>%
+    dplyr::summarize(first_year = min(Year), # First year each route was run
+                     n = dplyr::n(),
+                     n_obs = length(count[count > 0]),   # At least 1 counted
+                     .groups = "drop")
+
+  routes_ever <- routes_meta %>%
+    dplyr::filter(n_obs > 0)
+
+  routes_never <- routes_meta %>%
+    dplyr::filter(n_obs == 0)
+
+  if(nrow(routes_ever) > 0) {
+
+    strat_meta <- routes_meta %>%
+      dplyr::group_by(.data$strat_name) %>%
+      dplyr::summarize(nr = dplyr::n(),
+                       nr_ever = sum(n_obs > 0),
+                       nr_never = sum(n_obs == 0),
+                       pr_ever = nr_ever / nr,
+                       pr_never = nr_never / nr,
+                       first_year = min(first_year),
+                       max_nry = max(n_obs),
+                       n_obs = sum(n_obs),
+                       mean_obs = n_obs / nr_ever,
+                       .groups = "drop") %>%
+      dplyr::mutate(
+        first_year = dplyr::if_else(first_year > 2100, NA_integer_, first_year),
+        max_nry = dplyr::if_else(max_nry < 0, NA_integer_, max_nry)) %>%
+      dplyr::filter(.data$nr_ever >= .env$min_n_routes,
+                    .data$max_nry >= .env$min_max_route_years,
+                    .data$mean_obs >= .env$min_mean_route_years)
+
+
+
+    # Only keep obs where route ever had that species
+    obs_ever <- dplyr::semi_join(obs, routes_ever, by = "rt.uni") %>%
+      # Only keep obs where strata meets minimum requirements
+      dplyr::inner_join(strat_meta, by = "strat_name") %>%
+      # Create numeric years from start
+      dplyr::mutate(yr = .data$Year - min(.data$Year) + 1)
+
+  } else {
+    obs_ever <- dplyr::slice(obs, 0)
+  }
+
+  obs_final <- obs_ever %>%
+    dplyr::mutate(
+      stratcode = .data$strat_name,
+      strat = as.numeric(factor(.data$strat_name)),
+      observer = as.integer(factor(.data$ObsN)),
+      route = rt.uni,
+      site = as.integer(factor(rt.uni)),
+      obs_route = paste0(.data$rt.uni, " - ", .data$ObsN),
+      obs_site = as.integer(factor(.data$obs_route))) %>%
+    dplyr::group_by(.data$strat_name) %>%
+    dplyr::mutate(n_obs_sites = dplyr::n_distinct(obs_site)) %>%
+    dplyr::group_by(.data$obs_route) %>%
+    dplyr::mutate(first_year = dplyr::if_else(Year == min(Year), 1, 0)) %>%
+    dplyr::ungroup() %>%
+    dplyr::arrange(.data$strat, .data$rt.uni, .data$Year)
+
+  nobs_sites <- obs_final %>%
+    dplyr::group_by(.data$strat) %>%
+    dplyr::summarize(n = dplyr::n_distinct(.data$obs_site)) %>%
+    dplyr::pull(.data$n)
+
+  weights <- obs_final %>%
+    dplyr::select("strat", "pr_ever") %>%
+    dplyr::distinct() %>%
+    dplyr::pull(.data$pr_ever)
+
+  obs_by_site <- obs_final %>%
+    dplyr::select("strat", "obs_site", "site", "observer") %>%
+    dplyr::distinct() %>%
+    dplyr::arrange(.data$observer)
+
+  n_obs_sites <- obs_final %>%
+    dplyr::select("strat", "n_obs_sites") %>%
+    dplyr::distinct() %>%
+    dplyr::pull(.data$n_obs_sites)
+
+  nstrata <- length(unique(obs_final$strat))
+
+  # Create matrices
+  site_mat <- matrix(data = 0,
+                     nrow = nstrata,
+                     ncol = max(n_obs_sites))
+
+  obs_mat <- matrix(data = 0,
+                    nrow = nstrata,
+                    ncol = max(n_obs_sites))
+
+  for(i in 1:nstrata){
+    site_mat[i,1:n_obs_sites[i]] <- obs_by_site$site[obs_by_site$strat == i]
+    obs_mat[i,1:n_obs_sites[i]] <- obs_by_site$observer[obs_by_site$strat == i]
+  }
+
+  ncounts <- nrow(obs_final)
+
+  to_return <- list(
+    model = model,
+
+    # Sample sizes
+    nsites = max(obs_final$site),
+    nstrata = length(unique(obs_final$strat)),
+    ncounts = nrow(obs_final),
+    nyears = as.integer(max(obs_final$yr)),
+
+    # Basic data
+    count = obs_final$count,
+    strat = obs_final$strat,
+    year = obs_final$yr,
+    site = obs_final$site,
+
+    # Spatial structure
+    # N_edges = N_edges,
+    # node1 = node1,
+    # node2 = node2,
+
+    # Observer information
+    nobservers = max(obs_final$observer),
+    observer = obs_final$observer,
+    firstyr = obs_final$first_year,
+
+    # Ragged array information to link sites and observers to strata
+    nobs_sites_strata = n_obs_sites,
+    maxnobs_sites_strata = max(n_obs_sites),
+    ste_mat = site_mat,
+    obs_mat = obs_mat,
+
+    # Weights
+    nonzeroweight = weights,
+
+    # Model specifications
+
+    # Extra Poisson variance options
+
+    # 0 = use df == 3 (do not calculate df for the t-distributed noise)
+    # 1 = use nu ~ gamma(2,0.1))
+    calc_nu = as.integer(calculate_nu),
+
+    # 1 = heavy-tailed t-dist. noise; 0 = normal dist)
+    heavy_tailed = as.integer(heavy_tailed),
+
+    # 1 = over-dispersed poisson; 0 = Negative Binomial
+    use_pois = as.integer(use_pois),
+
+    # Log and Cross validation options
+
+    # Calc point-wise log-likelihood of data given model
+    calc_log_lik = as.integer(calculate_log_lik),
+
+    # 1 = data and model include cross-validation training and test data
+    calc_CV = as.integer(calculate_CV),
+    train = as.integer(1:ncounts), # indices of obs in the training dataset
+    test = as.integer(1),          # indices of obs in the test dataset
+    ntrain = ncounts,              # no. training data (must == ncounts if calc_CV == 0)
+    ntest = 1,                     # no. testing data  (ignored if calc_CV == 0)
+
+    stratify_by = strat_data$stratify_by,
+    r_year = obs_final$Year,
+    alt_data = obs_final
+    )
+
+  if(!is.null(model)) to_return <- append(
+    to_return,
+    prepare_model_stan(model, basis, obs_final, n_knots, heavy_tailed))
+
+  to_return
+}
+
+
+prepare_model <- function(model, basis, obs, n_knots, heavy_tailed) {
+
+  ymin <- min(obs$yr)
+  ymax <- max(obs$yr)
+  nyears <- length(ymin:ymax)
+  years <- ymin:ymax
+
+  to_return <- list()
+
+  if(tolower(model) %in% c("slope", "firstdiff")) {
+    to_return <- append(to_return,
+                        list(fixedyear = floor(stats::median(unique(obs$yr)))))
+  }
+
+  if(tolower(model) %in% c("gam", "gamye")) {
+    if(is.null(n_knots)) n_knots <- floor(length(unique((obs$yr)))/4)
+    if(tolower(basis) == "mgcv") {
+      smooth_basis <- mgcv::smoothCon(
+        mgcv::s(x, k = n_knots + 1, bs = "tp"), data = data.frame(x = years),
+        # drops constant and absorbs identifiability constraints into the basis
+        absorb.cons = TRUE,
+        # If TRUE, the smooth is reparameterized to turn the penalty into an
+        # identity matrix, with the final diagonal elements zeroed
+        # (corresponding to the penalty nullspace).
+        diagonal.penalty = TRUE)
+
+      X_basis = smooth_basis[[1]]$X
+
+    } else {
+      recenter <- floor(diff(c(1, ymax))/2)
+
+      # generates a year variable with range = 1, this rescaling helps the
+      # convergence for the GAM beta parameters
+      rescale <- ymax
+
+      obs$yearscale <- (obs$yr - recenter) / ymax
+
+      scaledyear <- seq(min(obs$yearscale), max(obs$yearscale), length = nyears)
+      names(scaledyear) <- ymin:ymax
+      if(ymin != 1) {
+        newys <- 1:(ymin - 1)
+        newyscale <- (newys - recenter)/rescale
+        names(newyscale) <- newys
+        scaledyear = c(newyscale, scaledyear)
+      }
+
+      yminsc <- scaledyear[as.character(ymin)]
+      ymaxsc <- scaledyear[as.character(ymax)]
+      if(ymin != 1) {
+        yminpred <- 1
+        yminscpred <- scaledyear[as.character(1)]
+      }
+
+      knotsX <- seq(yminsc, ymaxsc, length = (n_knots + 2))[-c(1, n_knots + 2)]
+      X_K <- (abs(outer(seq(yminsc, ymaxsc, length = nyears), knotsX, "-")))^3
+      X_OMEGA_all <- (abs(outer(knotsX,knotsX,"-")))^3
+      X_svd.OMEGA_all <- svd(X_OMEGA_all)
+      X_sqrt.OMEGA_all <- t(X_svd.OMEGA_all$v  %*%
+                              (t(X_svd.OMEGA_all$u) * sqrt(X_svd.OMEGA_all$d)))
+      X_basis <- t(solve(X_sqrt.OMEGA_all, t(X_K)))
+    }
+
+    to_return <- append(to_return,
+                        list(nknots = n_knots, X.basis = X_basis, basis = basis))
+  }
+  if(heavy_tailed) {
+    to_return <- c(to_return, list(heavy_tailed = TRUE, min_nu = 0))
+  } else {
+    to_return <- c(to_return, list(heavy_tailed = FALSE))
+  }
+  to_return
+}
+
+
+prepare_model_stan <- function(model, basis, obs, n_knots, heavy_tailed) {
+
+  ymin <- min(obs$yr)
+  ymax <- max(obs$yr)
+  nyears <- length(ymin:ymax)
+  years <- ymin:ymax
+
+  to_return <- list()
+
+  if(model %in% c("slope", "firstdiff")) {
+    to_return <- append(to_return,
+                        list(fixedyear = floor(stats::median(unique(obs$yr)))))
+  }
+
+  if(model %in% c("gam", "gamye")) {
+    if(is.null(n_knots)) n_knots <- floor(length(unique((obs$yr)))/4)
+    if(basis == "mgcv") {
+      smooth_basis <- mgcv::smoothCon(
+        mgcv::s(x, k = n_knots + 1, bs = "tp"), data = data.frame(x = years),
+        # drops constant and absorbs identifiability constraints into the basis
+        absorb.cons = TRUE,
+        # If TRUE, the smooth is reparameterized to turn the penalty into an
+        # identity matrix, with the final diagonal elements zeroed
+        # (corresponding to the penalty nullspace).
+        diagonal.penalty = TRUE)
+
+      year_basis <- smooth_basis[[1]]$X
+
+    } else {
+      recenter <- floor(diff(c(1, ymax))/2)
+
+      # generates a year variable with range = 1, this rescaling helps the
+      # convergence for the GAM beta parameters
+      rescale <- ymax
+
+      obs$yearscale <- (obs$yr - recenter) / ymax
+
+      scaledyear <- seq(min(obs$yearscale), max(obs$yearscale), length = nyears)
+      names(scaledyear) <- ymin:ymax
+      if(ymin != 1) {
+        newys <- 1:(ymin - 1)
+        newyscale <- (newys - recenter)/rescale
+        names(newyscale) <- newys
+        scaledyear = c(newyscale, scaledyear)
+      }
+
+      yminsc <- scaledyear[as.character(ymin)]
+      ymaxsc <- scaledyear[as.character(ymax)]
+      if(ymin != 1) {
+        yminpred <- 1
+        yminscpred <- scaledyear[as.character(1)]
+      }
+
+      knotsX <- seq(yminsc, ymaxsc, length = (n_knots + 2))[-c(1, n_knots + 2)]
+      X_K <- (abs(outer(seq(yminsc, ymaxsc, length = nyears), knotsX, "-")))^3
+      X_OMEGA_all <- (abs(outer(knotsX,knotsX,"-")))^3
+      X_svd.OMEGA_all <- svd(X_OMEGA_all)
+      X_sqrt.OMEGA_all <- t(X_svd.OMEGA_all$v  %*%
+                              (t(X_svd.OMEGA_all$u) * sqrt(X_svd.OMEGA_all$d)))
+      year_basis <- t(solve(X_sqrt.OMEGA_all, t(X_K)))
+    }
+
+    to_return <- append(to_return,
+                        list(nknots = n_knots, year_basis = year_basis))
+  }
+  to_return
 }

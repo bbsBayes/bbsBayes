@@ -10,6 +10,22 @@ test_that("JAGS models run", {
                             min_max_route_years = 2,
                             heavy_tailed = TRUE)
 
+  jags_data2 <- prepare_data_tidy(strat_data = bbs_data,
+                                  species_to_run = "Pacific Wren",
+                                  model = "slope",
+                                  min_max_route_years = 2,
+                                  heavy_tailed = TRUE)
+
+  # Only observer dimensions (not content) differ (shouldn't matter) -- Hooray!
+  waldo::compare(jags_data, jags_data2)
+
+})
+
+test_that("JAGS models run", {
+
+  skip("Do not test automatically")
+
+
   jags_fit <- run_model(jags_data = jags_data,
                         parameters_to_save = c("n","nslope",
                                                "BETA","beta","STRATA",
@@ -24,7 +40,7 @@ test_that("JAGS models run", {
 
 test_that("JAGS outputs", {
 
-  skip("Do not test automatically")
+  skip_on_ci()
 
   load(system.file("model_outputs", "jags_bbs_usgs_slope_pacific_wren.RData",
                    package = "bbsBayes"))
@@ -160,7 +176,7 @@ test_that("JAGS outputs", {
                      add_observed_means = TRUE)
 
   saveRDS(tp, file.path(system.file("model_outputs", package = "bbsBayes"),
-                        "jags_bbs_usgs_slope_pacific_wren_trend_plots.rds"))
+                        "jags_bbs_usgs_slope_pacific_wren_indices_plots.rds"))
   tp[[1]]
   tp[[2]]
 
@@ -175,7 +191,7 @@ test_that("JAGS outputs", {
                       add_observed_means = TRUE)
 
   saveRDS(tp2, file.path(system.file("model_outputs", package = "bbsBayes"),
-                         "jags_bbs_usgs_slope_pacific_wren_trend_plots2.rds"))
+                         "jags_bbs_usgs_slope_pacific_wren_indices_plots2.rds"))
   tp2[[1]]
   tp2[[2]]
 
@@ -234,87 +250,66 @@ test_that("JAGS outputs", {
                 species = "Pacfic Wren")
 })
 
+test_that("STAN prepare data", {
+
+  skip("Do not test automatically")
+
+  bbs_data <- stratify(by = "bbs_usgs", sample_data = TRUE)
+
+  stan_data1 <- prepare_data_stan1(bbs_data,
+                                   species_to_run = "Pacific Wren",
+                                   model = "slope",
+                                   min_max_route_years = 2)
+
+  stan_data2 <- prepare_data_stan2(bbs_data,
+                                   species_to_run = "Pacific Wren",
+                                   model = "slope",
+                                   min_max_route_years = 2)
+
+  # All the same -- Hooray!!
+  waldo::compare(names(stan_data1), names(stan_data2))
+  waldo::compare(stan_data1[1:16], stan_data2[1:16])
+
+  # Only expected diff (int vs. double and the alt_data data frame) -- Hooray!!
+  waldo::compare(stan_data1[17:30], stan_data2[17:30])
+
+})
+
+
+
 test_that("STAN models run", {
 
   skip("Do not test automatically")
 
   bbs_data <- stratify(by = "bbs_usgs", sample_data = TRUE)
 
-  stan_data <- prepare_data_stan(bbs_data,
-                                 species_to_run = "Pacific Wren",
-                                 model = "slope",
-                                 min_max_route_years = 2)
+  stan_data <- prepare_data_stan2(bbs_data,
+                                  species_to_run = "Pacific Wren",
+                                  model = "slope",
+                                  min_max_route_years = 2)
 
-  tmp_stratify_by <- stan_data[["stratify_by"]]
-  tmp_model <- stan_data[["model"]]
-  tmp_alt_data <- stan_data[["alt_data"]]
+  stan_fit <- run_model_stan(
+    stan_data,
+    out_name = "pacific_wren_slope_BBS_short",
+    out_dir = system.file("model_outputs", package = "bbsBayes"),
+    iter_sampling = 10, iter_warmup = 10)
 
-  stan_data[["stratify_by"]] <- NULL
-  stan_data[["model"]] <- NULL
-  stan_data[["alt_data"]] <- NULL
-
-  mod.file = system.file("models", "slope_bbs_CV.stan", package = "bbsBayes")
-  out_base <- paste("pacific_wren", tmp_model, "BBS", sep = "_")
-
-  # compiles Stan model (this is only necessary if the model has been changed since it was last run on this machine)
-  stan_model <- cmdstanr::cmdstan_model(mod.file)
-
-  init_def <- function() {
-    list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_pois,0,0.1),
-         strata_raw = rnorm(stan_data$nstrata,0,0.1),
-         STRATA = 0,
-         nu = 10,
-         sdstrata = runif(1,0.01,0.1),
-         eta = 0,
-         yeareffect_raw = matrix(rnorm(stan_data$nstrata*stan_data$nyears,0,0.1),nrow = stan_data$nstrata,ncol = stan_data$nyears),
-         obs_raw = rnorm(stan_data$nobservers,0,0.1),
-         ste_raw = rnorm(stan_data$nsites,0,0.1),
-         sdnoise = runif(1,0.3,1.3),
-         sdobs = runif(1,0.01,0.1),
-         sdste = runif(1,0.01,0.2),
-         sdbeta = runif(1,0.01,0.1),
-         sdyear = runif(stan_data$nstrata,0.01,0.1),
-         BETA = rnorm(1,0,0.1),
-         beta_raw = rnorm(stan_data$nstrata,0,0.1))}
-
-  stan_fit <- stan_model$sample(
-    data=stan_data,
-    refresh=1,
-    chains=3,
-    iter_sampling=1000,
-    iter_warmup=1000,
-    parallel_chains = 3,
-    #pars = parms,
-    adapt_delta = 0.95,
-    max_treedepth = 14,
-    seed = 123,
-    init = init_def,
-    output_dir = system.file("model_outputs", package = "bbsBayes"),
-    output_basename = out_base)
-
-  message("Calculating run summary")
-  fit_summary <- stan_fit$summary()
-
-  meta_data <- list()
-  meta_data[["stratify_by"]] <- tmp_stratify_by
-  meta_data[["model"]] <- tmp_model
-  meta_data[["alt_data"]] <- tmp_alt_data
-  meta_data[["strat_name"]] <- tmp_alt_data$strat_name
-
-  save(list = c("stan_fit","stan_data", "meta_data",
-                "out_base", "fit_summary"),
+  save(list = c("stan_fit","stan_data"),
        file = file.path(system.file("model_outputs", package = "bbsBayes"),
-                        paste0(out_base, "_Stan_fit.RData")))
+                        "pacific_wren_slope_BBS_short_fit.RData"))
 })
 
 test_that("EXPLORE STAN outputs", {
 
   skip("Do not test automatically")
 
-  load(system.file("model_outputs", "pacific_wren_slope_BBS_Stan_fit.RData",
+  # load(system.file("model_outputs", "pacific_wren_slope_BBS_short_fit.RData",
+  #                  package = "bbsBayes"))
+
+  load(system.file("model_outputs", "pacific_wren_slope_BBS_fit.RData",
                    package = "bbsBayes"))
 
-  # "stan_fit","stan_data","out_base",  "fit_summary"
+  # "stan_fit","stan_data"
 
   # samples
   temp <- stan_fit$draws(variables = "strata_raw", format = "draws_df")
@@ -352,7 +347,7 @@ test_that("EXPLORE STAN outputs", {
 })
 
 test_that("STAN outputs", {
-  skip("Do not test automatically")
+  skip_on_ci()
 
   load(system.file("model_outputs", "pacific_wren_slope_BBS_Stan_fit.RData",
                    package = "bbsBayes"))
@@ -364,5 +359,29 @@ test_that("STAN outputs", {
                                                "national",
                                                "prov_state",
                                                "stratum"))
+
+  tp <- plot_indices(indices = indices,
+                     species = "Pacific Wren",
+                     add_observed_means = TRUE)
+
+  saveRDS(tp, file.path(system.file("model_outputs", package = "bbsBayes"),
+                        "pacific_wren_slope_indices_plots.rds"))
+
+  trends <- generate_trends_tidy(indices = indices)
+
+  # plot_indices -------------------------------
+  saveRDS(tp, file.path(system.file("model_outputs", package = "bbsBayes"),
+                        "jags_bbs_usgs_slope_pacific_wren_trend_plots.rds"))
+
+  # Compare with JAGS
+  tp_jags <- readRDS(system.file(
+    "model_outputs",
+    "jags_bbs_usgs_slope_pacific_wren_indices_plots.rds",
+    package = "bbsBayes"))
+
+  library(patchwork)
+
+  (tp[[1]] + ggplot2::ggtitle("JAGS")) + (tp_jags[[1]] +  ggplot2::ggtitle("STAN"))
+
 
 })
