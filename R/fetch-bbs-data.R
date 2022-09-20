@@ -364,3 +364,247 @@ tick <- function(pb, quiet) {
     pb$tick()
   }
 }
+
+
+#' Fetch Breeding Bird Survey dataset (TIDY)
+#'
+#'  Use File Transfer Protocol (FTP) to fetch Breeding Bird Survey data from the
+#'  United States Geological Survey (USGS) FTP site. This is the raw data that
+#'  is uploaded to the site before any analyses are performed. A
+#'  package-specific directory is created on the user's computer (see
+#'  documentation of `rappdirs::appdir` for details of where this directory
+#'  lives), and the BBS data is saved to that directory for use by other
+#'  functions. Before downloading any data, the user must thoroughly read
+#'  through the terms and conditions of the user of the data and type the word
+#'  "yes" to agree.
+#'
+#' @param level Character. "state" or "stop", specifying which counts to fetch.
+#'   Defaults to "state", which provides counts beginning in 1966, aggregated in
+#'   five bins, each of which contains cumulative counts from 10 of the 50 stops
+#'   along a route. "stop" provides stop-level data beginning in 1997, which
+#'   includes counts for each stop along routes individually. Note that
+#'   stop-level data is not currently supported by the modelling utilities in
+#'   bbsBayes.
+#' @param release Numeric. Yearly release. Options are 2022 (default including
+#'   data through 2021 field season) or 2020 (including data through 2019)
+#' @param quiet Logical. Suppress progress bars? Defaults to FALSE
+#' @param force Logical. Should pre-exising BBS data be overwritten? Defaults to
+#'   FALSE
+#'
+#' @export
+#'
+fetch_bbs_data_tidy <- function(level = "state",
+                                release = 2022,
+                                quiet = FALSE,
+                                force = FALSE,
+                                compress = "none") {
+
+  if (!level %in% c('state', 'stop')) {
+    stop("Invalid level argument: level must be one of 'state' or 'stop'.",
+         call. = FALSE)
+  }
+  if(!release %in% c(2020, 2022)) {
+    stop("'release' must be either 2020 or 2022", call. = FALSE)
+  }
+
+  stopifnot(is.logical(quiet))
+
+  # Print Terms of Use
+  terms <- readChar(system.file(paste0("data-terms-",release),
+                                package = "bbsBayes"),
+                    file.info(system.file(paste0("data-terms-",release),
+                                          package = "bbsBayes"))$size)
+
+  cat(terms)
+  agree <- readline(prompt = "Type \"yes\" (without quotes) to agree: ")
+  if(agree != "yes") return(NULL)
+
+  bbs_dir <- rappdirs::app_dir(appname = "bbsBayes")
+
+  if(!file.exists(bbs_dir$data())) {
+    message(paste0("Creating data directory at ", bbs_dir$data()))
+    dir.create(bbs_dir$data(), recursive = TRUE)
+  } else {
+    message(paste0("Using data directory at ", bbs_dir$data()))
+  }
+
+  if(level == "state") {
+    if(file.exists(paste0(bbs_dir$data(), "/bbs_raw_data.RData")) & !force) {
+      warning("BBS state-level data file already exists. ",
+              "Use \"force = TRUE\" to overwrite.", call. = FALSE)
+      return()
+    }
+  } else if(level == "stop"){
+    if(file.exists(paste0(bbs_dir$data(), "bbs_stop_data.RData")) & !force) {
+      warning("BBS stop-level data file already exists. ",
+              "Use \"force = TRUE\" to overwrite.", call. = FALSE)
+      return()
+    }
+  }
+
+  if(!quiet) message("Connecting to USGS ScienceBase...", appendLF = FALSE)
+
+  connection <- sbtools::item_get(sb_id = get_sb_id(rel_date = release))
+
+  if(!is.null(connection) & !quiet) message("Connected!")
+
+  # Download/load Data --------------
+  birds <- get_counts_tidy(level, quiet, connection, force)
+  routes <- get_routes(release, quiet, connection, force)
+  weather <- get_weather(connection, force)
+  regs <- readr::read_csv(
+    system.file("data-import", "regs.csv", package = "bbsBayes"),
+    col_types = "cnncc")
+
+  # Combine routes, weather, and region ----------------
+  routes <- routes %>%
+    dplyr::inner_join(weather, by = c("CountryNum", "StateNum", "Route")) %>%
+    dplyr::rename_with(tolower, .cols = c("CountryNum", "StateNum"))
+
+  # remove off-road and water routes, as well as non-random and mini-routes
+  routes <- routes %>%
+    dplyr::filter(.data$RouteTypeDetailID == 1,
+                  .data$RouteTypeID == 1,
+                  .data$RunType == 1) %>%
+    dplyr::select(-"Stratum")
+
+  routes <- dplyr::inner_join(routes, regs, by = c("countrynum", "statenum"))
+
+  # Combine routes and birds -----------
+  unique_routes <- routes %>%
+    dplyr::select("BCR", "statenum", "Route", "countrynum") %>%
+    dplyr::distinct()
+
+  birds <- dplyr::inner_join(birds, unique_routes,
+                             by = c("statenum", "Route", "countrynum"))
+
+  # Species Data ----------------
+
+  if(!quiet) message("Downloading species data (Task 3/3)")
+
+  temp <- tempfile()
+  full_path <- sbtools::item_file_download(sb_id = connection,
+                                           names = "SpeciesList.txt",
+                                           destinations = temp)
+
+  if(release == 2022) lskip <- 14 #silly differences in file structure
+  if(release == 2020) lskip <- 11
+
+  meta <- readr::read_lines(temp, n_max = 30)
+  lskip <- stringr::str_which(meta, "---------")
+  col_names <- stringr::str_split(meta[lskip - 1], "( )+") %>%
+    unlist() %>%
+    tolower() %>%
+    stringr::str_remove("_common_name")
+  col_names <- col_names[col_names != ""]
+
+  # col_names should be:
+  #  "seq", "aou", "english", "french", "spanish", "order",
+  #  "family", "genus", "species"
+
+  widths <- c(7, 6, 51, 51, 51, 51, 51, 51, NA)
+  species <- readr::read_fwf(
+    file = temp,
+    col_positions = readr::fwf_widths(widths, col_names),
+    col_types = "icccccccc",
+    skip = lskip, locale = readr::locale(encoding = "latin1")) %>%
+    dplyr::mutate(sp.bbs = as.integer(.data$aou))
+
+
+  # Write Data -----------------------
+  bbs_data <- list(birds = birds,
+                   routes = routes,
+                   species = species)
+
+  if(level == "state") f <- "bbs_raw_data.rds"
+  if(level == "stop") f <- "bbs_stop_data.rds"
+  f <- file.path(bbs_dir$data(), f)
+
+  message(paste0("Saving BBS data to ", f))
+  readr::write_rds(bbs_data, file = f, compress = compress)
+
+}
+
+
+get_counts_tidy <- function(level, quiet, connection, force) {
+  if (level == "state") count_zip <- "States.zip"
+  if (level == "stop") count_zip <- "50-StopData.zip"
+
+  bird_count_filenames <- system.file("data-import",
+                                 paste0(level, "-dir.csv"),
+                                 package = "bbsBayes") %>%
+    utils::read.csv()
+
+  if(!quiet) message("Downloading count data (Task 1/3)")
+
+  full_path <- sbtools::item_file_download(
+    sb_id = connection,
+    names = count_zip,
+    destinations = file.path(tempdir(), count_zip),
+    overwrite_file = force)
+
+  unz_path <- utils::unzip(zipfile = full_path, exdir = tempdir())
+
+  birds <- unz_path %>%
+    purrr::map(utils::unzip, exdir = tempdir()) %>%
+    purrr::map(readr::read_csv, col_types = "nnnnnnnnnnnnnnn",
+               progress = FALSE) %>%
+    purrr::map(
+      ~dplyr::rename_with(.x, .fn = ~"StateNum",
+                          .cols = dplyr::any_of("statenum"))) %>%
+    dplyr::bind_rows() %>%
+    # column case conventions differ for state vs. stop level data, standardize
+    dplyr::rename_with(
+      tolower, dplyr::matches("CountryNum|StateNum", ignore.case = TRUE)) %>%
+    dplyr::rename_with(~"Year", dplyr::any_of("year"))
+
+  unlink(full_path)
+
+  birds
+}
+
+get_routes <- function(release, quiet, connection, force) {
+
+  if (!quiet) message("Downloading route data (Task 2/3)")
+
+  if(release == 2020) {
+    # if necessary because file name changed between 2020 and 2022 releases
+    rtsfl <- "routes.zip"
+  } else{
+    rtsfl <- "Routes.zip"
+  }
+
+  full_path <- sbtools::item_file_download(
+    sb_id = connection,
+    names = rtsfl,
+    destinations = file.path(tempdir(), rtsfl),
+    overwrite_file = force)
+
+  routes <- readr::read_csv(
+    utils::unzip(zipfile = full_path, exdir = tempdir()),
+    na = c("NA", "", "NULL"),
+    col_types = "nnncnnnnnnn",
+    locale = readr::locale(encoding = "latin1"))
+  unlink(full_path)
+
+  routes
+}
+
+
+get_weather <- function(connection, force) {
+
+  full_path <- sbtools::item_file_download(
+    sb_id = connection,
+    names = "Weather.zip",
+    destinations = file.path(tempdir(), "Weather.zip"),
+    overwrite_file = force)
+
+  weather <- readr::read_csv(
+    utils::unzip(zipfile = full_path, exdir = tempdir()),
+    col_types = "nnnnnnnnnnnncnnnnnn",
+    na = c("NA", "", "NULL"))
+
+  unlink(full_path)
+
+  weather
+}

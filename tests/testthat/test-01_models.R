@@ -1,3 +1,155 @@
+test_that("download bbs data", {
+
+  skip("Do not test automatically")
+
+  bbs_dir <- app_dir(appname = "bbsBayes")
+
+  # 2020 State data ------------
+
+  # Download data
+  fetch_bbs_data("state", 2020, force = TRUE)
+  fetch_bbs_data_tidy("state", 2020, force = TRUE)
+
+  # Load and compare data
+  load(file = file.path(bbs_dir$data(), "bbs_raw_data.RData"))
+  bbs_data2 <- readRDS(file.path(bbs_dir$data(), "bbs_raw_data.rds"))
+
+  b1 <- dplyr::arrange(bbs_data[[1]], RouteDataID, Year, AOU)
+  b2 <- as.data.frame(bbs_data2[[1]][names(b1)]) %>%
+    dplyr::arrange(RouteDataID, Year, AOU)
+
+  r1 <- dplyr::arrange(bbs_data[[2]], RouteDataID, Year, ObsN)
+  r2 <- as.data.frame(bbs_data2[[2]]) %>%
+    dplyr::arrange(RouteDataID, Year, ObsN)
+
+  s1 <- bbs_data[[3]]
+  s2 <- as.data.frame(bbs_data[[3]])
+
+  rm(bbs_data)
+  rm(bbs_data2)
+
+  # All the same except int vs. dbl -- Hooray!!
+  waldo::compare(b1, b2, tolerance = 0.00001)
+
+  # All the same except corrected ones -- Hooray!!
+  waldo::compare(dplyr::select(r1, -TempScale),
+                 dplyr::select(r2, -TempScale),
+                 tolerance = 0.00001)
+
+  # All the same -- Hooray!!
+  waldo::compare(s1, s1)
+
+
+  # 2020 Stop data ------------
+
+  # Download data
+  fetch_bbs_data("stop", 2020, force = TRUE)
+  fetch_bbs_data_tidy("stop", 2020, force = TRUE)
+
+  # Load and compare data
+  load(file = file.path(bbs_dir$data(), "bbs_stop_data.RData"))
+  bbs_data2 <- readRDS(file.path(bbs_dir$data(), "bbs_stop_data.rds"))
+
+  b1 <- dplyr::arrange(bbs_data[[1]], RouteDataID, Year, AOU)
+  b2 <- as.data.frame(bbs_data2[[1]][names(b1)]) %>%
+    dplyr::arrange(RouteDataID, Year, AOU)
+
+  r1 <- dplyr::arrange(bbs_data[[2]], RouteDataID, Year, ObsN)
+  r2 <- as.data.frame(bbs_data2[[2]]) %>%
+    dplyr::arrange(RouteDataID, Year, ObsN)
+
+  s1 <- bbs_data[[3]]
+  s2 <- as.data.frame(bbs_data[[3]])
+
+  rm(bbs_data)
+  rm(bbs_data2)
+
+  # All the same -- Hooray!!
+  waldo::compare(b1, b2, tolerance = 0.00001)
+
+  # All the same except corrected ones -- Hooray!!
+  waldo::compare(dplyr::select(r1, -TempScale),
+                 dplyr::select(r2, -TempScale),
+                 tolerance = 0.00001)
+
+  # All the same -- Hooray!!
+  waldo::compare(s1, s1)
+
+
+  # 2022 State data ------------
+
+  # Download data
+  fetch_bbs_data("state", 2022, force = TRUE)
+  unlink(list.files(tempdir()))
+  fetch_bbs_data_tidy("state", 2022, force = TRUE)
+
+  # Load and compare data
+  load(file = file.path(bbs_dir$data(), "bbs_raw_data.RData"))
+  bbs_data2 <- readRDS(file.path(bbs_dir$data(), "bbs_raw_data.rds"))
+
+  b1 <- dplyr::arrange(bbs_data[[1]], RouteDataID, Year, AOU)
+  b2 <- as.data.frame(bbs_data2[[1]][names(b1)]) %>%
+    dplyr::arrange(RouteDataID, Year, AOU)
+
+  r1 <- dplyr::arrange(bbs_data[[2]], RouteDataID, Year, ObsN)
+  r2 <- as.data.frame(bbs_data2[[2]]) %>%
+    dplyr::arrange(RouteDataID, Year, ObsN)
+
+  s1 <- bbs_data[[3]]
+  s2 <- as.data.frame(bbs_data[[3]])
+
+  rm(bbs_data)
+  rm(bbs_data2)
+
+  # All the same except int vs. dbl -- Hooray!!
+  waldo::compare(b1, b2, tolerance = 0.00001)
+
+  # All the same except corrected ones -- Hooray!!
+  waldo::compare(dplyr::select(r1, -TempScale),
+                 dplyr::select(r2, -TempScale),
+                 tolerance = 0.00001)
+
+  # All the same -- Hooray!!
+  waldo::compare(s1, s1)
+
+  # 2022 Stop data ------------
+
+  # Download data
+  fetch_bbs_data("stop", 2022, force = TRUE)
+  unlink(list.files(tempdir()))
+  fetch_bbs_data_tidy("stop", 2022, force = TRUE)
+
+  # Load and compare data
+  load(file = file.path(bbs_dir$data(), "bbs_raw_data.RData"))
+  bbs_data2 <- readRDS(file.path(bbs_dir$data(), "bbs_raw_data.rds"))
+
+  b1 <- dplyr::arrange(bbs_data[[1]], RouteDataID, Year, AOU)
+  b2 <- as.data.frame(bbs_data2[[1]][names(b1)]) %>%
+    dplyr::arrange(RouteDataID, Year, AOU)
+
+  r1 <- dplyr::arrange(bbs_data[[2]], RouteDataID, Year, ObsN)
+  r2 <- as.data.frame(bbs_data2[[2]]) %>%
+    dplyr::arrange(RouteDataID, Year, ObsN)
+
+  s1 <- bbs_data[[3]]
+  s2 <- as.data.frame(bbs_data[[3]])
+
+  rm(bbs_data)
+  rm(bbs_data2)
+
+  # All the same except int vs. dbl -- Hooray!!
+  waldo::compare(b1, b2, tolerance = 0.00001)
+
+  # All the same except corrected ones -- Hooray!!
+  waldo::compare(dplyr::select(r1, -TempScale),
+                 dplyr::select(r2, -TempScale),
+                 tolerance = 0.00001)
+
+  # All the same -- Hooray!!
+  waldo::compare(s1, s1)
+
+})
+
 test_that("stratify data", {
 
   skip("Do not test automatically")
