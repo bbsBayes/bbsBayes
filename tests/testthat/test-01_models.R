@@ -1,4 +1,16 @@
-test_that("JAGS models run", {
+test_that("stratify data", {
+
+  skip("Do not test automatically")
+
+  bbs_data1 <- stratify(by = "bbs_usgs", sample_data = TRUE)
+  bbs_data2 <- stratify_tidy(by = "bbs_usgs", sample_data = TRUE)
+
+  # No differences -- Hooray!
+  waldo::compare(bbs_data1, bbs_data2)
+
+})
+
+test_that("JAGS prepare data", {
 
   skip("Do not test automatically")
 
