@@ -436,6 +436,7 @@ generate_indices_tidy <- function(jags_mod = NULL,
   }
 
   n <- data_list$n
+
   stratify_by <- jags_mod$stratify_by
   #original_data = data_list$original_data
 
@@ -714,39 +715,31 @@ generate_indices_stan <- function(model_fit = NULL,
                              start_year = NULL,
                              drop_exclude = FALSE,
                              max_backcast = NULL,
-                             alt_region_names = NULL)
-{
-  if (is.null(model_fit))
-  {
-    stop("No model output supplied to generate_indices()."); return(NULL)
+                             alt_region_names = NULL) {
+
+  if (is.null(model_fit)) stop("No model output supplied", call. = FALSE)
+  if (is.null(model_data)) {
+    warning("No original data object supplied to generate_indices(). ",
+            "Number of routes will not be calculated", call. = FALSE)
   }
 
-  if (is.null(model_data))
-  {
-    warning("No original data object supplied to generate_indices(). Number of routes will not be calculated")
-  }
+  data_list <- extract_index_data_stan(
+    model_fit = model_fit,
+    alt_n = alternate_n,
+    model_data = model_data)
 
-  browser()
-  if(!is.null(model_data)){
-    data_list <- extract_index_data_stan(model_fit = model_fit,
-                                    alt_n = alternate_n,
-                                    model_data = model_data)
-  }else{
-    data_list <- extract_index_data_stan(model_fit = model_fit,
-                                    alt_n = alternate_n)
-
-  }
-
-  ## START HERE, n needs to be array ------------------------------------
-
-  n <- data_list$n
   stratify_by <- model_data$stratify_by
 
-  if(stratify_by %in% c("bcr", "latlong") & ( "national" %in% regions | "prov_state" %in% regions)){
-    stop("Stratification of model does not match desired regions. BCRs and latlong degree blocks can not be divided by political boundaries"); return(NULL)
+  if(stratify_by %in% c("bcr", "latlong") &
+     ("national" %in% regions | "prov_state" %in% regions)) {
+    stop("Stratification of model does not match desired regions. ",
+         "BCRs and latlong degree blocks can not be divided by ",
+         "political boundaries", call. = FALSE)
   }
-  if(stratify_by == c("state") & c("bcr") %in% regions){
-    stop("Stratification of model does not match desired regions. States and Provinces can not be divided by BCRs"); return(NULL)
+
+  if(stratify_by == "state" & "bcr" %in% regions){
+    stop("Stratification of model does not match desired regions. ",
+         "States and Provinces can not be divided by BCRs", call. = FALSE)
   }
 
   area_weights <- data_list$area_weights
@@ -765,7 +758,7 @@ generate_indices_stan <- function(model_fit = NULL,
       n_years <- max(model_data$year)
     }
 
-  }else{
+  } else{
     n_years <- max(model_data$year)
     start_year <- min(model_data$r_year)
   }
@@ -780,6 +773,10 @@ generate_indices_stan <- function(model_fit = NULL,
                                          "observer", "firstyr", "r_year")]) # route?
 
 
+  n <- samples_to_array(data_list$n,
+                        n_strata = length(unique(model_df$strat)),
+                        n_years = n_years)
+  n_samples <- dim(n)[1]
 
   strat_meta <- as.data.frame(model_data[c("strat", "year", "count")]) %>%  #route?
     dplyr::group_by(strat) %>%
@@ -787,9 +784,6 @@ generate_indices_stan <- function(model_fit = NULL,
     #nrts_total = dplyr::n_distinct(route)) %>%
     dplyr::mutate(non_zero_weight  = model_data$nonzeroweight) %>%
     dplyr::left_join(area_weights, by = c("strat" = "num"))
-
-
-  n_samples <- dim(n)[1]
 
   # Clarify regions
   if(!is.null(alt_region_names)) {
@@ -802,7 +796,7 @@ generate_indices_stan <- function(model_fit = NULL,
     region_names <- alt_region_names
     if(all(regions[-which(regions %in% c("continental","stratum"))] %in%
            names(region_names)) == FALSE){
-      stop("desired regions do not match the columns in your alternative ",
+      stop("Desired regions do not match the columns in your alternative ",
            "regions dataframe", call. = FALSE)
     }
   }
@@ -953,4 +947,26 @@ calc_alt_names <- function(r, region_names) {
   }
 
   region_alt_name
+}
+
+
+
+#' Convert STAN samples matrix to array
+#'
+#' Stan is all matrix [samples, strata_x_years]. Here we convert it to an
+#' array with by splitting strata and years into separate dimensions.
+#'
+#' Looks like the order of strata_x_years is S1Y1 S2Y1 S3Y1, etc.
+#'
+#' @param n Stan draws variable "n"
+#' @param n_strata Number of strata
+#' @param n_years  Number of years
+#'
+#' @return Three dimensional array, samples x strata x years
+#' @noRd
+
+samples_to_array <- function(n, n_strata, n_years) {
+  array(as.vector(n), dim = c(posterior::ndraws(n),
+                                        n_strata,
+                                        n_years))
 }
