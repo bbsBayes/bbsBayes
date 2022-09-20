@@ -269,3 +269,92 @@ run_model <- function(jags_data = NULL,
 
   return(jags_job)
 }
+
+
+run_model_stan <- function(model_data,
+                           out_name = NULL,
+                           out_dir = "./model_run",
+                           n_chains = 3,
+                           parallel_chains = 3,
+                           iter_sampling = 1000,
+                           iter_warmup = 1000) {
+
+
+  # Check inputs
+
+  # Prepare files and directory
+  if(!dir.exists(out_dir)) {
+    stop("'", out_dir, "' does not exist. Please create it first.",
+         call. = FALSE)
+  }
+
+  if(is.null(out_name)) out_name <- paste0("BBS_STAN_",
+                                           model_data$model, "_",
+                                           Sys.Date())
+
+  # Keep track of data
+  meta_data <- list()
+  meta_data[["stratify_by"]] <- model_data[["stratify_by"]]
+  meta_data[["model"]] <- model_data[["model"]]
+  meta_data[["alt_data"]] <- model_data[["alt_data"]]
+
+  model_data[["stratify_by"]] <- NULL
+  model_data[["model"]] <- NULL
+  model_data[["alt_data"]] <- NULL
+
+  # Select model
+  model <- meta_data[["model"]]
+  if(model == "slope") {
+    model <- system.file("models", "slope_bbs_CV.stan", package = "bbsBayes")
+  } else {
+    # . . .
+  }
+
+  # Compile model
+  model <- cmdstanr::cmdstan_model(model)
+
+
+  # Set initialization parameters
+  init_def <- function() {
+    list(
+      noise_raw = rnorm(model_data$ncounts * model_data$use_pois, 0, 0.1),
+      strata_raw = rnorm(model_data$nstrata, 0, 0.1),
+      STRATA = 0,
+      nu = 10,
+      sdstrata = runif(1, 0.01, 0.1),
+      eta = 0,
+      yeareffect_raw = matrix(
+        rnorm(model_data$nstrata * model_data$nyears, 0, 0.1),
+        nrow = model_data$nstrata, ncol = model_data$nyears),
+      obs_raw = rnorm(model_data$nobservers, 0, 0.1),
+      ste_raw = rnorm(model_data$nsites, 0, 0.1),
+      sdnoise = runif(1, 0.3, 1.3),
+      sdobs = runif(1, 0.01, 0.1),
+      sdste = runif(1, 0.01, 0.2),
+      sdbeta = runif(1, 0.01, 0.1),
+      sdyear = runif(model_data$nstrata, 0.01, 0.1),
+      BETA = rnorm(1, 0, 0.1),
+      beta_raw = rnorm(model_data$nstrata, 0, 0.1))
+  }
+
+  # What here should be changeable? can use ... and reference cmdstanr docs...
+  model_fit <- model$sample(
+    data = model_data,
+    refresh = 1,
+    chains = n_chains,
+    iter_sampling = iter_sampling,
+    iter_warmup = iter_warmup,
+    parallel_chains = 3,
+    #pars = parms,
+    adapt_delta = 0.95,
+    max_treedepth = 14,
+    seed = 123,
+    init = init_def,
+    output_dir = out_dir,
+    output_basename = out_name)
+
+  #message("Calculating run summary")
+  #fit_summary <- stan_fit$summary()
+
+  list("model_fit" = model_fit, "meta_data" = meta_data)
+}
