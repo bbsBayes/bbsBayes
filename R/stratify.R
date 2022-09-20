@@ -286,7 +286,7 @@ stratify <- function(by = NULL,
 #' @export
 #'
 
-stratify_tidy <- function(by = NULL,
+stratify_tidy <- function(by,
                           sample_data = FALSE,
                           bbs_data = NULL,
                           lump_species_forms = TRUE,
@@ -297,18 +297,16 @@ stratify_tidy <- function(by = NULL,
     by <- stratify_by
   }
 
-  if(!is.element(by, c("state", "bcr", "latlong", "bbs_cws", "bbs_usgs"))) {
-    stop("Invalid stratification specified, choose one of 'state', 'bcr', ",
-         "'latlong', 'bbs_cws', or 'bbs_usgs'", call. = FALSE)
-  }
+  by <- check_stratification(by)
+
 
   bbs_dir <- app_dir(appname = "bbsBayes")
 
   if(sample_data) {
     bbs_data <- load_sample_data()
-  } else if (is.null(bbs_data)) {
-    if(!file.exists(file.path(bbs_dir$data(), "/bbs_raw_data.RData"))) {
-      stop("No BBS data downloaded. Please use fetch_bbs_data() first.",
+  } else if(is.null(bbs_data)) {
+    if(!file.exists(file.path(bbs_dir$data(), "bbs_raw_data.RData"))) {
+      stop("No BBS data downloaded. Please use `fetch_bbs_data()` first.",
            call. = FALSE)
     }
   }
