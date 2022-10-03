@@ -114,8 +114,8 @@ prepare_data <- function(strat_data = NULL,
   }
 
 
-  birds <- strat_data$bird_strat
-  route <- strat_data$route_strat
+  birds <- strat_data$birds_strat
+  route <- strat_data$routes_strat
   species <- strat_data$species_strat
 
 
@@ -1300,6 +1300,8 @@ prepare_data_stan2 <- function(strat_data = NULL,
          "(`use_pois == FALSE`). Set `heavy_tailed = TRUE`",  call. = FALSE)
   }
 
+  species_to_run <- check_species(species_to_run, strat_data$species_strat)
+
   # More checks...
 
 
@@ -1308,13 +1310,13 @@ prepare_data_stan2 <- function(strat_data = NULL,
   # Get observations of interest
   sp_aou <- get_species_aou(strat_data$species_strat, species_to_run)
 
-  obs <- strat_data$bird_strat %>%
+  obs <- strat_data$birds_strat %>%
     dplyr::filter(AOU == .env$sp_aou) %>%
     dplyr::rename(count = "SpeciesTotal") %>%
     dplyr::select("statenum", "Route", "BCR", "RouteDataID", "count", "Year")
 
   # Add in routes
-  obs <- strat_data$route_strat %>%
+  obs <- strat_data$routes_strat %>%
     dplyr::select(
       "countrynum", "statenum", "Route", "Year", "Month", "Day",
       "State", "BCR", "RouteDataID", "strat_name", "rt.uni", "ObsN") %>%
