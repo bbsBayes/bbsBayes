@@ -15,10 +15,15 @@
 #'
 #' @export
 #'
-load_sample_data <- function()
-{
-  return(list(bird = bbsBayes::bird_sample,
-              route = bbsBayes::route_sample,
-              species = bbsBayes::species_sample))
+load_sample_data <- function() {
+  list(bird = bird_sample,
+       route = route_sample,
+       species = species_sample)
+}
+
+load_sample_data_tidy <- function() {
+  list(birds = bird_sample,
+       routes = route_sample,
+       species = species_sample)
 }
 

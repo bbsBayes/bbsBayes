@@ -430,9 +430,8 @@ fetch_bbs_data_tidy <- function(level = "state",
 
   if(level == "state") {
     if(file.exists(paste0(bbs_dir$data(), "/bbs_raw_data.RData")) & !force) {
-      warning("BBS state-level data file already exists. ",
-              "Use \"force = TRUE\" to overwrite.", call. = FALSE)
-      return()
+      stop("BBS state-level data file already exists. ",
+           "Use \"force = TRUE\" to overwrite.", call. = FALSE)
     }
   } else if(level == "stop"){
     if(file.exists(paste0(bbs_dir$data(), "bbs_stop_data.RData")) & !force) {
@@ -514,7 +513,9 @@ fetch_bbs_data_tidy <- function(level = "state",
   # Write Data -----------------------
   bbs_data <- list(birds = birds,
                    routes = routes,
-                   species = species)
+                   species = species,
+                   meta = data.frame(release = release,
+                                     dowload_date = Sys.Date()))
 
   if(level == "state") f <- "bbs_raw_data.rds"
   if(level == "stop") f <- "bbs_stop_data.rds"
