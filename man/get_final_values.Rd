@@ -14,8 +14,8 @@ List of final values of monitored parameters.
 }
 \description{
 \code{get_final_values} returns the final values of all parameters of
-  the model created by \code{run_model} as a list. This function would mostly be used
-  in conjunction with \code{run_model} to provide initial values.
+the model created by \code{run_model} as a list. This function would mostly be used
+in conjunction with \code{run_model} to provide initial values.
 }
 \examples{
 # Toy example with Pacific Wren sample data

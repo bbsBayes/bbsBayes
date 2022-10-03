@@ -60,29 +60,29 @@ supports "jags".}
 }
 \value{
 List of data to be used for modelling, including:
-  \item{model}{The model to be used}
-  \item{heavy_tailed}{Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution}
-  \item{min_nu}{if heavy_tailed is TRUE, minimum value for truncated gamma on DF of t-distribution noise default is 0 and user must change manually after function is run}
-  \item{ncounts}{The number of counts containing useful data for the species}
-  \item{nstrata}{The number of strata used in the analysis}
-  \item{ymin}{Minimum year used}
-  \item{ymax}{Maximum year used}
-  \item{nonzeroweight}{Proportion of routes in each strata with species obervation}
-  \item{count}{Vector of counts for the species}
-  \item{strat}{Vector of strata to be used in the analysis}
-  \item{obser}{Vector of unique observer-route pairings}
-  \item{year}{Vector of years for each count}
-  \item{firstyr}{Vector of indicator variables as to whether an observer was a first year}
-  \item{month}{vector of numeric month of observation}
-  \item{day}{vector of numeric day of observation}
-  \item{nobservers}{Total number of observer-route pairings}
-  \item{fixedyear}{Median of all years (ymin:ymax), included only with slope and firstdiff models}
-  \item{nknots}{Number of knots to use for smooting functions, included only with GAM}
-  \item{X.basis}{Basis function for n smoothing functions, included only with GAM}
+\item{model}{The model to be used}
+\item{heavy_tailed}{Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution}
+\item{min_nu}{if heavy_tailed is TRUE, minimum value for truncated gamma on DF of t-distribution noise default is 0 and user must change manually after function is run}
+\item{ncounts}{The number of counts containing useful data for the species}
+\item{nstrata}{The number of strata used in the analysis}
+\item{ymin}{Minimum year used}
+\item{ymax}{Maximum year used}
+\item{nonzeroweight}{Proportion of routes in each strata with species obervation}
+\item{count}{Vector of counts for the species}
+\item{strat}{Vector of strata to be used in the analysis}
+\item{obser}{Vector of unique observer-route pairings}
+\item{year}{Vector of years for each count}
+\item{firstyr}{Vector of indicator variables as to whether an observer was a first year}
+\item{month}{vector of numeric month of observation}
+\item{day}{vector of numeric day of observation}
+\item{nobservers}{Total number of observer-route pairings}
+\item{fixedyear}{Median of all years (ymin:ymax), included only with slope and firstdiff models}
+\item{nknots}{Number of knots to use for smooting functions, included only with GAM}
+\item{X.basis}{Basis function for n smoothing functions, included only with GAM}
 }
 \description{
 \code{prepare_data} subsets raw BBS data by selected species and
-   and wrangles stratified data for use as input for models.
+and wrangles stratified data for use as input for models.
 }
 \examples{
 # Toy example with Pacific Wren sample data

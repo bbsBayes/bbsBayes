@@ -14,7 +14,7 @@ sf polygon object
 }
 \description{
 \code{load_map} allows you to load a simple features object (\code{sf} package)
-  that represents a map of the strata that can be easily plotted.
+that represents a map of the strata that can be easily plotted.
 }
 \examples{
 # Toy example with Pacific Wren sample data

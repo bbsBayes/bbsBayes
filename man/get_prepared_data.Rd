@@ -12,21 +12,21 @@ get_prepared_data(jags_data = NULL)
 }
 \value{
 Data frame of 9 variables:
-  \item{count}{Number of species observed for this route run}
-  \item{strat}{Numerical factors of the stratum}
-  \item{obser}{Numerical factor of the observer}
-  \item{year}{Numerical factor of the year}
-  \item{firstyr}{1 if this was the observer's first year, 0 otherwise}
-  \item{strat_name}{Name of the stratum}
-  \item{route}{Route that this count was taken on}
-  \item{rYear}{Year this count was conducted}
-  \item{yearscale}{Scaled year}
+\item{count}{Number of species observed for this route run}
+\item{strat}{Numerical factors of the stratum}
+\item{obser}{Numerical factor of the observer}
+\item{year}{Numerical factor of the year}
+\item{firstyr}{1 if this was the observer's first year, 0 otherwise}
+\item{strat_name}{Name of the stratum}
+\item{route}{Route that this count was taken on}
+\item{rYear}{Year this count was conducted}
+\item{yearscale}{Scaled year}
 }
 \description{
 \code{get_prepared_data} returns a data frame of the data that
-  was used for JAGS. This is the subsetted data based on the
-  selected species to model, with zero counts filled in
-  and any other route/strata filter applied.
+was used for JAGS. This is the subsetted data based on the
+selected species to model, with zero counts filled in
+and any other route/strata filter applied.
 }
 \examples{
 # Toy example with Pacific Wren sample data

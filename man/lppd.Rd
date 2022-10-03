@@ -18,18 +18,18 @@ to \code{FALSE}}
 }
 \value{
 Data frame of pointwise LPPD by count if \code{pointwise}
-  is set to \code{TRUE}. Double precision numerical value of LPPD if
-  \code{pointwise} is set to \code{FALSE}.
+is set to \code{TRUE}. Double precision numerical value of LPPD if
+\code{pointwise} is set to \code{FALSE}.
 }
 \description{
 \code{lppd} Calculate log posterior preditive density (LPPD) for the supplied
-  model.
+model.
 }
 \details{
 NOTE: in order to calculated LPPD, the model MUST track the parameter
-  "lambda". In species that are data-rich, such as Wood Thrush,
-  this produces extremely large JAGS objects, and takes up a considerable
-  amount of memory when simulating with \code{run_model}
+"lambda". In species that are data-rich, such as Wood Thrush,
+this produces extremely large JAGS objects, and takes up a considerable
+amount of memory when simulating with \code{run_model}
 }
 \examples{
 # Toy example with Pacific Wren sample data

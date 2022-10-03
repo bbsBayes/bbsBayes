@@ -7,21 +7,21 @@
 \format{
 A data frame with 20 rows and 15 variables:
 \describe{
-  \item{statenum}{Numerical representation of state or province}
-  \item{Route}{Numerican representation of the route the species was observed}
-  \item{countrynum}{Numerical representation of the country}
-  \item{RouteDataID}{Unique code for each year a route was run}
-  \item{RPID}{Run Protocol ID}
-  \item{Year}{Year the species was observed on the route}
-  \item{AOU}{Numerical representation of the species, designated by American Ornithological Union}
-  \item{Count10}{Counts for stops 1-10}
-  \item{Count20}{Counts for stops 11-20}
-  \item{Count30}{Counts for stops 21-30}
-  \item{Count40}{Counts for stops 31-40}
-  \item{Count50}{Counts for stops 41-50}
-  \item{StopTotal}{Count for all stops}
-  \item{SpeciesTotal}{Total count for the species on the route run}
-  \item{BCR}{Bird Conservation Region the route was run in}
+\item{statenum}{Numerical representation of state or province}
+\item{Route}{Numerican representation of the route the species was observed}
+\item{countrynum}{Numerical representation of the country}
+\item{RouteDataID}{Unique code for each year a route was run}
+\item{RPID}{Run Protocol ID}
+\item{Year}{Year the species was observed on the route}
+\item{AOU}{Numerical representation of the species, designated by American Ornithological Union}
+\item{Count10}{Counts for stops 1-10}
+\item{Count20}{Counts for stops 11-20}
+\item{Count30}{Counts for stops 21-30}
+\item{Count40}{Counts for stops 31-40}
+\item{Count50}{Counts for stops 41-50}
+\item{StopTotal}{Count for all stops}
+\item{SpeciesTotal}{Total count for the species on the route run}
+\item{BCR}{Bird Conservation Region the route was run in}
 }
 }
 \usage{
@@ -29,14 +29,14 @@ bird_sample
 }
 \description{
 A sample dataset containing 10-stop counts of each bird species seen per route per year.
-  NOTE: This only contains data for Pacific Wren, not the full data set.
-  The full count set is obtained via the function \code{fetch_bbs_data}.
-  The data is obtained from the United States Geological Survey and is
-  subject to change as new data is added each year. See Details for citation.
+NOTE: This only contains data for Pacific Wren, not the full data set.
+The full count set is obtained via the function \code{fetch_bbs_data}.
+The data is obtained from the United States Geological Survey and is
+subject to change as new data is added each year. See Details for citation.
 }
 \details{
 Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding, V. Aponte and M-A.R. Hudson. 2019.
-  North American Breeding Bird Survey Dataset 1966 - 2018, version 2018.0.
-  U.S. Geological Survey, Patuxent Wildlife Research Center. https://doi.org/10.5066/P9HE8XYJ.
+North American Breeding Bird Survey Dataset 1966 - 2018, version 2018.0.
+U.S. Geological Survey, Patuxent Wildlife Research Center. https://doi.org/10.5066/P9HE8XYJ.
 }
 \keyword{datasets}

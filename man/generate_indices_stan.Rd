@@ -37,31 +37,31 @@ generate_indices_stan(
 }
 \value{
 List of 6 objects
-  \item{data_summary}{dataframe with the following columns}
-  \item{Year}{Year of particular index}
-  \item{Region}{Region name}
-  \item{Region_alt}{Long name for region}
-  \item{Region_type}{Type of region including continental, national,Province_State,BCR, bcr_by_country, or stratum}
-  \item{Strata_included}{Strata included in the annual index calculations}
-  \item{Strata_excluded}{Strata potentially excluded from the annual index calculations because they have no observations of the species in the first part of the time series, see arguments max_backcast and start_year}
-  \item{Index}{Strata-weighted count index}
-  \item{additional columns for each of the values in quantiles}{quantiles of the posterior distribution}
-  \item{obs_mean}{Mean of the observed annual counts of birds across all routes and all years. An alternative estimate of the average relative abundance of the species in the region and year. Differences between this and the annual indices are a function of the model. For composite regions (i.e., anything other than stratum-level estimates) this average count is calculated as an area-weighted average across all strata included}
-  \item{nrts}{Number of BBS routes that contributed data for this species, region, and year}
-  \item{nrts_total}{Number of BBS routes that contributed data for this species and region for all years in the selected time-series, i.e., all years since \code{start_year}}
-  \item{nnzero}{Number of BBS routes on which this species was observed (i.e., count is > 0) in this region and year}
-  \item{backcast_flag}{approximate annual average proportion of the covered species range that is free of extrapolated population trajectories. e.g., 1.0 = data cover full time-series, 0.75 = data cover 75 percent of time-series. Only calculated if max_backcast != NULL}
+\item{data_summary}{dataframe with the following columns}
+\item{Year}{Year of particular index}
+\item{Region}{Region name}
+\item{Region_alt}{Long name for region}
+\item{Region_type}{Type of region including continental, national,Province_State,BCR, bcr_by_country, or stratum}
+\item{Strata_included}{Strata included in the annual index calculations}
+\item{Strata_excluded}{Strata potentially excluded from the annual index calculations because they have no observations of the species in the first part of the time series, see arguments max_backcast and start_year}
+\item{Index}{Strata-weighted count index}
+\item{additional columns for each of the values in quantiles}{quantiles of the posterior distribution}
+\item{obs_mean}{Mean of the observed annual counts of birds across all routes and all years. An alternative estimate of the average relative abundance of the species in the region and year. Differences between this and the annual indices are a function of the model. For composite regions (i.e., anything other than stratum-level estimates) this average count is calculated as an area-weighted average across all strata included}
+\item{nrts}{Number of BBS routes that contributed data for this species, region, and year}
+\item{nrts_total}{Number of BBS routes that contributed data for this species and region for all years in the selected time-series, i.e., all years since \code{start_year}}
+\item{nnzero}{Number of BBS routes on which this species was observed (i.e., count is > 0) in this region and year}
+\item{backcast_flag}{approximate annual average proportion of the covered species range that is free of extrapolated population trajectories. e.g., 1.0 = data cover full time-series, 0.75 = data cover 75 percent of time-series. Only calculated if max_backcast != NULL}
 
-  \item{samples}{array of all posterior draws}
-  \item{area-weights}{data frame of the strata names and area weights used to calculate the continental estimates}
-  \item{y_min}{first year used in the summary, scale 1:length of time-series}
-  \item{y_max}{last year used in the summary, scale 1:length of time-series}
-  \item{start_year}{first year used in the summary, scale 1966:2018}
+\item{samples}{array of all posterior draws}
+\item{area-weights}{data frame of the strata names and area weights used to calculate the continental estimates}
+\item{y_min}{first year used in the summary, scale 1:length of time-series}
+\item{y_max}{last year used in the summary, scale 1:length of time-series}
+\item{start_year}{first year used in the summary, scale 1966:2018}
 }
 \description{
 \code{generate_indices} creates a data frame of the annual indices
-  of relative abundance by year. This data frame can then be used to
-  plot population trajectories for the species, and to estimate trends.
+of relative abundance by year. This data frame can then be used to
+plot population trajectories for the species, and to estimate trends.
 }
 \examples{
 

@@ -18,7 +18,7 @@ None
 }
 \description{
 \code{model_to_file} allows you to save any of the preloaded hierarchical
-  Bayesian models to a text file.
+Bayesian models to a text file.
 }
 \examples{
 

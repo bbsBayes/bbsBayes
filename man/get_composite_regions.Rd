@@ -11,12 +11,12 @@ get_composite_regions(strata_type = NULL)
 }
 \value{
 Data frame with at least the following variables:
-  \item{region}{Name of the stratum/region}
-  \item{area_sq_km}{Area of the stratum/region in square kilometres}
+\item{region}{Name of the stratum/region}
+\item{area_sq_km}{Area of the stratum/region in square kilometres}
 }
 \description{
 \code{get_composite_regions} allows you to obtain the dataframe defining the original composite regions
-  for a given stratification type.
+for a given stratification type.
 }
 \examples{
 

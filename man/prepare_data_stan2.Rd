@@ -26,17 +26,16 @@ prepare_data_stan2(
 )
 }
 \arguments{
-\item{strat_data}{List. Stratified data returned by `stratify()`}
+\item{strat_data}{List. Stratified data returned by \code{stratify()}}
 
 \item{species_to_run}{Character. English name of the species to run}
 
-\item{model}{Character. Model to use. One of `"slope", "firstdiff", "gam",
-"gamye"`}
+\item{model}{Character. Model to use. One of \verb{"slope", "firstdiff", "gam", "gamye"}}
 
 \item{heavy_tailed}{Logical. Whether the extra-Poisson error distribution
 should be modeled as a t-distribution, with heavier tails than the standard
-normal distribution. Default is `FALSE`, but recent results suggest users
-should strongly consider setting this to `TRUE`, even though it requires
+normal distribution. Default is \code{FALSE}, but recent results suggest users
+should strongly consider setting this to \code{TRUE}, even though it requires
 much longer convergence times}
 
 \item{n_knots}{Numeric. Number of knots to be used in GAM function}
@@ -59,14 +58,14 @@ the species observed. Defaults to 1.}
 \item{quiet}{Should progress bars be suppressed?}
 
 \item{basis}{Character. Which version of the basis-function to use for the
-GAM smooth. Default is `"original"`, the same basis used in Smith and
-Edwards 2020. `"mgcv"` is an alternate that uses the "tp" basis from the
-`mgcv` package (also used in `brms`, and `rstanarm`). If using `"mgcv"`,
+GAM smooth. Default is \code{"original"}, the same basis used in Smith and
+Edwards 2020. \code{"mgcv"} is an alternate that uses the "tp" basis from the
+\code{mgcv} package (also used in \code{brms}, and \code{rstanarm}). If using \code{"mgcv"},
 the user may want to consider adjusting the prior distributions for the
 parameters and their precision.}
 }
 \value{
-List of data to be used for modelling as input to `run_model()`.
+List of data to be used for modelling as input to \code{run_model()}.
 }
 \description{
 Subset raw BBS data by selected species and and wrangle stratified data for

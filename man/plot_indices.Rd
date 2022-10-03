@@ -44,7 +44,7 @@ plot_indices(
 }
 \value{
 List of ggplot objects, each entry being a plot
-  of a stratum indices
+of a stratum indices
 }
 \description{
 Generates the indices plot for each stratum modelled.

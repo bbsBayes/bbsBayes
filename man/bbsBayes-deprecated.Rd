@@ -186,220 +186,220 @@ species observed. Defaults to 1.}
 }
 \value{
 List of 6 objects:
-  \item{data_summary}{dataframe with the following columns}
-  \item{Year}{Year of particular index}
-  \item{Region}{Region name}
-  \item{Index}{Strata-weighted count index}
-  \item{additional columns for each of the values in quantiles}{quantiles of the posterior distribution}
-  \item{samples}{array of all samples from the posterior distribution}
-  \item{area-weights}{data frame of the strata names and area weights used to calculate the continental estimates}
-  \item{y_min}{first year used in the model, scale 1:length of time-series}
-  \item{y_max}{last year used in the model, scale 1:length of time-series}
-  \item{startyear}{first year used in the model, scale 1966:2018}
+\item{data_summary}{dataframe with the following columns}
+\item{Year}{Year of particular index}
+\item{Region}{Region name}
+\item{Index}{Strata-weighted count index}
+\item{additional columns for each of the values in quantiles}{quantiles of the posterior distribution}
+\item{samples}{array of all samples from the posterior distribution}
+\item{area-weights}{data frame of the strata names and area weights used to calculate the continental estimates}
+\item{y_min}{first year used in the model, scale 1:length of time-series}
+\item{y_max}{last year used in the model, scale 1:length of time-series}
+\item{startyear}{first year used in the model, scale 1966:2018}
 
 Numeric percentage of trend
 
 List of 6 objects
-  \item{data_summary}{dataframe with the following columns}
-  \item{Year}{Year of particular index}
-  \item{Region}{Region name}
-  \item{Region_alt}{Long name for region}
-  \item{Region_type}{Type of region including continental, national,Province_State,BCR, bcr_by_country, or stratum}
-  \item{Strata_included}{Strata included in the annual index calculations}
-  \item{Strata_excluded}{Strata potentially excluded from the annual index calculations because they have no observations of the species in the first part of the time series, see arguments max_backcast and startyear}
-  \item{Index}{Strata-weighted count index}
-  \item{additional columns for each of the values in quantiles}{quantiles of the posterior distribution}
-  \item{obs_mean}{Mean of the observed annual counts of birds across all routes and all years. An alternative estimate of the average relative abundance of the species in the region and year. Differences between this and the annual indices are a function of the model. For composite regions (i.e., anything other than stratum-level estimates) this average count is calculated as an area-weighted average across all strata included}
-  \item{nrts}{Number of BBS routes that contributed data for this species, region, and year}
-  \item{nnzero}{Number of BBS routes on which this species was observed (i.e., count is > 0) in this region and year}
-  \item{backcast_flag}{approximate annual average proportion of the covered species range that is free of extrapolated population trajectories. e.g., 1.0 = data cover full time-series, 0.75 = data cover 75 percent of time-series. Only calculated if max_backcast != NULL}
+\item{data_summary}{dataframe with the following columns}
+\item{Year}{Year of particular index}
+\item{Region}{Region name}
+\item{Region_alt}{Long name for region}
+\item{Region_type}{Type of region including continental, national,Province_State,BCR, bcr_by_country, or stratum}
+\item{Strata_included}{Strata included in the annual index calculations}
+\item{Strata_excluded}{Strata potentially excluded from the annual index calculations because they have no observations of the species in the first part of the time series, see arguments max_backcast and startyear}
+\item{Index}{Strata-weighted count index}
+\item{additional columns for each of the values in quantiles}{quantiles of the posterior distribution}
+\item{obs_mean}{Mean of the observed annual counts of birds across all routes and all years. An alternative estimate of the average relative abundance of the species in the region and year. Differences between this and the annual indices are a function of the model. For composite regions (i.e., anything other than stratum-level estimates) this average count is calculated as an area-weighted average across all strata included}
+\item{nrts}{Number of BBS routes that contributed data for this species, region, and year}
+\item{nnzero}{Number of BBS routes on which this species was observed (i.e., count is > 0) in this region and year}
+\item{backcast_flag}{approximate annual average proportion of the covered species range that is free of extrapolated population trajectories. e.g., 1.0 = data cover full time-series, 0.75 = data cover 75 percent of time-series. Only calculated if max_backcast != NULL}
 
-  \item{samples}{array of all samples from the posterior distribution}
-  \item{area-weights}{data frame of the strata names and area weights used to calculate the continental estimates}
-  \item{y_min}{first year used in the summary, scale 1:length of time-series}
-  \item{y_max}{last year used in the summary, scale 1:length of time-series}
-  \item{startyear}{first year used in the summary, scale 1966:2018}
+\item{samples}{array of all samples from the posterior distribution}
+\item{area-weights}{data frame of the strata names and area weights used to calculate the continental estimates}
+\item{y_min}{first year used in the summary, scale 1:length of time-series}
+\item{y_max}{last year used in the summary, scale 1:length of time-series}
+\item{startyear}{first year used in the summary, scale 1966:2018}
 
 Dataframe with one row for each region included in indices object, and columns including:
-  \item{Start_year}{first year of the trend}
-  \item{End_year}{last year of the trend}
-  \item{Region}{short name of the region}
-  \item{Region_alt}{Long name for region}
-  \item{Region_type}{Type of region including continental, national,Province_State,BCR, bcr_by_national, or stratum}
-  \item{Strata_included}{Strata included in the trend and annual index calculations}
-  \item{Strata_excluded}{Strata potentially excluded from the trend and annual index calculations because they have no observations of the species in the first part of the time series}
-  \item{Trend}{Estimated mean annual percent change over the trend time-period (i.e., Start_year - End_year), according to an endpoint comparison of annual index in Start_year and the annual index in End_year}
-  \item{Trend_Q_quantiles}{quantiles of the posterior distribution of Trend estimates, matching levels included in the quantiles argument}
-  \item{Percent_Change}{Estimated total percent change over the trend time-period}
-  \item{Percent_Change_Q_quantiles}{quantiles of the posterior distribution of Percent Change estimates, matching levels included in the quantiles argument}
-  \item{Slope_Trend}{Estimated mean annual percent change over the trend time-period, according to the slope of a linear regression through the log-transformed annual indices}
-  \item{Slope_Trend_Q_quantiles}{quantiles of the posterior distribution of Percent Change estimates, matching levels included in the quantiles argument}
-  \item{prob_decrease_X_percent}{proportion of the posterior distribution of Percent_Change that is below the percentage values supplied in prob_decrease}
-  \item{prob_increase_X_percent}{proportion of the posterior distribution of Percent_Change that is above the percentage values supplied in prob_increase}
-  \item{Relative_Abundance}{Mean of the annual index values across all years. An estimate of the average relative abundance of the species in the region. Can be interepreted as the predicted average count of the species in an average year on an average route by an average observer, for the years, routes, and observers in the existing data}
-  \item{Observed_Relative_Abundance}{Mean of the observed annual counts of birds across all routes and all years. An alternative estimate of the average relative abundance of the species in the region. For composite regions (i.e., anything other than stratum-level estimates) this average count is calculated as an area-weighted average across all strata included}
-  \item{Number_of_Strata}{The number of strata included in the region}
-  \item{Width_of_X_percent_Credible_Interval}{Width (in percent/year) of the credible interval on the Trend calculation. Calculated for the widest credible interval requested in quantiles argument. Default is 95 percent CI (i.e., Trend_Q0.975 - Trend_Q0.025)}
-  \item{Width_of_X_percent_Credible_Interval_Slope}{Width (in percent/year) of the credible interval on the Trend calculation for the slope-based trend. Calculated for the widest credible interval requested in quantiles argument. Default is 95 percent CI (i.e., Slope_Trend_Q0.975 - Slope_Trend_Q0.025)}
-  \item{Number_of_Routes}{The number of unique BBS routes included in the trend calculation for this region and species}
-  \item{Mean_Number_of_Routes}{The average number of BBS routes across years contributing data for this region and species}
-  \item{backcast_flag}{approximate proportion of the included species range*years that are free of extrapolated population trajectories e.g., 1.0 = data cover full time-series, 0.75 = data cover 75 percent of time-series. Only calculated if max_backcast != NULL}
+\item{Start_year}{first year of the trend}
+\item{End_year}{last year of the trend}
+\item{Region}{short name of the region}
+\item{Region_alt}{Long name for region}
+\item{Region_type}{Type of region including continental, national,Province_State,BCR, bcr_by_national, or stratum}
+\item{Strata_included}{Strata included in the trend and annual index calculations}
+\item{Strata_excluded}{Strata potentially excluded from the trend and annual index calculations because they have no observations of the species in the first part of the time series}
+\item{Trend}{Estimated mean annual percent change over the trend time-period (i.e., Start_year - End_year), according to an endpoint comparison of annual index in Start_year and the annual index in End_year}
+\item{Trend_Q_quantiles}{quantiles of the posterior distribution of Trend estimates, matching levels included in the quantiles argument}
+\item{Percent_Change}{Estimated total percent change over the trend time-period}
+\item{Percent_Change_Q_quantiles}{quantiles of the posterior distribution of Percent Change estimates, matching levels included in the quantiles argument}
+\item{Slope_Trend}{Estimated mean annual percent change over the trend time-period, according to the slope of a linear regression through the log-transformed annual indices}
+\item{Slope_Trend_Q_quantiles}{quantiles of the posterior distribution of Percent Change estimates, matching levels included in the quantiles argument}
+\item{prob_decrease_X_percent}{proportion of the posterior distribution of Percent_Change that is below the percentage values supplied in prob_decrease}
+\item{prob_increase_X_percent}{proportion of the posterior distribution of Percent_Change that is above the percentage values supplied in prob_increase}
+\item{Relative_Abundance}{Mean of the annual index values across all years. An estimate of the average relative abundance of the species in the region. Can be interepreted as the predicted average count of the species in an average year on an average route by an average observer, for the years, routes, and observers in the existing data}
+\item{Observed_Relative_Abundance}{Mean of the observed annual counts of birds across all routes and all years. An alternative estimate of the average relative abundance of the species in the region. For composite regions (i.e., anything other than stratum-level estimates) this average count is calculated as an area-weighted average across all strata included}
+\item{Number_of_Strata}{The number of strata included in the region}
+\item{Width_of_X_percent_Credible_Interval}{Width (in percent/year) of the credible interval on the Trend calculation. Calculated for the widest credible interval requested in quantiles argument. Default is 95 percent CI (i.e., Trend_Q0.975 - Trend_Q0.025)}
+\item{Width_of_X_percent_Credible_Interval_Slope}{Width (in percent/year) of the credible interval on the Trend calculation for the slope-based trend. Calculated for the widest credible interval requested in quantiles argument. Default is 95 percent CI (i.e., Slope_Trend_Q0.975 - Slope_Trend_Q0.025)}
+\item{Number_of_Routes}{The number of unique BBS routes included in the trend calculation for this region and species}
+\item{Mean_Number_of_Routes}{The average number of BBS routes across years contributing data for this region and species}
+\item{backcast_flag}{approximate proportion of the included species range*years that are free of extrapolated population trajectories e.g., 1.0 = data cover full time-series, 0.75 = data cover 75 percent of time-series. Only calculated if max_backcast != NULL}
 
 List of 6 objects:
-  \item{data_summary}{dataframe with the following columns}
-  \item{Year}{Year of particular index}
-  \item{Region}{Region name}
-  \item{Index}{Strata-weighted count index}
-  \item{additional columns for each of the values in quantiles}{quantiles of the posterior distribution}
+\item{data_summary}{dataframe with the following columns}
+\item{Year}{Year of particular index}
+\item{Region}{Region name}
+\item{Index}{Strata-weighted count index}
+\item{additional columns for each of the values in quantiles}{quantiles of the posterior distribution}
 
-  \item{samples}{array of all samples from the posterior distribution}
-  \item{area-weights}{data frame of the strata names and area weights used to calculate the continental estimates}
-  \item{y_min}{first year used in the model, scale 1:length of time-series}
-  \item{y_max}{last year used in the model, scale 1:length of time-series}
-  \item{startyear}{first year used in the model, scale 1966:2018}
+\item{samples}{array of all samples from the posterior distribution}
+\item{area-weights}{data frame of the strata names and area weights used to calculate the continental estimates}
+\item{y_min}{first year used in the model, scale 1:length of time-series}
+\item{y_max}{last year used in the model, scale 1:length of time-series}
+\item{startyear}{first year used in the model, scale 1966:2018}
 
 Data frame of 2 variables:
-  \item{Stratum}{Name of the stratum}
-  \item{Trend}{Percent change from the minimum year to maximum year}
+\item{Stratum}{Name of the stratum}
+\item{Trend}{Percent change from the minimum year to maximum year}
 
 Data frame of pointwise pWAIC by count if \code{pointwise}
-  is set to \code{TRUE}. Double precision numerical value of pWAIC if
-  \code{pointwise} is set to \code{FALSE}.
+is set to \code{TRUE}. Double precision numerical value of pWAIC if
+\code{pointwise} is set to \code{FALSE}.
 
 ggplot of continental indices
 
 List of data to be used in JAGS, including:
-  \item{model}{The model to be used in JAGS}
-  \item{heavy_tailed}{Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution}
-  \item{min_nu}{if heavy_tailed is TRUE, minimum value for truncated gamma on DF of t-distribution noise default is 0 and user must change manually after function is run}
-  \item{ncounts}{The number of counts containing useful data for the species}
-  \item{nstrata}{The number of strata used in the analysis}
-  \item{ymin}{Minimum year used}
-  \item{ymax}{Maximum year used}
-  \item{nonzeroweight}{Proportion of routes in each strata with species obervation}
-  \item{count}{Vector of counts for the species}
-  \item{strat}{Vector of strata to be used in the analysis}
-  \item{obser}{Vector of unique observer-route pairings}
-  \item{year}{Vector of years for each count}
-  \item{firstyr}{Vector of indicator variables as to whether an observer was a first year}
-  \item{month}{vector of numeric month of observation}
-  \item{day}{vector of numeric day of observation}
-  \item{nobservers}{Total number of observer-route pairings}
-  \item{fixedyear}{Median of all years (ymin:ymax), included only with slope model}
-  \item{nknots}{Number of knots to use for smooting functions, included only with GAM}
-  \item{X.basis}{Basis function for n smoothing functions, included only with GAM}
+\item{model}{The model to be used in JAGS}
+\item{heavy_tailed}{Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution}
+\item{min_nu}{if heavy_tailed is TRUE, minimum value for truncated gamma on DF of t-distribution noise default is 0 and user must change manually after function is run}
+\item{ncounts}{The number of counts containing useful data for the species}
+\item{nstrata}{The number of strata used in the analysis}
+\item{ymin}{Minimum year used}
+\item{ymax}{Maximum year used}
+\item{nonzeroweight}{Proportion of routes in each strata with species obervation}
+\item{count}{Vector of counts for the species}
+\item{strat}{Vector of strata to be used in the analysis}
+\item{obser}{Vector of unique observer-route pairings}
+\item{year}{Vector of years for each count}
+\item{firstyr}{Vector of indicator variables as to whether an observer was a first year}
+\item{month}{vector of numeric month of observation}
+\item{day}{vector of numeric day of observation}
+\item{nobservers}{Total number of observer-route pairings}
+\item{fixedyear}{Median of all years (ymin:ymax), included only with slope model}
+\item{nknots}{Number of knots to use for smooting functions, included only with GAM}
+\item{X.basis}{Basis function for n smoothing functions, included only with GAM}
 
 Double precision numerical value
 }
 \description{
 The functions listed below are deprecated and will be defunct in
-  the near future. When possible, alternative functions with similar
-  functionality are also mentioned. Help pages for deprecated functions are
-  available at \code{help("-deprecated")}.
+the near future. When possible, alternative functions with similar
+functionality are also mentioned. Help pages for deprecated functions are
+available at \code{help("-deprecated")}.
 
 \code{generate_cont_indices} creates a data frame of the strata-weighed
-  continental indices by year. This data frame can then be used to
-  generate a population trajectory of the species.
+continental indices by year. This data frame can then be used to
+generate a population trajectory of the species.
 
 \code{generate_cont_trend} calculates the geometric mean annual changes in population size.
 
 \code{generate_regional_indices} creates a data frame of the strata-weighted
-  regional indices by year. This data frame can then be used to
-  generate a population trajectory of the species.
+regional indices by year. This data frame can then be used to
+generate a population trajectory of the species.
 
 \code{generate_regional_trends} calculates the geometric mean annual changes in population size for composite regions.
 
 \code{generate_strata_indices} creates a data frame of indices by year,
-  factored by each stratum. These indicies can be used to generate
-  trajectory plots of the species for each strata.
+factored by each stratum. These indicies can be used to generate
+trajectory plots of the species for each strata.
 
 \code{generate_strata_trends} creates a data frame of trends by year,
-  factored by each stratum. These trends are calculated using the indices
-  generated by \code{generate_strata_indices}.
+factored by each stratum. These trends are calculated using the indices
+generated by \code{generate_strata_indices}.
 
 \code{p_waic} calculates effective number of parameters. This is
-  used as a bias adjustment factor in the calculation of WAIC
-  in the function \code{waic}.
+used as a bias adjustment factor in the calculation of WAIC
+in the function \code{waic}.
 
 Generates the trajectory plot of continental indices.
 
 \code{prepare_jags_data} subsets raw BBS data by selected species and
-   and wrangles stratified data for use as input to run JAGS models.
+and wrangles stratified data for use as input to run JAGS models.
 
 \code{waic} returns the Watanabe–Akaike information criterion (WAIC) for the
-  supplied model. WAIC is a generalization of the Akaike information
-  criterion onto singular statistical model.
+supplied model. WAIC is a generalization of the Akaike information
+criterion onto singular statistical model.
 }
 \details{
 NOTE: in order to calculated pWAIC, the model MUST track the parameter
-  "lambda". In species that are data-rich, such as Wood Thrush,
-  this produces extremely large JAGS objects, and takes up a considerable
-  amount of memory when simulating with \code{run_model}
+"lambda". In species that are data-rich, such as Wood Thrush,
+this produces extremely large JAGS objects, and takes up a considerable
+amount of memory when simulating with \code{run_model}
 
 NOTE: in order to calculated WAIC, the model MUST track the parameter
-  "lambda". In species that are data-rich, such as Wood Thrush,
-  this produces extremely large JAGS objects, and takes up a considerable
-  amount of memory when simulating with \code{run_model}
+"lambda". In species that are data-rich, such as Wood Thrush,
+this produces extremely large JAGS objects, and takes up a considerable
+amount of memory when simulating with \code{run_model}
 
-  See examples for details.
+See examples for details.
 }
 \section{\code{generate_cont_indices}}{
 
-  For \code{generate_cont_indices()}, use
-  \code{generate_indices(regions = "continental")}.
+For \code{generate_cont_indices()}, use
+\code{generate_indices(regions = "continental")}.
 }
 
 \section{\code{generate_cont_trend}}{
 
-  For \code{generate_cont_trend()}, use
-  \code{generate_trends()}.
+For \code{generate_cont_trend()}, use
+\code{generate_trends()}.
 }
 
 \section{\code{generate_regional_indices}}{
 
-  For \code{generate_regional_indices()}, use
-  \code{generate_indices()}.
+For \code{generate_regional_indices()}, use
+\code{generate_indices()}.
 }
 
 \section{\code{generate_regional_trends}}{
 
-  For \code{generate_regional_trends()}, use
-  \code{generate_trends()}.
+For \code{generate_regional_trends()}, use
+\code{generate_trends()}.
 }
 
 \section{\code{generate_strata_indices}}{
 
-  For \code{generate_strata_indices()}, use
-  \code{generate_indices(regions = "stratum")}.
+For \code{generate_strata_indices()}, use
+\code{generate_indices(regions = "stratum")}.
 }
 
 \section{\code{generate_strata_trends}}{
 
-  For \code{generate_strata_trends()}, use
-  \code{generate_trends()}.
+For \code{generate_strata_trends()}, use
+\code{generate_trends()}.
 }
 
 \section{\code{p_waic}}{
 
-  WAIC should no longer be used for BBS data.
-  Cross validation should be used instead.
+WAIC should no longer be used for BBS data.
+Cross validation should be used instead.
 }
 
 \section{\code{plot_cont_indices}}{
 
-  For \code{plot_cont_indices()}, use \code{plot_indices()}.
+For \code{plot_cont_indices()}, use \code{plot_indices()}.
 }
 
 \section{\code{prepare_jags_data}}{
 
-  For \code{prepare_jags_data()}, use
-  \code{prepare_data(sampler = "jags", ...)}.
+For \code{prepare_jags_data()}, use
+\code{prepare_data(sampler = "jags", ...)}.
 }
 
 \section{\code{waic}}{
 
-  WAIC should no longer be used for BBS data.
-  Cross validation should be used instead.
+WAIC should no longer be used for BBS data.
+Cross validation should be used instead.
 }
 
 \examples{

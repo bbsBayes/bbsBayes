@@ -19,16 +19,16 @@ Dataframe consisting of r-hat values per parameter.
 }
 \description{
 \code{r_hat} returns a dataframe of Gelman-Rubin's R-hat statistics for each
-  parameter tracked in the model.
+parameter tracked in the model.
 }
 \details{
 R-hat, also known as the potential scale reduction factor (PSRF) was described by
-  Gelman & Rubin (1992) as a way of calculating convergence of parameters given
-  2 or more chains. See citation below for details.
+Gelman & Rubin (1992) as a way of calculating convergence of parameters given
+2 or more chains. See citation below for details.
 
-  Gelman, Andrew; Rubin, Donald B. Inference from Iterative Simulation Using Multiple
-  Sequences. Statist. Sci. 7 (1992), no. 4, 457--472. doi:10.1214/ss/1177011136.
-  https://projecteuclid.org/euclid.ss/1177011136
+Gelman, Andrew; Rubin, Donald B. Inference from Iterative Simulation Using Multiple
+Sequences. Statist. Sci. 7 (1992), no. 4, 457--472. doi:10.1214/ss/1177011136.
+https://projecteuclid.org/euclid.ss/1177011136
 }
 \examples{
 # Toy example with Pacific Wren sample data

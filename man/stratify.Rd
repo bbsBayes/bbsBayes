@@ -38,15 +38,15 @@ wishes to keep the unidentified form separate, this can be set to FALSE}
 }
 \value{
 Large list (3 elements) consisting of:
-  \item{bird_strat}{Dataframe of stratified bird data}
-  \item{route_strat}{Dataframe of stratified route data}
-  \item{species_strat}{Dataframe of stratified species data}
-  \item{by}{Argument used for stratification}
+\item{bird_strat}{Dataframe of stratified bird data}
+\item{route_strat}{Dataframe of stratified route data}
+\item{species_strat}{Dataframe of stratified species data}
+\item{by}{Argument used for stratification}
 }
 \description{
 Assigns each bird count data point and each route a strata
-  based on its geographic location and the stratification
-  as specified by the user.
+based on its geographic location and the stratification
+as specified by the user.
 }
 \examples{
 
@@ -68,7 +68,7 @@ data_strat <- stratify(by = "state", sample_data = TRUE)
 data_strat <- stratify(by = "latlong", sample_data = TRUE)
 
 # To stratify the entire dataset, simply set the sample_data = FALSE,
-# or drop that argument altogher. The function then requires fetch_bbs_data()
+# or drop that argument altogether. The function then requires fetch_bbs_data()
 # to have been run (takes about 10 minutes). Stratification of the entire dataset
 # may take up to 3 minutes.
 

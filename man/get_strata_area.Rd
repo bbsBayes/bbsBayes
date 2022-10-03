@@ -11,12 +11,12 @@ get_strata_area(strata_type = NULL)
 }
 \value{
 Data frame with the following variables:
-  \item{region}{Name of the stratum/region}
-  \item{area_sq_km}{Area of the stratum/region in square kilometres}
+\item{region}{Name of the stratum/region}
+\item{area_sq_km}{Area of the stratum/region in square kilometres}
 }
 \description{
 \code{get_strata_area} allows you to obtain the area of each strata
-  for a given stratification type.
+for a given stratification type.
 }
 \examples{
 

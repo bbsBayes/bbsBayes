@@ -74,7 +74,7 @@ jagsUI object
 }
 \description{
 \code{run-model} runs a JAGS model as specified by the user for
-  the species of interest
+the species of interest
 }
 \examples{
 
