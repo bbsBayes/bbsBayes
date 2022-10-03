@@ -154,11 +154,48 @@ test_that("stratify data", {
 
   skip("Do not test automatically")
 
-  bbs_data1 <- stratify(by = "bbs_usgs", sample_data = TRUE)
-  bbs_data2 <- stratify_tidy(by = "bbs_usgs", sample_data = TRUE)
+  s1 <- stratify(by = "bbs_usgs", sample_data = TRUE)
+  s2 <- stratify_tidy(by = "bbs_usgs", sample_data = TRUE)
 
   # No differences -- Hooray!
-  waldo::compare(bbs_data1, bbs_data2)
+  waldo::compare(s1$route_strat, s2$routes_strat, list_as_map = TRUE)
+  waldo::compare(s1$bird_strat, s2$birds_strat, list_as_map = TRUE,
+                 ignore_attr = TRUE)
+  waldo::compare(s1$species_strat %>% dplyr::mutate(aou = as.numeric(aou)),
+                 s2$species_strat, list_as_map = TRUE,
+                 ignore_attr = TRUE)
+
+  # Note, these tests can take a while
+  s1 <- stratify(by = "bbs_usgs")
+  s2 <- stratify_tidy(by = "bbs_usgs")
+
+  r1 <- s1$route_strat
+  r2 <- s2$routes_strat
+  b1 <- s1$bird_strat
+  b2 <- s2$birds_strat
+  sp1 <- s1$species_strat
+  sp2 <- s2$species_strat
+  rm(s1, s2)
+
+  r1 <- dplyr::arrange(r1, rt.uni.y) %>%
+    dplyr::select(-dplyr::any_of(c("StartTemp", "EndTemp", "Assistant", "TempScale")))
+  r2 <- dplyr::arrange(r2, rt.uni.y) %>%
+    dplyr::select(-dplyr::any_of(c("StartTemp", "EndTemp", "Assistant", "TempScale")))
+
+  # All the same (except weather vars from BBS download) -- Hooray!
+  waldo::compare(r1, r2, tolerance = 0.00001)
+  rm(r1, r2)
+
+  b1 <- b1[names(b2)]
+  b1 <- dplyr::arrange(b1, dplyr::across())
+  b2 <- dplyr::arrange(b2, dplyr::across())
+
+  # All the same -- Hooray!
+  waldo::compare(b1, b2, tolerance = 0.00001, ignore_attr = TRUE)
+
+  # All the same -- Hooray!
+  waldo::compare(dplyr::arrange(sp1, aou),
+                 dplyr::arrange(sp2, aou), tolerance = 0.0001)
 
 })
 
