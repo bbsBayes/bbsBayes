@@ -1,0 +1,103 @@
+---
+title: "Get Started"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting setup}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+
+```
+
+
+## Install [cmdstanr](https://mc-stan.org/cmdstanr/)
+```{r, eval = FALSE}
+# we recommend running this is a fresh R session or restarting your current session
+install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
+```
+
+## Install cmdstan
+
+- Problems? Check out cmdstanr's vignette on [Getting Started](https://mc-stan.org/cmdstanr/articles/cmdstanr.html)
+
+```{r}
+cmdstanr::install_cmdstan()
+```
+
+
+## Check cmdstanr installation
+
+- Useful to include in model runs for reproducibility
+
+```{r}
+cmdstanr::cmdstan_path()
+cmdstanr::cmdstan_version()
+```
+
+
+## Download BBS data
+
+- Two levels `state` and `stop` (only `state` works with bbsBayes models)
+- Two releases `2020` and `2022`
+
+```{r, eval = FALSE}
+fetch_bbs_data_tidy(force = TRUE) # Defaults to 2022
+fetch_bbs_data_tidy(release = "2020", force = TRUE)
+```
+
+## Stratify the data
+
+```{r}
+strat_samp <- stratify_tidy(by = "bbs_usgs", sample_data = TRUE)
+strat <- stratify_tidy(by = "bbs_usgs")
+```
+
+## Prepare the data
+
+```{r}
+stan_data <- prepare_data_stan2(strat,
+                                species_to_run = "Pacific Wren",
+                                model = "slope",
+                                min_max_route_years = 2)
+```
+
+## Run model
+
+- Super fast, just for illustration
+
+```{r}
+stan_fit <- run_model_stan(
+    stan_data,
+    out_name = "pacific_wren_slope_BBS_short",
+    iter_sampling = 10, iter_warmup = 10)
+```
+
+
+
+## Troubleshooting
+
+
+```
+Warning message:
+In fun(libname, pkgname) :
+  rgeos: versions of GEOS runtime 3.10.2-CAPI-1.16.0
+and GEOS at installation 3.8.0-CAPI-1.13.1differ
+```
+
+```{r, eval = FALSE}
+pak::pkg_remove("rgeos")
+pak::pkg_install("rgeos")
+```
+
+
+
+
