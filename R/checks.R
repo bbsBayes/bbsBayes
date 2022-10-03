@@ -47,6 +47,19 @@ check_stratification <- function(strat, name = "stratification (`by`)") {
   strat
 }
 
+check_species <- function(species, species_list,
+                          name = "species (`species_to_run`)") {
+  if(is.null(species)) stop("No ", name, "specified", call. = FALSE)
+
+  if(!species %in% species_list$english) {
+    stop("Invalid species specified. Ensure ", name, " matches a value in\n",
+         "the `english` column of the stratified species list ",
+         "(`strat_data$species_strat)`.",
+         call. = FALSE)
+  }
+  species
+}
+
 #' Check user supplied BBS data
 #'
 #' @param bbs_data List with three components
