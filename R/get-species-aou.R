@@ -7,18 +7,10 @@
 #'
 #' @return 4-5 digit AOU code for the given species, -1 if not found
 #'
-#' @keywords internal
-#' @export
-#'
+#' @noRd
 
-get_species_aou <- function(species, sp_eng)
-{
-  aou <- NULL
-  if (length(aou <- species[species$english == sp_eng, "sp.bbs"]) == 1)
-  {
-    return(aou)
-  }else
-  {
-    return(-1)
-  }
+get_species_aou <- function(species, sp_eng) {
+  aou <- species$sp.bbs[species$english == sp_eng]
+  if (length(aou) != 1) aou <- -1
+  aou
 }
