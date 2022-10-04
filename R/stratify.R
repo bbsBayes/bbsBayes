@@ -57,7 +57,7 @@
 #' @export
 #'
 
-stratify <- function(by = NULL,
+stratify_orig <- function(by = NULL,
                      sample_data = FALSE,
                      bbs_data = NULL,
                      lump_species_forms = TRUE,
@@ -288,7 +288,7 @@ stratify <- function(by = NULL,
 #' @export
 #'
 
-stratify_tidy <- function(by,
+stratify <- function(by,
                           sample_data = FALSE,
                           bbs_data = NULL,
                           lump_species_forms = TRUE,
@@ -304,10 +304,10 @@ stratify_tidy <- function(by,
 
   # Load BBS Data
   if(sample_data) {
-    bbs_data <- load_sample_data_tidy()                  # Load sample data
+    bbs_data <- load_sample_data()                  # Load sample data
   } else if(is.null(bbs_data)) {
     if(!quiet) message("Loading BBS data...")
-    bbs_data <- load_bbs_data_tidy(level = "state") # Load BBS data
+    bbs_data <- load_bbs_data(level = "state") # Load BBS data
   } else {
     bbs_data <- check_bbs_data(bbs_data)            # Check user supplied data
   }

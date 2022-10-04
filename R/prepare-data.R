@@ -79,7 +79,7 @@
 #'
 #'
 
-prepare_data <- function(strat_data = NULL,
+prepare_data_orig <- function(strat_data = NULL,
                          species_to_run = NULL,
                          model = NULL,
                          heavy_tailed = FALSE,
@@ -114,8 +114,8 @@ prepare_data <- function(strat_data = NULL,
   }
 
 
-  birds <- strat_data$birds_strat
-  route <- strat_data$routes_strat
+  birds <- strat_data$bird_strat
+  route <- strat_data$route_strat
   species <- strat_data$species_strat
 
 
@@ -666,7 +666,7 @@ prepare_data_tidy <- function(strat_data = NULL,
 
   if(!is.null(model)) to_return <- append(
     to_return,
-    prepare_model(model, basis, obs_final, n_knots, heavy_tailed))
+    prepare_model_tidy(model, basis, obs_final, n_knots, heavy_tailed))
 
   to_return
 }
@@ -1269,24 +1269,24 @@ prepare_data_stan1 <- function(strat_data = NULL,
 #'
 #'
 
-prepare_data_stan2 <- function(strat_data = NULL,
-                               species_to_run = NULL,
-                               model = NULL,
-                               heavy_tailed = TRUE,
-                               n_knots = NULL,
-                               min_year = NULL,
-                               max_year = NULL,
-                               min_n_routes = 3,
-                               min_max_route_years = 3,
-                               min_mean_route_years = 1,
-                               strata_rem = NULL,
-                               quiet = FALSE,
-                               sampler = "Stan",
-                               basis = "mgcv",
-                               use_pois = FALSE,
-                               calculate_nu = FALSE,
-                               calculate_log_lik = FALSE,
-                               calculate_CV = FALSE) {
+prepare_data <- function(strat_data = NULL,
+                         species_to_run = NULL,
+                         model = NULL,
+                         heavy_tailed = TRUE,
+                         n_knots = NULL,
+                         min_year = NULL,
+                         max_year = NULL,
+                         min_n_routes = 3,
+                         min_max_route_years = 3,
+                         min_mean_route_years = 1,
+                         strata_rem = NULL,
+                         quiet = FALSE,
+                         sampler = "Stan",
+                         basis = "mgcv",
+                         use_pois = FALSE,
+                         calculate_nu = FALSE,
+                         calculate_log_lik = FALSE,
+                         calculate_CV = FALSE) {
 
   # Checks
   if(is.null(strat_data)) stop("No data supplied", call. = FALSE)
@@ -1511,13 +1511,13 @@ prepare_data_stan2 <- function(strat_data = NULL,
 
   if(!is.null(model)) to_return <- append(
     to_return,
-    prepare_model_stan(model, basis, obs_final, n_knots, heavy_tailed))
+    prepare_model(model, basis, obs_final, n_knots, heavy_tailed))
 
   to_return
 }
 
 
-prepare_model <- function(model, basis, obs, n_knots, heavy_tailed) {
+prepare_model_tidy <- function(model, basis, obs, n_knots, heavy_tailed) {
 
   ymin <- min(obs$yr)
   ymax <- max(obs$yr)
@@ -1591,7 +1591,7 @@ prepare_model <- function(model, basis, obs, n_knots, heavy_tailed) {
 }
 
 
-prepare_model_stan <- function(model, basis, obs, n_knots, heavy_tailed) {
+prepare_model <- function(model, basis, obs, n_knots, heavy_tailed) {
 
   ymin <- min(obs$yr)
   ymax <- max(obs$yr)

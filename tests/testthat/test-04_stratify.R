@@ -1,6 +1,6 @@
 test_that("stratify()", {
 
-  expect_message(s <- stratify_tidy(by = "bbs_usgs"),
+  expect_message(s <- stratify(by = "bbs_usgs"),
                  "Loading BBS data...") %>%
     expect_message("Lumping") %>%
     expect_message("Stratifying") %>%
@@ -8,7 +8,7 @@ test_that("stratify()", {
 
   expect_named(s, c("birds_strat", "routes_strat", "species_strat", "stratify_by"))
 
-  bbs_data <- load_bbs_data_tidy()
+  bbs_data <- load_bbs_data()
 
   d1 <- dplyr::filter(bbs_data$birds, AOU  %in% c(2970, 2971, 2973))
   s1 <- dplyr::filter(s$birds_strat, AOU %in% c(2970, 2971, 2973))

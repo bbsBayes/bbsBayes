@@ -71,7 +71,7 @@
 #' @export
 #'
 
-generate_indices <- function(jags_mod = NULL,
+generate_indices_orig <- function(jags_mod = NULL,
                              jags_data = NULL,
                              quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),
                              regions = c("stratum","continental"),
@@ -92,9 +92,9 @@ generate_indices <- function(jags_mod = NULL,
   }
 
   if(!is.null(jags_data)){
-    data_list <- extract_index_data(jags_mod = jags_mod,alt_n = alternate_n,jags_data = jags_data)
+    data_list <- extract_index_data_orig(jags_mod = jags_mod,alt_n = alternate_n,jags_data = jags_data)
   }else{
-    data_list <- extract_index_data(jags_mod = jags_mod,alt_n = alternate_n)
+    data_list <- extract_index_data_orig(jags_mod = jags_mod,alt_n = alternate_n)
 
   }
   n <- data_list$n
@@ -709,7 +709,7 @@ generate_indices_tidy <- function(jags_mod = NULL,
 #' @export
 #'
 
-generate_indices_stan <- function(model_fit = NULL,
+generate_indices <- function(model_fit = NULL,
                              model_data = NULL,
                              quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),
                              regions = c("stratum","continental"),
@@ -725,7 +725,7 @@ generate_indices_stan <- function(model_fit = NULL,
             "Number of routes will not be calculated", call. = FALSE)
   }
 
-  data_list <- extract_index_data_stan(
+  data_list <- extract_index_data(
     model_fit = model_fit,
     alt_n = alternate_n,
     model_data = model_data)

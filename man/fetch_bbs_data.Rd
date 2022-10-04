@@ -2,35 +2,41 @@
 % Please edit documentation in R/fetch-bbs-data.R
 \name{fetch_bbs_data}
 \alias{fetch_bbs_data}
-\title{Fetch Breeding Bird Survey dataset}
+\title{Fetch Breeding Bird Survey dataset (TIDY)}
 \usage{
-fetch_bbs_data(level = "state", release = 2022, quiet = FALSE, force = FALSE)
+fetch_bbs_data(
+  level = "state",
+  release = 2022,
+  quiet = FALSE,
+  force = FALSE,
+  compress = "none"
+)
 }
 \arguments{
-\item{level}{A string, either "state" or "stop", specifying which counts to
-fetch. Defaults to "state", which provides counts beginning in 1966,
-aggregated in five bins, each of which contains cumulative counts from 10 of
-the 50 stops along a route. Specifying "stop" provides stop-level data
-beginning in 1997, which includes counts for each stop along routes
-individually. Note that stop-level data is not currently supported by
-the modeling utilities in bbsBayes.}
+\item{level}{Character. "state" or "stop", specifying which counts to fetch.
+Defaults to "state", which provides counts beginning in 1966, aggregated in
+five bins, each of which contains cumulative counts from 10 of the 50 stops
+along a route. "stop" provides stop-level data beginning in 1997, which
+includes counts for each stop along routes individually. Note that
+stop-level data is not currently supported by the modelling utilities in
+bbsBayes.}
 
-\item{release}{Integer: what yearly release is desired? options are 2022 (default including data through 2021 field season) or 2020 (including data through 2019)}
+\item{release}{Numeric. Yearly release. Options are 2022 (default including
+data through 2021 field season) or 2020 (including data through 2019)}
 
-\item{quiet}{Logical: should progress bars be suppressed? Defaults to FALSE}
+\item{quiet}{Logical. Suppress progress bars? Defaults to FALSE}
 
-\item{force}{Logical: if BBS data already exists on computer, should it be overwritten? Defaults to FALSE}
-}
-\value{
-None
+\item{force}{Logical. Should pre-exising BBS data be overwritten? Defaults to
+FALSE}
 }
 \description{
-\code{fetch_bbs_data} uses File Transfer Protocol (FTP) to fetch Breeding Bird
-Survey data from the United States Geological Survey (USGS) FTP site. This
-is the raw data that is uploaded to the site before any analyses are performed.
-A package-specific directory is created on the user's computer (see documentation of
-\code{rappdirs::appdir} for details of where this directory lives), and the BBS
-data is saved to that directory for use by other functions.
-Before downloading any data, the user must thoroughly read through the terms
-and conditions of the user of the data and type the word "yes" to agree.
+Use File Transfer Protocol (FTP) to fetch Breeding Bird Survey data from the
+United States Geological Survey (USGS) FTP site. This is the raw data that
+is uploaded to the site before any analyses are performed. A
+package-specific directory is created on the user's computer (see
+documentation of \code{rappdirs::appdir} for details of where this directory
+lives), and the BBS data is saved to that directory for use by other
+functions. Before downloading any data, the user must thoroughly read
+through the terms and conditions of the user of the data and type the word
+"yes" to agree.
 }

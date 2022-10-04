@@ -43,7 +43,7 @@
 #'
 #'
 
-get_prepared_data <- function(jags_data = NULL)
+get_prepared_data_orig <- function(jags_data = NULL)
 {
   to_return <- data.frame(Year = jags_data$r_year,
                           Year_Factored = jags_data$year,
@@ -57,7 +57,7 @@ get_prepared_data <- function(jags_data = NULL)
   return(to_return)
 }
 
-get_prepared_data_stan <- function(model_data = NULL) {
+get_prepared_data <- function(model_data = NULL) {
   data.frame(Year = model_data$r_year,
              Year_Factored = model_data$year,
              Count = model_data$count,

@@ -15,13 +15,13 @@
 #'
 #' @export
 #'
-load_sample_data <- function() {
+load_sample_data_orig <- function() {
   list(bird = bird_sample,
        route = route_sample,
        species = species_sample)
 }
 
-load_sample_data_tidy <- function() {
+load_sample_data <- function() {
   list(birds = bird_sample,
        routes = route_sample,
        species = species_sample)

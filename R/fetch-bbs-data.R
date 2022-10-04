@@ -30,7 +30,7 @@
 #' @export
 #'
 #'
-fetch_bbs_data <- function(level = "state",
+fetch_bbs_data_orig <- function(level = "state",
                            release = 2022,
                            quiet = FALSE,
                            force = FALSE)
@@ -99,7 +99,7 @@ fetch_bbs_data <- function(level = "state",
     }
   }
 
-  bird <- get_counts(level = level, quiet = quiet, sb_conn = connection)
+  bird <- get_counts_orig(level = level, quiet = quiet, sb_conn = connection)
 
   ################################################################
   # Route List Data
@@ -274,7 +274,7 @@ fetch_bbs_data <- function(level = "state",
 }
 
 
-get_counts <- function(level, quiet, sb_conn) {
+get_counts_orig <- function(level, quiet, sb_conn) {
   if (level == "state") {
     count_zip <- "States.zip"
   }
@@ -393,7 +393,7 @@ tick <- function(pb, quiet) {
 #'
 #' @export
 #'
-fetch_bbs_data_tidy <- function(level = "state",
+fetch_bbs_data <- function(level = "state",
                                 release = 2022,
                                 quiet = FALSE,
                                 force = FALSE,
@@ -448,7 +448,7 @@ fetch_bbs_data_tidy <- function(level = "state",
   if(!is.null(connection) & !quiet) message("Connected!")
 
   # Download/load Data --------------
-  birds <- get_counts_tidy(level, quiet, connection, force)
+  birds <- get_counts(level, quiet, connection, force)
   routes <- get_routes(release, quiet, connection, force)
   weather <- get_weather(connection, force)
   regs <- readr::read_csv(
@@ -521,13 +521,17 @@ fetch_bbs_data_tidy <- function(level = "state",
   if(level == "stop") f <- "bbs_stop_data.rds"
   f <- file.path(bbs_dir$data(), f)
 
-  message(paste0("Saving BBS data to ", f))
+  message("Saving BBS data to ", f)
   readr::write_rds(bbs_data, file = f, compress = compress)
+
+  # Clean Up -------------------------
+  message("Removing temp files")
+  unlink(list.files(tempdir(), full.names = TRUE), recursive = TRUE)
 
 }
 
 
-get_counts_tidy <- function(level, quiet, connection, force) {
+get_counts <- function(level, quiet, connection, force) {
   if (level == "state") count_zip <- "States.zip"
   if (level == "stop") count_zip <- "50-StopData.zip"
 

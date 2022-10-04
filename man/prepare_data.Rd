@@ -2,13 +2,13 @@
 % Please edit documentation in R/prepare-data.R
 \name{prepare_data}
 \alias{prepare_data}
-\title{Wrangle data to use for modelling input}
+\title{Wrangle data to use for modelling input (STAN TIDY)}
 \usage{
 prepare_data(
   strat_data = NULL,
   species_to_run = NULL,
   model = NULL,
-  heavy_tailed = FALSE,
+  heavy_tailed = TRUE,
   n_knots = NULL,
   min_year = NULL,
   max_year = NULL,
@@ -17,75 +17,63 @@ prepare_data(
   min_mean_route_years = 1,
   strata_rem = NULL,
   quiet = FALSE,
-  sampler = "jags",
-  basis = "original",
-  ...
+  sampler = "Stan",
+  basis = "mgcv",
+  use_pois = FALSE,
+  calculate_nu = FALSE,
+  calculate_log_lik = FALSE,
+  calculate_CV = FALSE
 )
 }
 \arguments{
-\item{strat_data}{Large list of stratified data returned by \code{stratify()}}
+\item{strat_data}{List. Stratified data returned by \code{stratify()}}
 
-\item{species_to_run}{Character string of the English name of the species to run}
+\item{species_to_run}{Character. English name of the species to run}
 
-\item{model}{Character string of model to be used.
-Options are "slope", "firstdiff", "gam", "gamye.}
+\item{model}{Character. Model to use. One of \verb{"slope", "firstdiff", "gam", "gamye"}}
 
-\item{heavy_tailed}{Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution, with heavier tails than the standard normal distribution. Default is currently FALSE, but recent results suggest users should strongly consider setting this to TRUE, even though it requires much longer convergence times}
+\item{heavy_tailed}{Logical. Whether the extra-Poisson error distribution
+should be modeled as a t-distribution, with heavier tails than the standard
+normal distribution. Default is \code{FALSE}, but recent results suggest users
+should strongly consider setting this to \code{TRUE}, even though it requires
+much longer convergence times}
 
-\item{n_knots}{Number of knots to be used in GAM function}
+\item{n_knots}{Numeric. Number of knots to be used in GAM function}
 
-\item{min_year}{Minimum year to keep in analysis}
+\item{min_year}{Numeric. Minimum year to keep in analysis}
 
-\item{max_year}{Maximum year to keep in analysis}
+\item{max_year}{Numeric. Maximum year to keep in analysis}
 
-\item{min_n_routes}{Minimum routes per strata where species has been observed.
-Defaults to 3}
+\item{min_n_routes}{Numeric. Required minimum routes per strata where species
+has been observed. Defaults to 3}
 
-\item{min_max_route_years}{Minimum number of years with non-zero observations
-of species on at least 1 route. Defaults to 3}
+\item{min_max_route_years}{Required minimum number of years with non-zero
+observations of species on at least 1 route. Defaults to 3}
 
-\item{min_mean_route_years}{Minimum average of years per route with the
-species observed. Defaults to 1.}
+\item{min_mean_route_years}{Required minimum average of years per route with
+the species observed. Defaults to 1.}
 
-\item{strata_rem}{Strata to remove from analysis. Defaults to NULL}
+\item{strata_rem}{Character vector. Strata to remove from analysis.}
 
 \item{quiet}{Should progress bars be suppressed?}
 
-\item{sampler}{Which MCMC sampling software to use. Currently bbsBayes only
-supports "jags".}
-
-\item{basis}{Which version of the basis-function to use for the GAM smooth, the default is "original" the same basis used in Smith and Edwards 2020 and "mgcv" is an alternate that uses the "tp" basis from the packages mgcv (also used in brms, and rstanarm). If using the "mgcv" option, the user may want to consider adjusting the prior distributions for the parameters and their precision}
-
-\item{...}{Additional arguments}
+\item{basis}{Character. Which version of the basis-function to use for the
+GAM smooth. Default is \code{"original"}, the same basis used in Smith and
+Edwards 2020. \code{"mgcv"} is an alternate that uses the "tp" basis from the
+\code{mgcv} package (also used in \code{brms}, and \code{rstanarm}). If using \code{"mgcv"},
+the user may want to consider adjusting the prior distributions for the
+parameters and their precision.}
 }
 \value{
-List of data to be used for modelling, including:
-\item{model}{The model to be used}
-\item{heavy_tailed}{Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution}
-\item{min_nu}{if heavy_tailed is TRUE, minimum value for truncated gamma on DF of t-distribution noise default is 0 and user must change manually after function is run}
-\item{ncounts}{The number of counts containing useful data for the species}
-\item{nstrata}{The number of strata used in the analysis}
-\item{ymin}{Minimum year used}
-\item{ymax}{Maximum year used}
-\item{nonzeroweight}{Proportion of routes in each strata with species obervation}
-\item{count}{Vector of counts for the species}
-\item{strat}{Vector of strata to be used in the analysis}
-\item{obser}{Vector of unique observer-route pairings}
-\item{year}{Vector of years for each count}
-\item{firstyr}{Vector of indicator variables as to whether an observer was a first year}
-\item{month}{vector of numeric month of observation}
-\item{day}{vector of numeric day of observation}
-\item{nobservers}{Total number of observer-route pairings}
-\item{fixedyear}{Median of all years (ymin:ymax), included only with slope and firstdiff models}
-\item{nknots}{Number of knots to use for smooting functions, included only with GAM}
-\item{X.basis}{Basis function for n smoothing functions, included only with GAM}
+List of data to be used for modelling as input to \code{run_model()}.
 }
 \description{
-\code{prepare_data} subsets raw BBS data by selected species and
-and wrangles stratified data for use as input for models.
+Subset raw BBS data by selected species and and wrangle stratified data for
+use as input for models.
 }
 \examples{
 # Toy example with Pacific Wren sample data
+
 # First, stratify the sample data
 
 strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)

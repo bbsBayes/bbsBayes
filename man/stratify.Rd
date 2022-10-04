@@ -5,7 +5,7 @@
 \title{Stratify raw Breeding Bird Survey data}
 \usage{
 stratify(
-  by = NULL,
+  by,
   sample_data = FALSE,
   bbs_data = NULL,
   lump_species_forms = TRUE,
@@ -14,39 +14,42 @@ stratify(
 )
 }
 \arguments{
-\item{by}{String argument of stratification type.
-Options are "state", "bcr", "latlong", "bbs_cws", "bbs_usgs"}
+\item{by}{Character. Stratification type. One of "state", "bcr", "latlong",
+"bbs_cws", "bbs_usgs"}
 
-\item{sample_data}{Should just sample data (just Pacific Wren) be used?
-Defaults to FALSE.}
+\item{sample_data}{Logical. Use sample data (just Pacific Wren).}
 
-\item{bbs_data}{Raw BBS data saved as a list of 3 data frames.
-Not necessary if you have already run \code{fetch_bbs_data}}
+\item{bbs_data}{List. Raw BBS data saved as a list of 3 data frames.
+Not necessary if you have already run \code{fetch_bbs_data()}}
 
-\item{lump_species_forms}{Logical, default is TRUE, indicating that for
-species with multiple forms, the "unidentified" form is replaced by
-the sum of observations for all forms (including the original unidentified obs).
-The underlying BBS database includes separate data for each form,
-and these separate forms are retained with their original names.
-The original unidentified category for observations that were not specific to
-a particular form are replaced by the combined observations. If the user
-wishes to keep the unidentified form separate, this can be set to FALSE}
+\item{lump_species_forms}{Logical. Whether to lump together species with
+multiple forms (default \code{TRUE}). See Details.}
 
-\item{quiet}{Should progress bars be suppressed?}
+\item{quiet}{Logical. Suppress progress messages}
 
-\item{stratify_by}{Deprecated in favour of 'by'}
+\item{stratify_by}{Deprecated in favour of \code{by}.}
 }
 \value{
 Large list (3 elements) consisting of:
-\item{bird_strat}{Dataframe of stratified bird data}
-\item{route_strat}{Dataframe of stratified route data}
-\item{species_strat}{Dataframe of stratified species data}
-\item{by}{Argument used for stratification}
+\item{birds_strat}{Data frame of stratified bird counts data}
+\item{routes_strat}{Data frame of stratified routes data}
+\item{species_strat}{Data frame of stratified species data}
+\item{stratify_by}{Argument used for stratification}
 }
 \description{
-Assigns each bird count data point and each route a strata
-based on its geographic location and the stratification
-as specified by the user.
+Assigns each bird count data point and each route a strata based on its
+geographic location and the stratification as specified by the user.
+}
+\details{
+If \code{lump_species_forms} is \code{TRUE}, species with multiple forms
+(e.g., "(unid. race) Dark-eyed Junco"), are duplicated in the data. Once
+with individual, identified, forms, and once by lumping all forms together
+(including both unidentified and identified forms). This allows users to
+specify either individual forms, (e.g., "(Oregon Junco) Dark-eyed Junco")
+or grouped forms (e.g., "Dark-eyed Junco (all forms)") in later steps
+(e.g., \code{prepare_data()}) without rerunning the \code{stratify()} step. If the
+user wishes to keep the unidentified form separate, \code{lump_species_forms}
+can be set to \code{FALSE}.
 }
 \examples{
 

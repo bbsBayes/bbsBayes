@@ -68,7 +68,7 @@
 #'                       parameters_to_save = c("n", "strata"))
 #'
 
-run_model <- function(jags_data = NULL,
+run_model_orig <- function(jags_data = NULL,
                       model_file_path = NULL,
                       inits = NULL,
                       parameters_to_save = c("n"),
@@ -271,13 +271,13 @@ run_model <- function(jags_data = NULL,
 }
 
 
-run_model_stan <- function(model_data,
-                           out_name = NULL,
-                           out_dir = "./model_run",
-                           n_chains = 3,
-                           parallel_chains = 3,
-                           iter_sampling = 1000,
-                           iter_warmup = 1000) {
+run_model <- function(model_data,
+                      out_name = NULL,
+                      out_dir = "./model_run",
+                      n_chains = 3,
+                      parallel_chains = 3,
+                      iter_sampling = 1000,
+                      iter_warmup = 1000) {
 
 
   # Check inputs

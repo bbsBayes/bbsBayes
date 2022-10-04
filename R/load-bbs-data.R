@@ -21,7 +21,7 @@
 #' @export
 #'
 
-load_bbs_data <- function(level = "state")
+load_bbs_data_orig <- function(level = "state")
 {
   bbs_data <- NULL
   rm(bbs_data)
@@ -72,7 +72,7 @@ load_bbs_data <- function(level = "state")
 #'
 #' @export
 
-load_bbs_data_tidy <- function(level = "state") {
+load_bbs_data <- function(level = "state") {
   bbs_dir <- rappdirs::app_dir(appname = "bbsBayes")
 
   if (level == "state") f <- file.path(bbs_dir$data(), "bbs_raw_data.rds")

@@ -72,7 +72,7 @@
 #' @export
 #'
 
-generate_trends <- function(indices = NULL,
+generate_trends_orig <- function(indices = NULL,
                             Min_year = NULL,
                             Max_year = NULL,
                             quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),
@@ -316,7 +316,7 @@ if(slope){
 #' @export
 #'
 
-generate_trends_tidy <- function(indices = NULL,
+generate_trends <- function(indices = NULL,
                                  Min_year = NULL,
                                  Max_year = NULL,
                                  quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),

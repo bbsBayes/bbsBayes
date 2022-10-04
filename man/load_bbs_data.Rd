@@ -2,28 +2,28 @@
 % Please edit documentation in R/load-bbs-data.R
 \name{load_bbs_data}
 \alias{load_bbs_data}
-\title{Load Breeding Bird Survey dataset into R Session}
+\title{Load Breeding Bird Survey dataset into R Session (TIDY)}
 \usage{
 load_bbs_data(level = "state")
 }
 \arguments{
-\item{level}{A string, either "state" or "stop", specifying which counts to
+\item{level}{Character. #ither "state" or "stop", specifying which counts to
 load. Defaults to "state", which provides counts beginning in 1966,
 aggregated in five bins, each of which contains cumulative counts from 10 of
 the 50 stops along a route. Specifying "stop" provides stop-level data
 beginning in 1997, which includes counts for each stop along routes
 individually. Note that stop-level data is not currently supported by
-the modeling utilities in bbsBayes.}
+the modelling utilities in bbsBayes.}
 }
 \value{
 Large list (3 elements) consisting of:
-\item{bird}{Data frame of sample bird point count data per route, per year}
-\item{route}{Data frame of sample yearly route data}
+\item{birds}{Data frame of sample bird point count data per route, per year}
+\item{routes}{Data frame of sample yearly route data}
 \item{species}{Sample list of North American bird species}
 }
 \description{
-\code{load_bbs_data} loads the raw, unstratified BBS data into the current R session.
-The data must have been previously fetched using the \code{fetch_bbs_data} function.
-Note that this function is not necessary to run a Bayesian analysis of BBS data;
-calling \code{stratify} will return stratifed BBS data in a list of data frames.
+Loads the raw, unstratified BBS data into the current R session.
+The data must have been previously fetched using \code{fetch_bbs_data()}.
+Note that this is not necessary to run a Bayesian analysis of BBS data;
+calling \code{stratify()} will do the loading for you.
 }

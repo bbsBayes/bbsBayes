@@ -12,7 +12,7 @@
 #' @export
 #'
 
-extract_index_data <- function(jags_mod = NULL,
+extract_index_data_orig <- function(jags_mod = NULL,
                                alt_n = "n",
                                jags_data = NULL)
 {
@@ -44,7 +44,7 @@ extract_index_data <- function(jags_mod = NULL,
   area_weights$num <- strata_num
 
   if(!is.null(jags_data)){
-    original_data = get_prepared_data(jags_data = jags_data)
+    original_data = get_prepared_data_orig(jags_data = jags_data)
   }else{
     original_data = NULL
   }
@@ -104,7 +104,7 @@ extract_index_data_tidy <- function(jags_mod = NULL,
   area_weights$num <- strata_num
 
   if(!is.null(jags_data)){
-    original_data = get_prepared_data(jags_data = jags_data)
+    original_data = get_prepared_data_orig(jags_data = jags_data)
   }else{
     original_data = NULL
   }
@@ -131,7 +131,7 @@ extract_index_data_tidy <- function(jags_mod = NULL,
 #' @export
 #'
 
-extract_index_data_stan <- function(model_fit = NULL,
+extract_index_data <- function(model_fit = NULL,
                                     alt_n = "n",
                                     model_data = NULL) {
 
@@ -157,7 +157,7 @@ extract_index_data_stan <- function(model_fit = NULL,
     dplyr::select("region" = "strat_name", "area_sq_km", "num" = "strat")
 
   if(!is.null(model_data)){
-    original_data = get_prepared_data_stan(model_data = model_data)
+    original_data = get_prepared_data(model_data = model_data)
   }else{
     original_data = NULL
   }

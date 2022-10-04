@@ -1,17 +1,17 @@
 test_that("prepare_data()", {
 
-  suppressMessages(strat_samp <- stratify_tidy(by = "bbs_usgs", sample_data = TRUE))
+  suppressMessages(strat_samp <- stratify(by = "bbs_usgs", sample_data = TRUE))
 
-  expect_error(prepare_data_stan2(strat_samp,
-                                  species_to_run = "Wren",
-                                  model = "slope",
-                                  min_max_route_years = 2),
+  expect_error(prepare_data(strat_samp,
+                            species_to_run = "Wren",
+                            model = "slope",
+                            min_max_route_years = 2),
                "Invalid species specified")
 
-  expect_message(p <- prepare_data_stan2(strat_samp,
-                                         species_to_run = "Pacific Wren",
-                                         model = "slope",
-                                         min_max_route_years = 2),
+  expect_message(p <- prepare_data(strat_samp,
+                                   species_to_run = "Pacific Wren",
+                                   model = "slope",
+                                   min_max_route_years = 2),
                  "Preparing data")
 
   expect_type(p, "list")

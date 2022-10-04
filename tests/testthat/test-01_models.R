@@ -7,8 +7,8 @@ test_that("download bbs data", {
   # 2020 State data ------------
 
   # Download data
+  fetch_bbs_data_orig("state", 2020, force = TRUE)
   fetch_bbs_data("state", 2020, force = TRUE)
-  fetch_bbs_data_tidy("state", 2020, force = TRUE)
 
   # Load and compare data
   load(file = file.path(bbs_dir$data(), "bbs_raw_data.RData"))
@@ -43,8 +43,8 @@ test_that("download bbs data", {
   # 2020 Stop data ------------
 
   # Download data
+  fetch_bbs_data_orig("stop", 2020, force = TRUE)
   fetch_bbs_data("stop", 2020, force = TRUE)
-  fetch_bbs_data_tidy("stop", 2020, force = TRUE)
 
   # Load and compare data
   load(file = file.path(bbs_dir$data(), "bbs_stop_data.RData"))
@@ -79,9 +79,9 @@ test_that("download bbs data", {
   # 2022 State data ------------
 
   # Download data
+  fetch_bbs_data_orig("state", 2022, force = TRUE)
+  unlink(list.files(tempdir(), full.names = TRUE), recursive = TRUE)
   fetch_bbs_data("state", 2022, force = TRUE)
-  unlink(list.files(tempdir()))
-  fetch_bbs_data_tidy("state", 2022, force = TRUE)
 
   # Load and compare data
   load(file = file.path(bbs_dir$data(), "bbs_raw_data.RData"))
@@ -115,9 +115,9 @@ test_that("download bbs data", {
   # 2022 Stop data ------------
 
   # Download data
-  fetch_bbs_data("stop", 2022, force = TRUE)
+  fetch_bbs_data_orig("stop", 2022, force = TRUE)
   unlink(list.files(tempdir()))
-  fetch_bbs_data_tidy("stop", 2022, force = TRUE)
+  fetch_bbs_data("stop", 2022, force = TRUE)
 
   # Load and compare data
   load(file = file.path(bbs_dir$data(), "bbs_raw_data.RData"))
@@ -154,8 +154,8 @@ test_that("stratify data", {
 
   skip("Do not test automatically")
 
-  s1 <- stratify(by = "bbs_usgs", sample_data = TRUE)
-  s2 <- stratify_tidy(by = "bbs_usgs", sample_data = TRUE)
+  s1 <- stratify_orig(by = "bbs_usgs", sample_data = TRUE)
+  s2 <- stratify(by = "bbs_usgs", sample_data = TRUE)
 
   # No differences -- Hooray!
   waldo::compare(s1$route_strat, s2$routes_strat, list_as_map = TRUE)
@@ -166,8 +166,8 @@ test_that("stratify data", {
                  ignore_attr = TRUE)
 
   # Note, these tests can take a while
-  s1 <- stratify(by = "bbs_usgs")
-  s2 <- stratify_tidy(by = "bbs_usgs")
+  s1 <- stratify_orig(by = "bbs_usgs")
+  s2 <- stratify(by = "bbs_usgs")
 
   r1 <- s1$route_strat
   r2 <- s2$routes_strat
@@ -203,9 +203,9 @@ test_that("JAGS prepare data", {
 
   skip("Do not test automatically")
 
-  bbs_data <- stratify(by = "bbs_usgs", sample_data = TRUE)
+  bbs_data <- stratify_orig(by = "bbs_usgs", sample_data = TRUE)
 
-  jags_data <- prepare_data(strat_data = bbs_data,
+  jags_data <- prepare_data_orig(strat_data = bbs_data,
                             species_to_run = "Pacific Wren",
                             model = "slope",
                             min_max_route_years = 2,
@@ -218,7 +218,7 @@ test_that("JAGS prepare data", {
                                   heavy_tailed = TRUE)
 
   # Only observer dimensions (not content) differ (shouldn't matter) -- Hooray!
-  waldo::compare(jags_data, jags_data2)
+  waldo::compare(jags_data, jags_data2, ignore_attr = TRUE)
 
 })
 
@@ -227,7 +227,7 @@ test_that("JAGS models run", {
   skip("Do not test automatically")
 
 
-  jags_fit <- run_model(jags_data = jags_data,
+  jags_fit <- run_model_orig(jags_data = jags_data,
                         parameters_to_save = c("n","nslope",
                                                "BETA","beta","STRATA",
                                                "sdobs","sdbeta","eta"),
@@ -250,13 +250,24 @@ test_that("JAGS outputs", {
 
   #S <- ggmcmc::ggs(jagsfit$samples, family = "B.X") # "Column `Parameter` doesn't exists"
 
+  # Extract index data -------------------
+  i1 <- extract_index_data_orig(jags_fit, alt_n = "n", jags_data)
+  i2 <- extract_index_data_tidy(jags_fit, alt_n = "n", jags_data)
+
+  # All the same -- Hooray!
+  waldo::compare(i1$n, i2$n)
+  waldo::compare(i1$area_weights, i2$area_weights)
+  waldo::compare(i1$r_year, i2$r_year)
+
+
+
   # INDICES --------------------------
-  indices <- generate_indices(jags_mod = jags_fit,
-                              jags_data = jags_data,
-                              regions = c("continental",
-                                          "national",
-                                          "prov_state",
-                                          "stratum"))
+  indices <- generate_indices_orig(jags_mod = jags_fit,
+                                   jags_data = jags_data,
+                                   regions = c("continental",
+                                               "national",
+                                               "prov_state",
+                                               "stratum"))
   saveRDS(indices, file.path(system.file("model_outputs", package = "bbsBayes"),
                               "jags_bbs_usgs_slope_pacific_wren_indices.rds"))
 
@@ -275,44 +286,10 @@ test_that("JAGS outputs", {
     "jags_bbs_usgs_slope_pacific_wren_indices.rds",
     package = "bbsBayes"))
 
-  waldo::compare(dplyr::arrange(indices$data_summary, Year) %>%
-                   dplyr::filter(Region_type == "continental"),
-                 dplyr::arrange(indices2$data_summary, Year) %>%
-                   dplyr::filter(Region_type == "continental"),
+  # All data summary the same -- Hooray!
+  waldo::compare(dplyr::arrange(indices$data_summary, Year, Region),
+                 dplyr::arrange(indices2$data_summary, Year, Region),
                  tolerance = 0.0001)
-
-  waldo::compare(dplyr::arrange(indices$data_summary, Year) %>%
-                   dplyr::filter(Region_type == "national"),
-                 dplyr::arrange(indices2$data_summary, Year) %>%
-                   dplyr::filter(Region_type == "national"),
-                 tolerance = 0.0001)
-
-  # Problem with reversal of AK and BC...
-  waldo::compare(dplyr::arrange(indices$data_summary[, 1:7], Year, Region) %>%
-                   dplyr::filter(Region_type == "prov_state", !Region %in% c("AK", "BC")),
-                 dplyr::arrange(indices2$data_summary[, 1:7], Year, Region) %>%
-                   dplyr::filter(Region_type == "prov_state", !Region %in% c("AK", "BC")),
-                 tolerance = 0.0001)
-
-  waldo::compare(dplyr::arrange(indices$data_summary, Year, Region) %>%
-                   dplyr::filter(Region_type == "stratum"),
-                 dplyr::arrange(indices2$data_summary, Year, Region) %>%
-                   dplyr::filter(Region_type == "stratum"),
-                 tolerance = 0.0001)
-
-  waldo::compare(dplyr::arrange(indices$data_summary, Region, Year)$backcast_flag,
-                 dplyr::arrange(indices2$data_summary, Region, Year)$backcast_flag,
-                 tolerance = 0.0001)
-
-
-
-  # Only problems left with reversal of AK and BC in prov_stat
-  waldo::compare(dplyr::filter(indices$data_summary, !Region %in% c("AK", "BC")) %>%
-                   dplyr::arrange(Year, Region),
-                 dplyr::filter(indices2$data_summary, !Region %in% c("AK", "BC")) %>%
-                   dplyr::arrange(Year, Region),
-                 tolerance = 0.0001)
-
 
   # All samples the same --- Hooray!
   waldo::compare(indices$samples[names(indices2$samples)],
@@ -337,7 +314,7 @@ test_that("JAGS outputs", {
     "jags_bbs_usgs_slope_pacific_wren_indices.rds",
     package = "bbsBayes"))
 
-  trends <- generate_trends(indices = indices)
+  trends <- generate_trends_orig(indices = indices)
   saveRDS(trends, file.path(system.file("model_outputs", package = "bbsBayes"),
                              "jags_bbs_usgs_slope_pacific_wren_trends.rds"))
 
@@ -350,7 +327,7 @@ test_that("JAGS outputs", {
     "model_outputs",
     "jags_bbs_usgs_slope_pacific_wren_indices2.rds",
     package = "bbsBayes"))
-  trends2 <- generate_trends_tidy(indices = indices2)
+  trends2 <- generate_trends(indices = indices2)
   saveRDS(trends2, file.path(system.file("model_outputs", package = "bbsBayes"),
                              "jags_bbs_usgs_slope_pacific_wren_trends2.rds"))
 
@@ -462,10 +439,10 @@ test_that("STAN prepare data", {
                                    model = "slope",
                                    min_max_route_years = 2)
 
-  stan_data2 <- prepare_data_stan2(bbs_data,
-                                   species_to_run = "Pacific Wren",
-                                   model = "slope",
-                                   min_max_route_years = 2)
+  stan_data2 <- prepare_data(bbs_data,
+                             species_to_run = "Pacific Wren",
+                             model = "slope",
+                             min_max_route_years = 2)
 
   # All the same -- Hooray!!
   waldo::compare(names(stan_data1), names(stan_data2))
@@ -484,12 +461,12 @@ test_that("STAN models run", {
 
   bbs_data <- stratify(by = "bbs_usgs", sample_data = TRUE)
 
-  stan_data <- prepare_data_stan2(bbs_data,
-                                  species_to_run = "Pacific Wren",
-                                  model = "slope",
-                                  min_max_route_years = 2)
+  stan_data <- prepare_data(bbs_data,
+                            species_to_run = "Pacific Wren",
+                            model = "slope",
+                            min_max_route_years = 2)
 
-  stan_fit <- run_model_stan(
+  stan_fit <- run_model(
     stan_data,
     out_name = "pacific_wren_slope_BBS_short",
     out_dir = system.file("model_outputs", package = "bbsBayes"),
@@ -550,11 +527,11 @@ test_that("EXPLORE STAN outputs", {
 test_that("STAN outputs", {
   skip_on_ci()
 
-  load(system.file("model_outputs", "pacific_wren_slope_BBS_Stan_fit.RData",
+  load(system.file("model_outputs", "pacific_wren_slope_BBS_fit.RData",
                    package = "bbsBayes"))
 
   # INDICES --------------------------
-  indices <- generate_indices_stan(model_fit = stan_fit,
+  indices <- generate_indices(model_fit = stan_fit,
                                    model_data = stan_data,
                                    regions = c("continental",
                                                "national",
@@ -568,11 +545,9 @@ test_that("STAN outputs", {
   saveRDS(tp, file.path(system.file("model_outputs", package = "bbsBayes"),
                         "pacific_wren_slope_indices_plots.rds"))
 
-  trends <- generate_trends_tidy(indices = indices)
+  trends <- generate_trends(indices = indices)
 
   # plot_indices -------------------------------
-  saveRDS(tp, file.path(system.file("model_outputs", package = "bbsBayes"),
-                        "jags_bbs_usgs_slope_pacific_wren_trend_plots.rds"))
 
   # Compare with JAGS
   tp_jags <- readRDS(system.file(
@@ -582,7 +557,8 @@ test_that("STAN outputs", {
 
   library(patchwork)
 
-  (tp[[1]] + ggplot2::ggtitle("JAGS")) + (tp_jags[[1]] +  ggplot2::ggtitle("STAN"))
+  (tp[[5]] + ggplot2::ggtitle("JAGS")) + (tp_jags[[5]] +  ggplot2::ggtitle("STAN"))
+  (tp[[6]] + ggplot2::ggtitle("JAGS")) + (tp_jags[[6]] +  ggplot2::ggtitle("STAN"))
 
 
 })
