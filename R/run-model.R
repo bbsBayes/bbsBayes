@@ -29,7 +29,8 @@
 #' @param n_saved_steps Optional number of steps to save per chain.
 #'   Defaults to 2000.
 #' @param parallel Should each chain be run parallel on separate cores?
-#'   If TRUE, the number of cores used will be the minimum of the
+#' @param n_cores Number of cores to use if running in parallel. If NULL (default),
+#'   and parallel = TRUE, the number of cores used will be the minimum of the
 #'   \code{n_chains} specified and the number of cores on your computer
 #' @param quiet Should JAGS output be suppressed?
 #' @param modules Character vector of JAGS modules to load before analysis. By default no extra modules are loaded (other than 'basemod' and 'bugs'). To force glm or other modules to load, use modules = "glm". Be warned, our experience suggests that including the glm module may cause problems with the BBS data.
@@ -80,6 +81,7 @@ run_model <- function(jags_data = NULL,
                       n_saved_steps = 2000,
                       n_iter = 10000,
                       parallel = FALSE,
+                      n_cores = NULL,
                       quiet = FALSE,
                       modules = NULL,
                       ...)
@@ -247,6 +249,7 @@ run_model <- function(jags_data = NULL,
                            n.iter = n_iter + n_burnin,
                            n.thin = n_thin,
                            parallel = parallel,
+                           n.cores = n_cores,
                            verbose = !quiet,
                            modules = modules)
 
