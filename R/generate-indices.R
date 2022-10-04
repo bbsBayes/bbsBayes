@@ -549,7 +549,7 @@ generate_indices_tidy <- function(jags_mod = NULL,
   n_index <- 0
 
   # Calculate strata/year-level observation statistics
-  obs_strat <- dplyr::filter(jags_df) %>%
+  obs_strat <- jags_df %>%
     dplyr::select(strat, year, count) %>%
     dplyr::group_by(strat) %>%
     tidyr::complete(year = 1:n_years) %>%
@@ -581,15 +581,17 @@ generate_indices_tidy <- function(jags_mod = NULL,
     # Calculate sample statistics for this composite region
     samples <- strat_meta_sub %>%
       tidyr::nest(data = -.data[[rr]]) %>%
-      dplyr::summarize(N = purrr::map(.data$data, calc_weights, .env$n,
-                                      .env$n_years, .env$n_samples),
+      dplyr::group_by(.data[[rr]]) %>%
+      dplyr::summarize(N = purrr::map(.data$data, calc_weights,
+                                      n = .env$n, n_years = .env$n_years,
+                                      n_samples = .env$n_samples),
                        N_names = paste0(rr, "_", .data[[rr]]),
-                       Q = purrr::map(.data$N, calc_quantiles, .env$quantiles)) %>%
+                       Q = purrr::map(.data$N, calc_quantiles,
+                                      .env$quantiles, .env$n_years)) %>%
       dplyr::mutate(r = .env$rr)
 
     # Save sample stats for output
     N_all <- append(N_all, setNames(samples$N, samples$N_names))
-
 
     # Calculate observation statistics for this composite region
     obs_region <- obs_strat %>%
@@ -610,12 +612,12 @@ generate_indices_tidy <- function(jags_mod = NULL,
 
     # Calculate data summaries for output
     data_summary <- obs_region %>%
+      dplyr::left_join(calc_alt_names(rr, region_names), by = rr) %>%
+      dplyr::left_join(tidyr::unnest(samples, "Q"), by = c(rr, "year")) %>%
       dplyr::mutate(backcast_flag = 1 - flag_year,
                     Year = .env$start_year + year - 1,
                     Region_type = .env$rr) %>%
-      dplyr::left_join(calc_alt_names(rr, region_names), by = rr) %>%
       dplyr::rename(Region = .data[[rr]]) %>%
-      dplyr::bind_cols(tidyr::unnest(samples, "Q")) %>%
       dplyr::select("Year", "Region", "Region_alt", "Region_type",
                     "Strata_included", "Strata_excluded",
                     "Index", dplyr::contains("Index_q"),
@@ -811,7 +813,7 @@ generate_indices_stan <- function(model_fit = NULL,
   n_index <- 0
 
   # Calculate strata/year-level observation statistics
-  obs_strat <- dplyr::filter(model_df) %>%
+  obs_strat <- model_df %>%
     dplyr::select(strat, year, count) %>%
     dplyr::group_by(strat) %>%
     tidyr::complete(year = 1:n_years) %>%
@@ -843,11 +845,14 @@ generate_indices_stan <- function(model_fit = NULL,
     # Calculate sample statistics for this composite region
     samples <- strat_meta_sub %>%
       tidyr::nest(data = -.data[[rr]]) %>%
+      dplyr::group_by(.data[[rr]]) %>%
       dplyr::summarize(N = purrr::map(.data$data, calc_weights, .env$n,
                                       .env$n_years, .env$n_samples),
                        N_names = paste0(rr, "_", .data[[rr]]),
-                       Q = purrr::map(.data$N, calc_quantiles, .env$quantiles)) %>%
+                       Q = purrr::map(.data$N, calc_quantiles,
+                                      .env$quantiles, .env$n_years)) %>%
       dplyr::mutate(r = .env$rr)
+
 
     # Save sample stats for output
     N_all <- append(N_all, setNames(samples$N, samples$N_names))
@@ -872,12 +877,12 @@ generate_indices_stan <- function(model_fit = NULL,
 
     # Calculate data summaries for output
     data_summary <- obs_region %>%
+      dplyr::left_join(calc_alt_names(rr, region_names), by = rr) %>%
+      dplyr::left_join(tidyr::unnest(samples, "Q"), by = c(rr, "year")) %>%
       dplyr::mutate(backcast_flag = 1 - flag_year,
                     Year = .env$start_year + year - 1,
                     Region_type = .env$rr) %>%
-      dplyr::left_join(calc_alt_names(rr, region_names), by = rr) %>%
       dplyr::rename(Region = .data[[rr]]) %>%
-      dplyr::bind_cols(tidyr::unnest(samples, "Q")) %>%
       dplyr::select("Year", "Region", "Region_alt", "Region_type",
                     "Strata_included", "Strata_excluded",
                     "Index", dplyr::contains("Index_q"),
@@ -924,11 +929,12 @@ calc_weights <- function(data, n, n_years, n_samples) {
   N
 }
 
-calc_quantiles <- function(N, quantiles) {
+calc_quantiles <- function(N, quantiles, n_years) {
   apply(N, 2, stats::quantile, probs = c(quantiles, 0.5)) %>%
     t() %>%
     as.data.frame() %>%
-    setNames(c(paste0("Index_q_", quantiles), "Index"))
+    setNames(c(paste0("Index_q_", quantiles), "Index")) %>%
+    dplyr::bind_cols(year = 1:n_years)
 }
 
 calc_alt_names <- function(r, region_names) {
