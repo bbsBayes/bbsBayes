@@ -1,9 +1,10 @@
-## bbsBayes-deprecated.r
-#' @title Deprecated functions in package \pkg{bbsBayes}.
-#' @description The functions listed below are deprecated and will be defunct in
-#'   the near future. When possible, alternative functions with similar
-#'   functionality are also mentioned. Help pages for deprecated functions are
-#'   available at \code{help("-deprecated")}.
+#' bbsBayes deprecated functions
+#'
 #' @name bbsBayes-deprecated
-#' @keywords internal
+#'
+#' @description  No functions currently deprecated
+#'
+#' @seealso [bbsBayes-defunct]
+#'
+#'
 NULL

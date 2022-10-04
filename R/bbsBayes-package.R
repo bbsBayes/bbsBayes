@@ -1,3 +1,6 @@
+#' @keywords internal
+"_PACKAGE"
+
 .onLoad <- function(libname, pkgname)
 {
   assign("maps",
