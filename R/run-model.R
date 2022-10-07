@@ -302,8 +302,10 @@ run_model <- function(model_data,
   model_data[["model"]] <- NULL
   model_data[["alt_data"]] <- NULL
 
-  # Select model
   model <- meta_data[["model"]]
+
+  # Select model
+
   if(model == "slope") {
     model <- system.file("models", "slope_bbs_CV.stan", package = "bbsBayes")
   } else {
@@ -313,29 +315,8 @@ run_model <- function(model_data,
   # Compile model
   model <- cmdstanr::cmdstan_model(model)
 
-
-  # Set initialization parameters
-  init_def <- function() {
-    list(
-      noise_raw = rnorm(model_data$ncounts * model_data$use_pois, 0, 0.1),
-      strata_raw = rnorm(model_data$nstrata, 0, 0.1),
-      STRATA = 0,
-      nu = 10,
-      sdstrata = runif(1, 0.01, 0.1),
-      eta = 0,
-      yeareffect_raw = matrix(
-        rnorm(model_data$nstrata * model_data$nyears, 0, 0.1),
-        nrow = model_data$nstrata, ncol = model_data$nyears),
-      obs_raw = rnorm(model_data$nobservers, 0, 0.1),
-      ste_raw = rnorm(model_data$nsites, 0, 0.1),
-      sdnoise = runif(1, 0.3, 1.3),
-      sdobs = runif(1, 0.01, 0.1),
-      sdste = runif(1, 0.01, 0.2),
-      sdbeta = runif(1, 0.01, 0.1),
-      sdyear = runif(model_data$nstrata, 0.01, 0.1),
-      BETA = rnorm(1, 0, 0.1),
-      beta_raw = rnorm(model_data$nstrata, 0, 0.1))
-  }
+  # Get initial values
+  init_def <- create_init_def(model, model_data, n_chains)
 
   # What here should be changeable? can use ... and reference cmdstanr docs...
   model_fit <- model$sample(
@@ -357,4 +338,83 @@ run_model <- function(model_data,
   #fit_summary <- stan_fit$summary()
 
   list("model_fit" = model_fit, "meta_data" = meta_data)
+}
+
+
+
+create_init_def <- function(model, model_data, n_chains) {
+
+  model <- paste0(model[1], "_", model[2])
+
+  # Generic --------------
+  init_generic <-
+    list(
+      noise_raw  = rnorm(model_data$ncounts * model_data$use_pois, 0, 0.1),
+      strata_raw = rnorm(model_data$nstrata, 0, 0.1),
+      STRATA     = 0,
+      nu         = 10,
+      sdstrata   = runif(1, 0.01, 0.1),
+      eta        = 0,
+      obs_raw    = rnorm(model_data$nobservers, 0, 0.1),
+      ste_raw    = rnorm(model_data$nsites, 0, 0.1),
+      sdnoise    = runif(1,0.3,1.3),
+      sdobs      = runif(1,0.01,0.1),
+      sdste      = runif(1,0.01,0.2)
+      )
+
+  # By model -------------
+
+  # Matrices
+  m_yrs1 <-  function() matrix(rnorm(model_data$nyears * model_data$nstrata, 0, 0.1),
+                               nrow = model_data$nstrata,
+                               ncol = model_data$nyears)
+
+  m_yrs2 <-  function() matrix(rnorm((model_data$nyears - 1) * model_data$nstrata, 0, 0.1),
+                               nrow = model_data$nstrata,
+                               ncol = model_data$nyears - 1)
+
+  m_knots <- function() matrix(rnorm(model_data$nknots_year * model_data$nstrata, 0, 0.01),
+                               nrow = model_data$nstrata,
+                               ncol = model_data$nknots_year)
+
+  # Vectors
+  v_rand1 <-  function() runif(1, 0.01, 0.1)
+  v_rand2 <-  function() rnorm(1,    0, 0.1)
+  v_strat1 <- function() runif(model_data$nstrata,   0.01, 0.1)
+  v_strat2 <- function() rnorm(model_data$nstrata,      0, 0.1)
+  v_yrs <-    function() rnorm((model_data$nyears - 1), 0, 0.1)
+  v_knots <-  function() rnorm(model_data$nknots_year,  0, 0.1)
+
+  # Initial defs
+  init_specific <- dplyr::tribble(
+    ~yeareffect_raw, ~sdyear,  ~sdbeta,  ~sdBETA, ~BETA_raw, ~beta_raw, ~BETA,
+    "",              "",       v_strat1, "",      "",        m_yrs2,    "",     # first diff non-hier
+    "",              "",       v_rand1,  v_rand1, v_yrs,     m_yrs2,    "",     # first diff hier
+    "",              "",       v_rand1,  v_rand1, v_yrs,     m_yrs2,    "",     # first diff spatial
+    "",              "",       v_strat1, v_rand1, v_knots,   m_knots,   "",     # gam hier
+    "",              "",       v_rand1,  v_rand1, v_knots,   m_knots,   "",     # gam spatial
+    m_yrs1,          v_strat1, v_strat1, v_rand1, v_knots,   m_knots,   "",     # gamye hier
+    m_yrs1,          v_strat1, v_rand1,  v_rand1, v_knots,   m_knots,   "",     # gamye spatial
+    m_yrs1,          v_strat1, v_rand1,  "",      "",        v_strat2,  v_rand2,# slope hier
+    m_yrs1,          v_strat1, v_rand1,  "",      "",        v_strat2,  v_rand2 # slope spatial
+  ) %>%
+    dplyr::bind_cols(bbs_models) %>%
+    dplyr::filter(paste0(.data$model, "_", .data$variant) == .env$model) %>%
+    dplyr::select(-"model", -"variant", -"file") %>%
+    unlist()
+
+  # Drop empty values
+  init_specific <- init_specific[init_specific != ""]
+
+  # Run all the functions
+  for(i in seq_along(init_specific)) init_specific[[i]] <- rlang::exec(init_specific[[i]])
+
+  # Join with generic values
+  init <- append(init_generic, init_specific)
+
+  # Create one list for each chain
+  init_def <- list()
+  for(i in seq_len(n_chains)) init_def[[i]] <- init
+
+  init_def
 }
