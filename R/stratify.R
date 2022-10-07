@@ -93,7 +93,7 @@ stratify <- function(by = NULL,
                                          "lump.csv",
                                          package = "bbsBayes"),
                              stringsAsFactors = FALSE,
-                             fileEncoding = "latin1")
+                             fileEncoding = get_encoding())
   pb_len <- 8
   if (isTRUE(lump_species_forms))
   {
