@@ -128,7 +128,8 @@ fetch_bbs_data <- function(level = "state",
 
   routes <- utils::read.csv(utils::unzip(zipfile = full_path,
                                          exdir = temp),
-                            stringsAsFactors = FALSE)
+                            stringsAsFactors = FALSE,
+                            fileEncoding = get_encoding())
   unlink(temp)
   tick(pb, quiet)
 
@@ -213,7 +214,8 @@ fetch_bbs_data <- function(level = "state",
                                             "character",
                                             "character"),
                              widths = c(6, -1, 5, -1, 50, -1, 50, -1, 50, -1,
-                                        50, -1, 50, -1, 50, -1, 50))
+                                        50, -1, 50, -1, 50, -1, 50),
+                             fileEncoding = get_encoding())
   unlink(temp)
   tick(pb, quiet)
 
@@ -362,3 +364,9 @@ tick <- function(pb, quiet) {
     pb$tick()
   }
 }
+
+get_encoding <- function() {
+  if(l10n_info()[["UTF-8"]]) e <- "latin1" else e <- ""
+  e
+}
+
