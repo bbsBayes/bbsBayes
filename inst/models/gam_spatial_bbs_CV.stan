@@ -105,7 +105,6 @@ parameters {
 
   real eta; //first-year intercept
 
-  matrix[n_strata,n_years] yeareffect_raw;
 
   vector[n_observers] obs_raw;    // sd of year effects
   vector[n_sites] ste_raw;   //
@@ -116,7 +115,6 @@ parameters {
   real<lower=0> sdbeta;    // sd of GAM coefficients among strata - one value across all k and strata
   real<lower=0> sdstrata;    // sd of intercepts
   real<lower=0> sdBETA;    // sd of GAM coefficients
-  array[n_strata] real<lower=0> sdyear;    // sd of year effects
   real<lower=3> nu; // df of t-distribution > 3 so that it has a finite mean, variance, kurtosis
 
   vector[n_knots_year] BETA_raw;//_raw;
@@ -129,7 +127,6 @@ transformed parameters {
   matrix[n_strata,n_knots_year] beta;         // spatial effect slopes (0-centered deviation from continental mean slope B)
   matrix[n_years,n_strata] smooth_pred;
   vector[n_years] SMOOTH_pred;
-  matrix[n_strata,n_years] yeareffect;
   vector[n_knots_year] BETA;
   real<lower=0> phi; //transformed sdnoise
 
@@ -156,11 +153,6 @@ transformed parameters {
      smooth_pred[,s] = year_basis * transpose(beta[s,]);
 }
 
-for(s in 1:n_strata){
-    yeareffect[s,] = sdyear[s]*yeareffect_raw[s,];
-
-}
-
 // intercepts and slopes
 
 
@@ -177,7 +169,7 @@ for(s in 1:n_strata){
     noise = 0;
     }
 
-    E[i] =  smooth_pred[year_tr[i],strat_tr[i]] + strata + yeareffect[strat_tr[i],year_tr[i]] + eta*first_year_tr[i] + ste + obs + noise;
+    E[i] =  smooth_pred[year_tr[i],strat_tr[i]] + strata + eta*first_year_tr[i] + ste + obs + noise;
   }
 
 
@@ -206,7 +198,6 @@ model {
   }
   sdobs ~ normal(0,0.3); // informative prior on scale of observer effects - suggests observer variation larger than 3-4-fold differences is unlikely
   sdste ~ student_t(3,0,1); //prior on sd of site effects
-  sdyear ~ gamma(2,2); // prior on sd of yeareffects - stratum specific, and boundary-avoiding with a prior mode at 0.5 (1/2) - recommended by https://doi.org/10.1007/s11336-013-9328-2
   sdBETA ~ student_t(3,0,1); // prior on sd of GAM parameters
   sdbeta ~ student_t(3,0,1); // prior on sd of GAM parameters
   sdstrata ~ student_t(3,0,1); //prior on sd of intercept variation
@@ -217,14 +208,6 @@ model {
 
   ste_raw ~ std_normal();//site effects
   //sum(ste_raw) ~ normal(0,0.001*n_sites); //constraint isn't useful here
-
- for(s in 1:n_strata){
-
-  yeareffect_raw[s,] ~ std_normal();
-  //soft sum to zero constraint on year effects within a stratum
-  sum(yeareffect_raw[s,]) ~ normal(0,0.001*n_years);
-
- }
 
   BETA_raw ~ std_normal();// prior on fixed effect mean GAM parameters
   //sum to zero constraint built into the basis function
@@ -253,7 +236,6 @@ if(use_pois){
  generated quantities {
 
    array[n_strata,n_years] real<lower=0> n;
-   array[n_strata,n_years] real<lower=0> n_smooth;
    real<lower=0> retrans_noise;
    real<lower=0> retrans_obs;
    real<lower=0> retrans_ste;
@@ -294,11 +276,11 @@ if(use_pois){
       }
 
 
-   log_lik_cv[i] = poisson_log_lpmf(count_te[i] | smooth_pred[year_te[i],strat_te[i]] + strata + yeareffect[strat_te[i],year_te[i]] + eta*first_year_te[i] + ste + obs + noise);
+   log_lik_cv[i] = poisson_log_lpmf(count_te[i] | smooth_pred[year_te[i],strat_te[i]] + strata + eta*first_year_te[i] + ste + obs + noise);
 
    }else{
      noise = 0;
-  log_lik_cv[i] = neg_binomial_2_log_lpmf(count_te[i] | smooth_pred[year_te[i],strat_te[i]] + strata + yeareffect[strat_te[i],year_te[i]] + eta*first_year_te[i] + ste + obs + noise, phi);
+  log_lik_cv[i] = neg_binomial_2_log_lpmf(count_te[i] | smooth_pred[year_te[i],strat_te[i]] + strata + eta*first_year_te[i] + ste + obs + noise, phi);
 
    }
 
@@ -333,8 +315,6 @@ for(y in 1:n_years){
       for(s in 1:n_strata){
 
   array[n_obs_sites_strata[s]] real n_t;
-  array[n_obs_sites_strata[s]] real n_smooth_t;
-  real retrans_yr = 0.5*(sdyear[s]^2);
   real strata = (sdstrata*strata_raw[s]) + STRATA;
 
         for(t in 1:n_obs_sites_strata[s]){  //n_obs_sites_strata max_n_obs_sites_strata
@@ -343,11 +323,9 @@ for(y in 1:n_years){
   real obs = sdobs*obs_raw[obs_mat[s,t]]; // site intercepts
 
 
-      n_t[t] = exp(strata+ smooth_pred[y,s] + yeareffect[s,y] + retrans_noise + obs + ste);// + retrans_obs);
-      n_smooth_t[t] = exp(strata + smooth_pred[y,s] + retrans_yr + retrans_noise + obs + ste);// + retrans_obs);
+      n_t[t] = exp(strata+ smooth_pred[y,s] + retrans_noise + obs + ste);// + retrans_obs);
         }
         n[s,y] = non_zero_weight[s] * mean(n_t);//mean of exponentiated predictions across sites in a stratum
-        n_smooth[s,y] = non_zero_weight[s] * mean(n_smooth_t);//mean of exponentiated predictions across sites in a stratum
         //using the mean of hte exponentiated values, instead of including the log-normal
         // retransformation factor (0.5*sdste^2), because this retransformation makes 2 questionable assumptions:
           // 1 - assumes that sdste is equal among all strata

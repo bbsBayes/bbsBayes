@@ -1211,8 +1211,11 @@ prepare_data_stan1 <- function(strat_data = NULL,
 #'
 #' @param strat_data List. Stratified data returned by `stratify()`
 #' @param species_to_run Character. English name of the species to run
-#' @param model Character. Model to use. One of `"slope", "firstdiff", "gam",
+#' @param model Character. Model to use. One of `"slope", "first_diff", "gam",
 #'   "gamye"`
+#' @param model_variant Character. Model variant to use. One of `hier`
+#'   (hierarchical; Default), `spatial` or `nonhier` (non-hierarchical; not
+#'   recommended).
 #' @param heavy_tailed Logical. Whether the extra-Poisson error distribution
 #'   should be modeled as a t-distribution, with heavier tails than the standard
 #'   normal distribution. Default is `FALSE`, but recent results suggest users
@@ -1234,7 +1237,6 @@ prepare_data_stan1 <- function(strat_data = NULL,
 #' @param min_mean_route_years Required minimum average of years per route with
 #'   the species observed. Defaults to 1.
 #' @param strata_rem Character vector. Strata to remove from analysis.
-#' @param quiet Should progress bars be suppressed?
 #'
 #' @return List of data to be used for modelling as input to `run_model()`.
 #'
@@ -1254,7 +1256,7 @@ prepare_data_stan1 <- function(strat_data = NULL,
 #' #   model.
 #' model_data <- prepare_data(strat_data = strat_data,
 #'                            species_to_run = "Pacific Wren",
-#'                            model = "firstdiff",
+#'                            model = "first_diff",
 #'                            min_year = 2009,
 #'                            max_year = 2018)
 #'
@@ -1272,6 +1274,7 @@ prepare_data_stan1 <- function(strat_data = NULL,
 prepare_data <- function(strat_data = NULL,
                          species_to_run = NULL,
                          model = NULL,
+                         model_variant = "hier",
                          heavy_tailed = TRUE,
                          n_knots = NULL,
                          min_year = NULL,
@@ -1280,7 +1283,6 @@ prepare_data <- function(strat_data = NULL,
                          min_max_route_years = 3,
                          min_mean_route_years = 1,
                          strata_rem = NULL,
-                         quiet = FALSE,
                          sampler = "Stan",
                          basis = "mgcv",
                          use_pois = FALSE,
@@ -1292,7 +1294,7 @@ prepare_data <- function(strat_data = NULL,
   if(is.null(strat_data)) stop("No data supplied", call. = FALSE)
   if(is.null(species_to_run)) stop("No species specified", call. = FALSE)
 
-  model <- check_model(model)
+  model <- check_model(model, model_variant)
   basis <- check_basis(basis)
 
   if(!heavy_tailed & !use_pois) {
@@ -1330,18 +1332,6 @@ prepare_data <- function(strat_data = NULL,
   }
   if(!is.null(min_year)) obs <- dplyr::filter(obs, .data$Year >= .env$min_year)
   if(!is.null(max_year)) obs <- dplyr::filter(obs, .data$Year <= .env$max_year)
-
-  if(!quiet) {
-    message("Preparing data")
-    pb <- progress::progress_bar$new(
-      format = "\r[:bar] :percent eta: :eta",
-      clear = FALSE,
-      total = length(unique(obs$strat_name)) + 26,
-      width = 80)
-    pb$tick(0)
-  }
-
-  if(!quiet) pb$tick()
 
   routes_meta <- obs %>%
     dplyr::group_by(.data$strat_name, .data$rt.uni) %>%
@@ -1406,11 +1396,6 @@ prepare_data <- function(strat_data = NULL,
     dplyr::ungroup() %>%
     dplyr::arrange(.data$strat, .data$rt.uni, .data$Year)
 
-  nobs_sites <- obs_final %>%
-    dplyr::group_by(.data$strat) %>%
-    dplyr::summarize(n = dplyr::n_distinct(.data$obs_site)) %>%
-    dplyr::pull(.data$n)
-
   weights <- obs_final %>%
     dplyr::select("strat", "pr_ever") %>%
     dplyr::distinct() %>%
@@ -1426,32 +1411,32 @@ prepare_data <- function(strat_data = NULL,
     dplyr::distinct() %>%
     dplyr::pull(.data$n_obs_sites)
 
-  nstrata <- length(unique(obs_final$strat))
+  n_strata <- length(unique(obs_final$strat))
 
   # Create matrices
   site_mat <- matrix(data = 0,
-                     nrow = nstrata,
+                     nrow = n_strata,
                      ncol = max(n_obs_sites))
 
   obs_mat <- matrix(data = 0,
-                    nrow = nstrata,
+                    nrow = n_strata,
                     ncol = max(n_obs_sites))
 
-  for(i in 1:nstrata){
+  for(i in 1:n_strata){
     site_mat[i,1:n_obs_sites[i]] <- obs_by_site$site[obs_by_site$strat == i]
     obs_mat[i,1:n_obs_sites[i]] <- obs_by_site$observer[obs_by_site$strat == i]
   }
 
-  ncounts <- nrow(obs_final)
+  n_counts <- nrow(obs_final)
 
   to_return <- list(
     model = model,
 
     # Sample sizes
-    nsites = max(obs_final$site),
-    nstrata = length(unique(obs_final$strat)),
-    ncounts = nrow(obs_final),
-    nyears = as.integer(max(obs_final$yr)),
+    n_sites = max(obs_final$site),
+    n_strata = length(unique(obs_final$strat)),
+    n_counts = nrow(obs_final),
+    n_years = as.integer(max(obs_final$yr)),
 
     # Basic data
     count = obs_final$count,
@@ -1465,18 +1450,18 @@ prepare_data <- function(strat_data = NULL,
     # node2 = node2,
 
     # Observer information
-    nobservers = max(obs_final$observer),
+    n_observers = max(obs_final$observer),
     observer = obs_final$observer,
-    firstyr = obs_final$first_year,
+    first_year = obs_final$first_year,
 
     # Ragged array information to link sites and observers to strata
-    nobs_sites_strata = n_obs_sites,
-    maxnobs_sites_strata = max(n_obs_sites),
+    n_obs_sites_strata = n_obs_sites,
+    max_n_obs_sites_strata = max(n_obs_sites),
     ste_mat = site_mat,
     obs_mat = obs_mat,
 
     # Weights
-    nonzeroweight = weights,
+    non_zero_weight = weights,
 
     # Model specifications
 
@@ -1499,19 +1484,19 @@ prepare_data <- function(strat_data = NULL,
 
     # 1 = data and model include cross-validation training and test data
     calc_CV = as.integer(calculate_CV),
-    train = as.integer(1:ncounts), # indices of obs in the training dataset
+    train = as.integer(1:n_counts), # indices of obs in the training dataset
     test = as.integer(1),          # indices of obs in the test dataset
-    ntrain = ncounts,              # no. training data (must == ncounts if calc_CV == 0)
-    ntest = 1,                     # no. testing data  (ignored if calc_CV == 0)
+    n_train = n_counts,              # no. training data (must == n_counts if calc_CV == 0)
+    n_test = 1,                     # no. testing data  (ignored if calc_CV == 0)
 
     stratify_by = strat_data$stratify_by,
     r_year = obs_final$Year,
     alt_data = obs_final
     )
 
-  if(!is.null(model)) to_return <- append(
+  to_return <- append(
     to_return,
-    prepare_model(model, basis, obs_final, n_knots, heavy_tailed))
+    prepare_model(model, n_strata, basis, obs_final, n_knots, heavy_tailed))
 
   to_return
 }
@@ -1591,19 +1576,33 @@ prepare_model_tidy <- function(model, basis, obs, n_knots, heavy_tailed) {
 }
 
 
-prepare_model <- function(model, basis, obs, n_knots, heavy_tailed) {
+prepare_model <- function(model, n_strata, basis, obs, n_knots, heavy_tailed) {
 
   ymin <- min(obs$yr)
   ymax <- max(obs$yr)
-  nyears <- length(ymin:ymax)
+  n_years <- length(ymin:ymax)
   years <- ymin:ymax
+  model <- model[1] # Ignore model variant for now
 
   to_return <- list()
 
-  if(model %in% c("slope", "firstdiff")) {
-    to_return <- append(to_return,
-                        list(fixedyear = floor(stats::median(unique(obs$yr)))))
+  if(model %in% c("slope", "first_diff")) {
+    fixed_year <- floor(stats::median(unique(obs$yr)))
+    to_return <- append(to_return, list("fixed_year" = fixed_year))
   }
+
+  if(model %in% "first_diff"){
+    zero_betas <- rep(0, n_strata)
+    Iy1 <- (fixed_year - 1):1
+    n_Iy1 <- length(Iy1)
+    Iy2 <- (fixed_year + 1):n_years
+    n_Iy2 <- length(Iy2)
+
+    to_return <- append(to_return, list("zero_betas" = zero_betas,
+                                        "Iy1" = Iy1, "n_Iy1" = n_Iy1,
+                                        "Iy2" = Iy2, "n_Iy2" = n_Iy2))
+  }
+
 
   if(model %in% c("gam", "gamye")) {
     if(is.null(n_knots)) n_knots <- floor(length(unique((obs$yr)))/4)
@@ -1626,35 +1625,39 @@ prepare_model <- function(model, basis, obs, n_knots, heavy_tailed) {
       # convergence for the GAM beta parameters
       rescale <- ymax
 
-      obs$yearscale <- (obs$yr - recenter) / ymax
+      obs$year_scale <- (obs$yr - recenter) / ymax
 
-      scaledyear <- seq(min(obs$yearscale), max(obs$yearscale), length = nyears)
-      names(scaledyear) <- ymin:ymax
+      scaled_year <- seq(min(obs$year_scale),
+                         max(obs$year_scale),
+                         length = n_years) %>%
+        setNames(ymin:ymax)
+
       if(ymin != 1) {
-        newys <- 1:(ymin - 1)
-        newyscale <- (newys - recenter)/rescale
-        names(newyscale) <- newys
-        scaledyear = c(newyscale, scaledyear)
+        new_yr <- 1:(ymin - 1)
+        new_yr_scale <- (new_yr - recenter)/rescale
+        names(new_yr_scale) <- new_yr
+        scaled_year = c(new_yr_scale, scaled_year)
       }
 
-      yminsc <- scaledyear[as.character(ymin)]
-      ymaxsc <- scaledyear[as.character(ymax)]
+      ymin_scale <- scaled_year[as.character(ymin)]
+      ymax_scale <- scaled_year[as.character(ymax)]
+
       if(ymin != 1) {
-        yminpred <- 1
-        yminscpred <- scaledyear[as.character(1)]
+        ymin_pred <- 1
+        ymin_scale_pred <- scaled_year[as.character(1)]
       }
 
-      knotsX <- seq(yminsc, ymaxsc, length = (n_knots + 2))[-c(1, n_knots + 2)]
-      X_K <- (abs(outer(seq(yminsc, ymaxsc, length = nyears), knotsX, "-")))^3
-      X_OMEGA_all <- (abs(outer(knotsX,knotsX,"-")))^3
-      X_svd.OMEGA_all <- svd(X_OMEGA_all)
-      X_sqrt.OMEGA_all <- t(X_svd.OMEGA_all$v  %*%
-                              (t(X_svd.OMEGA_all$u) * sqrt(X_svd.OMEGA_all$d)))
-      year_basis <- t(solve(X_sqrt.OMEGA_all, t(X_K)))
+      knotsX <- seq(ymin_scale, ymax_scale, length = (n_knots + 2))[-c(1, n_knots + 2)]
+      X_K <- (abs(outer(seq(ymin_scale, ymax_scale, length = n_years), knotsX, "-")))^3
+      X_OMEGA_all <- (abs(outer(knotsX, knotsX, "-")))^3
+      X_svd_OMEGA_all <- svd(X_OMEGA_all)
+      X_sqrt_OMEGA_all <- t(X_svd_OMEGA_all$v  %*%
+                              (t(X_svd_OMEGA_all$u) * sqrt(X_svd_OMEGA_all$d)))
+      year_basis <- t(solve(X_sqrt_OMEGA_all, t(X_K)))
     }
 
     to_return <- append(to_return,
-                        list(nknots = n_knots, year_basis = year_basis))
+                        list(n_knots_year = n_knots, year_basis = year_basis))
   }
   to_return
 }

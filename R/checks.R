@@ -3,15 +3,32 @@
 #' @param model Name of model
 #'
 #' @noRd
-check_model <- function(model) {
-  if(is.null(model)) stop("No model specified", call. = FALSE)
+check_model <- function(model, model_variant) {
+  if(is.null(model)) stop("No `model` specified", call. = FALSE)
+  if(is.null(model_variant)) stop("No `model_variant` specified",
+                               call. = FALSE)
   model <- tolower(model)
-  m <- c("slope", "firstdiff", "gam", "gamye")
-  if(!model %in% m) {
-    stop("Invalid model specified. Must be one of ", paste0(m, collapse = ", "),
+  model_variant <- tolower(model_variant)
+
+  if(!model %in% bbs_models$model) {
+    stop("Invalid `model` specified. Must be one of ",
+         paste0(unique(bbs_models$model), collapse = ", "),
          call. = FALSE)
   }
-  model
+  if(!model_variant %in% bbs_models$variant) {
+    stop("Invalid `model_variant` specified. Must be one of ",
+         paste0(unique(bbs_models$variant), collapse = ", "),
+         call. = FALSE)
+  }
+  if(model_variant == "nonhier") {
+    if(model != "first_diff") stop("`model_variant` 'nonhier' only allowed ",
+                                   "for `first_diff` models", call. = FALSE)
+   warning("Non-hierarchial models are generally not recommended ",
+           "(see ?bbs_models), but provided for compatibility with the USGS",
+           "methods", call. = FALSE)
+  }
+
+  c(model, model_variant)
 }
 
 #' Check basis value
