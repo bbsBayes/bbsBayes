@@ -50,9 +50,9 @@ data {
   matrix[n_years, n_knots_year] year_basis; // basis function matrix
 
   //data for spatial iCAR among strata
-  int<lower=1> N_edges;
-  array [N_edges] int<lower=1, upper=n_strata> node1;  // node1[i] adjacent to node2[i]
-  array [N_edges] int<lower=1, upper=n_strata> node2;  // and node1[i] < node2[i]
+  int<lower=1> n_edges;
+  array [n_edges] int<lower=1, upper=n_strata> node1;  // node1[i] adjacent to node2[i]
+  array [n_edges] int<lower=1, upper=n_strata> node2;  // and node1[i] < node2[i]
 
 
   // Extra Poisson variance options

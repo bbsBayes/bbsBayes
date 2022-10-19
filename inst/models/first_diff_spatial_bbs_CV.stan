@@ -58,9 +58,9 @@ data {
   array[n_strata] real non_zero_weight; //proportion of the sites included - scaling factor
 
   //data for spatial iCAR among strata
-  int<lower=1> N_edges;
-  array [N_edges] int<lower=1, upper=n_strata> node1;  // node1[i] adjacent to node2[i]
-  array [N_edges] int<lower=1, upper=n_strata> node2;  // and node1[i] < node2[i]
+  int<lower=1> n_edges;
+  array [n_edges] int<lower=1, upper=n_strata> node1;  // node1[i] adjacent to node2[i]
+  array [n_edges] int<lower=1, upper=n_strata> node2;  // and node1[i] < node2[i]
 
   // Extra Poisson variance options
   int<lower=0,upper=1> heavy_tailed; //indicator if extra poisson variance should be t-distributed or normal (yes = 1, no = 0 and therefore normal)
