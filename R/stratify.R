@@ -289,11 +289,11 @@ stratify_orig <- function(by = NULL,
 #'
 
 stratify <- function(by,
-                          sample_data = FALSE,
-                          bbs_data = NULL,
-                          lump_species_forms = TRUE,
-                          quiet = FALSE,
-                          stratify_by = NULL) {
+                     sample_data = FALSE,
+                     bbs_data = NULL,
+                     lump_species_forms = TRUE,
+                     quiet = FALSE,
+                     stratify_by = NULL) {
 
   if(!is.null(stratify_by)) {
     message("Argument \"stratify_by\" has been deprecated in favour of \"by\"")
@@ -384,7 +384,7 @@ stratify <- function(by,
         # Keep PEI route numbers distinct from Nova Scotia routes
         Route = dplyr::if_else(.data$St_Abrev == "PE",
                                .data$Route + (1000 * .data$Route),
-                               .data$Route),
+                               as.double(.data$Route)),
         St_Abrev = "NSPE",
         statenum = 765)
 
@@ -398,7 +398,8 @@ stratify <- function(by,
 
     # Fix birds
     birds <- dplyr::select(birds, -"Route", -"statenum") %>%
-      dplyr::left_join(dplyr::select(routes, "rid", "Route", "statenum"),
+      dplyr::left_join(dplyr::select(routes, "rid", "Route", "statenum") %>%
+                         dplyr::distinct(),
                        by = "rid")
   }
 
