@@ -23,16 +23,23 @@ test_that("run_model", {
 
   withr::local_seed(111)
 
+
+  p <- prepare_data(stratify(by = "bbs_usgs", sample_data = TRUE, quiet = TRUE),
+                    species_to_run = "Pacific Wren",
+                    min_max_route_years = 2)
+
+  map <- load_map(stratify_by = "bbs_cws") %>%
+    dplyr::filter(.data$ST_12 %in% p$alt_data$strat_name)
+
+  n <- spatial_neighbours(map, strata_col = "ST_12")
+
   for(i in seq_len(nrow(bbs_models))) {
 
-    p <- prepare_data(stratify(by = "bbs_usgs", sample_data = TRUE, quiet = TRUE),
-                      species_to_run = "Pacific Wren",
-                      model = bbs_models$model[i],
-                      model_variant = bbs_models$variant[i],
-                      min_max_route_years = 2) %>%
-      suppressWarnings()
-
-    expect_message(r <- run_model(p, out_dir = ".", n_chains = 2,
+    expect_message(r <- run_model(model_data = p,
+                                  model = bbs_models$model[i],
+                                  model_variant = bbs_models$variant[i],
+                                  spatial_neighbours = n1,
+                                  out_dir = ".", n_chains = 2,
                                   iter_sampling = 10, iter_warmup = 10))
 
     expect_type(r, "list")

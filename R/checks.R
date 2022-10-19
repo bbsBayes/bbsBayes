@@ -5,21 +5,14 @@
 #' @noRd
 check_model <- function(model, model_variant) {
   if(is.null(model)) stop("No `model` specified", call. = FALSE)
-  if(is.null(model_variant)) stop("No `model_variant` specified",
-                               call. = FALSE)
   model <- tolower(model)
-  model_variant <- tolower(model_variant)
 
   if(!model %in% bbs_models$model) {
     stop("Invalid `model` specified. Must be one of ",
          paste0(unique(bbs_models$model), collapse = ", "),
          call. = FALSE)
   }
-  if(!model_variant %in% bbs_models$variant) {
-    stop("Invalid `model_variant` specified. Must be one of ",
-         paste0(unique(bbs_models$variant), collapse = ", "),
-         call. = FALSE)
-  }
+
   if(model_variant == "nonhier") {
     if(model != "first_diff") stop("`model_variant` 'nonhier' only allowed ",
                                    "for `first_diff` models", call. = FALSE)
@@ -28,7 +21,19 @@ check_model <- function(model, model_variant) {
            "methods", call. = FALSE)
   }
 
-  c(model, model_variant)
+  model
+}
+
+check_model_variant <- function(model_variant) {
+  if(is.null(model_variant)) stop("No `model_variant` specified",
+                                  call. = FALSE)
+  model_variant <- tolower(model_variant)
+  if(!model_variant %in% bbs_models$variant) {
+    stop("Invalid `model_variant` specified. Must be one of ",
+         paste0(unique(bbs_models$variant), collapse = ", "),
+         call. = FALSE)
+  }
+  model_variant
 }
 
 #' Check basis value
@@ -84,4 +89,59 @@ check_species <- function(species, species_list,
 #' @noRd
 check_bbs_data <- function(bbs_data) {
   bbs_data
+}
+
+check_neighbours <- function(spatial_neighbours) {
+  if(!is.list(spatial_neighbours) ||
+     !all(c("n", "n_edges", "node1", "node2", "adj_matrix", "strata_names") %in%
+          names(spatial_neighbours))) {
+    stop("`spatial_neighbours` must a list created by `spatial_neighbours()` ",
+         "containing\n  at least `n`, `n_edges`, `node1`, `node2`, `adj_matrix` ",
+         "and `strata_names`", call. = FALSE)
+  }
+}
+
+
+#' Check user supplied sf object
+#'
+#' @param sf sf spatial data frame
+#'
+#' @noRd
+check_sf <- function(sf) {
+  if(!is.null(sf) && !inherits(sf, "sf")) {
+    stop("'", deparse(substitute(sf)), "' must be an 'sf' spatial data frame",
+         call. = FALSE)
+  }
+}
+
+
+check_type <- function(msg, check_fun, ...) {
+  args <- list(...)
+  if(is.null(names(args))) {
+    names(args) <- vapply(substitute(list(...))[-1], deparse, FUN.VALUE = "a")
+  }
+
+  ck <- vapply(args, check_fun, FUN.VALUE = TRUE)
+  if(!all(ck)) {
+    stop("`", paste0(names(ck[!ck]), collapse = "`, `"),
+         "` must be ", msg, call. = FALSE)
+  }
+}
+
+check_logical <- function(...) {
+  check_type(msg = "logical (TRUE/FALSE)", check_fun = is.logical, ...)
+}
+
+check_numeric <- function(...) {
+  check_type(msg = "a number", check_fun = is.numeric, ...)
+}
+
+check_in <- function(arg, opts) {
+ if(!arg %in% opts) {
+   if(is.character(opts)) sep <- "'" else if(is.numeric(opts)) sep <- ""
+   stop("`", substitute(deparse(arg)),"` ",
+        "must be one of ", sep, paste0(opts, collapse = paste0(sep, ", ", sep)),
+        sep, ".",
+        call. = FALSE)
+ }
 }

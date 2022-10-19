@@ -8,21 +8,12 @@ prepare_data(
   strat_data = NULL,
   species_to_run = NULL,
   model = NULL,
-  heavy_tailed = TRUE,
-  n_knots = NULL,
   min_year = NULL,
   max_year = NULL,
   min_n_routes = 3,
   min_max_route_years = 3,
   min_mean_route_years = 1,
-  strata_rem = NULL,
-  quiet = FALSE,
-  sampler = "Stan",
-  basis = "mgcv",
-  use_pois = FALSE,
-  calculate_nu = FALSE,
-  calculate_log_lik = FALSE,
-  calculate_CV = FALSE
+  strata_rem = NULL
 )
 }
 \arguments{
@@ -30,15 +21,7 @@ prepare_data(
 
 \item{species_to_run}{Character. English name of the species to run}
 
-\item{model}{Character. Model to use. One of \verb{"slope", "firstdiff", "gam", "gamye"}}
-
-\item{heavy_tailed}{Logical. Whether the extra-Poisson error distribution
-should be modeled as a t-distribution, with heavier tails than the standard
-normal distribution. Default is \code{FALSE}, but recent results suggest users
-should strongly consider setting this to \code{TRUE}, even though it requires
-much longer convergence times}
-
-\item{n_knots}{Numeric. Number of knots to be used in GAM function}
+\item{model}{Character. Model to use. One of \verb{"slope", "first_diff", "gam", "gamye"}}
 
 \item{min_year}{Numeric. Minimum year to keep in analysis}
 
@@ -55,7 +38,17 @@ the species observed. Defaults to 1.}
 
 \item{strata_rem}{Character vector. Strata to remove from analysis.}
 
-\item{quiet}{Should progress bars be suppressed?}
+\item{model_variant}{Character. Model variant to use. One of \code{hier}
+(hierarchical; Default), \code{spatial} or \code{nonhier} (non-hierarchical; not
+recommended).}
+
+\item{heavy_tailed}{Logical. Whether the extra-Poisson error distribution
+should be modeled as a t-distribution, with heavier tails than the standard
+normal distribution. Default is \code{FALSE}, but recent results suggest users
+should strongly consider setting this to \code{TRUE}, even though it requires
+much longer convergence times}
+
+\item{n_knots}{Numeric. Number of knots to be used in GAM function}
 
 \item{basis}{Character. Which version of the basis-function to use for the
 GAM smooth. Default is \code{"original"}, the same basis used in Smith and
@@ -85,7 +78,7 @@ strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
 #   model.
 model_data <- prepare_data(strat_data = strat_data,
                            species_to_run = "Pacific Wren",
-                           model = "firstdiff",
+                           model = "first_diff",
                            min_year = 2009,
                            max_year = 2018)
 

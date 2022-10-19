@@ -1274,33 +1274,16 @@ prepare_data_stan1 <- function(strat_data = NULL,
 prepare_data <- function(strat_data = NULL,
                          species_to_run = NULL,
                          model = NULL,
-                         model_variant = "hier",
-                         heavy_tailed = TRUE,
-                         n_knots = NULL,
                          min_year = NULL,
                          max_year = NULL,
                          min_n_routes = 3,
                          min_max_route_years = 3,
                          min_mean_route_years = 1,
-                         strata_rem = NULL,
-                         sampler = "Stan",
-                         basis = "mgcv",
-                         use_pois = FALSE,
-                         calculate_nu = FALSE,
-                         calculate_log_lik = FALSE,
-                         calculate_CV = FALSE) {
+                         strata_rem = NULL) {
 
   # Checks
   if(is.null(strat_data)) stop("No data supplied", call. = FALSE)
   if(is.null(species_to_run)) stop("No species specified", call. = FALSE)
-
-  model <- check_model(model, model_variant)
-  basis <- check_basis(basis)
-
-  if(!heavy_tailed & !use_pois) {
-    stop("Heavy-tailed models are implied with Negative Binomial ",
-         "(`use_pois == FALSE`). Set `heavy_tailed = TRUE`",  call. = FALSE)
-  }
 
   species_to_run <- check_species(species_to_run, strat_data$species_strat)
 
@@ -1361,8 +1344,12 @@ prepare_data <- function(strat_data = NULL,
                        mean_obs = n_obs / nr_ever,
                        .groups = "drop") %>%
       dplyr::mutate(
-        first_year = dplyr::if_else(first_year > 2100, NA_integer_, first_year),
-        max_nry = dplyr::if_else(max_nry < 0, NA_integer_, max_nry)) %>%
+        first_year = dplyr::if_else(first_year > 2100,
+                                    NA_integer_,
+                                    as.integer(first_year)),
+        max_nry = dplyr::if_else(max_nry < 0,
+                                 NA_integer_,
+                                 as.integer(max_nry))) %>%
       dplyr::filter(.data$nr_ever >= .env$min_n_routes,
                     .data$max_nry >= .env$min_max_route_years,
                     .data$mean_obs >= .env$min_mean_route_years)
@@ -1429,8 +1416,7 @@ prepare_data <- function(strat_data = NULL,
 
   n_counts <- nrow(obs_final)
 
-  to_return <- list(
-    model = model,
+  list(
 
     # Sample sizes
     n_sites = max(obs_final$site),
@@ -1463,42 +1449,11 @@ prepare_data <- function(strat_data = NULL,
     # Weights
     non_zero_weight = weights,
 
-    # Model specifications
-
-    # Extra Poisson variance options
-
-    # 0 = use df == 3 (do not calculate df for the t-distributed noise)
-    # 1 = use nu ~ gamma(2,0.1))
-    calc_nu = as.integer(calculate_nu),
-
-    # 1 = heavy-tailed t-dist. noise; 0 = normal dist)
-    heavy_tailed = as.integer(heavy_tailed),
-
-    # 1 = over-dispersed poisson; 0 = Negative Binomial
-    use_pois = as.integer(use_pois),
-
-    # Log and Cross validation options
-
-    # Calc point-wise log-likelihood of data given model
-    calc_log_lik = as.integer(calculate_log_lik),
-
-    # 1 = data and model include cross-validation training and test data
-    calc_CV = as.integer(calculate_CV),
-    train = as.integer(1:n_counts), # indices of obs in the training dataset
-    test = as.integer(1),          # indices of obs in the test dataset
-    n_train = n_counts,              # no. training data (must == n_counts if calc_CV == 0)
-    n_test = 1,                     # no. testing data  (ignored if calc_CV == 0)
-
+    # Extra
     stratify_by = strat_data$stratify_by,
     r_year = obs_final$Year,
     alt_data = obs_final
     )
-
-  to_return <- append(
-    to_return,
-    prepare_model(model, n_strata, basis, obs_final, n_knots, heavy_tailed))
-
-  to_return
 }
 
 
@@ -1571,93 +1526,6 @@ prepare_model_tidy <- function(model, basis, obs, n_knots, heavy_tailed) {
     to_return <- c(to_return, list(heavy_tailed = TRUE, min_nu = 0))
   } else {
     to_return <- c(to_return, list(heavy_tailed = FALSE))
-  }
-  to_return
-}
-
-
-prepare_model <- function(model, n_strata, basis, obs, n_knots, heavy_tailed) {
-
-  ymin <- min(obs$yr)
-  ymax <- max(obs$yr)
-  n_years <- length(ymin:ymax)
-  years <- ymin:ymax
-  model <- model[1] # Ignore model variant for now
-
-  to_return <- list()
-
-  if(model %in% c("slope", "first_diff")) {
-    fixed_year <- floor(stats::median(unique(obs$yr)))
-    to_return <- append(to_return, list("fixed_year" = fixed_year))
-  }
-
-  if(model %in% "first_diff"){
-    zero_betas <- rep(0, n_strata)
-    Iy1 <- (fixed_year - 1):1
-    n_Iy1 <- length(Iy1)
-    Iy2 <- (fixed_year + 1):n_years
-    n_Iy2 <- length(Iy2)
-
-    to_return <- append(to_return, list("zero_betas" = zero_betas,
-                                        "Iy1" = Iy1, "n_Iy1" = n_Iy1,
-                                        "Iy2" = Iy2, "n_Iy2" = n_Iy2))
-  }
-
-
-  if(model %in% c("gam", "gamye")) {
-    if(is.null(n_knots)) n_knots <- floor(length(unique((obs$yr)))/4)
-    if(basis == "mgcv") {
-      smooth_basis <- mgcv::smoothCon(
-        mgcv::s(x, k = n_knots + 1, bs = "tp"), data = data.frame(x = years),
-        # drops constant and absorbs identifiability constraints into the basis
-        absorb.cons = TRUE,
-        # If TRUE, the smooth is reparameterized to turn the penalty into an
-        # identity matrix, with the final diagonal elements zeroed
-        # (corresponding to the penalty nullspace).
-        diagonal.penalty = TRUE)
-
-      year_basis <- smooth_basis[[1]]$X
-
-    } else {
-      recenter <- floor(diff(c(1, ymax))/2)
-
-      # generates a year variable with range = 1, this rescaling helps the
-      # convergence for the GAM beta parameters
-      rescale <- ymax
-
-      obs$year_scale <- (obs$yr - recenter) / ymax
-
-      scaled_year <- seq(min(obs$year_scale),
-                         max(obs$year_scale),
-                         length = n_years) %>%
-        setNames(ymin:ymax)
-
-      if(ymin != 1) {
-        new_yr <- 1:(ymin - 1)
-        new_yr_scale <- (new_yr - recenter)/rescale
-        names(new_yr_scale) <- new_yr
-        scaled_year = c(new_yr_scale, scaled_year)
-      }
-
-      ymin_scale <- scaled_year[as.character(ymin)]
-      ymax_scale <- scaled_year[as.character(ymax)]
-
-      if(ymin != 1) {
-        ymin_pred <- 1
-        ymin_scale_pred <- scaled_year[as.character(1)]
-      }
-
-      knotsX <- seq(ymin_scale, ymax_scale, length = (n_knots + 2))[-c(1, n_knots + 2)]
-      X_K <- (abs(outer(seq(ymin_scale, ymax_scale, length = n_years), knotsX, "-")))^3
-      X_OMEGA_all <- (abs(outer(knotsX, knotsX, "-")))^3
-      X_svd_OMEGA_all <- svd(X_OMEGA_all)
-      X_sqrt_OMEGA_all <- t(X_svd_OMEGA_all$v  %*%
-                              (t(X_svd_OMEGA_all$u) * sqrt(X_svd_OMEGA_all$d)))
-      year_basis <- t(solve(X_sqrt_OMEGA_all, t(X_K)))
-    }
-
-    to_return <- append(to_return,
-                        list(n_knots_year = n_knots, year_basis = year_basis))
   }
   to_return
 }

@@ -8,3 +8,11 @@ test_that("get_species_aou()", {
     expect_equal(-1)
 
 })
+
+
+test_that("ext()", {
+  expect_equal(ext("hello"), NA_character_)
+  expect_equal(ext("hello.txt"), "txt")
+  expect_equal(ext("hello.tiff"), "tiff")
+})
+

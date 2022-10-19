@@ -272,45 +272,101 @@ run_model_orig <- function(jags_data = NULL,
 
 
 run_model <- function(model_data,
-                      out_name = NULL,
-                      out_dir = "./model_run",
+                      model,
+                      model_variant = NULL,
+                      spatial_neighbours = NULL,
+                      heavy_tailed = TRUE,
+                      n_knots = NULL,
+                      basis = "mgcv",
+                      use_pois = FALSE,
+                      calculate_nu = FALSE,
+                      calculate_log_lik = FALSE,
+                      calculate_CV = FALSE,
                       n_chains = 3,
                       parallel_chains = 3,
                       iter_sampling = 1000,
-                      iter_warmup = 1000) {
-
+                      iter_warmup = 1000,
+                      out_name = NULL,
+                      out_dir = ".") {
 
   # Check inputs
+  model_variant <- check_model_variant(model_variant)
+  model <- check_model(model, model_variant)
+  basis <- check_basis(basis)
 
-  # Prepare files and directory
+  if(model_variant == "spatial") {
+    if(is.null(spatial_neighbours)) {
+      stop("When `model_variant = 'spatial'`, you must provide a list ",
+           "of neighbour nodes to `spatial_neighbours`.\n",
+           "  See ?run_model for details", call. = FALSE)
+    }
+    check_neighbours(spatial_neighbours)
+  } else if(!is.null(spatial_neighbours)) {
+    if(!quiet) message("Model isn't spatial, ignoring `spatial_models` argument")
+  }
+
+  check_logical(heavy_tailed, use_pois, calculate_nu, calculate_log_lik,
+                calculate_CV)
+  check_numeric(n_chains, parallel_chains, iter_sampling, iter_warmup)
+
+  if(!heavy_tailed & !use_pois) {
+    stop("Heavy-tailed models are implied with Negative Binomial ",
+         "(`use_pois == FALSE`). Set `heavy_tailed = TRUE`",  call. = FALSE)
+  }
+
+  # Check files and directory
   if(!dir.exists(out_dir)) {
     stop("'", out_dir, "' does not exist. Please create it first.",
          call. = FALSE)
   }
 
-  if(is.null(out_name)) out_name <- paste0("BBS_STAN_",
-                                           model_data$model[1], "_",
-                                           model_data$model[2], "_",
-                                           Sys.Date())
+  if(is.null(out_name)) {
+    out_name <- paste0("BBS_STAN_",
+                       model_data$model, "_",
+                       model_data$model_variant, "_",
+                       Sys.Date())
+  } else if(!is.na(ext(out_name))) {
+    stop("`out_name` should not have a file extension", call. = FALSE)
+  }
+
+
+  # Add model settings as parameters
+  params <- model_params(
+    model, n_strata = model_data$n_strata,
+    years = model_data$year, n_counts = model_data$n_counts,
+    basis, n_knots, heavy_tailed, use_pois,
+    calculate_nu, calculate_log_lik, calculate_CV)
+
+  # Check for matching strata
+  if(!all(spatial_neighbours$strata_names %in%
+          unique(model_data$alt_data$strat_name))) {
+    stop("The same strata must be used in both `prepare_data()` and ",
+         "`spatial_neighbours()`", call. = FALSE)
+  }
+
+  # Create master parameter list
+  model_data <- append(model_data, params)
+  model_data <- append(model_data,
+                       spatial_neighbours[c("n_edges", "node1", "node2")])
+
 
   # Keep track of data
   meta_data <- list()
+  meta_data[["model"]] <- model
+  meta_data[["model_variant"]] <- model_variant
   meta_data[["stratify_by"]] <- model_data[["stratify_by"]]
-  meta_data[["model"]] <- model_data[["model"]]
   meta_data[["alt_data"]] <- model_data[["alt_data"]]
+  meta_data[["run_date"]] <- Sys.time()
 
   model_data[["stratify_by"]] <- NULL
-  model_data[["model"]] <- NULL
   model_data[["alt_data"]] <- NULL
 
-  model <- meta_data[["model"]]
-
   # Get initial values
-  init_def <- create_init_def(model, model_data, n_chains)
+  init_def <- create_init_def(model, model_variant, model_data, n_chains)
 
   # Load model
   model <- system.file("models",
-                       paste0(model[1], "_", model[2], "_bbs_CV.stan"),
+                       paste0(model, "_", model_variant, "_bbs_CV.stan"),
                        package = "bbsBayes")
 
   if(length(model) == 0) {
@@ -343,11 +399,124 @@ run_model <- function(model_data,
   list("model_fit" = model_fit, "meta_data" = meta_data)
 }
 
+model_params <- function(model, n_strata, years, n_counts,
+                         basis, n_knots, heavy_tailed, use_pois,
+                         calculate_nu, calculate_log_lik, calculate_CV) {
 
 
-create_init_def <- function(model, model_data, n_chains) {
+  params <- list()
 
-  model <- paste0(model[1], "_", model[2])
+  # Model options
+
+  # Extra Poisson variance options
+  # 0 = use df == 3 (do not calculate df for the t-distributed noise)
+  # 1 = use nu ~ gamma(2,0.1))
+  params[["calc_nu"]] <- as.integer(calculate_nu)
+  # 1 = heavy-tailed t-dist. noise; 0 = normal dist)
+  params[["heavy_tailed"]] <- as.integer(heavy_tailed)
+  # 1 = over-dispersed poisson; 0 = Negative Binomial
+  params[["use_pois"]] <- as.integer(use_pois)
+
+  # Calc point-wise log-likelihood of data given model
+  params[["calc_log_lik"]] <- as.integer(calculate_log_lik)
+
+  # Cross validation options
+  params[["calc_CV"]] <- as.integer(calculate_CV) # 1 = do cross-validation
+  params[["train"]] <- as.integer(1:n_counts) # indices of obs in the training dataset
+  params[["test"]] <- 1L          # indices of obs in the test dataset
+  params[["n_train"]] <- n_counts # no. training data (must == n_counts if calc_CV == 0)
+  params[["n_test"]] <- 1L        # no. testing data  (ignored if calc_CV == 0)
+
+
+  # Calculate additional model parameters
+  ymin <- min(years)
+  ymax <- max(years)
+  n_years <- length(ymin:ymax)
+  years <- ymin:ymax
+
+
+  if(model %in% c("slope", "first_diff")) {
+    fixed_year <- floor(stats::median(unique(years)))
+    params[["fixed_year"]] <- fixed_year
+  }
+
+  if(model %in% "first_diff"){
+    zero_betas <- rep(0, n_strata)
+    Iy1 <- (fixed_year - 1):1
+    n_Iy1 <- length(Iy1)
+    Iy2 <- (fixed_year + 1):n_years
+    n_Iy2 <- length(Iy2)
+
+    params[["zero_betas"]] <- zero_betas
+    params[["Iy1"]] <- Iy1
+    params[["n_Iy1"]] <- n_Iy1
+    params[["Iy2"]] <- Iy2
+    params[["n_Iy2"]] <- n_Iy2
+  }
+
+
+  if(model %in% c("gam", "gamye")) {
+    if(is.null(n_knots)) n_knots <- floor(length(unique((years)))/4)
+    if(basis == "mgcv") {
+      smooth_basis <- mgcv::smoothCon(
+        mgcv::s(x, k = n_knots + 1, bs = "tp"), data = data.frame(x = years),
+        # drops constant and absorbs identifiability constraints into the basis
+        absorb.cons = TRUE,
+        # If TRUE, the smooth is reparameterized to turn the penalty into an
+        # identity matrix, with the final diagonal elements zeroed
+        # (corresponding to the penalty nullspace).
+        diagonal.penalty = TRUE)
+
+      year_basis <- smooth_basis[[1]]$X
+
+    } else {
+      recenter <- floor(diff(c(1, ymax))/2)
+
+      # generates a year variable with range = 1, this rescaling helps the
+      # convergence for the GAM beta parameters
+      rescale <- ymax
+
+      year_scale <- (years - recenter) / ymax
+
+      scaled_year <- seq(min(year_scale),
+                         max(year_scale),
+                         length = n_years) %>%
+        setNames(ymin:ymax)
+
+      if(ymin != 1) {
+        new_yr <- 1:(ymin - 1)
+        new_yr_scale <- (new_yr - recenter)/rescale
+        names(new_yr_scale) <- new_yr
+        scaled_year = c(new_yr_scale, scaled_year)
+      }
+
+      ymin_scale <- scaled_year[as.character(ymin)]
+      ymax_scale <- scaled_year[as.character(ymax)]
+
+      if(ymin != 1) {
+        ymin_pred <- 1
+        ymin_scale_pred <- scaled_year[as.character(1)]
+      }
+
+      knotsX <- seq(ymin_scale, ymax_scale, length = (n_knots + 2))[-c(1, n_knots + 2)]
+      X_K <- (abs(outer(seq(ymin_scale, ymax_scale, length = n_years), knotsX, "-")))^3
+      X_OMEGA_all <- (abs(outer(knotsX, knotsX, "-")))^3
+      X_svd_OMEGA_all <- svd(X_OMEGA_all)
+      X_sqrt_OMEGA_all <- t(X_svd_OMEGA_all$v  %*%
+                              (t(X_svd_OMEGA_all$u) * sqrt(X_svd_OMEGA_all$d)))
+      year_basis <- t(solve(X_sqrt_OMEGA_all, t(X_K)))
+    }
+
+    params[["n_knots_year"]] <- n_knots
+    params[["year_basis"]] <- year_basis
+  }
+
+  params
+}
+
+
+
+create_init_def <- function(model, model_variant, model_data, n_chains) {
 
   # Generic --------------
   init_generic <-
@@ -409,7 +578,7 @@ create_init_def <- function(model, model_data, n_chains) {
   # Join by model and get relevant variant
   init_specific <- init_specific %>%
     dplyr::bind_cols(bbs_models) %>%
-    dplyr::filter(paste0(.data$model, "_", .data$variant) == .env$model) %>%
+    dplyr::filter(.data$model == .env$model, .data$variant == .env$model_variant) %>%
     dplyr::select(-"model", -"variant", -"file") %>%
     unlist()
 
@@ -428,3 +597,4 @@ create_init_def <- function(model, model_data, n_chains) {
 
   init_def
 }
+

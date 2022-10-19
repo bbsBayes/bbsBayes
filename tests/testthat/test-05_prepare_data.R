@@ -42,6 +42,5 @@ test_that("prepare_data()", {
   # Data
   expect_snapshot_value(p["alt_data"], style = "json2")
 
-
-
 })
+
