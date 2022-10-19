@@ -92,7 +92,7 @@ stratify_orig <- function(by = NULL,
   lump_sp <- utils::read.csv(system.file("species-lump-split",
                                          "lump.csv",
                                          package = "bbsBayes"),
-                             fileEncoding = "latin1",
+                             fileEncoding = get_encoding(),
                              stringsAsFactors = FALSE)
   pb_len <- 8
   if (isTRUE(lump_species_forms))
