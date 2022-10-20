@@ -88,8 +88,6 @@ spatial_neighbours <- function(
   check_logical(voronoi, nearest_fill, quiet)
   check_numeric(island_link_dist_factor, buffer_dist)
 
-
-
   # Prepare spatial data
   if(!quiet) message("Preparing spatial data...")
 
@@ -120,8 +118,10 @@ spatial_neighbours <- function(
          "Need all (MULTI)POINTS or all (MULTI)POLYGONS", call. = FALSE)
   }
 
-  if(!voronoi && geo_type != "POLYGON") voronoi <- TRUE
-
+  if(!voronoi && geo_type != "POLYGON") {
+    message("Non-polygon spatial data provided, switching to `voronoi = TRUE`")
+    voronoi <- TRUE
+  }
   # Calculate centres
   if(geo_type == "POINT") {
     centres <- strata_map
@@ -165,7 +165,7 @@ spatial_neighbours <- function(
 
     if(buffer_type == "convex_hull") {
 
-      cov_hull_buv <- centre_union %>%
+      cov_hull_buf <- centre_union %>%
         sf::st_convex_hull() %>%
         sf::st_buffer(dist = buffer_dist)
 

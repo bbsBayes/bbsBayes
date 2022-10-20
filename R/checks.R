@@ -82,35 +82,42 @@ check_species <- function(species, species_list,
   species
 }
 
-#' Check user supplied BBS data
-#'
-#' @param bbs_data List with three components
-#'
-#' @noRd
-check_bbs_data <- function(bbs_data) {
-  bbs_data
-}
+check_neighbours <- function(spatial_neighbours, model_data) {
 
-check_neighbours <- function(spatial_neighbours) {
+  # Check for correct data
   if(!is.list(spatial_neighbours) ||
-     !all(c("n", "n_edges", "node1", "node2", "adj_matrix", "strata_names") %in%
+     !all(c("n", "n_edges", "node1", "node2", "adj_matrix", "strata_name") %in%
           names(spatial_neighbours))) {
     stop("`spatial_neighbours` must a list created by `spatial_neighbours()` ",
          "containing\n  at least `n`, `n_edges`, `node1`, `node2`, `adj_matrix` ",
          "and `strata_names`", call. = FALSE)
+  }
+
+  # Check for matching strata
+  if(!all(spatial_neighbours$strata_names %in%
+          unique(model_data$data$strata_name))) {
+    stop("The same strata must be used in both `prepare_data()` and ",
+         "`spatial_neighbours()`", call. = FALSE)
   }
 }
 
 
 #' Check user supplied sf object
 #'
+#' Quietly passes `NULL` objects through
+#'
 #' @param sf sf spatial data frame
 #'
 #' @noRd
 check_sf <- function(sf) {
-  if(!is.null(sf) && !inherits(sf, "sf")) {
-    stop("'", deparse(substitute(sf)), "' must be an 'sf' spatial data frame",
-         call. = FALSE)
+  if(!is.null(sf)) {
+    if(!inherits(sf, "sf")) {
+      stop("`'`", deparse(substitute(sf)), "`'` must be an 'sf' spatial data frame",
+           call. = FALSE)
+    } else if(nrow(sf) == 0) {
+      stop("Empty spatial data frame (`", deparse(substitute(sf)), "`)",
+           call. = FALSE)
+    }
   }
 }
 

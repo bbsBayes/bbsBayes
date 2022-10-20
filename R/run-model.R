@@ -273,7 +273,7 @@ run_model_orig <- function(jags_data = NULL,
 
 run_model <- function(model_data,
                       model,
-                      model_variant = NULL,
+                      model_variant = "hier",
                       spatial_neighbours = NULL,
                       heavy_tailed = TRUE,
                       n_knots = NULL,
@@ -282,12 +282,18 @@ run_model <- function(model_data,
                       calculate_nu = FALSE,
                       calculate_log_lik = FALSE,
                       calculate_CV = FALSE,
-                      n_chains = 3,
-                      parallel_chains = 3,
+                      refresh = 100,
+                      chains = 4,
+                      parallel_chains = 4,
                       iter_sampling = 1000,
                       iter_warmup = 1000,
+                      adapt_delta = 0.95,
+                      max_treedepth = 14,
+                      init_def = NULL,
                       out_name = NULL,
-                      out_dir = ".") {
+                      out_dir = ".",
+                      quiet = FALSE,
+                      ...) {
 
   # Check inputs
   model_variant <- check_model_variant(model_variant)
@@ -295,19 +301,21 @@ run_model <- function(model_data,
   basis <- check_basis(basis)
 
   if(model_variant == "spatial") {
+
     if(is.null(spatial_neighbours)) {
       stop("When `model_variant = 'spatial'`, you must provide a list ",
            "of neighbour nodes to `spatial_neighbours`.\n",
            "  See ?run_model for details", call. = FALSE)
     }
-    check_neighbours(spatial_neighbours)
+    check_neighbours(spatial_neighbours, model_data)
+
   } else if(!is.null(spatial_neighbours)) {
     if(!quiet) message("Model isn't spatial, ignoring `spatial_models` argument")
   }
 
   check_logical(heavy_tailed, use_pois, calculate_nu, calculate_log_lik,
                 calculate_CV)
-  check_numeric(n_chains, parallel_chains, iter_sampling, iter_warmup)
+  check_numeric(chains, parallel_chains, iter_sampling, iter_warmup)
 
   if(!heavy_tailed & !use_pois) {
     stop("Heavy-tailed models are implied with Negative Binomial ",
@@ -337,13 +345,6 @@ run_model <- function(model_data,
     basis, n_knots, heavy_tailed, use_pois,
     calculate_nu, calculate_log_lik, calculate_CV)
 
-  # Check for matching strata
-  if(!all(spatial_neighbours$strata_names %in%
-          unique(model_data$alt_data$strat_name))) {
-    stop("The same strata must be used in both `prepare_data()` and ",
-         "`spatial_neighbours()`", call. = FALSE)
-  }
-
   # Create master parameter list
   model_data <- append(model_data, params)
   model_data <- append(model_data,
@@ -363,7 +364,9 @@ run_model <- function(model_data,
   model_data[["data"]] <- NULL
 
   # Get initial values
-  init_def <- create_init_def(model, model_variant, model_data, n_chains)
+  if(is.null(init_def)) {
+    init_def <- create_init_def(model, model_variant, model_data, chains)
+  }
 
   # Load model
   model <- system.file("models",
@@ -381,15 +384,13 @@ run_model <- function(model_data,
   # What here should be changeable? can use ... and reference cmdstanr docs...
   model_fit <- model$sample(
     data = model_data,
-    refresh = 1,
-    chains = n_chains,
+    refresh = refresh,
+    chains = chains,
     iter_sampling = iter_sampling,
     iter_warmup = iter_warmup,
     parallel_chains = parallel_chains,
-    #pars = parms,
-    adapt_delta = 0.95,
-    max_treedepth = 14,
-    seed = 123,
+    adapt_delta = adapt_delta,
+    max_treedepth = max_treedepth,
     init = init_def,
     output_dir = out_dir,
     output_basename = out_name)
@@ -517,7 +518,7 @@ model_params <- function(model, n_strata, year, n_counts,
 
 
 
-create_init_def <- function(model, model_variant, model_data, n_chains) {
+create_init_def <- function(model, model_variant, model_data, chains) {
 
   # Generic --------------
   init_generic <-
@@ -594,7 +595,7 @@ create_init_def <- function(model, model_variant, model_data, n_chains) {
 
   # Create one list for each chain
   init_def <- list()
-  for(i in seq_len(n_chains)) init_def[[i]] <- init
+  for(i in seq_len(chains)) init_def[[i]] <- init
 
   init_def
 }
