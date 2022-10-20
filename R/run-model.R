@@ -333,7 +333,7 @@ run_model <- function(model_data,
   # Add model settings as parameters
   params <- model_params(
     model, n_strata = model_data$n_strata,
-    years = model_data$year, n_counts = model_data$n_counts,
+    year = model_data$year, n_counts = model_data$n_counts,
     basis, n_knots, heavy_tailed, use_pois,
     calculate_nu, calculate_log_lik, calculate_CV)
 
@@ -355,11 +355,12 @@ run_model <- function(model_data,
   meta_data[["model"]] <- model
   meta_data[["model_variant"]] <- model_variant
   meta_data[["stratify_by"]] <- model_data[["stratify_by"]]
-  meta_data[["alt_data"]] <- model_data[["alt_data"]]
+  meta_data[["non_zero_weight"]] <- model_data[["non_zero_weight"]]
+  meta_data[["data"]] <- model_data[["data"]]
   meta_data[["run_date"]] <- Sys.time()
 
   model_data[["stratify_by"]] <- NULL
-  model_data[["alt_data"]] <- NULL
+  model_data[["data"]] <- NULL
 
   # Get initial values
   init_def <- create_init_def(model, model_variant, model_data, n_chains)
@@ -399,7 +400,7 @@ run_model <- function(model_data,
   list("model_fit" = model_fit, "meta_data" = meta_data)
 }
 
-model_params <- function(model, n_strata, years, n_counts,
+model_params <- function(model, n_strata, year, n_counts,
                          basis, n_knots, heavy_tailed, use_pois,
                          calculate_nu, calculate_log_lik, calculate_CV) {
 
@@ -429,8 +430,8 @@ model_params <- function(model, n_strata, years, n_counts,
 
 
   # Calculate additional model parameters
-  ymin <- min(years)
-  ymax <- max(years)
+  ymin <- min(year)
+  ymax <- max(year)
   n_years <- length(ymin:ymax)
   years <- ymin:ymax
 

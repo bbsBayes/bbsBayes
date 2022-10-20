@@ -316,140 +316,148 @@ if(slope){
 #' @export
 #'
 
-generate_trends <- function(indices = NULL,
-                                 Min_year = NULL,
-                                 Max_year = NULL,
-                                 quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),
-                                 slope = FALSE,
-                                 prob_decrease = NULL,
-                                 prob_increase = NULL) {
-  if (is.null(indices)) {
+generate_trends <- function(indices,
+                            min_year = NULL,
+                            max_year = NULL,
+                            quantiles = c(0.025, 0.05, 0.25, 0.75, 0.95, 0.975),
+                            slope = FALSE,
+                            prob_decrease = NULL,
+                            prob_increase = NULL) {
+  if(is.null(indices)) {
     stop("No indices supplied to generate_trends()."); return(NULL)
   }
 
-  if (is.null(Min_year)) {
-    min_year = indices$y_min
-    Min_year <- indices$start_year
-    minyn <- 1
+  if(is.null(min_year)) {
+    min_year <- indices$start_year
+    min_year_num <- 1
   } else {
-    min_year <- indices$y_min + (Min_year-indices$start_year)
-    minyn <- 1 + (Min_year-indices$start_year)
+    min_year_num <- 1 + (min_year - indices$start_year)
 
-    if(min_year < 0){
-      min_year = indices$y_min
-      Min_year <- indices$start_year
-      minyn <- 1
+    if(min_year_num < 0) {
+      message("`min_year` is before the date range, using minimum year of ",
+              "the data (", indices$start_year, ") instead.")
+      min_year <- indices$start_year
+      min_year_num <- 1
     }
   }
-  if (is.null(Max_year)) {
-    max_year = indices$y_max
-    Max_year = indices$start_year+(max_year - indices$y_min)
-    maxyn <- 1+(indices$y_max-indices$y_min)
-  }else{
-    max_year <- indices$y_min + (Max_year-indices$start_year)
-    maxyn <- 1+(Max_year-indices$start_year)
+
+  if (is.null(max_year)) {
+    max_year <- indices$start_year + indices$y_max - 1
+    max_year_num <- indices$y_max
+  } else {
+    max_year_num <- 1 + (max_year - indices$start_year)
+    if(max_year_num > indices$y_max) {
+      message("`max_year` is beyond the date range, using maximum year of ",
+              "the data (", indices$start_year + indices$y_max -1, ") instead.")
+      max_year <- indices$start_year + indices$y_max - 1
+      max_year_num <- indices$y_max
+    }
   }
 
 
   trend <- indices$data_summary %>%
-    dplyr::filter(Year %in% Min_year:Max_year) %>%
-    dplyr::group_by(Region, Region_type, Region_alt, Strata_included, Strata_excluded) %>%
+    dplyr::filter(.data$year %in% min_year:max_year) %>%
+    dplyr::group_by(.data$region, .data$region_type, .data$region_alt,
+                    .data$strata_included, .data$strata_excluded,
+                    .data$stratify_by) %>%
     dplyr::summarize(
-      n = purrr::map2(Region_type, Region, ~indices$samples[[paste0(.x, "_", .y)]]),
-      ch = purrr::map(n, ~.x[, maxyn] / .x[, minyn]),
-      tr = purrr::map(ch, ~100 * ((.x^(1/(maxyn - minyn))) - 1)),
-      Start_year = .env$Min_year,
-      End_year = .env$Max_year,
-      Number_of_strata = purrr::map_dbl(
-        Strata_included, ~length(unlist(stringr::str_split(.x, " ; ")))),
-      Trend = purrr::map_dbl(tr, median),
-      Trend_Q = purrr::map_df(
+      n = purrr::map2(.data$region_type, .data$region,
+                      ~indices$samples[[paste0(.x, "_", .y)]]),
+      ch = purrr::map(n, ~.x[, max_year_num] / .x[, min_year_num]),
+      tr = purrr::map(ch, ~100 * ((.x^(1/(max_year_num - min_year_num))) - 1)),
+      start_year = .env$min_year,
+      end_year = .env$max_year,
+      n_strata_included = purrr::map_dbl(
+        strata_included, ~length(unlist(stringr::str_split(.x, " ; ")))),
+      trend = purrr::map_dbl(tr, median),
+      trend_q = purrr::map_df(
         tr, ~setNames(stats::quantile(.x, quantiles, names = FALSE),
-                      paste0("Trend_Q", quantiles))),
-      Percent_Change = purrr::map_dbl(ch, ~100 * (median(.x) - 1)),
-      PC_Q = purrr::map_df(
+                      paste0("trend_q", quantiles))),
+      percent_change = purrr::map_dbl(ch, ~100 * (median(.x) - 1)),
+      pc_q = purrr::map_df(
         ch, ~setNames(100 * (stats::quantile(.x, quantiles, names = FALSE) - 1),
-                      paste0("Percent_Change_Q", quantiles))),
-      Relative_Abundance = mean(Index),
-      Observed_Relative_Abundance = mean(obs_mean),
-      Number_of_Routes = mean(nrts_total),
-      Mean_Number_of_Routes = mean(nrts),
-      backcast_flag = mean(backcast_flag),
+                      paste0("percent_change_q", quantiles))),
+      rel_abundance = mean(.data$index),
+      obs_rel_abundance = mean(.data$obs_mean),
+      n_routes = mean(.data$n_routes_total),
+      mean_n_routes = mean(.data$n_routes),
+      backcast_flag = mean(.data$backcast_flag),
       .groups = "drop") %>%
     dplyr::distinct() %>%
-    tidyr::unnest(cols = c(Trend_Q, PC_Q)) %>%
-    dplyr::arrange(Region_type, Region)
+    tidyr::unnest(cols = c(.data$trend_q, .data$pc_q)) %>%
+    dplyr::arrange(.data$region_type, .data$region)
 
 
 
-  ###### reliability criteria
+  # Reliability Criteria
   q1 <- quantiles[1]
   q2 <- quantiles[length(quantiles)]
   q <- (q2 - q1) * 100
 
   trend <- trend %>%
     dplyr::mutate(
-      "Width_of_{{q}}_percent_Credible_Interval" :=
-        .data[[paste0("Trend_Q", q2)]] - .data[[paste0("Trend_Q", q1)]])
+      "width_of_{{q}}_percent_credible_interval" :=
+        .data[[paste0("trend_q", q2)]] - .data[[paste0("trend_q", q1)]])
 
-  ### optional slope based trends
+  # Optional slope based trends
   if(slope) {
     trend <- trend %>%
       dplyr::mutate(
-        sl.t = purrr::map(.data$n, calc_slope, .env$minyn, .env$maxyn),
-        Slope_Trend = purrr::map_dbl(.data$sl.t, median),
-        Slope_Trend_Q = purrr::map_df(
-          sl.t, ~setNames(stats::quantile(.x, quantiles, names = FALSE),
-                          paste0("Slope_Trend_Q", quantiles)))) %>%
-      tidyr::unnest(Slope_Trend_Q) %>%
+        sl_t = purrr::map(.data$n, calc_slope,
+                          .env$min_year_num, .env$max_year_num),
+        slope_trend = purrr::map_dbl(.data$sl_t, stats::median),
+        slope_trend_q = purrr::map_df(
+          sl_t, ~setNames(stats::quantile(.x, quantiles, names = FALSE),
+                          paste0("slope_trend_q", quantiles)))) %>%
+      tidyr::unnest(slope_trend_q) %>%
       dplyr::mutate(
-        "Width_of_{q}_percent_Credible_Interval_Slope" :=
-          .data[[paste0("Slope_Trend_Q", q2)]] - .data[[paste0("Slope_Trend_Q", q1)]])
+        "width_of_{q}_percent_credible_interval_slope" :=
+          .data[[paste0("slope_trend_q", q2)]] -
+          .data[[paste0("slope_trend_q", q1)]])
   }
 
-  #### model conditional probabilities of population change during trend period
+  # Model conditional probabilities of population change during trend period
   if(!is.null(prob_decrease)) {
     trend <- trend %>%
       dplyr::mutate(
-        pch = purrr::map(ch, ~100 * (.x - 1)),
-        pch_pp = purrr::map_df(pch, calc_prob_crease, prob_decrease, type = "decrease")) %>%
-      tidyr::unnest(pch_pp) %>%
-      dplyr::select(-pch)
+        pch = purrr::map(.data$ch, ~100 * (.x - 1)),
+        pch_pp = purrr::map_df(.data$pch, calc_prob_crease,
+                               .env$prob_decrease, type = "decrease")) %>%
+      tidyr::unnest(.data$pch_pp) %>%
+      dplyr::select(-"pch")
   }
 
   if(!is.null(prob_increase)){
     trend <- trend %>%
       dplyr::mutate(
-        pch = purrr::map(ch, ~100 * (.x - 1)),
-        pch_pp = purrr::map_df(pch, calc_prob_crease, prob_increase, type = "increase")) %>%
-      tidyr::unnest(pch_pp) %>%
-      dplyr::select(-pch)
+        pch = purrr::map(.data$ch, ~100 * (.x - 1)),
+        pch_pp = purrr::map_df(.data$pch, calc_prob_crease,
+                               .env$prob_increase, type = "increase")) %>%
+      tidyr::unnest(.data$pch_pp) %>%
+      dplyr::select(-"pch")
   }
 
   trend %>%
-    dplyr::select(-n, -ch, -tr) %>%
-    dplyr::relocate(Start_year, End_year)
+    dplyr::select(-"n", -"ch", -"tr") %>%
+    dplyr::relocate("start_year", "end_year")
 }
 
+bsl <- function(i, wy) {
+  n <- length(wy)
+  sy <- sum(i)
+  sx <- sum(wy)
+  ssx <- sum(wy^2)
+  sxy <- sum(i*wy)
 
+  (n * sxy - sx * sy) / (n * ssx - sx^2)
+}
 
-calc_slope <- function(n, minyn, maxyn) {
+calc_slope <- function(n, min_year_num, max_year_num) {
+  wy <- c(min_year_num:max_year_num)
+  ne <- log(n[, wy])
+  m <-  t(apply(ne, 1, FUN = bsl))
 
-  bsl = function(i){
-    n = length(wy)
-    sy = sum(i)
-    sx = sum(wy)
-    ssx = sum(wy^2)
-    sxy = sum(i*wy)
-    b = (n*sxy - sx*sy)/(n*ssx - sx^2)
-    return(b)
-  }
-
-  wy = c(minyn:maxyn)
-  ne = log(n[,wy])
-  m =  t(apply(ne,1,FUN = bsl))
-
-  as.vector((exp(m)-1)*100)
+  as.vector((exp(m) - 1) * 100)
 }
 
 calc_prob_crease <- function(x, p, type = "decrease") {

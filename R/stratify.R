@@ -325,7 +325,7 @@ stratify <- function(by,
 
     # Rename unidentified to name of lumped group
     species <- species %>%
-      dplyr::left_join(lump_sp, by = c("sp.bbs" = "aou_original")) %>%
+      dplyr::left_join(lump_sp, by = c("sp_bbs" = "aou_original")) %>%
       dplyr::mutate(
         english = dplyr::if_else(!is.na(english_out), english_out, english),
         french = dplyr::if_else(!is.na(french_out), french_out, french)) %>%
@@ -336,9 +336,9 @@ stratify <- function(by,
 
     b <- birds %>%
       dplyr::inner_join(dplyr::select(lump_sp, "aou_original", "aou_add"),
-                        by = c("AOU" = "aou_add")) %>%
-      dplyr::mutate(AOU = .data$aou_original) %>%
-      dplyr::select(-aou_original)
+                        by = c("aou" = "aou_add")) %>%
+      dplyr::mutate(aou = .data$aou_original) %>%
+      dplyr::select(-"aou_original")
 
     # Add to birds
     # (note that this duplicates observations under a different species aou
@@ -350,12 +350,12 @@ stratify <- function(by,
 
   # Create temporary rid (because easier for birds to join)
   routes <- dplyr::mutate(
-    routes, rid = paste(.data$countrynum, .data$statenum, .data$Route, sep = "-"))
+    routes, rid = paste(.data$country_num, .data$state_num, .data$route, sep = "-"))
 
-  birds <- dplyr::select(routes, "countrynum", "statenum", "Route", "rid") %>%
+  birds <- dplyr::select(routes, "country_num", "state_num", "route", "rid") %>%
     dplyr::distinct() %>%
     dplyr::left_join(birds, .,
-                     by = c("countrynum", "statenum", "Route"))
+                     by = c("country_num", "state_num", "route"))
 
 
   if (by == "bbs_cws") {
@@ -363,67 +363,66 @@ stratify <- function(by,
     if(!quiet) message("  Combining BCR 7 and NS and PEI...")
 
     # Combine all BCR 7
-    bcr7 <- dplyr::filter(routes, .data$BCR == 7) %>%
-      dplyr::mutate(St_Abrev = "BCR7",
-                    Route = .data$Route + (1000 * .data$statenum),
-                    statenum = 777)
+    bcr7 <- dplyr::filter(routes, .data$bcr == 7) %>%
+      dplyr::mutate(st_abrev = "BCR7",
+                    route = .data$route + (1000 * .data$state_num),
+                    state_num = 777)
 
     # Combine NS and PEI
-    ns_pei <- dplyr::filter(routes, .data$St_Abrev %in% c("PE", "NS")) %>%
+    ns_pei <- dplyr::filter(routes, .data$st_abrev %in% c("PE", "NS")) %>%
       dplyr::mutate(
-        State = "Nova Scotia Prince Edward Island",
+        state = "Nova Scotia Prince Edward Island",
         # Keep PEI route numbers distinct from Nova Scotia routes
-        Route = dplyr::if_else(.data$St_Abrev == "PE",
-                               .data$Route + (1000 * .data$Route),
-                               as.double(.data$Route)),
-        St_Abrev = "NSPE",
-        statenum = 765)
+        route = dplyr::if_else(.data$st_abrev == "PE",
+                               .data$route + (1000 * .data$route),
+                               as.double(.data$route)),
+        st_abrev = "NSPE",
+        state_num = 765)
 
     # Add to routes
     # Note: This only works because the two data sets are mutually exclusive
     #       Otherwise bind together between sets.
     routes <- routes %>%
-      dplyr::filter(.data$BCR != 7,                         # Omit BCR 7
-                    !.data$St_Abrev %in% c("PE", "NS")) %>% # Omit PE and NS
+      dplyr::filter(.data$bcr != 7,                         # Omit BCR 7
+                    !.data$st_abrev %in% c("PE", "NS")) %>% # Omit PE and NS
       dplyr::bind_rows(bcr7, ns_pei)                        # Add combo data
 
     # Fix birds
-    birds <- dplyr::select(birds, -"Route", -"statenum") %>%
-      dplyr::left_join(dplyr::select(routes, "rid", "Route", "statenum") %>%
+    birds <- dplyr::select(birds, -"route", -"state_num") %>%
+      dplyr::left_join(dplyr::select(routes, "rid", "route", "state_num") %>%
                          dplyr::distinct(),
                        by = "rid")
   }
 
-  # Create Strat Name
+  # Create Strata Name
   routes <- dplyr::mutate(
     routes,
-    strat_name = dplyr::case_when(
-      by == "state" ~ .data$St_Abrev,
-      by == "bcr" ~ paste0("BCR", .data$BCR),
-      by == "latlong" ~ paste0(trunc(.data$Latitude),
+    strata_name = dplyr::case_when(
+      by == "state" ~ .data$st_abrev,
+      by == "bcr" ~ paste0("BCR", .data$bcr),
+      by == "latlong" ~ paste0(trunc(.data$latitude),
                                "_",
-                               trunc(.data$Longitude)),
+                               trunc(.data$longitude)),
       by %in% c("bbs_usgs", "bbs_cws") ~
-        paste0(.data$Country, "-", .data$St_Abrev, "-", .data$BCR)))
+        paste0(.data$country, "-", .data$st_abrev, "-", .data$bcr)))
 
   # Re-create rt.uni and rt.uni.y value with newly defined combined states
   if(!quiet) message("  Renaming routes based on stratification...")
   routes <- dplyr::mutate(routes,
-                          rt.uni = paste0(.data$statenum, "-", .data$Route),
-                          rt.uni.y = paste0(.data$rt.uni, "-", .data$Year))
+                          route = paste0(.data$state_num, "-", .data$route))
 
   # Create rt.uni and rt.uni.y by index then join
-  b_index <- dplyr::select(birds, "rid", "Year", "statenum", "Route") %>%
+  b_index <- dplyr::select(birds, "rid", "year", "state_num", "route") %>%
     dplyr::distinct() %>%
-    dplyr::mutate(rt.uni = paste0(.data$statenum, "-", .data$Route),
-                  rt.uni.y = paste0(.data$rt.uni, "-", .data$Year)) %>%
-    dplyr::select("rid", "Year", "rt.uni", "rt.uni.y")
+    dplyr::mutate(route = paste0(.data$state_num, "-", .data$route)) %>%
+    dplyr::select("rid", "year", "route")
 
-  birds <- dplyr::left_join(birds, b_index, by = c("rid", "Year"))
+  birds <- dplyr::select(birds, -"route") %>%
+    dplyr::left_join(b_index, by = c("rid", "year"))
 
 
-  list(birds_strat = dplyr::select(birds, -"rid"),
-       routes_strat = dplyr::select(routes, -"rid"),
-       species_strat = species,
-       stratify_by = by)
+  list(meta_data = list(stratify_by = stratify_by),
+       birds_strata = dplyr::select(birds, -"rid"),
+       routes_strata = dplyr::select(routes, -"rid"),
+       species_strata = species)
 }

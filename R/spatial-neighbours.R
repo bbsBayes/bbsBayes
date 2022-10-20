@@ -222,7 +222,7 @@ spatial_neighbours <- function(
   append(nb_fmt(nb_weights),
          list(adj_matrix = nb_mat,
               map = map,
-              strata_names = strata_map[[strata_col]]))
+              strata_name = strata_map[[strata_col]]))
 }
 
 

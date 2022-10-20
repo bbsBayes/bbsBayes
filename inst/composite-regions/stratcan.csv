@@ -1,4 +1,4 @@
-prov_state,region,area_sq_km,national,bcr,Province_State,Country,bcr_by_country
+prov_state,region,area_sq_km,national,bcr,Province_State,country,bcr_by_country
 AB,CA-AB-10,52564.62776,CA,10,Alberta,Canada,Canada-BCR_10
 AB,CA-AB-6,445135.6378,CA,6,Alberta,Canada,Canada-BCR_6
 AB,CA-AB-8,6987.155721,CA,8,Alberta,Canada,Canada-BCR_8

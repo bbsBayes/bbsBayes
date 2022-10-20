@@ -22,8 +22,8 @@ load_sample_data_orig <- function() {
 }
 
 load_sample_data <- function() {
-  list(birds = bird_sample,
-       routes = route_sample,
+  list(birds = birds_sample,
+       routes = routes_sample,
        species = species_sample)
 }
 

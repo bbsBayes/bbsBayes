@@ -452,34 +452,35 @@ fetch_bbs_data <- function(level = "state",
   if(!is.null(connection) & !quiet) message("Connected!")
 
   # Download/load Data --------------
-  birds <- get_counts(level, quiet, connection, force)
+  birds <- get_birds(level, quiet, connection, force)
   routes <- get_routes(release, quiet, connection, force)
   weather <- get_weather(connection, force)
   regs <- readr::read_csv(
     system.file("data-import", "regs.csv", package = "bbsBayes"),
-    col_types = "cnncc")
+    col_types = "cnncc") %>%
+    dplyr::rename_with(snakecase::to_snake_case) %>%
+    dplyr::rename(country_num = "countrynum", state_num = "statenum")
 
   # Combine routes, weather, and region ----------------
-  routes <- routes %>%
-    dplyr::inner_join(weather, by = c("CountryNum", "StateNum", "Route")) %>%
-    dplyr::rename_with(tolower, .cols = c("CountryNum", "StateNum"))
+  routes <- dplyr::inner_join(routes, weather,
+                              by = c("country_num", "state_num", "route"))
 
   # remove off-road and water routes, as well as non-random and mini-routes
   routes <- routes %>%
-    dplyr::filter(.data$RouteTypeDetailID == 1,
-                  .data$RouteTypeID == 1,
-                  .data$RunType == 1) %>%
-    dplyr::select(-"Stratum")
+    dplyr::filter(.data$route_type_detail_id == 1,
+                  .data$route_type_id == 1,
+                  .data$run_type == 1) %>%
+    dplyr::select(-"stratum")
 
-  routes <- dplyr::inner_join(routes, regs, by = c("countrynum", "statenum"))
+  routes <- dplyr::inner_join(routes, regs, by = c("country_num", "state_num"))
 
   # Combine routes and birds -----------
   unique_routes <- routes %>%
-    dplyr::select("BCR", "statenum", "Route", "countrynum") %>%
+    dplyr::select("bcr", "state_num", "route", "country_num") %>%
     dplyr::distinct()
 
   birds <- dplyr::inner_join(birds, unique_routes,
-                             by = c("statenum", "Route", "countrynum"))
+                             by = c("state_num", "route", "country_num"))
 
   # Species Data ----------------
 
@@ -509,9 +510,10 @@ fetch_bbs_data <- function(level = "state",
   species <- readr::read_fwf(
     file = temp,
     col_positions = readr::fwf_widths(widths, col_names),
-    col_types = "icccccccc",
+    col_types = "iiccccccc",
     skip = lskip, locale = readr::locale(encoding = "latin1")) %>%
-    dplyr::mutate(sp.bbs = as.integer(.data$aou))
+    dplyr::mutate(sp_bbs = as.integer(.data$aou))
+
 
 
   # Write Data -----------------------
@@ -599,7 +601,7 @@ get_encoding <- function() {
   e
 }
 
-get_counts <- function(level, quiet, connection, force) {
+get_birds <- function(level, quiet, connection, force) {
   if (level == "state") count_zip <- "States.zip"
   if (level == "stop") count_zip <- "50-StopData.zip"
 
@@ -622,14 +624,8 @@ get_counts <- function(level, quiet, connection, force) {
     purrr::map(utils::unzip, exdir = tempdir()) %>%
     purrr::map(readr::read_csv, col_types = "nnnnnnnnnnnnnnn",
                progress = FALSE) %>%
-    purrr::map(
-      ~dplyr::rename_with(.x, .fn = ~"StateNum",
-                          .cols = dplyr::any_of("statenum"))) %>%
-    dplyr::bind_rows() %>%
-    # column case conventions differ for state vs. stop level data, standardize
-    dplyr::rename_with(
-      tolower, dplyr::matches("CountryNum|StateNum", ignore.case = TRUE)) %>%
-    dplyr::rename_with(~"Year", dplyr::any_of("year"))
+    purrr::map(~dplyr::rename_with(.x, snakecase::to_snake_case)) %>%
+    dplyr::bind_rows()
 
   unlink(full_path)
 
@@ -657,7 +653,9 @@ get_routes <- function(release, quiet, connection, force) {
     utils::unzip(zipfile = full_path, exdir = tempdir()),
     na = c("NA", "", "NULL"),
     col_types = "nnncnnnnnnn",
-    locale = readr::locale(encoding = "latin1"))
+    locale = readr::locale(encoding = "latin1")) %>%
+    dplyr::rename_with(snakecase::to_snake_case)
+
   unlink(full_path)
 
   routes
@@ -675,7 +673,8 @@ get_weather <- function(connection, force) {
   weather <- readr::read_csv(
     utils::unzip(zipfile = full_path, exdir = tempdir()),
     col_types = "nnnnnnnnnnnncnnnnnn",
-    na = c("NA", "", "NULL"))
+    na = c("NA", "", "NULL")) %>%
+    dplyr::rename_with(snakecase::to_snake_case)
 
   unlink(full_path)
 

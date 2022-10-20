@@ -10,7 +10,7 @@
 #' @noRd
 
 get_species_aou <- function(species, sp_eng) {
-  aou <- species$sp.bbs[species$english == sp_eng]
+  aou <- species$sp_bbs[species$english == sp_eng]
   if (length(aou) != 1) aou <- -1
   aou
 }

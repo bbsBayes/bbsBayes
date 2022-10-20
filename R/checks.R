@@ -58,15 +58,15 @@ check_basis <- function(basis) {
 #' @param name Name of argument to return if missing.
 #'
 #' @noRd
-check_stratification <- function(strat, name = "stratification (`by`)") {
-  if(is.null(strat)) stop("No ", name, " specified", call. = FALSE)
-  strat <- tolower(strat)
+check_stratification <- function(strata, name = "stratification (`by`)") {
+  if(is.null(strata)) stop("No ", name, " specified", call. = FALSE)
+  strata <- tolower(strata)
   s <- c("state", "bcr", "latlong", "bbs_cws", "bbs_usgs")
-  if(!strat %in% s) {
+  if(!strata %in% s) {
     stop("Invalid stratification specified, choose one of '",
          paste0(s, collapse = "', '"), "'", call. = FALSE)
   }
-  strat
+  strata
 }
 
 check_species <- function(species, species_list,

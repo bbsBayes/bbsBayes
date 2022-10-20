@@ -709,28 +709,19 @@ generate_indices_tidy <- function(jags_mod = NULL,
 #' @export
 #'
 
-generate_indices <- function(model_fit = NULL,
-                             model_data = NULL,
+generate_indices <- function(model_output = NULL,
                              quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),
-                             regions = c("stratum","continental"),
+                             regions = c("stratum", "continental"),
                              alternate_n = "n",
                              start_year = NULL,
                              drop_exclude = FALSE,
                              max_backcast = NULL,
                              alt_region_names = NULL) {
 
-  if (is.null(model_fit)) stop("No model output supplied", call. = FALSE)
-  if (is.null(model_data)) {
-    warning("No original data object supplied to generate_indices(). ",
-            "Number of routes will not be calculated", call. = FALSE)
-  }
+  # Checks
+  if (is.null(model_output)) stop("No model output supplied", call. = FALSE)
 
-  data_list <- extract_index_data(
-    model_fit = model_fit,
-    alt_n = alternate_n,
-    model_data = model_data)
-
-  stratify_by <- model_data$stratify_by
+  stratify_by <- model_output$meta_data$stratify_by
 
   if(stratify_by %in% c("bcr", "latlong") &
      ("national" %in% regions | "prov_state" %in% regions)) {
@@ -744,48 +735,62 @@ generate_indices <- function(model_fit = NULL,
          "States and Provinces can not be divided by BCRs", call. = FALSE)
   }
 
-  area_weights <- data_list$area_weights
-  area_weights$region = as.character(area_weights$region)
+  # Prepare data
+  model_data <- model_output$meta_data$data
 
-
+  # Start years
+  n_years <- max(model_data$year_num)
   if(!is.null(start_year)){
-    inity = min(data_list$r_year)-1
-    n_years <- max(model_data$year)
+    inity <- min(model_data$year)-1
 
     if(inity > start_year){
       warning(
         "Value of ", start_year, " for `start_year` is earlier than the ",
-        "earliest year of the data, using ", start_year <- min(model_data$r_year),
+        "earliest year of the data, using ", start_year <- min(model_data$year),
         " instead", call. = FALSE)
-      n_years <- max(model_data$year)
     }
 
   } else{
-    n_years <- max(model_data$year)
-    start_year <- min(model_data$r_year)
+    start_year <- min(model_data$year)
   }
 
-
-  if(is.null(max_backcast)){
-    max_backcast <- n_years
-  }
-
-  # Use model_data
-  model_df <- as.data.frame(model_data[c("year", "count", "strat", "strat_name",
-                                         "observer", "firstyr", "r_year")]) # route?
-
-
-  n <- samples_to_array(data_list$n,
-                        n_strata = length(unique(model_df$strat)),
+  # Posterior draws
+  n <- model_output$model_fit$draws(variables = alternate_n,
+                                    format = "draws_matrix")
+  n <- samples_to_array(n,
+                        n_strata = length(unique(model_data$strata)),
                         n_years = n_years)
   n_samples <- dim(n)[1]
 
-  strat_meta <- as.data.frame(model_data[c("strat", "year", "count")]) %>%  #route?
-    dplyr::group_by(strat) %>%
-    dplyr::summarize(start_year = min(year[count > 0], na.rm = TRUE)) %>%
-    #nrts_total = dplyr::n_distinct(route)) %>%
-    dplyr::mutate(non_zero_weight  = model_data$nonzeroweight) %>%
-    dplyr::left_join(area_weights, by = c("strat" = "num"))
+
+  # Area weights
+
+  strata_list <- model_data %>%
+    dplyr::select(strata_name, strata) %>%
+    dplyr::distinct() %>%
+    dplyr::arrange(.data$strata)
+
+  area_weights <- readr::read_csv(
+    system.file("area-weight", strata[[stratify_by]], package = "bbsBayes"),
+    col_types = "cd", progress = FALSE) %>%
+    dplyr::right_join(strata_list, by = c("region" = "strata_name"))
+
+
+  if(is.null(max_backcast)) max_backcast <- n_years
+
+  strata_meta <- model_data %>%
+    dplyr::group_by(.data$strata) %>%
+    dplyr::summarize(start_year = min(.data$year_num[.data$count > 0], na.rm = TRUE),
+                     n_routes_total = dplyr::n_distinct(route)) %>%
+    dplyr::mutate(non_zero_weight = model_output$meta_data$non_zero_weight) %>%
+    dplyr::left_join(area_weights, by = "strata")
+
+
+  # Get regions
+  region_names <- readr::read_csv(
+    system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),
+    show_col_types = FALSE, progress = FALSE) %>%
+    dplyr::mutate(stratum = .data$region, continental = "Continental")
 
   # Clarify regions
   if(!is.null(alt_region_names)) {
@@ -803,26 +808,17 @@ generate_indices <- function(model_fit = NULL,
     }
   }
 
-  region_names <- utils::read.csv(system.file("composite-regions",
-                                              strata[[stratify_by]],
-                                              package = "bbsBayes"),
-                                  stringsAsFactors = FALSE) %>%
-    dplyr::mutate(stratum = region, continental = "Continental")
-
-
-  n_index <- 0
-
   # Calculate strata/year-level observation statistics
-  obs_strat <- model_df %>%
-    dplyr::select(strat, year, count) %>%
-    dplyr::group_by(strat) %>%
-    tidyr::complete(year = 1:n_years) %>%
-    dplyr::arrange(strat, year, count) %>%
-    dplyr::group_by(strat, year) %>%
-    dplyr::summarize(o_mns = mean(count, na.rm = TRUE),
-                     nrts = sum(!is.na(count)),
-                     nnzero = sum(count > 0, na.rm = TRUE),
-                     strem_flag = 0, .groups = "drop")
+  obs_strata <- model_data %>%
+    dplyr::select("strata", "year_num", "count") %>%
+    dplyr::group_by(.data$strata) %>%
+    tidyr::complete(year_num = seq(1, .env$n_years)) %>%
+    dplyr::arrange(.data$strata, .data$year_num, .data$count) %>%
+    dplyr::group_by(.data$strata, .data$year_num) %>%
+    dplyr::summarize(obs_mean = mean(.data$count, na.rm = TRUE),
+                     n_routes = sum(!is.na(.data$count)),
+                     n_non_zero = sum(.data$count > 0, na.rm = TRUE),
+                     strata_remove_flag = 0, .groups = "drop")
 
 
   data_summary <- dplyr::tibble()
@@ -832,9 +828,9 @@ generate_indices <- function(model_fit = NULL,
   for(rr in regions) { #selecting the type of composite region
 
     # Calculate strata-level information for sub-regions in this composite region
-    strat_meta_sub <- region_names %>%
+    strata_meta_sub <- region_names %>%
       dplyr::select("region", .data[[rr]]) %>%
-      dplyr::inner_join(strat_meta, ., by = "region") %>%
+      dplyr::inner_join(strata_meta, ., by = "region") %>%
       dplyr::group_by(.data[[rr]]) %>%
       dplyr::mutate(pz_area = area_sq_km * non_zero_weight,
                     strata_p = pz_area / sum(pz_area),
@@ -843,7 +839,7 @@ generate_indices <- function(model_fit = NULL,
       dplyr::ungroup()
 
     # Calculate sample statistics for this composite region
-    samples <- strat_meta_sub %>%
+    samples <- strata_meta_sub %>%
       tidyr::nest(data = -.data[[rr]]) %>%
       dplyr::group_by(.data[[rr]]) %>%
       dplyr::summarize(N = purrr::map(.data$data, calc_weights, .env$n,
@@ -859,34 +855,40 @@ generate_indices <- function(model_fit = NULL,
 
 
     # Calculate observation statistics for this composite region
-    obs_region <- obs_strat %>%
-      dplyr::inner_join(strat_meta_sub, by = "strat") %>%
-      dplyr::mutate(obs_mean = o_mns * area_weight_non_zero) %>%
-      dplyr::group_by(.data[[rr]], strat) %>%
+    obs_region <- obs_strata %>%
+      dplyr::inner_join(strata_meta_sub, by = "strata") %>%
+      dplyr::mutate(obs_mean = obs_mean * area_weight_non_zero) %>%
+      dplyr::group_by(.data[[rr]], strata) %>%
       dplyr::mutate(
-        flag_remove = sum(nnzero[1:max_backcast]) < 1 & start_year > 1,
-        flag_year = dplyr::if_else(flag_remove & year <= start_year, strata_p, 0)) %>%
-      dplyr::group_by(.data[[rr]], year) %>%
+        flag_remove = sum(n_non_zero[1:max_backcast]) < 1 & start_year > 1,
+        flag_year = dplyr::if_else(.data$flag_remove &
+                                     .data$year_num <= .data$start_year,
+                                   .data$strata_p, 0)) %>%
+      dplyr::group_by(.data[[rr]], .data$year_num) %>%
       dplyr::summarize(
-        dplyr::across(.cols = c(obs_mean, nrts, nnzero, flag_year),  # nrts_total?
+        dplyr::across(.cols = c(.data$obs_mean, .data$n_routes_total,
+                                .data$n_non_zero, .data$flag_year),
                       sum, na.rm = TRUE),
-        flag_remove = unique(flag_remove),
-        Strata_included = paste0(region[!flag_remove], collapse = " ; "),
-        Strata_excluded = paste0(region[flag_remove], collapse = " ; "),
+        flag_remove = unique(.data$flag_remove),
+        strata_included = paste0(.data$region[!.data$flag_remove],
+                                 collapse = " ; "),
+        strata_excluded = paste0(.data$region[.data$flag_remove],
+                                 collapse = " ; "),
         .groups = "drop")
 
     # Calculate data summaries for output
     data_summary <- obs_region %>%
       dplyr::left_join(calc_alt_names(rr, region_names), by = rr) %>%
-      dplyr::left_join(tidyr::unnest(samples, "Q"), by = c(rr, "year")) %>%
-      dplyr::mutate(backcast_flag = 1 - flag_year,
-                    Year = .env$start_year + year - 1,
-                    Region_type = .env$rr) %>%
-      dplyr::rename(Region = .data[[rr]]) %>%
-      dplyr::select("Year", "Region", "Region_alt", "Region_type",
-                    "Strata_included", "Strata_excluded",
-                    "Index", dplyr::contains("Index_q"),
-                    "obs_mean", "nrts", "nnzero", "backcast_flag") %>%  #nrts_total
+      dplyr::left_join(tidyr::unnest(samples, "Q"), by = c(rr, "year_num")) %>%
+      dplyr::mutate(backcast_flag = 1 - .data$flag_year,
+                    year = .env$start_year + .data$year_num - 1,
+                    region_type = .env$rr,
+                    stratify_by = .env$stratify_by) %>%
+      dplyr::rename(region = .data[[rr]]) %>%
+      dplyr::select("year", "region", "region_alt", "region_type",
+                    "stratify_by", "strata_included", "strata_excluded",
+                    "index", dplyr::contains("index_q"),
+                    "obs_mean", "n_routes_total", "n_non_zero", "backcast_flag") %>%
       dplyr::bind_rows(data_summary, .)
   }
 
@@ -897,7 +899,7 @@ generate_indices <- function(model_fit = NULL,
        y_max = n_years,
        start_year = start_year,
        regions = regions,
-       raw_data = model_df)
+       data = model_data)
 }
 
 
@@ -912,15 +914,15 @@ calc_weights <- function(data, n, n_years, n_samples) {
   n_weight[ , , 1:n_years] <- n[ , , 1:n_years]
 
   for (i in 1:n_samples) {
-    for (j in data$strat) {
-      n_weight[i,j,] <- n_weight[i,j,] * data$area_weight[data$strat == j]
+    for (j in data$strata) {
+      n_weight[i,j,] <- n_weight[i,j,] * data$area_weight[data$strata == j]
     }
   }
 
-  n_weight <- n_weight[, data$strat, ]
+  n_weight <- n_weight[, data$strata, ]
 
   # Sum over strata
-  if(length(data$strat) > 1){
+  if(length(data$strata) > 1){
     N <- apply(n_weight, c(1, 3), sum)
   }else{
     N <- n_weight
@@ -933,23 +935,23 @@ calc_quantiles <- function(N, quantiles, n_years) {
   apply(N, 2, stats::quantile, probs = c(quantiles, 0.5)) %>%
     t() %>%
     as.data.frame() %>%
-    setNames(c(paste0("Index_q_", quantiles), "Index")) %>%
-    dplyr::bind_cols(year = 1:n_years)
+    setNames(c(paste0("index_q_", quantiles), "index")) %>%
+    dplyr::bind_cols(year_num = 1:n_years)
 }
 
 calc_alt_names <- function(r, region_names) {
-  col_region_name <- dplyr::case_when(r == "national" ~ "Country",
+  col_region_name <- dplyr::case_when(r == "national" ~ "country",
                                       r == "prov_state" ~ "Province_State",
                                       TRUE ~ r)
 
   region_alt_name <- dplyr::bind_cols(
     {{r}} := region_names[[r]],
-    Region_alt = region_names[[col_region_name]]) %>%
+    region_alt = region_names[[col_region_name]]) %>%
     dplyr::distinct()
 
   if(r == "bcr") {
     region_alt_name <- dplyr::mutate(region_alt_name,
-                                     Region_alt = paste0("BCR_", Region_alt))
+                                     region_alt = paste0("BCR_", .data$region_alt))
   }
 
   region_alt_name
