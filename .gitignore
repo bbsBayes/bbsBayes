@@ -21,3 +21,4 @@ arch/
 inst/doc
 inst/model_outputs
 inst/models/*_CV
+docs

@@ -11,3 +11,8 @@ testfile.R
 generate-map-abundance.R
 
 ^data-raw$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^RELEASE.R$
+^CODE_DESIGN.R$
