@@ -1,0 +1,59 @@
+---
+title: "Models: First Difference Non-hierarchical"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Models: First Difference Non-hierarchical}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r, cache = TRUE}
+library(bbsBayes)
+library(patchwork)
+
+s <- stratify(by = "bbs_usgs")
+p <- prepare_data(s,
+                  species_to_run = "Pacific Wren",
+                  min_max_route_years = 2)
+
+map <- load_map(stratify_by = "bbs_cws") %>%
+    dplyr::filter(.data$ST_12 %in% unique(p$data$strata_name))
+plot(map[1])
+n <- spatial_neighbours(map, strata_col = "ST_12")
+
+dir.create("./model_data/")
+r <- run_model(model_data = p,
+               model = "first_diff",
+               model_variant = "nonhier",
+               spatial_neighbours = n,
+               iter_sampling = 10, iter_warmup = 5, chains = 2,
+               out_dir = "./model_data/")
+```
+
+
+```{r}
+indices <- generate_indices(model_output = r,
+                            regions = c("continental",
+                                        "national",
+                                        "prov_state",
+                                        "stratum"))
+
+tp <- plot_indices(indices, add_observed_means = TRUE)
+```
+
+
+```{r, fig.width = 12, fig.asp = length(tp)/3*3 / 12}
+patchwork::wrap_plots(tp, ncol = 3)
+```
+
+
+
+
+

@@ -29,7 +29,7 @@ install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOpt
 
 - Problems? Check out cmdstanr's vignette on [Getting Started](https://mc-stan.org/cmdstanr/articles/cmdstanr.html)
 
-```{r}
+```{r, eval = FALSE}
 cmdstanr::install_cmdstan()
 ```
 
@@ -50,35 +50,49 @@ cmdstanr::cmdstan_version()
 - Two releases `2020` and `2022`
 
 ```{r, eval = FALSE}
-fetch_bbs_data_tidy(force = TRUE) # Defaults to 2022
-fetch_bbs_data_tidy(release = "2020", force = TRUE)
+fetch_bbs_data(force = TRUE) # Defaults to 2022
+fetch_bbs_data(release = "2020", force = TRUE)
 ```
 
 ## Stratify the data
 
 ```{r}
-strat_samp <- stratify_tidy(by = "bbs_usgs", sample_data = TRUE)
-strat <- stratify_tidy(by = "bbs_usgs")
+strat_samp <- stratify(by = "bbs_usgs", sample_data = TRUE)
+strat <- stratify(by = "bbs_usgs")
 ```
 
 ## Prepare the data
 
 ```{r}
-stan_data <- prepare_data_stan2(strat,
-                                species_to_run = "Pacific Wren",
-                                model = "slope",
-                                min_max_route_years = 2)
+stan_data <- prepare_data(strat,
+                          species_to_run = "Pacific Wren",
+                          min_max_route_years = 2)
 ```
 
 ## Run model
 
 - Super fast, just for illustration
 
-```{r}
-stan_fit <- run_model_stan(
-    stan_data,
-    out_name = "pacific_wren_slope_BBS_short",
-    iter_sampling = 10, iter_warmup = 10)
+```{r, eval = FALSE}
+stan_output <- run_model(
+  stan_data,
+  model = "slope",
+  out_name = "pacific_wren_slope_BBS_short",
+  iter_sampling = 10, iter_warmup = 10, chains = 2)
+```
+
+## Look at the model outputs
+
+```{r, eval = FALSE}
+indices <- generate_indices(model_output = stan_output,
+                            regions = c("continental",
+                                        "national",
+                                        "prov_state",
+                                        "stratum"))
+
+tp <- plot_indices(indices = indices,
+                   species = "Pacific Wren",
+                   add_observed_means = TRUE)
 ```
 
 
@@ -89,7 +103,7 @@ stan_fit <- run_model_stan(
 ```
 Warning message:
 In fun(libname, pkgname) :
-  rgeos: versions of GEOS runtime 3.10.2-CAPI-1.16.0
+rgeos: versions of GEOS runtime 3.10.2-CAPI-1.16.0
 and GEOS at installation 3.8.0-CAPI-1.13.1differ
 ```
 
