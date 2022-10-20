@@ -54,7 +54,7 @@
 #' @export
 #'
 
-generate_map <- function(trend = NULL,
+generate_map_orig <- function(trend = NULL,
                               select = FALSE,
                               stratify_by = NULL,
                               slope = FALSE,
@@ -143,4 +143,106 @@ generate_map <- function(trend = NULL,
 
 
   return(mp.plot)
+}
+
+
+#' Generate a map of trends by strata
+#'
+#' `generate_map()` allows you to generate a colour-coded map of there percent
+#' change in species trends for each strata.
+#'
+#' @param trend Data frame. Trends produced by `generate_trends()`.
+#' @param slope Logical. Whether or not to map values of the alternative trend
+#'   metric (slope of a log-linear regression) if `slope = TRUE` was used in
+#'   `generate_trends()`,  through the annual indices. Default `FALSE`.
+#' @param title Logical. Whether or not to include a title with species. Default
+#'   `TRUE`.
+#' @param col_viridis Logical flag to use "viridis" colour-blind friendly
+#'   palette. Default is FALSE
+#'
+#' @return spplot object
+#'
+#' @examples
+#' # Toy example with Pacific Wren sample data
+#' # First, stratify the sample data
+#' s <- stratify(by = "bbs_cws", sample_data = TRUE)
+#'
+#' # Prepare the stratified data for use in a JAGS model.
+#' d <- prepare_data(s, species_to_run = "Pacific Wren",
+#'                   min_year = 2009, max_year = 2018)
+#'
+#' # Now run the model (fast but not good, just for illustration)
+#' m <- run_model(d, model = "first_diff",
+#'                iter_sampling = 5, iter_warmup = 5, chains = 2)
+#'
+#' # Generate the continental and stratum indices
+#' indices <- generate_indices(m)
+#'
+#' # Now, generate the trends
+#' trends <- generate_trends(indices)
+#'
+#' # Generate the map
+#' map <- generate_map(trends)
+#'
+#' @export
+#'
+
+generate_map <- function(trends,
+                         slope = FALSE,
+                         title = TRUE,
+                         col_viridis = TRUE) {
+
+
+  trends <- dplyr::filter(trends, .data$region_type == "stratum")
+
+  stratify_by <- unique(trends$stratify_by)
+
+
+  start_year <- min(trends$start_year)
+  end_year <- min(trends$end_year)
+
+  map <- load_map(stratify_by)
+
+  breaks <- c(-7, -4, -2, -1, -0.5, 0.5, 1, 2, 4, 7)
+  labls <- c(paste0("< ", breaks[1]),
+             paste0(breaks[-c(length(breaks))],":", breaks[-c(1)]),
+             paste0("> ",breaks[length(breaks)]))
+  labls <- paste0(labls, " %")
+
+
+  if(slope) trend_col <- "slope_trend" else trend_col <- "trend"
+
+  trends$t_plot <- as.numeric(as.character(trends[[trend_col]]))
+  trends$t_plot <- cut(trends$t_plot, breaks = c(-Inf, breaks, Inf),
+                      labels = labls)
+
+  trends$ST_12 <- trends$region
+
+  map <- dplyr::left_join(x = map, y = trends, by = "ST_12")
+
+  if(title) title <- paste(species, "trends", start_year, "-", end_year) else title <- NULL
+
+  names(map_palette) <- labls
+
+  m <- ggplot2::ggplot() +
+    ggplot2::geom_sf(data = map, ggplot2::aes(fill = .data$t_plot),
+                     colour = grDevices::grey(0.4), size = 0.1) +
+    ggplot2::theme_minimal() +
+    ggplot2::labs(title = ptit, fill = paste0("Trend\n", fyr, "-", lyr)) +
+    ggplot2::theme(legend.position = "right", line = ggplot2::element_line(size = 0.4),
+                   rect = ggplot2::element_rect(size = 0.1),
+                   axis.text = ggplot2::element_blank(),
+                   axis.line = ggplot2::element_blank(),
+                   axis.title = ggplot2::element_blank()) +
+    ggplot2::guides(fill = ggplot2::guide_legend(reverse = TRUE))
+
+  if(!col_viridis) {
+    pal <- c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
+             "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")
+    m <- m + ggplot2::scale_fill_manual(values = pal)
+  } else {
+    m <- m + ggplot2::scale_fill_viridis_d()
+  }
+
+  m
 }

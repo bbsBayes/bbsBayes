@@ -270,7 +270,38 @@ run_model_orig <- function(jags_data = NULL,
   return(jags_job)
 }
 
-
+#' Run Bayesian model
+#'
+#'
+#'
+#' @param model_data List. Output of `prepare_data()`.
+#' @param model Character.
+#' @param model_variant
+#' @param spatial_neighbours
+#' @param heavy_tailed
+#' @param n_knots
+#' @param basis
+#' @param use_pois
+#' @param calculate_nu
+#' @param calculate_log_lik
+#' @param calculate_CV
+#' @param refresh
+#' @param chains
+#' @param parallel_chains
+#' @param iter_sampling
+#' @param iter_warmup
+#' @param adapt_delta
+#' @param max_treedepth
+#' @param init_def
+#' @param out_name
+#' @param out_dir
+#' @param quiet
+#' @param ...
+#'
+#' @return
+#' @export
+#'
+#' @examples
 run_model <- function(model_data,
                       model,
                       model_variant = "hier",

@@ -11,17 +11,6 @@
               latlong = "BBS_LatLong_strata"),
          parent.env(environment()))
 
-  assign("models",
-         list(slope = "slope.jags",
-              firstdiff = "first-difference.jags",
-              gam = "gam.jags",
-              gamye = "gam-ye.jags",
-              slope_heavy = "slope.t.jags",
-              firstdiff_heavy = "first-difference.t.jags",
-              gam_heavy = "gam.t.jags",
-              gamye_heavy = "gam-ye.t.jags"),
-         parent.env(environment()))
-
   assign("strata",
          list(bbs_usgs = "strat.csv",
               bbs_cws = "stratcan.csv",

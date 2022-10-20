@@ -5,7 +5,7 @@
 \title{Wrangle data to use for modelling input (STAN TIDY)}
 \usage{
 prepare_data(
-  strat_data = NULL,
+  strata_data = NULL,
   species_to_run = NULL,
   model = NULL,
   min_year = NULL,
@@ -17,8 +17,6 @@ prepare_data(
 )
 }
 \arguments{
-\item{strat_data}{List. Stratified data returned by \code{stratify()}}
-
 \item{species_to_run}{Character. English name of the species to run}
 
 \item{model}{Character. Model to use. One of \verb{"slope", "first_diff", "gam", "gamye"}}
@@ -37,6 +35,8 @@ observations of species on at least 1 route. Defaults to 3}
 the species observed. Defaults to 1.}
 
 \item{strata_rem}{Character vector. Strata to remove from analysis.}
+
+\item{strat_data}{List. Stratified data returned by \code{stratify()}}
 
 \item{model_variant}{Character. Model variant to use. One of \code{hier}
 (hierarchical; Default), \code{spatial} or \code{nonhier} (non-hierarchical; not

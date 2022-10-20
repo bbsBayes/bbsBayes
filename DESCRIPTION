@@ -10,7 +10,6 @@ Authors@R: c(person("Brandon P.M.", "Edwards", role = c("aut", "cre"),
                       email = "steffi@steffi.ca"))
 Imports:
     progress,
-    jagsUI,
     ggrepel,
     geofacet,
     ggplot2,
@@ -22,7 +21,10 @@ Imports:
     rappdirs,
     sbtools,
     mgcv,
-    spdep (>= 1.2.7)
+    spdep (>= 1.2.7),
+    snakecase,
+    magrittr,
+    rlang (>= 0.4.11)
 Depends: R (>= 3.5)
 SystemRequirements: JAGS 4.3.0 (https://sourceforge.net/projects/mcmc-jags/)
 URL: https://github.com/BrandonEdwards/bbsBayes
@@ -48,6 +50,7 @@ Roxygen: list(markdown = TRUE)
 Suggests: 
     knitr,
     rmarkdown,
+    roxygen2,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr

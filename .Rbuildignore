@@ -4,10 +4,10 @@
 testdata
 bbsBayes-report.html
 testfile.R
-CODE_OF_CONDUCT.md
-CONTRIBUTING.md
-ISSUES_TEMPLATE.md
-PULL_REQUEST_TEMPLATE.md
+^CODE_OF_CONDUCT.md$
+^CONTRIBUTING.md$
+^ISSUES_TEMPLATE.md$
+^PULL_REQUEST_TEMPLATE.md$
 generate-map-abundance.R
 
 ^data-raw$

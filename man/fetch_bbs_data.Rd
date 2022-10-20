@@ -40,3 +40,11 @@ functions. Before downloading any data, the user must thoroughly read
 through the terms and conditions of the user of the data and type the word
 "yes" to agree.
 }
+\examples{
+
+fetch_bbs_data(force = TRUE)
+fetch_bbs_data(level = "stop", force = TRUE)
+fetch_bbs_data(release = 2020, force = TRUE)
+fetch_bbs_data(release = 2020, level = "stop", force = TRUE)
+
+}

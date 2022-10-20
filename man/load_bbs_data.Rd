@@ -4,7 +4,7 @@
 \alias{load_bbs_data}
 \title{Load Breeding Bird Survey dataset into R Session (TIDY)}
 \usage{
-load_bbs_data(level = "state")
+load_bbs_data(level = "state", release = 2022)
 }
 \arguments{
 \item{level}{Character. #ither "state" or "stop", specifying which counts to

@@ -7,10 +7,9 @@
 stratify(
   by,
   sample_data = FALSE,
-  bbs_data = NULL,
   lump_species_forms = TRUE,
-  quiet = FALSE,
-  stratify_by = NULL
+  release = 2022,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -19,15 +18,10 @@ stratify(
 
 \item{sample_data}{Logical. Use sample data (just Pacific Wren).}
 
-\item{bbs_data}{List. Raw BBS data saved as a list of 3 data frames.
-Not necessary if you have already run \code{fetch_bbs_data()}}
-
 \item{lump_species_forms}{Logical. Whether to lump together species with
 multiple forms (default \code{TRUE}). See Details.}
 
 \item{quiet}{Logical. Suppress progress messages}
-
-\item{stratify_by}{Deprecated in favour of \code{by}.}
 }
 \value{
 Large list (3 elements) consisting of:
