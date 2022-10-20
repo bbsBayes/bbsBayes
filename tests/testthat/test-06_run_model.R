@@ -38,7 +38,7 @@ test_that("run_model", {
     expect_message(r <- run_model(model_data = p,
                                   model = bbs_models$model[i],
                                   model_variant = bbs_models$variant[i],
-                                  spatial_neighbours = n1,
+                                  spatial_neighbours = n,
                                   out_dir = ".", n_chains = 2,
                                   iter_sampling = 10, iter_warmup = 10))
 
