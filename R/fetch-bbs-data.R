@@ -393,23 +393,27 @@ tick <- function(pb, quiet) {
 #' @param force Logical. Should pre-exising BBS data be overwritten? Defaults to
 #'   FALSE
 #'
+#' @examples
+#'
+#' fetch_bbs_data(force = TRUE)
+#' fetch_bbs_data(level = "stop", force = TRUE)
+#' fetch_bbs_data(release = 2020, force = TRUE)
+#' fetch_bbs_data(release = 2020, level = "stop", force = TRUE)
+#'
 #' @export
 #'
 fetch_bbs_data <- function(level = "state",
-                                release = 2022,
-                                quiet = FALSE,
-                                force = FALSE,
-                                compress = "none") {
+                           release = 2022,
+                           quiet = FALSE,
+                           force = FALSE,
+                           compress = "none") {
 
-  if (!level %in% c('state', 'stop')) {
-    stop("Invalid level argument: level must be one of 'state' or 'stop'.",
-         call. = FALSE)
-  }
-  if(!release %in% c(2020, 2022)) {
-    stop("'release' must be either 2020 or 2022", call. = FALSE)
-  }
+  check_in(level, c("state", "stop"))
+  check_in(release, c(2020, 2022))
 
   stopifnot(is.logical(quiet))
+
+  out_dir <- bbs_dir()
 
   # Print Terms of Use
   terms <- readChar(system.file(paste0("data-terms-",release),
@@ -421,22 +425,20 @@ fetch_bbs_data <- function(level = "state",
   agree <- readline(prompt = "Type \"yes\" (without quotes) to agree: ")
   if(agree != "yes") return(NULL)
 
-  bbs_dir <- rappdirs::app_dir(appname = "bbsBayes")
-
-  if(!file.exists(bbs_dir$data())) {
-    message(paste0("Creating data directory at ", bbs_dir$data()))
-    dir.create(bbs_dir$data(), recursive = TRUE)
+  if(!dir.exists(out_dir)) {
+    message(paste0("Creating data directory at ", out_dir))
+    dir.create(out_dir, recursive = TRUE)
   } else {
-    message(paste0("Using data directory at ", bbs_dir$data()))
+    message(paste0("Using data directory at ", out_dir))
   }
 
   if(level == "state") {
-    if(file.exists(paste0(bbs_dir$data(), "/bbs_raw_data.RData")) & !force) {
+    if(file.exists(paste0(out_dir, "/bbs_raw_data.RData")) & !force) {
       stop("BBS state-level data file already exists. ",
            "Use \"force = TRUE\" to overwrite.", call. = FALSE)
     }
   } else if(level == "stop"){
-    if(file.exists(paste0(bbs_dir$data(), "bbs_stop_data.RData")) & !force) {
+    if(file.exists(paste0(out_dir, "bbs_stop_data.RData")) & !force) {
       warning("BBS stop-level data file already exists. ",
               "Use \"force = TRUE\" to overwrite.", call. = FALSE)
       return()
@@ -517,11 +519,12 @@ fetch_bbs_data <- function(level = "state",
                    routes = routes,
                    species = species,
                    meta = data.frame(release = release,
-                                     dowload_date = Sys.Date()))
+                                     download_date = Sys.Date()))
 
-  if(level == "state") f <- "bbs_raw_data.rds"
-  if(level == "stop") f <- "bbs_stop_data.rds"
-  f <- file.path(bbs_dir$data(), f)
+  if(level == "state") f <- paste0("bbs_state_data_", release, ".rds")
+  if(level == "stop") f <- paste0("bbs_stop_data_", release, ".rds")
+
+  f <- file.path(out_dir, f)
 
   message("Saving BBS data to ", f)
   readr::write_rds(bbs_data, file = f, compress = compress)
@@ -530,6 +533,65 @@ fetch_bbs_data <- function(level = "state",
   message("Removing temp files")
   unlink(list.files(tempdir(), full.names = TRUE), recursive = TRUE)
 
+}
+
+
+bbs_dir <- function() {
+  rappdirs::app_dir(appname = "bbsBayes")$data()
+}
+
+#' Remove BBS data from cache
+#'
+#' Remove all or some of the data downloaded via `fetch_bbs_data()`
+#'
+#' @param level Character. Data to remove, one of "all", "state", or "stop"
+#' @param release Character/Numeric. Data to remove, one of "all", 2020, or 2022
+#' @param cache_dir Logical. Remove entire cache directory (and all data
+#'   contained therein)
+#'
+#' @return Nothing.
+#'
+#' @export
+#'
+#' @examples
+#'
+#' \dontrun{
+#' # Remove everything
+#' remove_bbs_data(cache_dir = TRUE)
+#'
+#' # Remove all files (but not the dir)
+#' remove_bbs_data(level = "all", release = "all")
+#'
+#' # Remove all 'stop' data
+#' remove_bbs_data(level = "stop", release = "all")
+#'
+#' # Remove all 2020 data
+#' remove_bbs_data(level = "all", release = 2020)
+#'
+#' # Remove 2020 stop data
+#' remove_bbs_data(level = "stop", release = 2020)
+#' }
+#'
+remove_bbs_data <- function(level, release, cache_dir = FALSE) {
+  if(cache_dir) {
+    message("Removing all data files and cache directory")
+    unlink(bbs_dir(), recursive = TRUE)
+  } else {
+    check_in(level, c("all", "state", "stop"))
+    check_in(release, c("all", 2020, 2022))
+
+    if(level == "all") level <- c("state", "stop")
+    if(release == "all") release <- c("2020", "2022")
+
+    f <- file.path(bbs_dir(), paste0("bbs_", level, "_data_", release, ".rds"))
+
+    if(any(file.exists(f))) {
+      message("Removing ",
+              paste0(f[file.exists(f)], collapse = ", "),
+              " from the cache")
+      unlink(f)
+    } else message("No data files to remove")
+  }
 }
 
 get_encoding <- function() {

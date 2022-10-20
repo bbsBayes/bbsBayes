@@ -72,12 +72,10 @@ load_bbs_data_orig <- function(level = "state")
 #'
 #' @export
 
-load_bbs_data <- function(level = "state") {
+load_bbs_data <- function(level = "state", release = 2022) {
   bbs_dir <- rappdirs::app_dir(appname = "bbsBayes")
 
-  if (level == "state") f <- file.path(bbs_dir$data(), "bbs_raw_data.rds")
-  if (level == "stop") f <- file.path(bbs_dir$data(), "bbs_stop_data.rds")
-
+  f <- file.path(bbs_dir(), paste0("bbs_", level, "_data_", release, ".rds"))
 
   if(!file.exists(f)) stop("No BBS data downloaded. ",
                            "Please use `fetch_bbs_data()` first.",

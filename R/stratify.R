@@ -239,11 +239,8 @@ stratify_orig <- function(by = NULL,
 #'   "bbs_cws", "bbs_usgs"
 #' @param sample_data Logical. Use sample data (just Pacific Wren).
 #' @param quiet Logical. Suppress progress messages
-#' @param bbs_data List. Raw BBS data saved as a list of 3 data frames.
-#'   Not necessary if you have already run `fetch_bbs_data()`
 #' @param lump_species_forms Logical. Whether to lump together species with
 #'   multiple forms (default `TRUE`). See Details.
-#' @param stratify_by Deprecated in favour of `by`.
 #'
 #' @details If `lump_species_forms` is `TRUE`, species with multiple forms
 #'   (e.g., "(unid. race) Dark-eyed Junco"), are duplicated in the data. Once
@@ -290,26 +287,20 @@ stratify_orig <- function(by = NULL,
 
 stratify <- function(by,
                      sample_data = FALSE,
-                     bbs_data = NULL,
                      lump_species_forms = TRUE,
-                     quiet = FALSE,
-                     stratify_by = NULL) {
-
-  if(!is.null(stratify_by)) {
-    message("Argument \"stratify_by\" has been deprecated in favour of \"by\"")
-    by <- stratify_by
-  }
+                     release = 2022,
+                     quiet = FALSE) {
 
   by <- check_stratification(by)
 
   # Load BBS Data
   if(sample_data) {
-    bbs_data <- load_sample_data()                  # Load sample data
-  } else if(is.null(bbs_data)) {
-    if(!quiet) message("Loading BBS data...")
-    bbs_data <- load_bbs_data(level = "state") # Load BBS data
+    # Load sample data
+    bbs_data <- load_sample_data()
   } else {
-    bbs_data <- check_bbs_data(bbs_data)            # Check user supplied data
+    # Load cached data
+    if(!quiet) message("Loading BBS data...")
+    bbs_data <- load_bbs_data(level = "state", release = release)
   }
 
   species <- bbs_data$species %>%
