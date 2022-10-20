@@ -1,3 +1,4 @@
+
 #' Check model name
 #'
 #' @param model Name of model
@@ -18,7 +19,7 @@ check_model <- function(model, model_variant) {
                                    "for `first_diff` models", call. = FALSE)
    warning("Non-hierarchial models are generally not recommended ",
            "(see ?bbs_models), but provided for compatibility with the USGS",
-           "methods", call. = FALSE)
+           "methods", call. = FALSE, immediate. = TRUE)
   }
 
   model
@@ -146,7 +147,7 @@ check_numeric <- function(...) {
 check_in <- function(arg, opts) {
  if(!arg %in% opts) {
    if(is.character(opts)) sep <- "'" else if(is.numeric(opts)) sep <- ""
-   stop("`", substitute(deparse(arg)),"` ",
+   stop("`", deparse(substitute(arg)),"` ",
         "must be one of ", sep, paste0(opts, collapse = paste0(sep, ", ", sep)),
         sep, ".",
         call. = FALSE)
