@@ -83,22 +83,21 @@ check_species <- function(species, species_list,
   species
 }
 
-check_neighbours <- function(spatial_neighbours, model_data) {
+check_neighbours <- function(spatial_data, strata) {
 
   # Check for correct data
-  if(!is.list(spatial_neighbours) ||
+  if(!is.list(spatial_data) ||
      !all(c("n", "n_edges", "node1", "node2", "adj_matrix", "strata_name") %in%
-          names(spatial_neighbours))) {
-    stop("`spatial_neighbours` must a list created by `spatial_neighbours()` ",
+          names(spatial_data))) {
+    stop("`spatial_data` must a list created by `prepare_spatial()` ",
          "containing\n  at least `n`, `n_edges`, `node1`, `node2`, `adj_matrix` ",
          "and `strata_names`", call. = FALSE)
   }
 
   # Check for matching strata
-  if(!all(spatial_neighbours$strata_names %in%
-          unique(model_data$data$strata_name))) {
+  if(!all(spatial_data$strata_names %in% strata)) {
     stop("The same strata must be used in both `prepare_data()` and ",
-         "`spatial_neighbours()`", call. = FALSE)
+         "`prepare_spatial()`", call. = FALSE)
   }
 }
 
