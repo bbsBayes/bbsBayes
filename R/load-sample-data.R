@@ -22,8 +22,13 @@ load_sample_data_orig <- function() {
 }
 
 load_sample_data <- function() {
-  list(birds = birds_sample,
-       routes = routes_sample,
-       species = species_sample)
+  # list(birds = birds_sample,
+  #      routes = routes_sample,
+  #      species = species_sample)
+   list(birds = dplyr::rename_with(bird_sample, snakecase::to_snake_case) %>%
+          dplyr::rename(country_num = countrynum, state_num = statenum),
+        routes = dplyr::rename_with(route_sample, snakecase::to_snake_case) %>%
+          dplyr::rename(country_num = countrynum, state_num = statenum),
+        species = dplyr::rename_with(species_sample, snakecase::to_snake_case))
 }
 
