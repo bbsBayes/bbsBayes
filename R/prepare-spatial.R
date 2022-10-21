@@ -60,19 +60,18 @@
 #' strata_map <- base_strata_map %>%
 #'   dplyr::inner_join(strata_df,by = c("ST_12" = "strat_name"))
 #'
-#' n <- spatial_neighbours(base_strata_map, strata_col = "ST_12")
+#' n <- prepare_spatial(base_strata_map, strata_col = "ST_12")
 #'
 #' @export
-spatial_neighbours <- function(
-    strata_map,
-    strata_col = "strat",
-    voronoi = FALSE,
-    nearest_fill = FALSE,
-    island_link_dist_factor = 1.2,
-    buffer_type = "buffer",
-    buffer_dist = 10000,
-    add_map = NULL,
-    quiet = FALSE) {
+prepare_spatial <- function(strata_map,
+                            strata_col = "strat",
+                            voronoi = FALSE,
+                            nearest_fill = FALSE,
+                            island_link_dist_factor = 1.2,
+                            buffer_type = "buffer",
+                            buffer_dist = 10000,
+                            add_map = NULL,
+                            quiet = FALSE) {
 
   # Checks
   check_sf(strata_map)
@@ -214,15 +213,13 @@ spatial_neighbours <- function(
   map <- plot_neighbours(strata_map, centres, nb_db, bbox, strata_col, vint,
                          add_map)
 
-  # Format for Stan models
-  car_stan <- nb_fmt(nb_weights)
+  # Reformat nodes and edges
+  nb <- nb_fmt(nb_weights)
 
-  car_stan[["adj_matrix"]] <- nb_mat
-
-  append(nb_fmt(nb_weights),
-         list(adj_matrix = nb_mat,
-              map = map,
-              strata_name = strata_map[[strata_col]]))
+  append(nb,
+         list("adj_matrix" = nb_mat,
+              "map" = map,
+              "strata_name" = strata_map[[strata_col]]))
 }
 
 
@@ -246,8 +243,10 @@ nb_fmt <- function(nb_weights) {
       }
     }
   }
-  list("n" = length(num),"n_edges" = length(adj) / 2,
-       "node1" = node1, "node2" = node2)
+  list("n" = length(num),
+       "n_edges" = length(adj) / 2,
+       "node1" = node1,
+       "node2" = node2)
 }
 
 

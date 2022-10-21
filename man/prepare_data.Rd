@@ -6,8 +6,7 @@
 \usage{
 prepare_data(
   strata_data = NULL,
-  species_to_run = NULL,
-  model = NULL,
+  species = NULL,
   min_year = NULL,
   max_year = NULL,
   min_n_routes = 3,
@@ -17,9 +16,7 @@ prepare_data(
 )
 }
 \arguments{
-\item{species_to_run}{Character. English name of the species to run}
-
-\item{model}{Character. Model to use. One of \verb{"slope", "first_diff", "gam", "gamye"}}
+\item{species}{Character. English name of the species to run}
 
 \item{min_year}{Numeric. Minimum year to keep in analysis}
 
@@ -37,25 +34,6 @@ the species observed. Defaults to 1.}
 \item{strata_rem}{Character vector. Strata to remove from analysis.}
 
 \item{strat_data}{List. Stratified data returned by \code{stratify()}}
-
-\item{model_variant}{Character. Model variant to use. One of \code{hier}
-(hierarchical; Default), \code{spatial} or \code{nonhier} (non-hierarchical; not
-recommended).}
-
-\item{heavy_tailed}{Logical. Whether the extra-Poisson error distribution
-should be modeled as a t-distribution, with heavier tails than the standard
-normal distribution. Default is \code{FALSE}, but recent results suggest users
-should strongly consider setting this to \code{TRUE}, even though it requires
-much longer convergence times}
-
-\item{n_knots}{Numeric. Number of knots to be used in GAM function}
-
-\item{basis}{Character. Which version of the basis-function to use for the
-GAM smooth. Default is \code{"original"}, the same basis used in Smith and
-Edwards 2020. \code{"mgcv"} is an alternate that uses the "tp" basis from the
-\code{mgcv} package (also used in \code{brms}, and \code{rstanarm}). If using \code{"mgcv"},
-the user may want to consider adjusting the prior distributions for the
-parameters and their precision.}
 }
 \value{
 List of data to be used for modelling as input to \code{run_model()}.
@@ -74,22 +52,9 @@ strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
 # Prepare the stratified data for use in a model. In this
 #   toy example, we will set the minimum year as 2009 and
 #   maximum year as 2018, effectively only setting up to
-#   model 10 years of data. We will use the "first difference
-#   model.
+#   model 10 years of data.
+
 model_data <- prepare_data(strat_data = strat_data,
                            species_to_run = "Pacific Wren",
-                           model = "first_diff",
-                           min_year = 2009,
-                           max_year = 2018)
-
-# You can also specify the GAM model, with an optional number of
-# knots to use for the GAM basis.
-# By default, the number of knots will be equal to the floor
-# of the total unique years for the species / 4
-model_data <- prepare_data(strat_data = strat_data,
-                           species_to_run = "Pacific Wren",
-                           model = "gam",
-                           n_knots = 9)
-
-
+                           min_year = 2009, max_year = 2018)
 }

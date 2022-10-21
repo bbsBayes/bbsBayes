@@ -1285,24 +1285,7 @@ prepare_model_tidy <- function(model, basis, obs, n_knots, heavy_tailed) {
 #' use as input for models.
 #'
 #' @param strat_data List. Stratified data returned by `stratify()`
-#' @param species_to_run Character. English name of the species to run
-#' @param model Character. Model to use. One of `"slope", "first_diff", "gam",
-#'   "gamye"`
-#' @param model_variant Character. Model variant to use. One of `hier`
-#'   (hierarchical; Default), `spatial` or `nonhier` (non-hierarchical; not
-#'   recommended).
-#' @param heavy_tailed Logical. Whether the extra-Poisson error distribution
-#'   should be modeled as a t-distribution, with heavier tails than the standard
-#'   normal distribution. Default is `FALSE`, but recent results suggest users
-#'   should strongly consider setting this to `TRUE`, even though it requires
-#'   much longer convergence times
-#' @param n_knots Numeric. Number of knots to be used in GAM function
-#' @param basis Character. Which version of the basis-function to use for the
-#'   GAM smooth. Default is `"original"`, the same basis used in Smith and
-#'   Edwards 2020. `"mgcv"` is an alternate that uses the "tp" basis from the
-#'   `mgcv` package (also used in `brms`, and `rstanarm`). If using `"mgcv"`,
-#'   the user may want to consider adjusting the prior distributions for the
-#'   parameters and their precision.
+#' @param species Character. English name of the species to run
 #' @param min_year Numeric. Minimum year to keep in analysis
 #' @param max_year Numeric. Maximum year to keep in analysis
 #' @param min_n_routes Numeric. Required minimum routes per strata where species
@@ -1327,28 +1310,14 @@ prepare_model_tidy <- function(model, basis, obs, n_knots, heavy_tailed) {
 #' # Prepare the stratified data for use in a model. In this
 #' #   toy example, we will set the minimum year as 2009 and
 #' #   maximum year as 2018, effectively only setting up to
-#' #   model 10 years of data. We will use the "first difference
-#' #   model.
+#' #   model 10 years of data.
+#'
 #' model_data <- prepare_data(strat_data = strat_data,
 #'                            species_to_run = "Pacific Wren",
-#'                            model = "first_diff",
-#'                            min_year = 2009,
-#'                            max_year = 2018)
-#'
-#' # You can also specify the GAM model, with an optional number of
-#' # knots to use for the GAM basis.
-#' # By default, the number of knots will be equal to the floor
-#' # of the total unique years for the species / 4
-#' model_data <- prepare_data(strat_data = strat_data,
-#'                            species_to_run = "Pacific Wren",
-#'                            model = "gam",
-#'                            n_knots = 9)
-#'
-#'
+#'                            min_year = 2009, max_year = 2018)
 
 prepare_data <- function(strata_data = NULL,
-                         species_to_run = NULL,
-                         model = NULL,
+                         species = NULL,
                          min_year = NULL,
                          max_year = NULL,
                          min_n_routes = 3,
@@ -1358,15 +1327,15 @@ prepare_data <- function(strata_data = NULL,
 
   # Checks
   if(is.null(strata_data)) stop("No data supplied", call. = FALSE)
-  if(is.null(species_to_run)) stop("No species specified", call. = FALSE)
+  if(is.null(species)) stop("No species specified", call. = FALSE)
 
-  species_to_run <- check_species(species_to_run, strata_data$species_strat)
+  species <- check_species(species, strata_data$species_strat)
 
   # More checks...
 
 
   # Get observations of interest
-  sp_aou <- get_species_aou(strata_data$species_strata, species_to_run)
+  sp_aou <- get_species_aou(strata_data$species_strata, species)
 
   obs <- strata_data$birds_strata %>%
     dplyr::filter(aou == .env$sp_aou) %>%

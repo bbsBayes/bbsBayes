@@ -274,10 +274,10 @@ run_model_orig <- function(jags_data = NULL,
 #'
 #'
 #'
-#' @param model_data List. Output of `prepare_data()`.
+#' @param prepped_data List. Output of `prepare_data()`.
 #' @param model Character.
 #' @param model_variant
-#' @param spatial_neighbours
+#' @param spatial_data List. Output of `prepare_spatial()`.
 #' @param heavy_tailed
 #' @param n_knots
 #' @param basis
@@ -302,10 +302,21 @@ run_model_orig <- function(jags_data = NULL,
 #' @export
 #'
 #' @examples
-run_model <- function(model_data,
+#'
+#'
+#' # You can also specify the GAM model, with an optional number of
+#' # knots to use for the GAM basis.
+#' # By default, the number of knots will be equal to the floor
+#' # of the total unique years for the species / 4
+#' model_data <- prepare_data(strat_data = strat_data,
+#'                            species_to_run = "Pacific Wren",
+#'                            model = "gam",
+#'                            n_knots = 9)
+#'
+run_model <- function(prepped_data,
                       model,
                       model_variant = "hier",
-                      spatial_neighbours = NULL,
+                      spatial_data = NULL,
                       heavy_tailed = TRUE,
                       n_knots = NULL,
                       basis = "mgcv",
@@ -331,17 +342,21 @@ run_model <- function(model_data,
   model <- check_model(model, model_variant)
   basis <- check_basis(basis)
 
+  model_data <- prepped_data$model_data
+
   if(model_variant == "spatial") {
 
-    if(is.null(spatial_neighbours)) {
+    if(is.null(spatial_data)) {
       stop("When `model_variant = 'spatial'`, you must provide a list ",
-           "of neighbour nodes to `spatial_neighbours`.\n",
-           "  See ?run_model for details", call. = FALSE)
+           "of neighbour nodes\n(created with `prepare_spatial()`) to ",
+           "`spatial_data`. ",
+           "See ?run_model for details", call. = FALSE)
     }
-    check_neighbours(spatial_neighbours, model_data)
+    check_neighbours(spatial_data,
+                     unique(prepped_data$raw_data$strata_name))
 
-  } else if(!is.null(spatial_neighbours)) {
-    if(!quiet) message("Model isn't spatial, ignoring `spatial_models` argument")
+  } else if(!is.null(spatial_data)) {
+    if(!quiet) message("Model isn't spatial, ignoring `spatial_data` argument")
   }
 
   check_logical(heavy_tailed, use_pois, calculate_nu, calculate_log_lik,
@@ -360,10 +375,7 @@ run_model <- function(model_data,
   }
 
   if(is.null(out_name)) {
-    out_name <- paste0("BBS_STAN_",
-                       model_data$model, "_",
-                       model_data$model_variant, "_",
-                       Sys.Date())
+    out_name <- paste0("BBS_STAN_", model, "_", model_variant, "_", Sys.Date())
   } else if(!is.na(ext(out_name))) {
     stop("`out_name` should not have a file extension", call. = FALSE)
   }
@@ -378,21 +390,14 @@ run_model <- function(model_data,
 
   # Create master parameter list
   model_data <- append(model_data, params)
-  model_data <- append(model_data,
-                       spatial_neighbours[c("n_edges", "node1", "node2")])
+  model_data <- append(model_data, spatial_data[c("n_edges", "node1", "node2")])
 
 
   # Keep track of data
-  meta_data <- list()
+  meta_data <- prepped_data[["meta_data"]]
   meta_data[["model"]] <- model
   meta_data[["model_variant"]] <- model_variant
-  meta_data[["stratify_by"]] <- model_data[["stratify_by"]]
-  meta_data[["non_zero_weight"]] <- model_data[["non_zero_weight"]]
-  meta_data[["data"]] <- model_data[["data"]]
   meta_data[["run_date"]] <- Sys.time()
-
-  model_data[["stratify_by"]] <- NULL
-  model_data[["data"]] <- NULL
 
   # Get initial values
   if(is.null(init_def)) {
