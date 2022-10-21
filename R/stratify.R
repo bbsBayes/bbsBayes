@@ -421,8 +421,8 @@ stratify <- function(by,
     dplyr::left_join(b_index, by = c("rid", "year"))
 
 
-  list(meta_data = list(stratify_by = stratify_by),
-       birds_strata = dplyr::select(birds, -"rid"),
-       routes_strata = dplyr::select(routes, -"rid"),
-       species_strata = species)
+  list("meta_data" = list(stratify_by = by),
+       "birds_strata" = dplyr::select(birds, -"rid"),
+       "routes_strata" = dplyr::select(routes, -"rid"),
+       "species_strata" = species)
 }

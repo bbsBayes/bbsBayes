@@ -434,7 +434,9 @@ run_model <- function(prepped_data,
   #message("Calculating run summary")
   #fit_summary <- stan_fit$summary()
 
-  list("model_fit" = model_fit, "meta_data" = meta_data)
+  list("model_fit" = model_fit,
+       "meta_data" = meta_data,
+       "raw_data" = prepped_data[["raw_data"]])
 }
 
 model_params <- function(model, n_strata, year, n_counts,

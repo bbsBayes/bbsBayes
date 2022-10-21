@@ -1452,10 +1452,7 @@ prepare_data <- function(strata_data = NULL,
     obs_mat[i,1:n_obs_sites[i]] <- obs_by_site$observer[obs_by_site$strata == i]
   }
 
-  n_counts <- nrow(obs_final)
-
-  list(
-
+  model_data <- list(
     # Sample sizes
     n_sites = max(obs_final$site),
     n_strata = length(unique(obs_final$strata)),
@@ -1480,10 +1477,17 @@ prepare_data <- function(strata_data = NULL,
     obs_mat = obs_mat,
 
     # Weights
-    non_zero_weight = weights,
+    non_zero_weight = weights
+  )
 
-    # Extra
-    stratify_by = strata_data$stratify_by,
-    data = dplyr::select(obs_final, -dplyr::matches("^(n|p)_routes_"))
-    )
+  # Extra
+  meta_data <- list(species = species,
+                    stratify_by = strata_data$meta_data$stratify_by,
+                    non_zero_weight = weights) # For later steps
+
+  raw_data <- dplyr::select(obs_final, -dplyr::matches("^(n|p)_routes_"))
+
+  list("model_data" = model_data,
+       "meta_data" = meta_data,
+       "raw_data" = raw_data)
 }

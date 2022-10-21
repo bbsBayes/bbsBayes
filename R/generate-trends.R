@@ -312,8 +312,7 @@ if(slope){
 #' s <- stratify(by = "bbs_cws", sample_data = TRUE)
 #'
 #' # Prepare the stratified data for use in a JAGS model.
-#' d <- prepare_data(s, species_to_run = "Pacific Wren",
-#'                   model = "first_diff",
+#' d <- prepare_data(s, species = "Pacific Wren",
 #'                   min_year = 2009,
 #'                   max_year = 2018)
 #'
@@ -321,10 +320,10 @@ if(slope){
 #' m <- run_model(d, model = "first_diff")
 #'
 #' # Generate the continental and stratum indices
-#' indices <- generate_indices(model_output = m)
+#' idx <- generate_indices(model_output = m)
 #'
 #' # Now, generate the trends
-#' trends <- generate_trends(indices)
+#' t <- generate_trends(idx)
 #'
 #'
 #' @export
