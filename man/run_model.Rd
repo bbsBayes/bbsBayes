@@ -5,10 +5,10 @@
 \title{Run Bayesian model}
 \usage{
 run_model(
-  model_data,
+  prepped_data,
   model,
   model_variant = "hier",
-  spatial_neighbours = NULL,
+  spatial_data = NULL,
   heavy_tailed = TRUE,
   n_knots = NULL,
   basis = "mgcv",
@@ -31,12 +31,27 @@ run_model(
 )
 }
 \arguments{
-\item{model_data}{List. Output of \code{prepare_data()}.}
+\item{prepped_data}{List. Output of \code{prepare_data()}.}
 
 \item{model}{Character.}
+
+\item{spatial_data}{List. Output of \code{prepare_spatial()}.}
 
 \item{...}{}
 }
 \description{
 Run Bayesian model
+}
+\examples{
+
+
+# You can also specify the GAM model, with an optional number of
+# knots to use for the GAM basis.
+# By default, the number of knots will be equal to the floor
+# of the total unique years for the species / 4
+model_data <- prepare_data(strat_data = strat_data,
+                           species_to_run = "Pacific Wren",
+                           model = "gam",
+                           n_knots = 9)
+
 }

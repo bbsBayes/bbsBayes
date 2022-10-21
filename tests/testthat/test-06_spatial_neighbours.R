@@ -1,6 +1,6 @@
 test_that("nb_fmt()", {
 
-  # Eg nb_weights created from example data in ?spatial_neighbours
+  # Eg nb_weights created from example data in ?prepare_spatial
   # (limited to Pacific Wren)
   nb_weights <- list(
     num = c(2, 7, 3, 6, 4, 1, 2, 3, 2, 2, 3, 6, 3, 3, 4, 5, 6, 3, 7),
@@ -35,11 +35,11 @@ test_that("fix_islands()", {
 
 })
 
-test_that("spatial_neighbours() defaults", {
+test_that("prepare_spatial() defaults", {
 
   map <- load_map(stratify_by = "bbs_cws")
 
-  expect_message(n <- spatial_neighbours(map, strata_col = "ST_12"),
+  expect_message(n <- prepare_spatial(map, strata_col = "ST_12"),
                  "Preparing") %>%
     expect_message("Identifying neighbours \\(non-Voronoi method\\)") %>%
     expect_message("Isolated") %>%
@@ -57,11 +57,11 @@ test_that("spatial_neighbours() defaults", {
   expect_equal(n$strata_names, map$ST_12)
 })
 
-test_that("spatial_neighbours() vironoi", {
+test_that("prepare_spatial() vironoi", {
 
   map <- load_map(stratify_by = "bbs_cws")
 
-  expect_message(n <- spatial_neighbours(map, strata_col = "ST_12",
+  expect_message(n <- prepare_spatial(map, strata_col = "ST_12",
                                          voronoi = TRUE),
                  "Preparing") %>%
     expect_message("Identifying neighbours \\(Voronoi method\\)") %>%
