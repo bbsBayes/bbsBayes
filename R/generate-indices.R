@@ -763,9 +763,7 @@ generate_indices <- function(model_output = NULL,
     dplyr::distinct() %>%
     dplyr::arrange(.data$strata)
 
-  area_weights <- readr::read_csv(
-    system.file("area-weight", strata[[stratify_by]], package = "bbsBayes"),
-    col_types = "cd", progress = FALSE) %>%
+  area_weights <- load_internal_file("area-weight", stratify_by) %>%
     dplyr::right_join(strata_list, by = c("region" = "strata_name"))
 
 
@@ -780,9 +778,7 @@ generate_indices <- function(model_output = NULL,
 
 
   # Get regions
-  region_names <- readr::read_csv(
-    system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),
-    show_col_types = FALSE, progress = FALSE) %>%
+  region_names <- load_internal_file("composite-regions", stratify_by) %>%
     dplyr::mutate(stratum = .data$region, continental = "Continental")
 
   # Clarify regions
