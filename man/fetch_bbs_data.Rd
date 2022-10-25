@@ -13,32 +13,34 @@ fetch_bbs_data(
 )
 }
 \arguments{
-\item{level}{Character. "state" or "stop", specifying which counts to fetch.
-Defaults to "state", which provides counts beginning in 1966, aggregated in
-five bins, each of which contains cumulative counts from 10 of the 50 stops
-along a route. "stop" provides stop-level data beginning in 1997, which
-includes counts for each stop along routes individually. Note that
-stop-level data is not currently supported by the modelling utilities in
-bbsBayes.}
+\item{level}{Character. Which type of BBS counts to fetct, "state" or "stop".
+Defaults to "state".}
 
 \item{release}{Numeric. Yearly release. Options are 2022 (default including
 data through 2021 field season) or 2020 (including data through 2019)}
 
-\item{quiet}{Logical. Suppress progress bars? Defaults to FALSE}
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
 
 \item{force}{Logical. Should pre-exising BBS data be overwritten? Defaults to
 FALSE}
 }
 \description{
 Use File Transfer Protocol (FTP) to fetch Breeding Bird Survey data from the
-United States Geological Survey (USGS) FTP site. This is the raw data that
-is uploaded to the site before any analyses are performed. A
-package-specific directory is created on the user's computer (see
-documentation of \code{rappdirs::appdir} for details of where this directory
-lives), and the BBS data is saved to that directory for use by other
-functions. Before downloading any data, the user must thoroughly read
-through the terms and conditions of the user of the data and type the word
-"yes" to agree.
+United States Geological Survey (USGS) FTP site. This is the raw data that is
+uploaded to the site before any analyses are performed. A package-specific
+directory is created on the user's computer (see documentation of
+\code{rappdirs::appdir} for details of where this directory lives), and the BBS
+data is saved to that directory for use by other functions. Before
+downloading any data, the user must thoroughly read through the terms and
+conditions of the user of the data and type the word "yes" to agree.
+}
+\details{
+BBS \code{state} level counts provide counts beginning in 1966,
+aggregated in five bins, each of which contains cumulative counts from 10
+of the 50 stops along a route. In contrats BBS \code{stop} level counts provides
+stop-level data beginning in 1997, which includes counts for each stop
+along routes individually. Note that stop-level data is not currently
+supported by the modelling utilities in bbsBayes.
 }
 \examples{
 

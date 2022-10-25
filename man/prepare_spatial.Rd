@@ -46,7 +46,7 @@ Details.}
 
 \item{add_map}{sf spatial object. Spatial data to add to map output.}
 
-\item{quiet}{Logical. Suppress progress messages.}
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
 }
 \value{
 List containing samples, nodes, adjacent matrix and map visualizing

@@ -16,7 +16,7 @@ stratify(
 \item{by}{Character. Stratification type. One of "state", "bcr", "latlong",
 "bbs_cws", "bbs_usgs"}
 
-\item{sample_data}{Logical. Use sample data (just Pacific Wren).}
+\item{sample_data}{Logical. Use sample data (just Pacific Wren)}
 
 \item{lump_species_forms}{Logical. Whether to lump together species with
 multiple forms (default \code{TRUE}). See Details.}

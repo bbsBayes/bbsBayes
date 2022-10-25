@@ -32,7 +32,7 @@ change in species trends for each strata.
 s <- stratify(by = "bbs_cws", sample_data = TRUE)
 
 # Prepare the stratified data for use in a JAGS model.
-d <- prepare_data(s, species_to_run = "Pacific Wren",
+d <- prepare_data(s, species = "Pacific Wren",
                   min_year = 2009, max_year = 2018)
 
 # Now run the model (fast but not good, just for illustration)
@@ -40,12 +40,12 @@ m <- run_model(d, model = "first_diff",
                iter_sampling = 5, iter_warmup = 5, chains = 2)
 
 # Generate the continental and stratum indices
-indices <- generate_indices(m)
+i <- generate_indices(m)
 
 # Now, generate the trends
-trends <- generate_trends(indices)
+t <- generate_trends(i)
 
 # Generate the map
-map <- generate_map(trends)
+map <- generate_map(t)
 
 }

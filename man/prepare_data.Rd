@@ -16,11 +16,15 @@ prepare_data(
 )
 }
 \arguments{
+\item{strata_data}{List. Stratified data returned by \code{stratify()}}
+
 \item{species}{Character. English name of the species to run}
 
-\item{min_year}{Numeric. Minimum year to keep in analysis}
+\item{min_year}{Numeric. Minimum year to use. Default (\code{NULL}) uses first
+year in data.}
 
-\item{max_year}{Numeric. Maximum year to keep in analysis}
+\item{max_year}{Numeric. Maximum year to use. Default (\code{NULL}) uses first
+year in data.}
 
 \item{min_n_routes}{Numeric. Required minimum routes per strata where species
 has been observed. Defaults to 3}
@@ -32,8 +36,6 @@ observations of species on at least 1 route. Defaults to 3}
 the species observed. Defaults to 1.}
 
 \item{strata_rem}{Character vector. Strata to remove from analysis.}
-
-\item{strat_data}{List. Stratified data returned by \code{stratify()}}
 }
 \value{
 List of data to be used for modelling as input to \code{run_model()}.
