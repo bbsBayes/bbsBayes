@@ -25,8 +25,8 @@
 #'   "buffer"` or the final distance if `buffer_type = "convex_hull"`. See
 #'   Details.
 #' @param add_map sf spatial object. Spatial data to add to map output.
-#' @param quiet Logical. Suppress progress messages.
 #'
+#' @inheritParams common_docs
 #' @details
 #' When using the Voronoi method, a buffer is used to fill around and link
 #' strata together. If the `buffer_type` is `buffer`, `buffer_dist` is the

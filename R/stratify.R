@@ -237,7 +237,7 @@ stratify_orig <- function(by = NULL,
 #'
 #' @param by Character. Stratification type. One of "state", "bcr", "latlong",
 #'   "bbs_cws", "bbs_usgs"
-#' @param sample_data Logical. Use sample data (just Pacific Wren).
+#' @param sample_data Logical. Use sample data (just Pacific Wren)
 #' @param quiet Logical. Suppress progress messages
 #' @param lump_species_forms Logical. Whether to lump together species with
 #'   multiple forms (default `TRUE`). See Details.

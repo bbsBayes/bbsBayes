@@ -1284,10 +1284,8 @@ prepare_model_tidy <- function(model, basis, obs, n_knots, heavy_tailed) {
 #' Subset raw BBS data by selected species and and wrangle stratified data for
 #' use as input for models.
 #'
-#' @param strat_data List. Stratified data returned by `stratify()`
+#' @param strata_data List. Stratified data returned by `stratify()`
 #' @param species Character. English name of the species to run
-#' @param min_year Numeric. Minimum year to keep in analysis
-#' @param max_year Numeric. Maximum year to keep in analysis
 #' @param min_n_routes Numeric. Required minimum routes per strata where species
 #'   has been observed. Defaults to 3
 #' @param min_max_route_years Required minimum number of years with non-zero
@@ -1295,6 +1293,8 @@ prepare_model_tidy <- function(model, basis, obs, n_knots, heavy_tailed) {
 #' @param min_mean_route_years Required minimum average of years per route with
 #'   the species observed. Defaults to 1.
 #' @param strata_rem Character vector. Strata to remove from analysis.
+#'
+#' @inheritParams common_docs
 #'
 #' @return List of data to be used for modelling as input to `run_model()`.
 #'
