@@ -873,11 +873,10 @@ generate_indices <- function(model_output = NULL,
       dplyr::left_join(tidyr::unnest(samples, "Q"), by = c(rr, "year_num")) %>%
       dplyr::mutate(backcast_flag = 1 - .data$flag_year,
                     year = .env$start_year + .data$year_num - 1,
-                    region_type = .env$rr,
-                    stratify_by = .env$stratify_by) %>%
+                    region_type = .env$rr) %>%
       dplyr::rename(region = .data[[rr]]) %>%
       dplyr::select("year", "region", "region_alt", "region_type",
-                    "stratify_by", "strata_included", "strata_excluded",
+                    "strata_included", "strata_excluded",
                     "index", dplyr::contains("index_q"),
                     "obs_mean", "n_routes_total", "n_non_zero", "backcast_flag") %>%
       dplyr::bind_rows(data_summary, .)

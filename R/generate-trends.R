@@ -369,12 +369,10 @@ generate_trends <- function(indices,
     }
   }
 
-
   trends <- indices$data_summary %>%
     dplyr::filter(.data$year %in% min_year:max_year) %>%
     dplyr::group_by(.data$region, .data$region_type, .data$region_alt,
-                    .data$strata_included, .data$strata_excluded,
-                    .data$stratify_by) %>%
+                    .data$strata_included, .data$strata_excluded) %>%
     dplyr::summarize(
       n = purrr::map2(.data$region_type, .data$region,
                       ~indices$samples[[paste0(.x, "_", .y)]]),
