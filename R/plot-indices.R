@@ -307,7 +307,7 @@ plot_indices <- function(indices = NULL,
                          add_observed_means = FALSE,
                          add_number_routes = FALSE) {
 
-
+  species <- indices$meta_data$species
   indices <- indices$data_summary
 
   lq <- (1 - ci_width) / 2

@@ -1482,8 +1482,7 @@ prepare_data <- function(strata_data = NULL,
 
   # Extra
   meta_data <- list(species = species,
-                    stratify_by = strata_data$meta_data$stratify_by,
-                    non_zero_weight = weights) # For later steps
+                    stratify_by = strata_data$meta_data$stratify_by)
 
   raw_data <- dplyr::select(obs_final, -dplyr::matches("^(n|p)_routes_"))
 

@@ -168,7 +168,7 @@ generate_map_orig <- function(trend = NULL,
 #' s <- stratify(by = "bbs_cws", sample_data = TRUE)
 #'
 #' # Prepare the stratified data for use in a JAGS model.
-#' d <- prepare_data(s, species_to_run = "Pacific Wren",
+#' d <- prepare_data(s, species = "Pacific Wren",
 #'                   min_year = 2009, max_year = 2018)
 #'
 #' # Now run the model (fast but not good, just for illustration)
@@ -176,13 +176,13 @@ generate_map_orig <- function(trend = NULL,
 #'                iter_sampling = 5, iter_warmup = 5, chains = 2)
 #'
 #' # Generate the continental and stratum indices
-#' indices <- generate_indices(m)
+#' i <- generate_indices(m)
 #'
 #' # Now, generate the trends
-#' trends <- generate_trends(indices)
+#' t <- generate_trends(i)
 #'
 #' # Generate the map
-#' map <- generate_map(trends)
+#' map <- generate_map(t)
 #'
 #' @export
 #'
@@ -192,14 +192,13 @@ generate_map <- function(trends,
                          title = TRUE,
                          col_viridis = TRUE) {
 
+  stratify_by <- trends$meta_data$stratify_by
+  species <- trends$meta_data$species
 
-  trends <- dplyr::filter(trends, .data$region_type == "stratum")
-
-  stratify_by <- unique(trends$stratify_by)
-
-
+  trends <- dplyr::filter(trends$trends, .data$region_type == "stratum")
   start_year <- min(trends$start_year)
   end_year <- min(trends$end_year)
+
 
   map <- load_map(stratify_by)
 
@@ -222,13 +221,12 @@ generate_map <- function(trends,
 
   if(title) title <- paste(species, "trends", start_year, "-", end_year) else title <- NULL
 
-  names(map_palette) <- labls
-
   m <- ggplot2::ggplot() +
     ggplot2::geom_sf(data = map, ggplot2::aes(fill = .data$t_plot),
                      colour = grDevices::grey(0.4), size = 0.1) +
     ggplot2::theme_minimal() +
-    ggplot2::labs(title = ptit, fill = paste0("Trend\n", fyr, "-", lyr)) +
+    ggplot2::labs(title = title,
+                  fill = paste0("Trend\n", start_year, "-", end_year)) +
     ggplot2::theme(legend.position = "right", line = ggplot2::element_line(size = 0.4),
                    rect = ggplot2::element_rect(size = 0.1),
                    axis.text = ggplot2::element_blank(),

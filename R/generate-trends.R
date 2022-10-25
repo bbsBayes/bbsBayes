@@ -316,14 +316,15 @@ if(slope){
 #'                   min_year = 2009,
 #'                   max_year = 2018)
 #'
-#' # Now run the model
-#' m <- run_model(d, model = "first_diff")
+#' # Now run the model (fast but not good, just for illustration)
+#' m <- run_model(d, model = "first_diff",
+#'                iter_sampling = 5, iter_warmup = 5, chains = 2)
 #'
 #' # Generate the continental and stratum indices
-#' idx <- generate_indices(model_output = m)
+#' i <- generate_indices(model_output = m)
 #'
 #' # Now, generate the trends
-#' t <- generate_trends(idx)
+#' t <- generate_trends(i)
 #'
 #'
 #' @export
@@ -340,35 +341,38 @@ generate_trends <- function(indices,
     stop("No indices supplied to generate_trends()."); return(NULL)
   }
 
+  start_year <- indices$meta_data$start_year
+  n_years <- indices$meta_data$n_years
+
   if(is.null(min_year)) {
-    min_year <- indices$start_year
+    min_year <- start_year
     min_year_num <- 1
   } else {
-    min_year_num <- 1 + (min_year - indices$start_year)
+    min_year_num <- 1 + (min_year - start_year)
 
     if(min_year_num < 0) {
       message("`min_year` is before the date range, using minimum year of ",
-              "the data (", indices$start_year, ") instead.")
-      min_year <- indices$start_year
+              "the data (", start_year, ") instead.")
+      min_year <- start_year
       min_year_num <- 1
     }
   }
 
   if (is.null(max_year)) {
-    max_year <- indices$start_year + indices$y_max - 1
-    max_year_num <- indices$y_max
+    max_year <- start_year + n_years - 1
+    max_year_num <- n_years
   } else {
-    max_year_num <- 1 + (max_year - indices$start_year)
-    if(max_year_num > indices$y_max) {
+    max_year_num <- 1 + (max_year - start_year)
+    if(max_year_num > n_years) {
       message("`max_year` is beyond the date range, using maximum year of ",
-              "the data (", indices$start_year + indices$y_max -1, ") instead.")
-      max_year <- indices$start_year + indices$y_max - 1
-      max_year_num <- indices$y_max
+              "the data (", start_year + n_years -1, ") instead.")
+      max_year <- start_year + n_years - 1
+      max_year_num <- n_years
     }
   }
 
 
-  trend <- indices$data_summary %>%
+  trends <- indices$data_summary %>%
     dplyr::filter(.data$year %in% min_year:max_year) %>%
     dplyr::group_by(.data$region, .data$region_type, .data$region_alt,
                     .data$strata_included, .data$strata_excluded,
@@ -407,14 +411,14 @@ generate_trends <- function(indices,
   q2 <- quantiles[length(quantiles)]
   q <- (q2 - q1) * 100
 
-  trend <- trend %>%
+  trends <- trends %>%
     dplyr::mutate(
       "width_of_{{q}}_percent_credible_interval" :=
         .data[[paste0("trend_q", q2)]] - .data[[paste0("trend_q", q1)]])
 
   # Optional slope based trends
   if(slope) {
-    trend <- trend %>%
+    trends <- trends %>%
       dplyr::mutate(
         sl_t = purrr::map(.data$n, calc_slope,
                           .env$min_year_num, .env$max_year_num),
@@ -429,9 +433,9 @@ generate_trends <- function(indices,
           .data[[paste0("slope_trend_q", q1)]])
   }
 
-  # Model conditional probabilities of population change during trend period
+  # Model conditional probabilities of population change during trends period
   if(!is.null(prob_decrease)) {
-    trend <- trend %>%
+    trends <- trends %>%
       dplyr::mutate(
         pch = purrr::map(.data$ch, ~100 * (.x - 1)),
         pch_pp = purrr::map_df(.data$pch, calc_prob_crease,
@@ -441,7 +445,7 @@ generate_trends <- function(indices,
   }
 
   if(!is.null(prob_increase)){
-    trend <- trend %>%
+    trends <- trends %>%
       dplyr::mutate(
         pch = purrr::map(.data$ch, ~100 * (.x - 1)),
         pch_pp = purrr::map_df(.data$pch, calc_prob_crease,
@@ -450,9 +454,12 @@ generate_trends <- function(indices,
       dplyr::select(-"pch")
   }
 
-  trend %>%
+  trends <- trends %>%
     dplyr::select(-"n", -"ch", -"tr") %>%
     dplyr::relocate("start_year", "end_year")
+
+  list("trends" = trends,
+       "meta_data" = indices$meta_data)
 }
 
 bsl <- function(i, wy) {

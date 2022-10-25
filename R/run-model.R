@@ -431,10 +431,8 @@ run_model <- function(prepped_data,
     output_dir = out_dir,
     output_basename = out_name)
 
-  #message("Calculating run summary")
-  #fit_summary <- stan_fit$summary()
-
   list("model_fit" = model_fit,
+       "non_zero_weight" = model_data$non_zero_weight,
        "meta_data" = meta_data,
        "raw_data" = prepped_data[["raw_data"]])
 }

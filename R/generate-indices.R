@@ -680,31 +680,23 @@ generate_indices_tidy <- function(jags_mod = NULL,
 #'
 #' # Toy example with Pacific Wren sample data
 #' # First, stratify the sample data
-#'
-#' strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
+#' s <- stratify(by = "bbs_cws", sample_data = TRUE)
 #'
 #' # Prepare the stratified data for use in a JAGS model.
-#' model_data <- prepare_jags_data(strat_data = strat_data,
-#'                                species_to_run = "Pacific Wren",
-#'                                model = "firstdiff",
-#'                                min_year = 2009,
-#'                                max_year = 2018)
+#' d <- prepare_data(s, species = "Pacific Wren",
+#'                   min_year = 2009,
+#'                   max_year = 2018)
 #'
-#' # Now run a JAGS model.
-#' model_fit <- run_model(model_data = model_data,
-#'                       n_adapt = 0,
-#'                       n_burnin = 0,
-#'                       n_iter = 10,
-#'                       n_thin = 1)
+#' # Now run the model (fast but not good, just for illustration)
+#' m <- run_model(d, model = "first_diff",
+#'                iter_sampling = 5, iter_warmup = 5, chains = 2)
 #'
 #' # Generate the continental and stratum indices
-#' indices <- generate_indices(model_fit = model_fit,
-#'                             model_data = model_data)
+#' i <- generate_indices(model_output = m)
 #'
 #' # Generate only national indices
-#' indices_nat <- generate_indices(model_fit = model_fit,
-#'                                 model_data = model_data,
-#'                                 regions = c("national"))
+#' i_nat <- generate_indices(model_output = m,
+#'                           regions = "national")
 #'
 #' @export
 #'
@@ -716,7 +708,8 @@ generate_indices <- function(model_output = NULL,
                              start_year = NULL,
                              drop_exclude = FALSE,
                              max_backcast = NULL,
-                             alt_region_names = NULL) {
+                             alt_region_names = NULL,
+                             quiet = FALSE) {
 
   # Checks
   if (is.null(model_output)) stop("No model output supplied", call. = FALSE)
@@ -736,36 +729,36 @@ generate_indices <- function(model_output = NULL,
   }
 
   # Prepare data
-  model_data <- model_output$meta_data$data
+  raw_data <- model_output$raw_data
 
   # Start years
-  n_years <- max(model_data$year_num)
+  n_years <- max(raw_data$year_num)
   if(!is.null(start_year)){
-    inity <- min(model_data$year)-1
+    inity <- min(raw_data$year)-1
 
     if(inity > start_year){
       warning(
         "Value of ", start_year, " for `start_year` is earlier than the ",
-        "earliest year of the data, using ", start_year <- min(model_data$year),
+        "earliest year of the data, using ", start_year <- min(raw_data$year),
         " instead", call. = FALSE)
     }
 
   } else{
-    start_year <- min(model_data$year)
+    start_year <- min(raw_data$year)
   }
 
   # Posterior draws
   n <- model_output$model_fit$draws(variables = alternate_n,
                                     format = "draws_matrix")
   n <- samples_to_array(n,
-                        n_strata = length(unique(model_data$strata)),
+                        n_strata = length(unique(raw_data$strata)),
                         n_years = n_years)
   n_samples <- dim(n)[1]
 
 
   # Area weights
 
-  strata_list <- model_data %>%
+  strata_list <- raw_data %>%
     dplyr::select(strata_name, strata) %>%
     dplyr::distinct() %>%
     dplyr::arrange(.data$strata)
@@ -778,11 +771,11 @@ generate_indices <- function(model_output = NULL,
 
   if(is.null(max_backcast)) max_backcast <- n_years
 
-  strata_meta <- model_data %>%
+  strata_meta <- raw_data %>%
     dplyr::group_by(.data$strata) %>%
     dplyr::summarize(start_year = min(.data$year_num[.data$count > 0], na.rm = TRUE),
                      n_routes_total = dplyr::n_distinct(route)) %>%
-    dplyr::mutate(non_zero_weight = model_output$meta_data$non_zero_weight) %>%
+    dplyr::mutate(non_zero_weight = model_output$non_zero_weight) %>%
     dplyr::left_join(area_weights, by = "strata")
 
 
@@ -809,7 +802,7 @@ generate_indices <- function(model_output = NULL,
   }
 
   # Calculate strata/year-level observation statistics
-  obs_strata <- model_data %>%
+  obs_strata <- raw_data %>%
     dplyr::select("strata", "year_num", "count") %>%
     dplyr::group_by(.data$strata) %>%
     tidyr::complete(year_num = seq(1, .env$n_years)) %>%
@@ -826,6 +819,8 @@ generate_indices <- function(model_output = NULL,
 
 
   for(rr in regions) { #selecting the type of composite region
+
+    if(!quiet) message("Processing region ", rr)
 
     # Calculate strata-level information for sub-regions in this composite region
     strata_meta_sub <- region_names %>%
@@ -895,11 +890,11 @@ generate_indices <- function(model_output = NULL,
   list(data_summary = data_summary,
        samples = N_all,
        area_weights = area_weights,
-       y_min = 1,
-       y_max = n_years,
-       start_year = start_year,
-       regions = regions,
-       data = model_data)
+       "meta_data" = append(model_output$meta_data,
+                            list("regions" = regions,
+                                 "start_year" = start_year,
+                                 "n_years" = n_years)),
+       "raw_data" = raw_data)
 }
 
 
