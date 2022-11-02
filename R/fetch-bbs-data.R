@@ -385,6 +385,11 @@ tick <- function(pb, quiet) {
 #'   data through 2021 field season) or 2020 (including data through 2019)
 #' @param force Logical. Should pre-exising BBS data be overwritten? Defaults to
 #'   FALSE
+#' @param compression Character. What compression should be used to save data?
+#'   Defaults to `none` which takes up the most space but is the fastest to
+#'   load. Must be one of `none`, `gz`, `bz2`, or `xz` (passed to
+#'   `readr::write_rds()`'s `compress` argument).
+#'
 #'
 #' @inheritParams common_docs
 #'
@@ -408,14 +413,31 @@ fetch_bbs_data <- function(level = "state",
                            release = 2022,
                            quiet = FALSE,
                            force = FALSE,
-                           compress = "none") {
+                           compression = "none") {
 
   check_in(level, c("state", "stop"))
   check_in(release, c(2020, 2022))
 
-  stopifnot(is.logical(quiet))
+  check_logical(c(quiet, force))
 
   out_dir <- bbs_dir()
+
+  if(!dir.exists(out_dir)) {
+    message(paste0("Creating data directory at ", out_dir))
+    dir.create(out_dir, recursive = TRUE)
+  } else {
+    message(paste0("Using data directory at ", out_dir))
+  }
+
+  if(level == "state") f <- paste0("bbs_state_data_", release, ".rds")
+  if(level == "stop") f <- paste0("bbs_stop_data_", release, ".rds")
+
+  if(file.exists(file.path(out_dir, f)) & !force) {
+    stop("BBS ", level, " data for the ", release, " release already exists ",
+         "(", f, ")\n",
+         "Use \"force = TRUE\" to overwrite.", call. = FALSE)
+  }
+
 
   # Print Terms of Use
   terms <- readChar(system.file(paste0("data-terms-",release),
@@ -427,25 +449,6 @@ fetch_bbs_data <- function(level = "state",
   agree <- readline(prompt = "Type \"yes\" (without quotes) to agree: ")
   if(agree != "yes") return(NULL)
 
-  if(!dir.exists(out_dir)) {
-    message(paste0("Creating data directory at ", out_dir))
-    dir.create(out_dir, recursive = TRUE)
-  } else {
-    message(paste0("Using data directory at ", out_dir))
-  }
-
-  if(level == "state") {
-    if(file.exists(paste0(out_dir, "/bbs_raw_data.RData")) & !force) {
-      stop("BBS state-level data file already exists. ",
-           "Use \"force = TRUE\" to overwrite.", call. = FALSE)
-    }
-  } else if(level == "stop"){
-    if(file.exists(paste0(out_dir, "bbs_stop_data.RData")) & !force) {
-      warning("BBS stop-level data file already exists. ",
-              "Use \"force = TRUE\" to overwrite.", call. = FALSE)
-      return()
-    }
-  }
 
   if(!quiet) message("Connecting to USGS ScienceBase...", appendLF = FALSE)
 
@@ -456,10 +459,10 @@ fetch_bbs_data <- function(level = "state",
   # Download/load Data --------------
   birds <- get_birds(level, quiet, connection, force)
   routes <- get_routes(release, quiet, connection, force)
-  weather <- get_weather(connection, force)
+  weather <- get_weather(quiet, connection, force)
   regs <- readr::read_csv(
     system.file("data-import", "regs.csv", package = "bbsBayes"),
-    col_types = "cnncc") %>%
+    col_types = "cnncc", progress = FALSE) %>%
     dplyr::rename_with(snakecase::to_snake_case) %>%
     dplyr::rename(country_num = "countrynum", state_num = "statenum")
 
@@ -489,14 +492,17 @@ fetch_bbs_data <- function(level = "state",
   if(!quiet) message("Downloading species data (Task 3/3)")
 
   temp <- tempfile()
-  full_path <- sbtools::item_file_download(sb_id = connection,
-                                           names = "SpeciesList.txt",
-                                           destinations = temp)
+  suppressMessages({
+    full_path <- sbtools::item_file_download(sb_id = connection,
+                                             names = "SpeciesList.txt",
+                                             destinations = temp)
+  })
+  if(!quiet) message("\n") # For next message
 
   if(release == 2022) lskip <- 14 #silly differences in file structure
   if(release == 2020) lskip <- 11
 
-  meta <- readr::read_lines(temp, n_max = 30)
+  meta <- readr::read_lines(temp, n_max = 30, progress = FALSE)
   lskip <- stringr::str_which(meta, "---------")
   col_names <- stringr::str_split(meta[lskip - 1], "( )+") %>%
     unlist() %>%
@@ -513,10 +519,14 @@ fetch_bbs_data <- function(level = "state",
     file = temp,
     col_positions = readr::fwf_widths(widths, col_names),
     col_types = "iiccccccc",
-    skip = lskip, locale = readr::locale(encoding = "latin1")) %>%
-    dplyr::mutate(sp_bbs = as.integer(.data$aou))
+    skip = lskip, locale = readr::locale(encoding = "latin1"),
+    progress = FALSE)
 
 
+  # Combine species forms -------------------------------------
+  b <- combine_species(birds, species, quiet)
+  birds <- b$birds
+  species <- b$species
 
   # Write Data -----------------------
   bbs_data <- list(birds = birds,
@@ -525,13 +535,10 @@ fetch_bbs_data <- function(level = "state",
                    meta = data.frame(release = release,
                                      download_date = Sys.Date()))
 
-  if(level == "state") f <- paste0("bbs_state_data_", release, ".rds")
-  if(level == "stop") f <- paste0("bbs_stop_data_", release, ".rds")
-
   f <- file.path(out_dir, f)
 
   message("Saving BBS data to ", f)
-  readr::write_rds(bbs_data, file = f, compress = compress)
+  readr::write_rds(bbs_data, file = f, compress = compression)
 
   # Clean Up -------------------------
   message("Removing temp files")
@@ -613,12 +620,12 @@ get_birds <- function(level, quiet, connection, force) {
     utils::read.csv()
 
   if(!quiet) message("Downloading count data (Task 1/3)")
-
-  full_path <- sbtools::item_file_download(
-    sb_id = connection,
-    names = count_zip,
-    destinations = file.path(tempdir(), count_zip),
-    overwrite_file = force)
+  suppressMessages({
+    full_path <- sbtools::item_file_download(
+      sb_id = connection,
+      names = count_zip,
+      destinations = file.path(tempdir(), count_zip),
+      overwrite_file = force)})
 
   unz_path <- utils::unzip(zipfile = full_path, exdir = tempdir())
 
@@ -636,7 +643,10 @@ get_birds <- function(level, quiet, connection, force) {
 
 get_routes <- function(release, quiet, connection, force) {
 
-  if (!quiet) message("Downloading route data (Task 2/3)")
+  if (!quiet) {
+    message("Downloading route data (Task 2/3)")
+    message("  - routes...")
+  }
 
   if(release == 2020) {
     # if necessary because file name changed between 2020 and 2022 releases
@@ -645,16 +655,18 @@ get_routes <- function(release, quiet, connection, force) {
     rtsfl <- "Routes.zip"
   }
 
-  full_path <- sbtools::item_file_download(
-    sb_id = connection,
-    names = rtsfl,
-    destinations = file.path(tempdir(), rtsfl),
-    overwrite_file = force)
+  suppressMessages({
+    full_path <- sbtools::item_file_download(
+      sb_id = connection,
+      names = rtsfl,
+      destinations = file.path(tempdir(), rtsfl),
+      overwrite_file = force)
+  })
 
   routes <- readr::read_csv(
     utils::unzip(zipfile = full_path, exdir = tempdir()),
     na = c("NA", "", "NULL"),
-    col_types = "nnncnnnnnnn",
+    col_types = "nnncnnnnnnn", progress = FALSE,
     locale = readr::locale(encoding = "latin1")) %>%
     dplyr::rename_with(snakecase::to_snake_case)
 
@@ -664,21 +676,64 @@ get_routes <- function(release, quiet, connection, force) {
 }
 
 
-get_weather <- function(connection, force) {
+get_weather <- function(quiet, connection, force) {
 
-  full_path <- sbtools::item_file_download(
-    sb_id = connection,
-    names = "Weather.zip",
-    destinations = file.path(tempdir(), "Weather.zip"),
-    overwrite_file = force)
+  if(!quiet) message("  - weather...")
+  suppressMessages({
+    full_path <- sbtools::item_file_download(
+      sb_id = connection,
+      names = "Weather.zip",
+      destinations = file.path(tempdir(), "Weather.zip"),
+      overwrite_file = force)
+  })
 
   weather <- readr::read_csv(
     utils::unzip(zipfile = full_path, exdir = tempdir()),
     col_types = "nnnnnnnnnnnncnnnnnn",
-    na = c("NA", "", "NULL")) %>%
+    na = c("NA", "", "NULL"), progress = FALSE) %>%
     dplyr::rename_with(snakecase::to_snake_case)
 
   unlink(full_path)
 
   weather
+}
+
+combine_species <- function(birds, species, quiet = FALSE) {
+
+  if(!quiet) message("Combining species forms for optional use")
+
+  # Species list - Rename unidentified to name of combo group
+  s <- species %>%
+    dplyr::left_join(species_forms, by = c("aou" = "aou_unid")) %>%
+    dplyr::mutate(
+      english = dplyr::if_else(
+        !is.na(.data$english_combined), .data$english_combined, .data$english),
+      french = dplyr::if_else(
+        !is.na(.data$french_combined), .data$french_combined, .data$french)) %>%
+    dplyr::select(names(species)) %>%
+    dplyr::distinct() %>%
+    dplyr::mutate(unid_combined = TRUE)
+
+  # Birds - Pull out original, non-combined, non-unidentified species, and combine
+  species_forms <- tidyr::unnest(species_forms, "aou_id")
+
+  b <- birds %>%
+    dplyr::inner_join(dplyr::select(species_forms, "aou_unid", "aou_id"),
+                      by = c("aou" = "aou_id")) %>%
+    dplyr::mutate(aou = .data$aou_unid) %>%
+    dplyr::select(-"aou_unid") %>%
+    dplyr::mutate(unid_combined = TRUE)
+
+  # Add combined species to both data sets
+  # (note that this duplicates observations/listings, but permits use of
+  # different species groupings when specifing later steps
+
+  birds <- dplyr::mutate(birds, unid_combined = FALSE) %>%
+    dplyr::bind_rows(b)
+
+  species <- dplyr::mutate(species, unid_combined = FALSE) %>%
+    dplyr::bind_rows(s)
+
+  list("birds" = birds,
+       "species" = species)
 }
