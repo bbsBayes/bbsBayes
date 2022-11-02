@@ -57,13 +57,16 @@ load_bbs_data_orig <- function(level = "state")
 #' Note that this is not necessary to run a Bayesian analysis of BBS data;
 #' calling `stratify()` will do the loading for you.
 #'
-#' @param level Character. #ither "state" or "stop", specifying which counts to
+#' @param level Character. Either "state" or "stop", specifying which counts to
 #' load. Defaults to "state", which provides counts beginning in 1966,
 #' aggregated in five bins, each of which contains cumulative counts from 10 of
 #' the 50 stops along a route. Specifying "stop" provides stop-level data
 #' beginning in 1997, which includes counts for each stop along routes
 #' individually. Note that stop-level data is not currently supported by
 #' the modelling utilities in bbsBayes.
+#' @param release
+#' @param sample
+#' @param quiet
 #'
 #' @return Large list (3 elements) consisting of:
 #' \item{birds}{Data frame of sample bird point count data per route, per year}
@@ -72,7 +75,18 @@ load_bbs_data_orig <- function(level = "state")
 #'
 #' @export
 
-load_bbs_data <- function(level = "state", release = 2022) {
+load_bbs_data <- function(level = "state", release = 2022,
+                          sample = FALSE, quiet = TRUE) {
+
+  # Return sample data
+  if(sample) {
+    if(!quiet) message("Using sample BBS data...")
+    return(bbs_data_sample)
+  }
+
+  # Return full data
+  if(!quiet) message("Loading BBS data...")
+
   bbs_dir <- rappdirs::app_dir(appname = "bbsBayes")
 
   f <- file.path(bbs_dir(), paste0("bbs_", level, "_data_", release, ".rds"))
