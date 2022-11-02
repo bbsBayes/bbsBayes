@@ -1,0 +1,99 @@
+---
+title: "Workflow"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(bbsBayes)
+library(DiagrammeR)
+library(dplyr)
+```
+
+```{r}
+n_data <- create_node_df(
+  n = 3,
+  label = c("fetch_bbs_data()",   # 1
+            "remove_bbs_data()",  # 2
+            "load_bbs_data()")    # 3
+)
+
+e_data <- create_edge_df(
+  from = c(1, 1),
+  to = c(2, 3),
+  style = "dashed")
+
+g_data <- create_graph(n_data, e_data, attr_theme = "tb")
+render_graph(g_data)
+```
+
+
+```{r}
+n_wf <- c("stratify()",         # 1
+            "prepare_data()",     # 2
+            "prepare_spatial()",  # 3
+            "run_model()",        # 4
+            "generate_indices()", # 5
+            "generate_trends()",  # 6
+            "generate_map()",     # 7
+             
+            "geofacet_plot()",     # 9
+          "plot_indices()"     # 8 
+) %>%
+  create_node_df(n = length(.), label = .)
+
+e_wf <- create_edge_df(from = c(1, 2, 3, 4, 5, 6, 5, 5, 6),
+                       to =   c(2, 4, 4, 5, 6, 7, 9, 8, 8),
+                       note = c(NA, NA, "   For\nspatial models", 
+                                NA, NA, NA, NA, NA, NA),
+                       style = "solid")
+
+g_wf <- create_graph(n_wf, e_wf, attr_theme = "tb")
+render_graph(g_wf)
+```
+
+```{r}
+n_extra <- c("get_composite_regions()", "get_final_values()",
+             "get_mcmc_list()", "get_strata_area()", "model_to_file()") %>%
+  create_node_df(n = length(.), label = .)
+e_extra <- create_edge_df(from = 1:5, to = 2:6, style = "invis")
+g_extra <- create_graph(n_extra, e_extra)
+render_graph(g_extra)
+```
+
+```{r}
+n_future <- c("stratify_custom()", "convergence()") %>%
+  create_node_df(length(.), label = .)
+```
+
+
+
+```{r}
+g <- combine_graphs(g_data, g_wf) %>%
+  add_edge(from = 1, to = 4, edge_aes = edge_aes(style = "dashed")) %>%
+  add_node_df(n_future) %>%
+  add_edge(from = 13, to = 4) %>%
+  add_edge(from = 7, to = 14, edge_aes = edge_aes(style = "solid")) %>%
+  combine_graphs(g_extra) %>%
+  add_node(label = "load_map()") %>%
+  set_node_attrs("fillcolor", "yellow", nodes = c(14, 13)) %>%
+  set_node_attrs("fillcolor", "pink", nodes = c(2, 6)) %>%
+  set_node_attrs("fontcolor", "black", nodes = 11:12) %>%
+  set_edge_attrs("style", "dashed", from = 9, to = 11) %>%
+  add_global_graph_attrs(c("color",  "fontcolor", "fontname", "shape", "fixedsize"),
+                         c("black", "black", "Courier New", "rectangle", "false"), 
+                         "node") %>%
+  add_global_graph_attrs(c("fontcolor", "color"), "#000000", "edge")
+  
+render_graph(g)
+```

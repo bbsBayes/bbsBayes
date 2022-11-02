@@ -1,0 +1,159 @@
+---
+title: "Custom Stratifications"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Custom Stratifications}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+The Stratification vignette covers how to stratify your data using existing or 
+custom stratifications. Here we will explore how to use custom stratifications 
+in later steps, such as `generate_indices()`.
+
+First, we'll load the packages we need.
+```{r setup}
+library(bbsBayes)
+library(sf)       # Spatial data manipulations
+library(dplyr)    # General data manipulations
+library(ggplot2)  # Plotting
+```
+
+
+Second, make sure you have the BBS data downloaded.
+```{r, eval = FALSE}
+fetch_bbs_data()
+```
+
+We'll start with a custom stratification example we used in the original
+Stratification vignette (see that vignette for more details regarding the
+`stratify()` step)
+
+First we need a spatial data object with polygons defining the strata.
+
+In our example we'll use WBPHS stratum boundaries for 2019.
+This is available from available from the US Fish and Wildlife Service Catalogue: <https://ecos.fws.gov/ServCat/Reference/Profile/142628>
+
+You can either download it by hand, or with the following code.
+```{r, eval = file.exists("WBPHS_stratum_boundaries_2019.zip")}
+z <- "WBPHS_stratum_boundaries_2019.zip"
+
+download.file(url = "https://ecos.fws.gov/ServCat/DownloadFile/213149",
+              destfile = z)
+unzip(z)
+unlink(z)
+```
+
+We'll load and prepare this data.
+```{r}
+map <- sf::read_sf("WBPHS_stratum_boundaries_2019.shp") %>%
+  rename(strata_name = STRAT)
+```
+
+And stratify our data!
+```{r}
+s <- stratify(by = "WBPHS_2019", species = "Canada Jay", strata_custom = map)
+```
+
+Once stratified, the next couple of steps are the same, regardless of whether 
+we're using a custom stratification or not.
+```{r}
+p <- prepare_data(s)
+```
+
+Run the model (note this is not an appropriate model, as we're aiming for speed
+rather than accuracy).
+```{r, eval = !file.exists(list.files(pattern = "BBS_STAN_first_diff_hier_(.)*.rds"))}
+m <- run_model(p, model = "first_diff", 
+               chains = 2, iter_sampling = 20, iter_warmup = 20)
+```
+
+
+```{r, echo = FALSE}
+save_model_run(m)
+m <- readr::read_rds("BBS_STAN_first_diff_hier_2022-11-02_02.rds")
+```
+
+
+Now we can start to look at the indices and trends related to our model.
+
+`generate_indices()` creates indices at different regional levels. By default
+these are "continent" and "stratum", but you can add "prov_state", "bcr",
+"bcr_by_country" (where appropriate). You can also create your own regional
+divisions and provide them as a `regions_index` data frame.
+
+For example, let's imagine we would like to calculate regional indices for 
+each stratum, country, province/state, as well as for a custom division of 
+east vs. west. 
+
+First we'll need to tell the function which strata belong to which province or 
+state, as well as which belong to the 'east' and which to the 'west.
+
+For the first, we can use a helper function `assign_prov_state()`. This function
+takes your map of strata and assigns each strata to a province or state
+depending on the amount of overlap. By default it will warn if the amount of
+overlap is less than 75%, but in this case, we will lower that cutoff to 60%.
+The plot gives us a chance to make a quick assessment of whether we're happy 
+with how the various strata have been assigned.
+
+```{r}
+rindex <- assign_prov_state(map, min_overlap = 0.6, plot = TRUE)
+```
+
+Next we'll define the east/west divide by hand. If we plot the strata by 
+name, we can pick out which are eastern and which western.
+
+```{r}
+ggplot(rindex) +
+  geom_sf(data = load_map(type = "North America")) +
+  geom_sf() +
+  geom_sf_text(aes(label = strata_name))
+
+rindex <- mutate(rindex, 
+                 east_west = if_else(as.numeric(strata_name) < 50 | 
+                                       as.numeric(strata_name) > 74,
+                                     "west", "east"))
+
+ggplot(data = rindex) +
+  geom_sf(data = load_map(type = "North America")) +
+  geom_sf(data = rindex, aes(fill = east_west), alpha = 0.5)
+
+```
+
+Now we'll create our indices and trends
+```{r}
+
+i <- generate_indices(
+  m, 
+  regions = c("stratum", "country", "prov_state", "east_west"),
+  regions_index = rindex)
+
+t <- generate_trends(i)
+```
+
+We can plot each of these indices with `plot_indices()` which creates a list
+of plots. 
+
+```{r}
+p <- plot_indices(i)
+names(p)
+
+library(patchwork)
+p[["east"]] + p[["west"]]
+```
+
+Finally we can even create geofaceted plots (which is only possible in our case
+because we assigned our strata to Provinces and States and calculated indices
+for these regions).
+```{r}
+geofacet_plot(i, trends = t, multiple = TRUE)
+```
+

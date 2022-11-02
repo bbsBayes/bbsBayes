@@ -26,13 +26,13 @@ p <- prepare_data(s,
 map <- load_map(stratify_by = "bbs_cws") %>%
     dplyr::filter(.data$ST_12 %in% unique(p$data$strata_name))
 plot(map[1])
-n <- spatial_neighbours(map, strata_col = "ST_12")
+n <- prepare_spatial(map, strata_col = "ST_12")
 
 dir.create("./model_data/")
-r <- run_model(model_data = p,
+r <- run_model(prepped_data = p,
                model = "first_diff",
                model_variant = "nonhier",
-               spatial_neighbours = n,
+               spatial_data = n,
                iter_sampling = 10, iter_warmup = 5, chains = 2,
                out_dir = "./model_data/")
 ```
