@@ -334,13 +334,20 @@ run_model <- function(prepped_data,
                       init_def = NULL,
                       out_name = NULL,
                       out_dir = ".",
+                      save_output = TRUE,
                       quiet = FALSE,
                       ...) {
 
   # Check inputs
+  check_data(prepped_data)
   model_variant <- check_model_variant(model_variant)
   model <- check_model(model, model_variant)
   basis <- check_basis(basis)
+
+  check_logical(heavy_tailed, use_pois, calculate_nu, calculate_log_lik,
+                calculate_CV, save_output, quiet)
+  check_numeric(refresh, chains, parallel_chains, iter_sampling, iter_warmup,
+                adapt_delta, max_treedepth)
 
   model_data <- prepped_data$model_data
 
@@ -352,8 +359,7 @@ run_model <- function(prepped_data,
            "`spatial_data`. ",
            "See ?run_model for details", call. = FALSE)
     }
-    check_neighbours(spatial_data,
-                     unique(prepped_data$raw_data$strata_name))
+    check_spatial(spatial_data, unique(prepped_data$raw_data$strata_name))
 
   } else if(!is.null(spatial_data)) {
     if(!quiet) message("Model isn't spatial, ignoring `spatial_data` argument")
@@ -431,10 +437,15 @@ run_model <- function(prepped_data,
     output_dir = out_dir,
     output_basename = out_name)
 
-  list("model_fit" = model_fit,
-       "non_zero_weight" = model_data$non_zero_weight,
-       "meta_data" = meta_data,
-       "raw_data" = prepped_data[["raw_data"]])
+  model_output <- list("model_fit" = model_fit,
+                       "non_zero_weight" = model_data$non_zero_weight,
+                       "meta_data" = meta_data,
+                       "meta_strata" = prepped_data[["meta_strata"]],
+                       "raw_data" = prepped_data[["raw_data"]])
+
+  if(save_output) save_model_run(model_output)
+
+  model_output
 }
 
 model_params <- function(model, n_strata, year, n_counts,
@@ -635,4 +646,61 @@ create_init_def <- function(model, model_variant, model_data, chains) {
 
   init_def
 }
+
+
+#' Save output of run_model()
+#'
+#' This function closely imitate `cmdstanr::save_object()` but saves the
+#' entire model output oject from `run_model()` which contains more details
+#' regarding stratification etc.
+#'
+#' @param model_output
+#' @param path Character. Optional file path to use for saved data. Defaults to
+#' the file path used for the original run
+#'
+#' @inheritParams common_docs
+#'
+#' @return
+#' @export
+#'
+#' @examples
+save_model_run <- function(model_output, path = NULL, quiet = FALSE) {
+
+  check_data(model_output)
+
+  model_fit <- model_output$model_fit
+
+  if(is.null(path)) {
+    path <- model_fit$output_files() %>%
+      normalizePath() %>%
+      stringr::str_remove("-[0-9]{1,3}.csv$") %>%
+      unique()
+
+    n <- length(list.files(path = dirname(path),
+                           pattern = paste0(basename(path), "[.]*.rds$")))
+
+    path <- paste0(path, "_",
+                   stringr::str_pad(n + 1, width = 2, side = "left", pad = 0),
+                   ".rds")
+    if(!quiet) message("Saving model output to ", path)
+  } else{
+    if(!dir.exists(dirname(path))) {
+      stop("Directory does not exist, please create it first (",
+           dirname(path), ")", call. = FALSE)
+    }
+  }
+
+  # Ensure all lazy data loaded (see ?cmdstanr::save_object)
+  model_fit$draws()
+  try(model_fit$sampler_diagnostics(), silent = TRUE)
+  try(model_fit$init(), silent = TRUE)
+  try(model_fit$profiles(), silent = TRUE)
+
+  # Update entire model output object and save
+  model_output[["model_fit"]] <- model_fit
+  readr::write_rds(model_output, path)
+
+  invisible(model_output)
+}
+
 
