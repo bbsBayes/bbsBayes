@@ -31,7 +31,6 @@ test_that("get_XXXX()", {
 
 })
 
-
 test_that("fetch bbs data", {
 
  skip("Long running, run by hand as needed")
@@ -61,4 +60,60 @@ test_that("fetch bbs data", {
     expect_equal(b$meta$download_date, Sys.Date())
     }
   }
+})
+
+
+test_that("combine_species()", {
+
+  bbs_data <- load_bbs_data()
+  birds <- bbs_data$birds %>% dplyr::filter(!unid_combined)
+  species <- bbs_data$species %>% dplyr::filter(!unid_combined)
+
+  expect_message(b <- combine_species(birds, species),
+                 "Combining species forms")
+
+  expect_type(b, "list") %>%
+    expect_named(c("birds", "species"))
+
+  s <- b$species
+  b <- b$birds
+
+  # Check bird counts
+
+  expect_gt(nrow(b), nrow(birds))
+  expect_true(all(birds$aou == b$aou[seq_along(birds$aou)]))
+
+  # Check specific combo
+  d1 <- dplyr::filter(birds, aou %in% c(2970, 2971, 2973))
+  b1 <- dplyr::filter(b, aou %in% c(2970, 2971, 2973))
+
+  # Expect combining to have occurred
+  dc1 <- dplyr::count(d1, .data$aou)
+  bc1 <- dplyr::count(b1, .data$aou)
+
+  # Final AOU cat (2973) should have all AOU counts in stratified
+  expect_equal(sum(dc1$n), bc1$n[3])
+
+  # But others do not change
+  expect_equal(dc1$n[1], bc1$n[1])
+  expect_equal(dc1$n[2], bc1$n[2])
+
+
+  # Check species list
+
+  expect_equal(nrow(s), nrow(species) * 2)
+  expect_true(all(species$aou == s$aou[seq_along(species$aou)]))
+
+  # Check specific combo
+  d1 <- dplyr::filter(species, aou %in% c(2970, 2971, 2973)) %>%
+    dplyr::select(-unid_combined)
+  s1 <- dplyr::filter(s, aou %in% c(2970, 2971, 2973), unid_combined) %>%
+    dplyr::select(-unid_combined)
+
+  # Final AOU cat (2973) should be the only one really different
+  # and only when combined
+  expect_equal(d1[1:2,], s1[1:2,])
+  expect_true(all(d1[3, c("english", "french")] !=
+                    s1[3, c("english", "french")]))
+
 })
