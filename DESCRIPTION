@@ -24,7 +24,8 @@ Imports:
     spdep (>= 1.2.7),
     snakecase,
     magrittr,
-    rlang (>= 0.4.11)
+    rlang (>= 0.4.11),
+    units (>= 0.8.0)
 Depends: R (>= 3.5)
 SystemRequirements: JAGS 4.3.0 (https://sourceforge.net/projects/mcmc-jags/)
 URL: https://github.com/BrandonEdwards/bbsBayes
