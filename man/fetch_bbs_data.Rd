@@ -9,7 +9,7 @@ fetch_bbs_data(
   release = 2022,
   quiet = FALSE,
   force = FALSE,
-  compress = "none"
+  compression = "none"
 )
 }
 \arguments{
@@ -23,6 +23,11 @@ data through 2021 field season) or 2020 (including data through 2019)}
 
 \item{force}{Logical. Should pre-exising BBS data be overwritten? Defaults to
 FALSE}
+
+\item{compression}{Character. What compression should be used to save data?
+Defaults to \code{none} which takes up the most space but is the fastest to
+load. Must be one of \code{none}, \code{gz}, \code{bz2}, or \code{xz} (passed to
+\code{readr::write_rds()}'s \code{compress} argument).}
 }
 \description{
 Use File Transfer Protocol (FTP) to fetch Breeding Bird Survey data from the

@@ -4,7 +4,7 @@
 \alias{load_map}
 \title{Load a map of of the geographic strata.}
 \usage{
-load_map(stratify_by)
+load_map(stratify_by = NULL, type = "strata")
 }
 \arguments{
 \item{stratify_by}{How were the data stratified?}

@@ -6,19 +6,15 @@
 \usage{
 prepare_data(
   strata_data = NULL,
-  species = NULL,
   min_year = NULL,
   max_year = NULL,
   min_n_routes = 3,
   min_max_route_years = 3,
-  min_mean_route_years = 1,
-  strata_rem = NULL
+  min_mean_route_years = 1
 )
 }
 \arguments{
 \item{strata_data}{List. Stratified data returned by \code{stratify()}}
-
-\item{species}{Character. English name of the species to run}
 
 \item{min_year}{Numeric. Minimum year to use. Default (\code{NULL}) uses first
 year in data.}
@@ -34,11 +30,20 @@ observations of species on at least 1 route. Defaults to 3}
 
 \item{min_mean_route_years}{Required minimum average of years per route with
 the species observed. Defaults to 1.}
-
-\item{strata_rem}{Character vector. Strata to remove from analysis.}
 }
 \value{
-List of data to be used for modelling as input to \code{run_model()}.
+List of prepared (meta) data to be used for modelling and further
+steps.
+\itemize{
+\item \code{model_data} list of data formatted for use in Stan modelling
+\item \code{meta_data} contains \code{species}, \code{stratify_by}, and \code{stratify_type}
+\item \code{meta_strata} contains a data frame listing strata names and area for all
+strata relevant to the data (i.e. some may have been removed due to lack of
+count data). Specifically, \code{strata_name} (the label of the stratum),
+\code{strata} (the numeric code) and \code{area_sq_km}
+\item \code{raw_data} contains a data frame of summarized data used to create
+\code{model_data} (just formatted more nicely)
+}
 }
 \description{
 Subset raw BBS data by selected species and and wrangle stratified data for
@@ -57,6 +62,5 @@ strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
 #   model 10 years of data.
 
 model_data <- prepare_data(strat_data = strat_data,
-                           species_to_run = "Pacific Wren",
                            min_year = 2009, max_year = 2018)
 }

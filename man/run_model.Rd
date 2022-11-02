@@ -26,6 +26,7 @@ run_model(
   init_def = NULL,
   out_name = NULL,
   out_dir = ".",
+  save_output = TRUE,
   quiet = FALSE,
   ...
 )

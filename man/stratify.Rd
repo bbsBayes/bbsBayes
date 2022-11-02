@@ -2,71 +2,118 @@
 % Please edit documentation in R/stratify.R
 \name{stratify}
 \alias{stratify}
-\title{Stratify raw Breeding Bird Survey data}
+\title{Stratify and filter Breeding Bird Survey data}
 \usage{
 stratify(
   by,
-  sample_data = FALSE,
-  lump_species_forms = TRUE,
+  species,
+  strata_custom = NULL,
+  combine_species_forms = TRUE,
   release = 2022,
+  sample_data = FALSE,
   quiet = FALSE
 )
 }
 \arguments{
-\item{by}{Character. Stratification type. One of "state", "bcr", "latlong",
-"bbs_cws", "bbs_usgs"}
+\item{by}{Character. Stratification type. Either an established type, one of
+"state", "bcr", "latlong", "bbs_cws", "bbs_usgs", or a custom name (see
+strata_custom for details).}
+
+\item{strata_custom}{Data frame or sf spatial data frame. Data frame
+of modified existing stratification, or a sf spatial data frame with
+polygons defining the custom stratifications. See Details.}
+
+\item{combine_species_forms}{Logical. Whether to combine ambiguous species
+forms. See Details.}
 
 \item{sample_data}{Logical. Use sample data (just Pacific Wren)}
-
-\item{lump_species_forms}{Logical. Whether to lump together species with
-multiple forms (default \code{TRUE}). See Details.}
 
 \item{quiet}{Logical. Suppress progress messages}
 }
 \value{
-Large list (3 elements) consisting of:
-\item{birds_strat}{Data frame of stratified bird counts data}
-\item{routes_strat}{Data frame of stratified routes data}
-\item{species_strat}{Data frame of stratified species data}
-\item{stratify_by}{Argument used for stratification}
+Large list with \code{meta_data}, \code{meta_strata}, \code{birds_strata}, and
+\code{routes_strata}
 }
 \description{
-Assigns each bird count data point and each route a strata based on its
-geographic location and the stratification as specified by the user.
+Assigns count data to strata and filters by species of interest. Routes are
+assigned to strata based on their geographic location and the stratification
+specified by the user. Species are filtered by matching English, French or
+Scientific names to those in the BBS species data (see \code{search_species()} for
+a flexible search to identify correct species names).
 }
 \details{
-If \code{lump_species_forms} is \code{TRUE}, species with multiple forms
-(e.g., "(unid. race) Dark-eyed Junco"), are duplicated in the data. Once
-with individual, identified, forms, and once by lumping all forms together
-(including both unidentified and identified forms). This allows users to
-specify either individual forms, (e.g., "(Oregon Junco) Dark-eyed Junco")
-or grouped forms (e.g., "Dark-eyed Junco (all forms)") in later steps
-(e.g., \code{prepare_data()}) without rerunning the \code{stratify()} step. If the
-user wishes to keep the unidentified form separate, \code{lump_species_forms}
-can be set to \code{FALSE}.
+To define a custom subset of an existing stratification, specify the
+stratification in \code{by} (e.g., "bbs_cws") and then supply a subset of
+\code{bbs_strata[["bbc_cws"]]} to \code{strata_custom} (see examples).
+
+To define a completely new custom stratification, specify the name you
+would like use in \code{by} (e.g., "east_west_divide") and then supply a spatial
+data frame with polygons identifying the different strata to
+\code{strata_custom}. Note that this data must have a column called
+\code{strata_name} which names all the strata contained (see examples).
+
+If \code{combine_species_forms} is \code{TRUE} (default), species with multiple forms
+(e.g., "unid. Dusky Grouse / Sooty Grouse") are included in overall species
+groupings (e.g., "unid." are combined with "Dusky Grouse" and "Sooty
+Grouse" into "Blue Grouse (Dusky/Sooty)"). If the user wishes to keep the
+forms separate, \code{combine_species_forms} can be set to \code{FALSE}. See the data
+frame \code{species_forms}, for which species are set to be combined with which
+other species.
+
+See \code{vignette("stratification", package = "bbsBayes")} for more details.
 }
 \examples{
 
-# Toy examples using Pacific Wren sample data
+# Sample Data - USGS BBS stara
+s <- stratify(by = "bbs_usgs", sample_data = TRUE)
 
-# Stratify by CWS USGS stratifications
-data_strat <- stratify(by = "bbs_usgs", sample_data = TRUE)
+# Full data - species and stratification
+# Use `search_species()` to get correct species name
 
-# Stratify by Bird Conservation Regions only
-data_strat <- stratify(by = "bcr", sample_data = TRUE)
+# Stratify by Bird Conservation Regions
+s <- stratify(by = "bcr", species = "Great Horned Owl")
 
-# Stratify by CWS BBS stratifications
-data_strat <- stratify(by = "bbs_cws", sample_data = TRUE)
+# Stratify by CWS BBS strata
+s <- stratify(by = "bbs_cws", species = "Canada Jay")
 
 # Stratify by State/Province/Territory only
-data_strat <- stratify(by = "state", sample_data = TRUE)
+s <- stratify(by = "prov_state", species = "Common Loon")
 
 # Stratify by blocks of 1 degree of latitude X 1 degree of longitude
-data_strat <- stratify(by = "latlong", sample_data = TRUE)
+s <- stratify(by = "latlong", species = "Snowy Owl")
 
-# To stratify the entire dataset, simply set the sample_data = FALSE,
-# or drop that argument altogether. The function then requires fetch_bbs_data()
-# to have been run (takes about 10 minutes). Stratification of the entire dataset
-# may take up to 3 minutes.
+# Use combined or non-combined species forms
+
+search_species("Sooty grouse")
+s <- stratify(by = "bbs_usgs", species = "Blue Grouse (Dusky/Sooty)")
+nrow(s$birds_strata) # Contains all Dusky, Sooty and unidentified
+
+search_species("Sooty grouse", combine_species_forms = FALSE)
+s <- stratify(by = "bbs_usgs", species = "unid. Dusky Grouse / Sooty Grouse",
+              combine_species_forms = FALSE)
+nrow(s$birds_strata) # Contains *only* unidentified
+
+
+# Stratify by a subset of an existing stratification
+library(dplyr)
+my_cws <- filter(bbs_strata[["bbs_cws"]], country_code == "CA")
+s <- stratify(by = "bbs_cws", strata_custom = my_cws, species = "Snowy Owl")
+
+my_bcr <- filter(bbs_strata[["bcr"]], strata_name == "BCR8")
+s <- stratify(by = "bcr", strata_custom = my_bcr,
+              species = "Yellow-rumped Warbler (all forms)")
+
+# Stratify by Custom stratification, using sf map object
+# e.g. with WBPHS stratum boundaries 2019
+# available: https://ecos.fws.gov/ServCat/Reference/Profile/142628
+
+\dontrun{
+map <- sf::read_sf("../WBPHS_Stratum_Boundaries_2019") \%>\%
+  rename(strata_name = STRAT) # stratify expects this column
+
+s <- stratify(by = "WBPHS_2019", strata_map = map)
+}
+
+
 
 }

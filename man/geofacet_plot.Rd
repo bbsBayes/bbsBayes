@@ -58,7 +58,7 @@ of the relevant strata) within each facet.
 s <- stratify(by = "bbs_cws", sample_data = TRUE)
 
 # Prepare the stratified data for modelling
-d <- prepare_data(s, species = "Pacific Wren",
+d <- prepare_data(s,
                   min_year = 2009,
                   max_year = 2018)
 
@@ -68,18 +68,13 @@ m <- run_model(d, model = "first_diff",
 
 # Generate indices
 i <- generate_indices(m, regions = c("stratum", "prov_state"))
-
 t <- generate_trends(i)
-# Now make the geofacet plot.
-gp <- geofacet_plot(i, trends = t, multiple = TRUE)
 
-# There is an unfortunate conflict between geofacet function in the geofacet package
-# and the S3 +.gg method in other ggplot-extension-packages like ggmcmc
-# The geofacet_plot function may fail with the following error message:
-#  Error: Don't know how to add e2 to a plot
-# If this happens, you can fix the problem by following these steps
-#   1 - save your model output
-#   2 - restart your R-session
-#   3 - reload the bbsBayes package (do not re-load the other conflicting package, e.g., ggmcmc)
+# Now make the geofacet plot.
+geofacet_plot(i, trends = t, multiple = TRUE)
+geofacet_plot(i, trends = t, multiple = TRUE, col_viridis = TRUE)
+geofacet_plot(i, multiple = TRUE)
+geofacet_plot(i, trends = t, multiple = FALSE)
+geofacet_plot(i, multiple = FALSE)
 
 }

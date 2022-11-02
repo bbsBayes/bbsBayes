@@ -7,12 +7,12 @@
 generate_indices(
   model_output = NULL,
   quantiles = c(0.025, 0.05, 0.25, 0.75, 0.95, 0.975),
-  regions = c("stratum", "continental"),
+  regions = c("stratum", "continent"),
+  regions_index = NULL,
   alternate_n = "n",
   start_year = NULL,
   drop_exclude = FALSE,
   max_backcast = NULL,
-  alt_region_names = NULL,
   quiet = FALSE
 )
 }
@@ -23,7 +23,7 @@ generate_indices(
 distribution Defaults to c(0.025,0.05,0.25,0.5,0.75,0.95,0.975)}
 
 \item{regions}{vector selecting regional compilation(s) to calculate. Default
-is "continental","stratum", options also include "national", "prov_state",
+is "continent" and "stratum". Options also include "country", "prov_state",
 "bcr", and "bcr_by_country" for the stratifications that include areas that
 align with those regions.}
 

@@ -4,16 +4,18 @@
 \alias{load_bbs_data}
 \title{Load Breeding Bird Survey dataset into R Session (TIDY)}
 \usage{
-load_bbs_data(level = "state", release = 2022)
+load_bbs_data(level = "state", release = 2022, sample = FALSE, quiet = TRUE)
 }
 \arguments{
-\item{level}{Character. #ither "state" or "stop", specifying which counts to
+\item{level}{Character. Either "state" or "stop", specifying which counts to
 load. Defaults to "state", which provides counts beginning in 1966,
 aggregated in five bins, each of which contains cumulative counts from 10 of
 the 50 stops along a route. Specifying "stop" provides stop-level data
 beginning in 1997, which includes counts for each stop along routes
 individually. Note that stop-level data is not currently supported by
 the modelling utilities in bbsBayes.}
+
+\item{quiet}{}
 }
 \value{
 Large list (3 elements) consisting of:
