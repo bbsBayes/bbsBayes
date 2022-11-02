@@ -76,12 +76,7 @@ prepare_spatial <- function(strata_map,
   # Checks
   check_sf(strata_map)
   check_sf(add_map)
-
-  if(!strata_col %in% names(strata_map)) {
-    stop("`strata_col` isn't present in `strata_map`.\n",
-         "`strata_col` must identify the column in `strata_map` that contains ",
-         "strata names", call. = FALSE)
-  }
+  check_strata_col(strata_map, strata_col)
 
   check_in(buffer_type, c("buffer", "convex_hull"))
   check_logical(voronoi, nearest_fill, quiet)
@@ -108,11 +103,9 @@ prepare_spatial <- function(strata_map,
   sf::st_agr(strata_map) <- "constant"
 
   # Specify and check types
-  geo_type <- sf::st_geometry_type(strata_map, by_geometry = FALSE) %>%
-    stringr::str_remove("MULTI") %>%
-    unique()
+  geo_types <- get_geo_types(strata_map)
 
-  if(length(geo_type)> 1) {
+  if(length(geo_type) > 1) {
     stop("Multiple geometry types in `strata_map`. ",
          "Need all (MULTI)POINTS or all (MULTI)POLYGONS", call. = FALSE)
   }
