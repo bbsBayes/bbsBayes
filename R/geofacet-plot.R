@@ -74,6 +74,11 @@
 #'
 #' @export
 #'
+#'
+#' @examples
+#'
+#'
+#' geofacet_plot_orig(i, multiple = FALSE, trends = t, stratify_by = ")
 
 
 
@@ -526,7 +531,7 @@ geofacet_plot_tidy <- function(indices_list = NULL,
 #' s <- stratify(by = "bbs_cws", sample_data = TRUE)
 #'
 #' # Prepare the stratified data for modelling
-#' d <- prepare_data(s, species = "Pacific Wren",
+#' d <- prepare_data(s,
 #'                   min_year = 2009,
 #'                   max_year = 2018)
 #'
@@ -536,19 +541,14 @@ geofacet_plot_tidy <- function(indices_list = NULL,
 #'
 #' # Generate indices
 #' i <- generate_indices(m, regions = c("stratum", "prov_state"))
-#'
 #' t <- generate_trends(i)
-#' # Now make the geofacet plot.
-#' gp <- geofacet_plot(i, trends = t, multiple = TRUE)
 #'
-#' # There is an unfortunate conflict between geofacet function in the geofacet package
-#' # and the S3 +.gg method in other ggplot-extension-packages like ggmcmc
-#' # The geofacet_plot function may fail with the following error message:
-#' #  Error: Don't know how to add e2 to a plot
-#' # If this happens, you can fix the problem by following these steps
-#' #   1 - save your model output
-#' #   2 - restart your R-session
-#' #   3 - reload the bbsBayes package (do not re-load the other conflicting package, e.g., ggmcmc)
+#' # Now make the geofacet plot.
+#' geofacet_plot(i, trends = t, multiple = TRUE)
+#' geofacet_plot(i, trends = t, multiple = TRUE, col_viridis = TRUE)
+#' geofacet_plot(i, multiple = TRUE)
+#' geofacet_plot(i, trends = t, multiple = FALSE)
+#' geofacet_plot(i, multiple = FALSE)
 #'
 #' @export
 
@@ -561,24 +561,38 @@ geofacet_plot <- function(indices,
                           add_observed_means = FALSE,
                           col_viridis = FALSE) {
 
-
   # CHECKS
+  check_data(indices)
+  stratify_by <- indices$meta_data$stratify_by
+
+  if(!"prov_state" %in% names(indices$meta_strata)) {
+    stop("Cannot create geofacet plots for data which doesn't align with ",
+         "provincial/state boundaries.\n  `indices` from `generate_indices()` ",
+         "must have had `prov_state` in the regions.", call. = FALSE)
+  } else if(multiple & !"stratum" %in% names(indices$meta_strata)) {
+    stop("Cannot create mutliple plots per geofacet if `stratum` was not a ",
+         "region used in `generate_indices()`", call. = FALSE)
+  }
 
   alpha_ribbon <- 0.5
   r <- dplyr::if_else(multiple, "stratum", "prov_state")
 
   species <- indices$meta_data$species
   stratify_by <- indices$meta_data$stratify_by
+  meta_strata <- indices$meta_strata
+
   indices <- indices$data_summary %>%
     dplyr::filter(.data$region_type == .env$r) %>%
     calc_luq(ci_width)
 
   if(!is.null(trends)) {
     tr <- TRUE
-    trends <- trends$trends
+    trends <- trends$trends %>%
+      dplyr::filter(.data$region_type == .env$r)
   } else tr <- FALSE
 
-  facets <- load_internal_file("geofacet-grids", stratify_by)
+  if(stratify_by == "bbs_cws") by <- "bbs_cws" else by <- "bbs_usgs"
+  facets <- load_internal_file("geofacet-grids", by)
 
   min_year <- min(indices$year)
   max_year <- max(indices$year)
@@ -588,19 +602,17 @@ geofacet_plot <- function(indices,
 
   # Multiple regions per plot
   if(multiple) {
-    region_names <- load_internal_file("composite-regions", stratify_by)
+    if(tr) trends <- trends %>%
+        dplyr::inner_join(meta_strata, by = c("region" = "strata_name"))
 
-    if(tr) trends <- dplyr::inner_join(trends, region_names, by = "region")
-
-    indices <- dplyr::inner_join(indices, region_names, by = "region") %>%
+    indices <- indices %>%
+      dplyr::inner_join(meta_strata, by = c("region" = "strata_name")) %>%
       dplyr::mutate(code = .data$prov_state,
                     group = .data$region)
-
   } else {
     indices <- indices %>%
       dplyr::mutate(code = .data$region,
-                    group = 1,
-                    bcr = NA)
+                    group = 1)
   }
 
   # Trends
@@ -622,33 +634,37 @@ geofacet_plot <- function(indices,
   # Labels
   tr_labs <- indices %>%
     dplyr::filter(.data$year == .env$years[2]) %>%
-    dplyr::mutate(
-      t_fmt = signif(round(.data$trend, 1), 2),
-      lbl = dplyr::case_when(
-        !multiple & !tr ~ "",
-        !multiple &  tr ~ paste(.data$t_fmt, "%/yr"),
-         multiple &  tr ~ paste0(.data$t_fmt, " BCR", .data$bcr),
-         multiple & !tr ~ paste0("BCR", .data$bcr)))
+    dplyr::mutate(t_fmt = signif(round(.data$trend, 1), 2),
+                  extra = "")
+
+  if(stratify_by %in% c("bbs_usgs", "bbs_cws")){
+    tr_labs <- dplyr::mutate(
+      tr_labs,
+      extra = paste0("BCR", stringr::str_extract(.data$region, "[0-9]{1,2}$")))
+  }
+
+  tr_labs <- dplyr::mutate(
+    tr_labs,
+    lbl = dplyr::case_when(
+      !multiple & !tr ~ "",
+      !multiple &  tr ~ paste(.data$t_fmt, "%/yr"),
+      multiple &  tr ~ paste0(.data$t_fmt, " ", extra),
+      multiple & !tr ~ extra))
 
 
   # Colours
-  if(multiple & tr) {
-    if(!col_viridis) {
-      map_palette <- c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
-                       "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")
-    } else {
-      map_palette <- c("#fde725", "#dce319", "#b8de29", "#95d840", "#73d055", "#55c667",
-                       "#238a8d", "#2d708e", "#39568c", "#453781", "#481567")
-    }
-    map_palette <- setNames(map_palette, levels(indices$trend_cat))
-  } else if (multiple & !tr) {
-    map_palette <- setNames("#39568c", "no_trends")
-  } else if(!multiple) {
-    map_palette <- setNames("#313695", "no_trends")
-  }
+  if(tr) n <- levels(indices$trend_cat) else n <- "no_trends"
+  map_palette <- dplyr::case_when(
+    !multiple ~ "#313695",
+    multiple & !tr ~ "#39568c",
+    col_viridis ~ c("#fde725", "#dce319", "#b8de29", "#95d840", "#73d055",
+                    "#55c667", "#238a8d", "#2d708e", "#39568c", "#453781",
+                    "#481567"),
+    TRUE ~ c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
+             "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")) %>%
+    setNames(n)
 
   # Plot
-
   p <- ggplot2::ggplot(data = indices) +
     ggplot2::theme(
       panel.grid.major = ggplot2::element_blank(),
@@ -693,10 +709,6 @@ geofacet_plot <- function(indices,
   suppressMessages(
     p + geofacet::facet_geo(facets = ~code, grid = facets, label = "code"))
 }
-
-
-
-
 
 
 

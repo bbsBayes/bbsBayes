@@ -306,9 +306,9 @@ plot_indices <- function(indices = NULL,
   if(!is.null(min_year)) indices <- indices[indices$year >= min_year, ]
   if(!is.null(max_year)) indices <- indices[indices$year <= max_year, ]
 
-  for (i in unique(indices$region_alt)) {
+  for (i in unique(indices$region)) {
 
-    to_plot <- indices[which(indices$region_alt == i), ]
+    to_plot <- indices[which(indices$region == i), ]
     if(title) t <- paste0(species, " - ", i) else t <- ""
 
     if(add_number_routes){
