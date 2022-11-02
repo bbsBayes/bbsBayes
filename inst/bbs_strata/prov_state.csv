@@ -1,4 +1,4 @@
-region,area_sq_km,prov_state,national,Province_State,country
+strata_name,area_sq_km,prov_state,country_code,province_state,country
 AB,662849.7799,AB,CA,Alberta,Canada
 AK,1476067.177,AK,US,ALASKA,United States of America
 AL,133473.4893,AL,US,ALABAMA,United States of America
