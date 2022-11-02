@@ -1285,18 +1285,25 @@ prepare_model_tidy <- function(model, basis, obs, n_knots, heavy_tailed) {
 #' use as input for models.
 #'
 #' @param strata_data List. Stratified data returned by `stratify()`
-#' @param species Character. English name of the species to run
 #' @param min_n_routes Numeric. Required minimum routes per strata where species
 #'   has been observed. Defaults to 3
 #' @param min_max_route_years Required minimum number of years with non-zero
 #'   observations of species on at least 1 route. Defaults to 3
 #' @param min_mean_route_years Required minimum average of years per route with
 #'   the species observed. Defaults to 1.
-#' @param strata_rem Character vector. Strata to remove from analysis.
 #'
 #' @inheritParams common_docs
 #'
-#' @return List of data to be used for modelling as input to `run_model()`.
+#' @return List of prepared (meta) data to be used for modelling and further
+#'   steps.
+#'   - `model_data` list of data formatted for use in Stan modelling
+#'   - `meta_data` contains `species`, `stratify_by`, and `stratify_type`
+#'   - `meta_strata` contains a data frame listing strata names and area for all
+#'   strata relevant to the data (i.e. some may have been removed due to lack of
+#'   count data). Specifically, `strata_name` (the label of the stratum),
+#'   `strata` (the numeric code) and `area_sq_km`
+#'   - `raw_data` contains a data frame of summarized data used to create
+#'   `model_data` (just formatted more nicely)
 #'
 #' @export
 #'
@@ -1313,32 +1320,22 @@ prepare_model_tidy <- function(model, basis, obs, n_knots, heavy_tailed) {
 #' #   model 10 years of data.
 #'
 #' model_data <- prepare_data(strat_data = strat_data,
-#'                            species_to_run = "Pacific Wren",
 #'                            min_year = 2009, max_year = 2018)
 
 prepare_data <- function(strata_data = NULL,
-                         species = NULL,
                          min_year = NULL,
                          max_year = NULL,
                          min_n_routes = 3,
                          min_max_route_years = 3,
-                         min_mean_route_years = 1,
-                         strata_rem = NULL) {
+                         min_mean_route_years = 1) {
 
   # Checks
-  if(is.null(strata_data)) stop("No data supplied", call. = FALSE)
-  if(is.null(species)) stop("No species specified", call. = FALSE)
-
-  species <- check_species(species, strata_data$species_strat)
-
-  # More checks...
-
+  check_data(strata_data)
+  check_numeric(min_year, max_year, allow_null = TRUE)
+  check_numeric(min_n_routes, min_max_route_years, min_mean_route_years)
 
   # Get observations of interest
-  sp_aou <- get_species_aou(strata_data$species_strata, species)
-
   obs <- strata_data$birds_strata %>%
-    dplyr::filter(aou == .env$sp_aou) %>%
     dplyr::rename(count = "species_total") %>%
     dplyr::select("route", "count", "year", "rpid")
 
@@ -1350,28 +1347,28 @@ prepare_data <- function(strata_data = NULL,
     dplyr::mutate(count = tidyr::replace_na(.data$count, 0))
 
   # Filter observations
-  if(!is.null(strata_rem)) {
-    obs <- dplyr::filter(obs, !.data$strata_name %in% .env$strata_rem)
-  }
   if(!is.null(min_year)) obs <- dplyr::filter(obs, .data$year >= .env$min_year)
   if(!is.null(max_year)) obs <- dplyr::filter(obs, .data$year <= .env$max_year)
 
-  routes_meta <- obs %>%
+  routes <- obs %>%
     dplyr::group_by(.data$strata_name, .data$route) %>%
-    dplyr::summarize(first_year = min(.data$year), # First year each route was run
-                     n = dplyr::n(),
-                     n_obs = length(.data$count[.data$count > 0]),   # At least 1 counted
-                     .groups = "drop")
+    dplyr::summarize(
+      # First year each route was run
+      first_year = min(.data$year),
+      n = dplyr::n(),
+      # At least 1 counted
+      n_obs = length(.data$count[.data$count > 0]),
+      .groups = "drop")
 
-  routes_ever <- routes_meta %>%
+  routes_ever <- routes %>%
     dplyr::filter(.data$n_obs > 0)
 
-  routes_never <- routes_meta %>%
+  routes_never <- routes %>%
     dplyr::filter(.data$n_obs == 0)
 
   if(nrow(routes_ever) > 0) {
 
-    strata_meta <- routes_meta %>%
+    routes_by_strata <- routes %>%
       dplyr::group_by(.data$strata_name) %>%
       dplyr::summarize(n_routes = dplyr::n(),
                        n_routes_ever = sum(.data$n_obs > 0),
@@ -1394,12 +1391,17 @@ prepare_data <- function(strata_data = NULL,
                     .data$max_n_routes_year >= .env$min_max_route_years,
                     .data$mean_obs >= .env$min_mean_route_years)
 
+    if(nrow(routes_by_strata) == 0) {
+      stop("Not enough routes where this species was counted.\nConsider ",
+           "adjusting `min_n_routes`, `min_max_route_years`, and/or ",
+           "`min_mean_route_years`\n", call. = FALSE)
+    }
 
 
     # Only keep obs where route ever had that species
     obs_ever <- dplyr::semi_join(obs, routes_ever, by = "route") %>%
       # Only keep obs where strata meets minimum requirements
-      dplyr::inner_join(strata_meta, by = "strata_name") %>%
+      dplyr::inner_join(routes_by_strata, by = "strata_name") %>%
       # Create numeric years from start
       dplyr::mutate(year_num = .data$year - min(.data$year) + 1)
 
@@ -1409,6 +1411,7 @@ prepare_data <- function(strata_data = NULL,
 
   obs_final <- obs_ever %>%
     dplyr::mutate(
+      # Create strata numbers here to get final set (rather than in stratify())
       strata = as.numeric(factor(.data$strata_name)),
       observer = as.integer(factor(.data$obs_n)),
       site = as.integer(factor(.data$route)),
@@ -1481,12 +1484,14 @@ prepare_data <- function(strata_data = NULL,
   )
 
   # Extra
-  meta_data <- list(species = species,
-                    stratify_by = strata_data$meta_data$stratify_by)
+  meta_strata <- dplyr::select(obs_final, "strata_name", "strata") %>%
+    dplyr::distinct() %>%
+    dplyr::left_join(strata_data$meta_strata, by = "strata_name")
 
   raw_data <- dplyr::select(obs_final, -dplyr::matches("^(n|p)_routes_"))
 
   list("model_data" = model_data,
-       "meta_data" = meta_data,
+       "meta_data" = strata_data$meta_data,
+       "meta_strata" = meta_strata,
        "raw_data" = raw_data)
 }
