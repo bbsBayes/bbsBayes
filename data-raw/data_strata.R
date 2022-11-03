@@ -20,7 +20,7 @@ library(assertr) # Checks to make sure data is as it should be in the end
 # are calculated from that.
 
 # USGS --------------------------------------------------
-strata_bbs_usgs <- load_map("bbs_usgs") %>%
+strata_bbs_usgs <- load_map("bbs_usgs", type = "dev") %>%
   st_make_valid() %>% # As needed when st_is_valid() fails
   rename_with(.fn = ~"strata_name", .cols = dplyr::any_of(c("strata_name", "ST_12"))) %>%
   select(strata_name) %>%
@@ -76,7 +76,8 @@ st_write(strata_bbs_cws,
 
 # BCR ----------------------------------------------------
 
-strata_bcr <- load_map("bcr") %>%
+strata_bcr <- load_map("bcr", type = "dev") %>%
+  sf::st_make_valid() %>%
   rename_with(.fn = ~"strata_name", .cols = dplyr::any_of(c("strata_name", "ST_12"))) %>%
   select(strata_name) %>%
   mutate(area_sq_km = as.numeric(units::set_units(st_area(.), "km^2"))) %>%
@@ -88,26 +89,12 @@ strata_bcr <- load_map("bcr") %>%
 # waldo::compare(arrange(load_internal_file("bbs_strata", "bcr"), strata_name),
 #                arrange(s, strata_name), tolerance = 0.1)
 
-routes <- s$routes_strata %>%
-  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) %>%
-  filter(bcr == 31) %>%
-  st_transform(st_crs(strata_bcr))
-
-ll <- st_join(strata_latlong, filter(strata_bcr, strata_name == "BCR31")) %>% filter(!is.na(strata_name.y))
-
-ggplot() +
-  geom_sf(data = filter(strata_bcr, strata_name == "BCR31"), colour = "red", size = 2) +
-  geom_sf(data = routes) +
-  geom_sf(data = ll, fill = NA)
-
-
-
 st_write(strata_bcr, file.path(system.file("maps", package = "bbsBayes"),
                                "bcr_strata.gpkg"), append = FALSE)
 
 # Latitude/Longitude -------------------------------------------------
 
-strata_latlong <- load_map("latlong") %>%
+strata_latlong <- load_map("latlong", type = "dev") %>%
   rename_with(.fn = ~"strata_name", .cols = dplyr::any_of(c("strata_name", "ST_12"))) %>%
   select(strata_name) %>%
   mutate(area_sq_km = as.numeric(units::set_units(st_area(.), "km^2"))) %>%
@@ -128,7 +115,7 @@ st_write(strata_latlong, file.path(system.file("maps", package = "bbsBayes"),
 prov_state_names <- format_ne_states() %>%
   st_drop_geometry()
 
-strata_prov_state <- load_map("prov_state") %>%
+strata_prov_state <- load_map("prov_state", type = "dev") %>%
   rename_with(.fn = ~"strata_name", .cols = dplyr::any_of(c("strata_name", "ST_12"))) %>%
   select(strata_name) %>%
   mutate(area_sq_km = as.numeric(units::set_units(st_area(.), "km^2"))) %>%

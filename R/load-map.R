@@ -21,8 +21,8 @@
 
 load_map <- function(stratify_by = NULL, type = "strata") {
 
-  if(type == "strata") {
-    stratify_by <- check_strata(stratify_by, simple = TRUE)
+  if(type %in% c("strata", "dev")) {
+    if(type != "dev") stratify_by <- check_strata(stratify_by, simple = TRUE)
 
     f <- system.file("maps", package = "bbsBayes") %>%
       list.files(pattern = paste0(stratify_by, "_strata"),
