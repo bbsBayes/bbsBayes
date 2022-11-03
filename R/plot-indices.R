@@ -244,7 +244,7 @@ plot_indices_orig <- function(indices_list = NULL,
 #' s <- stratify(by = "bbs_cws", sample_data = TRUE)
 #'
 #' # Prepare the stratified data for modelling
-#' d <- prepare_data(s, species = "Pacific Wren",
+#' d <- prepare_data(s,
 #'                   min_year = 2009,
 #'                   max_year = 2018)
 #'
@@ -252,9 +252,9 @@ plot_indices_orig <- function(indices_list = NULL,
 #' m <- run_model(d, model = "first_diff",
 #'                iter_sampling = 5, iter_warmup = 5, chains = 2)
 #'
-#' # Generate national, continental, and stratum indices
+#' # Generate country, continent, and stratum indices
 #' i <- generate_indices(model_output = m,
-#'                       regions = c("national", "continental", "stratum"))
+#'                       regions = c("country", "continent", "stratum"))
 #'
 #' # Now, plot_indices() will generate a list of plots for all regions
 #' plots <- plot_indices(i)
@@ -265,7 +265,7 @@ plot_indices_orig <- function(indices_list = NULL,
 #' names(plots)
 #'
 #' # Suppose we wanted to access the continental plot. We could do so with
-#' cont_plot <- plots[["Continental"]]
+#' cont_plot <- plots[["continental"]]
 #'
 #' # You can specify to only plot a subset of years using min_year and max_year
 #'
@@ -333,7 +333,7 @@ plot_indices <- function(indices = NULL,
       ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
                      panel.grid.minor = ggplot2::element_blank(),
                      panel.background = ggplot2::element_blank(),
-                     axis.line = element_line(colour = "black"),
+                     axis.line = ggplot2::element_line(colour = "black"),
                      plot.title = ggplot2::element_text(size = title_size),
                      axis.title = ggplot2::element_text(size = axis_title_size),
                      axis.text = ggplot2::element_text(size = axis_text_size)) +

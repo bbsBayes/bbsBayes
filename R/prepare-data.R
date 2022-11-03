@@ -1319,8 +1319,7 @@ prepare_model_tidy <- function(model, basis, obs, n_knots, heavy_tailed) {
 #' #   maximum year as 2018, effectively only setting up to
 #' #   model 10 years of data.
 #'
-#' model_data <- prepare_data(strat_data = strat_data,
-#'                            min_year = 2009, max_year = 2018)
+#' model_data <- prepare_data(strat_data, min_year = 2009, max_year = 2018)
 
 prepare_data <- function(strata_data = NULL,
                          min_year = NULL,

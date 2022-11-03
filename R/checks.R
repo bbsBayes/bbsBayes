@@ -162,7 +162,7 @@ check_strata <- function(strata, custom = NULL, simple = FALSE,
 
 check_regions <- function(regions, stratify_by, stratify_type, regions_index = NULL) {
 
-  r <- c("continent", "stratum", "prov_state", "bcr", "bcr_by_country")
+  r <- c("continent", "country", "stratum", "prov_state", "bcr", "bcr_by_country")
 
   if(!is.null(regions_index)) {
     if(!"strata_name" %in% names(regions_index)) {
