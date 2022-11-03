@@ -307,10 +307,9 @@ run_model_orig <- function(jags_data = NULL,
 #' # knots to use for the GAM basis.
 #' # By default, the number of knots will be equal to the floor
 #' # of the total unique years for the species / 4
-#' model_data <- prepare_data(strat_data = strat_data,
-#'                            species_to_run = "Pacific Wren",
-#'                            model = "gam",
-#'                            n_knots = 9)
+#' #model_data <- prepare_data(strat_data,
+#' #                           model = "gam",
+#' #                           n_knots = 9)
 #'
 run_model <- function(prepped_data,
                       model,
@@ -399,10 +398,13 @@ run_model <- function(prepped_data,
 
 
   # Keep track of data
-  meta_data <- prepped_data[["meta_data"]]
-  meta_data[["model"]] <- model
-  meta_data[["model_variant"]] <- model_variant
-  meta_data[["run_date"]] <- Sys.time()
+  meta_data <- append(
+    prepped_data[["meta_data"]],
+    list("model" = model,
+         "model_variant" = model_variant,
+         "run_date" = Sys.time(),
+         "cmdstan_path" = cmdstanr::cmdstan_path(),
+         "cmdstan_version" = cmdstanr::cmdstan_version()))
 
   # Get initial values
   if(is.null(init_def)) {
@@ -434,7 +436,8 @@ run_model <- function(prepped_data,
     max_treedepth = max_treedepth,
     init = init_def,
     output_dir = out_dir,
-    output_basename = out_name)
+    output_basename = out_name,
+    ...)
 
   model_output <- list("model_fit" = model_fit,
                        "non_zero_weight" = model_data$non_zero_weight,
