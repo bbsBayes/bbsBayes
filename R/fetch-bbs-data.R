@@ -550,9 +550,10 @@ bbs_dir <- function() {
   rappdirs::app_dir(appname = "bbsBayes")$data()
 }
 
-#' Remove BBS data from cache
+#' Remove bbsBayes cache
 #'
-#' Remove all or some of the data downloaded via `fetch_bbs_data()`
+#' Remove all or some of the data downloaded via `fetch_bbs_data()` as well as
+#' model executables created by `cmdstanr::cmdstan_model()` via `run_model()`.
 #'
 #' @param level Character. Data to remove, one of "all", "state", or "stop"
 #' @param release Character/Numeric. Data to remove, one of "all", 2020, or 2022
@@ -567,26 +568,30 @@ bbs_dir <- function() {
 #'
 #' \dontrun{
 #' # Remove everything
-#' remove_bbs_data(cache_dir = TRUE)
+#' remove_cache(type = "all")
 #'
-#' # Remove all files (but not the dir)
-#' remove_bbs_data(level = "all", release = "all")
+#' # Remove all BBS data files (but not the dir)
+#' remove_cache(level = "all", release = "all")
 #'
 #' # Remove all 'stop' data
-#' remove_bbs_data(level = "stop", release = "all")
+#' remove_cache(level = "stop", release = "all")
 #'
 #' # Remove all 2020 data
-#' remove_bbs_data(level = "all", release = 2020)
+#' remoremove_cacheve_bbs_data(level = "all", release = 2020)
 #'
 #' # Remove 2020 stop data
-#' remove_bbs_data(level = "stop", release = 2020)
+#' remove_cache(level = "stop", release = 2020)
+#'
+#' # Remove all model executables
+#' remove_cache(type = "model")
 #' }
 #'
-remove_bbs_data <- function(level, release, cache_dir = FALSE) {
-  if(cache_dir) {
-    message("Removing all data files and cache directory")
+remove_cache <- function(type = "bbs_data", level, release) {
+  if(type == "all") {
+    message("Removing all data files (BBS data and Stan models) ",
+            "and cache directory")
     unlink(bbs_dir(), recursive = TRUE)
-  } else {
+  } else if(type == "bbs_data") {
     check_in(level, c("all", "state", "stop"))
     check_in(release, c("all", 2020, 2022))
 
@@ -594,14 +599,15 @@ remove_bbs_data <- function(level, release, cache_dir = FALSE) {
     if(release == "all") release <- c("2020", "2022")
 
     f <- file.path(bbs_dir(), paste0("bbs_", level, "_data_", release, ".rds"))
-
-    if(any(file.exists(f))) {
-      message("Removing ",
-              paste0(f[file.exists(f)], collapse = ", "),
-              " from the cache")
-      unlink(f)
-    } else message("No data files to remove")
+    f <- f[file.exists(f)]
+  } else if(type == "models") {
+    f <- list.files(bbs_dir(), "CV$", full.names = TRUE)
   }
+
+  if(length(f) > 0) {
+    message("Removing ", paste0(f, collapse = ", "), " from the cache")
+    unlink(f)
+  } else message("No data files to remove")
 }
 
 #' Check whether BBS data exists

@@ -423,7 +423,7 @@ run_model <- function(prepped_data,
   }
 
   # Compile model
-  model <- cmdstanr::cmdstan_model(model)
+  model <- cmdstanr::cmdstan_model(model, dir = bbs_dir())
 
   # What here should be changeable? can use ... and reference cmdstanr docs...
   model_fit <- model$sample(
