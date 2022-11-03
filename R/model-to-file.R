@@ -9,8 +9,6 @@
 #'
 #' @return None
 #'
-#' @export
-#'
 #' @examples
 #'
 #' # Save the Slope model to a file called "slope.txt" in temp directory
@@ -29,6 +27,7 @@
 #' model_to_file(model = "gamye",
 #'               filename = file.path(tempdir(), "gamye.txt"))
 #'
+#' @noRd
 
 model_to_file <- function(model = NULL,
                           filename = NULL,

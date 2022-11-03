@@ -52,10 +52,7 @@
 #' # to have been run (takes about 10 minutes). Stratification of the entire dataset
 #' # may take up to 3 minutes.
 #'
-#' @importFrom progress progress_bar
-#' @importFrom rappdirs app_dir
-#' @export
-#'
+#' @noRd
 
 stratify_orig <- function(by = NULL,
                      sample_data = FALSE,

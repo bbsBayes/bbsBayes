@@ -36,8 +36,6 @@
 #' @param ... Additional arguments
 #' @return jagsUI object
 #'
-#' @importFrom jagsUI jags
-#' @export
 #'
 #' @examples
 #'
@@ -67,6 +65,7 @@
 #'                       n_thin = 1,
 #'                       parameters_to_save = c("n", "strata"))
 #'
+#' @noRd
 
 run_model_orig <- function(jags_data = NULL,
                       model_file_path = NULL,

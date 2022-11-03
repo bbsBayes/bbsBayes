@@ -15,9 +15,6 @@
 #'
 #' @return spplot object
 #'
-#' @importFrom sf read_sf
-#' @importFrom dplyr left_join
-#' @importFrom ggplot2 geom_sf
 #'
 #' @examples
 #' # Toy example with Pacific Wren sample data
@@ -51,8 +48,9 @@
 #'                     stratify_by = "bbs_cws",
 #'                     select = TRUE,
 #'                     species = "Pacific Wren")
-#' @export
 #'
+#' @noRd
+
 
 generate_map_orig <- function(trend = NULL,
                               select = FALSE,

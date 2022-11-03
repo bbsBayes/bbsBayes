@@ -25,11 +25,6 @@
 #'
 #' @return ggplot object
 #'
-#' @importFrom geofacet facet_geo
-#' @importFrom ggplot2 ggplot theme element_blank element_line
-#' labs geom_line geom_ribbon aes element_text element_rect margin
-#' @importFrom grDevices grey
-#' @importFrom ggrepel geom_text_repel
 #'
 #' @examples
 #'
@@ -72,13 +67,13 @@
 #' #   2 - restart your R-session
 #' #   3 - reload the bbsBayes package (do not re-load the other conflicting package, e.g., ggmcmc)
 #'
-#' @export
-#'
 #'
 #' @examples
 #'
 #'
 #' geofacet_plot_orig(i, multiple = FALSE, trends = t, stratify_by = ")
+#'
+#' @noRd
 
 
 
@@ -517,12 +512,6 @@ geofacet_plot_tidy <- function(indices_list = NULL,
 #' @inheritParams common_docs
 #'
 #' @return ggplot object
-#'
-#' @importFrom geofacet facet_geo
-#' @importFrom ggplot2 ggplot theme element_blank element_line
-#' labs geom_line geom_ribbon aes element_text element_rect margin
-#' @importFrom grDevices grey
-#' @importFrom ggrepel geom_text_repel
 #'
 #' @examples
 #'

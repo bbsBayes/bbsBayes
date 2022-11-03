@@ -19,10 +19,6 @@
 #' @return List of ggplot objects, each entry being a plot
 #'   of a stratum indices
 #'
-#' @importFrom ggplot2 ggplot theme element_blank element_line
-#' labs geom_line geom_ribbon aes element_text
-#' @importFrom stringr str_replace_all
-#' @importFrom grDevices grey
 #'
 #'
 #' @examples
@@ -76,9 +72,7 @@
 #'                                     min_year = 2011,
 #'                                     max_year = 2016,
 #'                                     species = "Pacific Wren")
-#'
-#' @export
-#'
+#' @noRd
 
 plot_indices_orig <- function(indices_list = NULL,
                          ci_width = 0.95,

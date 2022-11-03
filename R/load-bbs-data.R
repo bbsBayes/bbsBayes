@@ -18,8 +18,7 @@
 #' \item{route}{Data frame of sample yearly route data}
 #' \item{species}{Sample list of North American bird species}
 #'
-#' @export
-#'
+#' @noRd
 
 load_bbs_data_orig <- function(level = "state")
 {

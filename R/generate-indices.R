@@ -36,7 +36,6 @@
 #'   \item{y_max}{last year used in the summary, scale 1:length of time-series}
 #'   \item{startyear}{first year used in the summary, scale 1966:2018}
 #'
-#' @importFrom stats quantile
 #'
 #' @examples
 #'
@@ -68,8 +67,7 @@
 #'                                 jags_data = jags_data,
 #'                                 regions = c("national"))
 #'
-#' @export
-#'
+#' @noRd
 
 generate_indices_orig <- function(jags_mod = NULL,
                              jags_data = NULL,
@@ -373,7 +371,6 @@ generate_indices_orig <- function(jags_mod = NULL,
 #'   \item{y_max}{last year used in the summary, scale 1:length of time-series}
 #'   \item{start_year}{first year used in the summary, scale 1966:2018}
 #'
-#' @importFrom stats quantile
 #'
 #' @examples
 #'
@@ -405,8 +402,7 @@ generate_indices_orig <- function(jags_mod = NULL,
 #'                                 jags_data = jags_data,
 #'                                 regions = c("national"))
 #'
-#' @export
-#'
+#' @noRd
 
 generate_indices_tidy <- function(jags_mod = NULL,
                                   jags_data = NULL,

@@ -37,9 +37,6 @@
 #'   \item{Mean_Number_of_Routes}{The average number of BBS routes across years contributing data for this region and species}
 #'   \item{backcast_flag}{approximate proportion of the included species range*years that are supported by data in a given region and year, e.g., 1.0 = data cover full time-series, 0.75 = data cover 75 percent of time-series. Only calculated if max_backcast != NULL}
 #'
-#' @importFrom stats quantile
-#' @importFrom stringr str_split
-#'
 #'
 #' @examples
 #'
@@ -68,9 +65,7 @@
 #' # Now, generate the trends
 #' trends <- generate_trends(indices = indices)
 #'
-#'
-#' @export
-#'
+#' @noRd
 
 generate_trends_orig <- function(indices = NULL,
                             Min_year = NULL,

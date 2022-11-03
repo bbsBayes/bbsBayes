@@ -20,16 +20,10 @@
 #' @param quiet Logical: should progress bars be suppressed? Defaults to FALSE
 #' @param force Logical: if BBS data already exists on computer, should it be overwritten? Defaults to FALSE
 #'
-#' @importFrom utils download.file read.csv read.fwf unzip
-#' @importFrom sbtools item_get item_file_download
-#' @importFrom progress progress_bar
-#' @importFrom rappdirs app_dir
 #'
 #' @return None
 #'
-#' @export
-#'
-#'
+
 fetch_bbs_data_orig <- function(level = "state",
                            release = 2022,
                            quiet = FALSE,
@@ -400,7 +394,7 @@ tick <- function(pb, quiet) {
 #'   along routes individually. Note that stop-level data is not currently
 #'   supported by the modelling utilities in bbsBayes.
 #'
-#' @examples
+#' @examplesIf interactive()
 #'
 #' fetch_bbs_data(force = TRUE)
 #' fetch_bbs_data(level = "stop", force = TRUE)

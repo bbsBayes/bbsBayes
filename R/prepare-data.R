@@ -45,12 +45,6 @@
 #'   \item{nknots}{Number of knots to use for smooting functions, included only with GAM}
 #'   \item{X.basis}{Basis function for n smoothing functions, included only with GAM}
 #'
-#' @importFrom stats median
-#' @importFrom progress progress_bar
-#' @importFrom mgcv s
-#' @importFrom mgcv smoothCon
-#' @export
-#'
 #' @examples
 #' # Toy example with Pacific Wren sample data
 #' # First, stratify the sample data
@@ -77,7 +71,7 @@
 #'                            model = "gam",
 #'                            n_knots = 9)
 #'
-#'
+#' @noRd
 
 prepare_data_orig <- function(strat_data = NULL,
                          species_to_run = NULL,
@@ -480,11 +474,6 @@ prepare_data_orig <- function(strat_data = NULL,
 #'   \item{nknots}{Number of knots to use for smooting functions, included only with GAM}
 #'   \item{X.basis}{Basis function for n smoothing functions, included only with GAM}
 #'
-#' @importFrom stats median
-#' @importFrom progress progress_bar
-#' @importFrom mgcv s
-#' @importFrom mgcv smoothCon
-#' @export
 #'
 #' @examples
 #' # Toy example with Pacific Wren sample data
@@ -512,7 +501,7 @@ prepare_data_orig <- function(strat_data = NULL,
 #'                            model = "gam",
 #'                            n_knots = 9)
 #'
-#'
+#' @noRd
 
 prepare_data_tidy <- function(strat_data = NULL,
                               species_to_run = NULL,
@@ -722,11 +711,6 @@ prepare_data_tidy <- function(strat_data = NULL,
 #'   \item{nknots}{Number of knots to use for smooting functions, included only with GAM}
 #'   \item{X.basis}{Basis function for n smoothing functions, included only with GAM}
 #'
-#' @importFrom stats median
-#' @importFrom progress progress_bar
-#' @importFrom mgcv s
-#' @importFrom mgcv smoothCon
-#' @export
 #'
 #' @examples
 #' # Toy example with Pacific Wren sample data
@@ -754,7 +738,7 @@ prepare_data_tidy <- function(strat_data = NULL,
 #'                            model = "gam",
 #'                            n_knots = 9)
 #'
-#'
+#' @noRd
 
 prepare_data_stan1 <- function(strat_data = NULL,
                               species_to_run = NULL,
