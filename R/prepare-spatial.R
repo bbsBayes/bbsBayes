@@ -3,9 +3,8 @@
 #' Given a spatial data frame containing polygons or points to outline strata,
 #' a neighbourhood matrix is identified for use in `run_model()`
 #'
-#' @param strata_map sf data frame. Map of the strata in (MULTI)POLYGONs or
-#'   (MULTI)POINTs. Must have column "strata_name" matching strata output from
-#'   `prepare_data()`.
+#' @param strata_map sf data frame. Map of the strata in (MULTI)POLYGONs. Must
+#'   have column "strata_name" matching strata output from `prepare_data()`.
 #' @param voronoi Logical. Whether or not to use Voroni method for polygons.
 #'   (Must use Voronoi method for points).
 #' @param nearest_fill Logical. For strata with no neighbours, whether or not to

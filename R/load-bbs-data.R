@@ -56,13 +56,8 @@ load_bbs_data_orig <- function(level = "state")
 #' Note that this is not necessary to run a Bayesian analysis of BBS data;
 #' calling `stratify()` will do the loading for you.
 #'
-#' @param level Character. Either "state" or "stop", specifying which counts to
-#' load. Defaults to "state", which provides counts beginning in 1966,
-#' aggregated in five bins, each of which contains cumulative counts from 10 of
-#' the 50 stops along a route. Specifying "stop" provides stop-level data
-#' beginning in 1997, which includes counts for each stop along routes
-#' individually. Note that stop-level data is not currently supported by
-#' the modelling utilities in bbsBayes.
+#' @inheritParams common_docs
+#'
 #'
 #' @return Large list (3 elements) consisting of:
 #' \item{birds}{Data frame of sample bird point count data per route, per year}

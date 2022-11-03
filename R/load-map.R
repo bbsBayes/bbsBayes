@@ -5,6 +5,8 @@
 #'
 #' @param stratify_by Character. Stratification type. One of
 #'   "prov_state", "bcr", "latlong", "bbs_cws", "bbs_usgs".
+#' @param type Character. "strata" or political map ("North America", "Canada"
+#'   or "US"/"USA"/"United States of America").
 #'
 #' @return sf polygon object
 #'

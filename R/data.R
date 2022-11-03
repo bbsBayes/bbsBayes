@@ -59,6 +59,7 @@
 #' stratification.
 #'
 #' Contains `bbs_usgs`, `bbs_cws`, `bcr`, `latlong` and `prov_state`
+"bbs_strata"
 
 #' Example model output
 #'
