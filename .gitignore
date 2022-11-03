@@ -19,6 +19,6 @@ R/*abundance.R
 arch/
 
 inst/doc
-inst/model_outputs
-inst/models/*_CV$
+model_outputs
 docs
+DEVTESTS

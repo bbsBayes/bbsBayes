@@ -17,6 +17,8 @@ generate_indices(
 )
 }
 \arguments{
+\item{model_output}{List. Output of \code{run_model()}.}
+
 \item{quantiles}{vector of quantiles to be sampled from the posterior
 distribution Defaults to c(0.025,0.05,0.25,0.5,0.75,0.95,0.975)}
 
@@ -53,6 +55,8 @@ year of the BBS and start_year+max_backcast, the stratum is flagged within
 the relevant regional summary. Default value, NULL ignores any backcasting
 limit (i.e., generates annual indices for the entire time series,
 regardless of when the species was first observed)}
+
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
 }
 \value{
 List of 6 objects

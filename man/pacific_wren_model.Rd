@@ -3,7 +3,7 @@
 \docType{data}
 \name{pacific_wren_model}
 \alias{pacific_wren_model}
-\title{List of established strata}
+\title{Example model output}
 \format{
 An object of class \code{list} of length 5.
 }
@@ -11,13 +11,6 @@ An object of class \code{list} of length 5.
 pacific_wren_model
 }
 \description{
-Each list item contains a data frame describing the strata for that
-stratification.
-}
-\details{
-Contains \code{bbs_usgs}, \code{bbs_cws}, \code{bcr}, \code{latlong} and \code{prov_state}
-Example model output
-
 Pacific wren model output
 }
 \keyword{datasets}

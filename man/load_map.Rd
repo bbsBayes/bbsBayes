@@ -9,6 +9,9 @@ load_map(stratify_by = NULL, type = "strata")
 \arguments{
 \item{stratify_by}{Character. Stratification type. One of
 "prov_state", "bcr", "latlong", "bbs_cws", "bbs_usgs".}
+
+\item{type}{Character. "strata" or political map ("North America", "Canada"
+or "US"/"USA"/"United States of America").}
 }
 \value{
 sf polygon object

@@ -62,13 +62,6 @@ test_that("check_sf()", {
   expect_error(check_sf("Hi"), "must be an 'sf' spatial data frame")
   expect_error(check_sf(map[0,]), "Empty spatial data frame")
 
-  # Invalid properties
-  map <- sf::read_sf(system.file("maps", "BBS_USGS_strata.shp",
-                                 package = "bbsBayes"))
-  expect_error(check_sf(map), "Invalid spatial properties found")
-
-  # All good once fixed
-  map <- sf::st_make_valid(map)
   expect_silent(check_sf(map))
 
 })

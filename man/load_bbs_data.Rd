@@ -7,13 +7,13 @@
 load_bbs_data(level = "state", release = 2022, sample = FALSE, quiet = TRUE)
 }
 \arguments{
-\item{level}{Character. Either "state" or "stop", specifying which counts to
-load. Defaults to "state", which provides counts beginning in 1966,
-aggregated in five bins, each of which contains cumulative counts from 10 of
-the 50 stops along a route. Specifying "stop" provides stop-level data
-beginning in 1997, which includes counts for each stop along routes
-individually. Note that stop-level data is not currently supported by
-the modelling utilities in bbsBayes.}
+\item{level}{Character. Which type of BBS counts to fetch, "state" or "stop".
+Defaults to "state".}
+
+\item{release}{Numeric. Yearly release. Options are 2022 (default including
+data through 2021 field season) or 2020 (including data through 2019)}
+
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
 }
 \value{
 Large list (3 elements) consisting of:

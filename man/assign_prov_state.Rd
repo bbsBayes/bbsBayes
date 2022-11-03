@@ -4,14 +4,24 @@
 \alias{assign_prov_state}
 \title{Categorize polygon by Province/State if applicable}
 \usage{
-assign_prov_state(sf, min_overlap = 0.75, plot = FALSE, keep_spatial = TRUE)
+assign_prov_state(
+  strata_map,
+  min_overlap = 0.75,
+  plot = FALSE,
+  keep_spatial = TRUE
+)
 }
 \arguments{
+\item{strata_map}{sf data frame. Strata polygons to be categorized.}
+
 \item{min_overlap}{Numeric. The minimum proportion of overlap between a
 stratum polygon and a Province or State. Below this will raise warnings.}
 
 \item{plot}{Logical. Whether to plot how polygons were assigned to Provinces
 or States}
+
+\item{keep_spatial}{Logical. Whether the output should be a spatial data frame or
+not.}
 }
 \value{
 (Spatial) data frame with strata assigned to Province/State

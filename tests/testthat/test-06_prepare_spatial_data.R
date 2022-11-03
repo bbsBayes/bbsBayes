@@ -40,8 +40,10 @@ test_that("fix_islands()", {
 test_that("prepare_spatial() defaults", {
 
   map <- load_map("bbs_cws")
+  p <- stratify(by = "bbs_cws", sample_data = TRUE) %>%
+    prepare_data()
 
-  expect_message(n <- prepare_spatial(map),
+  expect_message(n <- prepare_spatial(map, p),
                  "Preparing") %>%
     expect_message("Identifying neighbours \\(non-Voronoi method\\)") %>%
     expect_message("  Isolated") %>%
@@ -62,8 +64,10 @@ test_that("prepare_spatial() defaults", {
 test_that("prepare_spatial() vironoi", {
 
   map <- load_map("bbs_cws")
+  p <- stratify(by = "bbs_cws", sample_data = TRUE) %>%
+    prepare_data()
 
-  expect_message(n <- prepare_spatial(map, voronoi = TRUE),
+  expect_message(n <- prepare_spatial(map, p, voronoi = TRUE),
                  "Preparing") %>%
     expect_message("Identifying neighbours \\(Voronoi method\\)") %>%
     expect_message("Formating") %>%

@@ -6,6 +6,9 @@
 \usage{
 convergence(model_output)
 }
+\arguments{
+\item{model_output}{List. Output of \code{run_model()}.}
+}
 \value{
 Data frame of convergence metrics
 }

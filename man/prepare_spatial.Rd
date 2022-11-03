@@ -17,9 +17,8 @@ prepare_spatial(
 )
 }
 \arguments{
-\item{strata_map}{sf data frame. Map of the strata in (MULTI)POLYGONs or
-(MULTI)POINTs. Must have column "strata_name" matching strata output from
-\code{prepare_data()}.}
+\item{strata_map}{sf data frame. Map of the strata in (MULTI)POLYGONs. Must
+have column "strata_name" matching strata output from \code{prepare_data()}.}
 
 \item{prepped_data}{List. Output of \code{prepare_data()}.
 

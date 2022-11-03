@@ -18,6 +18,5 @@ generate-map-abundance.R
 ^README.Rmd$
 ^\.github$
 ^vignettes/articles$
-^inst/models/*_CV$
-^inst/model_outputs$
-^inst/maps/BBS_*
+^maps/BBS_*
+^DEVTESTS$
