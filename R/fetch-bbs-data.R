@@ -599,6 +599,19 @@ remove_bbs_data <- function(level, release, cache_dir = FALSE) {
   }
 }
 
+#' @export
+have_bbs_data <- function(level = "state", release = 2022){
+  check_in(level, c("all", "state", "stop"))
+  check_in(release, c("all", 2020, 2022))
+
+  if(level == "all") level <- c("state", "stop")
+  if(release == "all") release <- c("2020", "2022")
+
+  f <- file.path(bbs_dir(), paste0("bbs_", level, "_data_", release, ".rds"))
+
+  file.exists(f)
+}
+
 get_encoding <- function() {
   if(l10n_info()[["UTF-8"]]) e <- "latin1" else e <- ""
   e

@@ -55,6 +55,11 @@ fetch_bbs_data(force = TRUE) # Defaults to 2022
 fetch_bbs_data(release = "2020", force = TRUE)
 ```
 
+
+```{r, echo = FALSE, eval = !have_bbs_data()}
+fetch_bbs_data()
+```
+
 ## Stratify the data
 
 ```{r}

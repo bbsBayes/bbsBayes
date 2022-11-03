@@ -19,6 +19,17 @@ library(bbsBayes)
 library(ggplot2)
 ```
 
+First make sure you have the BBS data downloaded
+```{r}
+have_bbs_data()
+```
+
+If not, install with `fetch_bbs_data()`
+```{r, eval = !have_bbs_data()}
+fetch_bbs_data()
+```
+
+
 
 Let's start by running a quick (and dirty) model looking at the Pacific Wren.
 

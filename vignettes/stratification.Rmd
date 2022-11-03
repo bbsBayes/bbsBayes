@@ -32,11 +32,15 @@ library(dplyr)    # General data manipulations
 library(ggplot2)  # Plotting
 ```
 
-Second, make sure you have the BBS data downloaded.
-```{r, eval = FALSE}
-fetch_bbs_data()
+Then we'll make sure we have the BBS data downloaded
+```{r}
+have_bbs_data()
 ```
 
+If not, install with `fetch_bbs_data()`
+```{r, eval = !have_bbs_data()}
+fetch_bbs_data()
+```
 
 ## Stratifying with existing categories
 
