@@ -405,8 +405,8 @@ tick <- function(pb, quiet) {
 #'
 fetch_bbs_data <- function(level = "state",
                            release = 2022,
-                           quiet = FALSE,
                            force = FALSE,
+                           quiet = FALSE,
                            compression = "none") {
 
   check_in(level, c("state", "stop"))
@@ -443,6 +443,13 @@ fetch_bbs_data <- function(level = "state",
   agree <- readline(prompt = "Type \"yes\" (without quotes) to agree: ")
   if(agree != "yes") return(NULL)
 
+  fetch_bbs_data_internal(level, release, force, quiet, compression)
+}
+
+
+fetch_bbs_data_internal <- function(level = "state", release = 2022,
+                                    force = FALSE, quiet = TRUE,
+                                    compression = "none") {
 
   if(!quiet) message("Connecting to USGS ScienceBase...", appendLF = FALSE)
 
@@ -539,6 +546,8 @@ fetch_bbs_data <- function(level = "state",
   unlink(list.files(tempdir(), full.names = TRUE), recursive = TRUE)
 
 }
+
+
 
 
 bbs_dir <- function() {

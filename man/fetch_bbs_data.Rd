@@ -7,8 +7,8 @@
 fetch_bbs_data(
   level = "state",
   release = 2022,
-  quiet = FALSE,
   force = FALSE,
+  quiet = FALSE,
   compression = "none"
 )
 }
@@ -19,10 +19,10 @@ Defaults to "state".}
 \item{release}{Numeric. Yearly release. Options are 2022 (default including
 data through 2021 field season) or 2020 (including data through 2019)}
 
-\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
-
 \item{force}{Logical. Should pre-exising BBS data be overwritten? Defaults to
 FALSE}
+
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
 
 \item{compression}{Character. What compression should be used to save data?
 Defaults to \code{none} which takes up the most space but is the fastest to

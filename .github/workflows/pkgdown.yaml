@@ -35,8 +35,7 @@ jobs:
 
       - name: Fetch BBS data
         run: |
-          library(bbsBayes)
-          fetch_bbs_data()
+          bbsBayes:::fetch_bbs_data_internal()
         shell: Rscript {0}
 
       - name: Build site
