@@ -12,6 +12,9 @@ species_forms <- readr::read_csv("data-raw/species_forms.csv",
                 french_combined = french_out) %>%
   as.data.frame()
 
+usethis::use_data(species_forms, overwrite = TRUE)
+
+
 bbs_models <- dplyr::tribble(
   ~model,       ~variant,           ~file,
   "first_diff", "nonhier", "first_diff_nonhier_bbs_CV.stan",
@@ -24,5 +27,7 @@ bbs_models <- dplyr::tribble(
   "slope",      "hier",    "slope_hier_bbs_CV.stan",
   "slope",      "spatial", "slope_spatial_bbs_CV.stan")
 
-usethis::use_data(species_forms, bbs_models, overwrite = TRUE)
+usethis::use_data(bbs_models, overwrite = TRUE)
+
+
 
