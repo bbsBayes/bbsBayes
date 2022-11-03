@@ -659,16 +659,16 @@ geofacet_plot <- function(indices,
       panel.grid.major = ggplot2::element_blank(),
       panel.grid.minor = ggplot2::element_blank(),
       panel.background = ggplot2::element_blank(),
-      axis.text.x = ggplot2::element_text(colour = grey(0.2), size = 5, angle = 90),
-      axis.text.y = ggplot2::element_text(colour = grey(0.2), size = 5),
-      strip.background = ggplot2::element_rect(fill = grDevices::grey(0.97)),
-      strip.text = ggplot2::element_text(size = 6,margin = ggplot2::margin()),
+      axis.text.x = ggplot2::element_text(colour = "grey20", size = 5, angle = 90),
+      axis.text.y = ggplot2::element_text(colour = "grey20", size = 5),
+      strip.background = ggplot2::element_rect(fill = "grey97"),
+      strip.text = ggplot2::element_text(size = 6, margin = ggplot2::margin()),
       legend.position = "none") +
     ggplot2::labs(title = paste(species, "trajectories within Provinces and States"),
                   x = "", y = "Annual indices") +
     ggplot2::geom_line(
       ggplot2::aes(x = .data$year, y = .data$index, group = .data$group),
-      colour = grDevices::grey(0.6)) +
+      colour = "grey60") +
     ggplot2::geom_ribbon(
       ggplot2::aes(x = .data$year, ymin = .data$lci, ymax = .data$uci,
                    group = .data$group, fill = .data$trend_cat),
@@ -676,7 +676,7 @@ geofacet_plot <- function(indices,
     ggrepel::geom_text_repel(
       data = tr_labs,
       ggplot2::aes(x = year, y = uci, label = lbl, group = .data$group),
-      colour = grDevices::grey(0.6), size = 2, nudge_y = 0.2 * uplim,
+      colour = "grey60", size = 2, nudge_y = 0.2 * uplim,
       segment.alpha = 0.1) +
 
     ggplot2::scale_x_continuous(breaks = years) +
@@ -689,7 +689,7 @@ geofacet_plot <- function(indices,
     p <- p +
       ggplot2::geom_point(
         ggplot2::aes(x = year, y = obs_mean, group = .data[[group_by]]),
-        colour = grDevices::grey(0.6), size = 0.5, alpha = alpha_ribbon)
+        colour = "grey60", size = 0.5, alpha = alpha_ribbon)
   }
 
   # Add final geofacetting

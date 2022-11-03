@@ -9,25 +9,25 @@ Authors@R: c(person("Brandon P.M.", "Edwards", role = c("aut", "cre"),
               person("Steffi", "LaZerte", role = "aut",
                       email = "steffi@steffi.ca"))
 Imports:
-    progress,
+    dplyr (>= 1.0.0),
     ggrepel,
     geofacet,
     ggplot2,
-    stringr,
-    grDevices,
-    dplyr,
-    sf (>= 1.0.8),
-    tools,
-    rappdirs,
-    sbtools,
+    magrittr,
     mgcv,
+    rappdirs,
+    readr (>= 2.1.2)
+    rlang (>= 0.4.11),
+    sbtools,
+    sf (>= 1.0.8),
     spdep (>= 1.2.7),
     snakecase,
-    magrittr,
-    rlang (>= 0.4.11),
+    stringr,
+    tools,
     units (>= 0.8.0)
+    
 Depends: R (>= 3.5)
-SystemRequirements: JAGS 4.3.0 (https://sourceforge.net/projects/mcmc-jags/)
+SystemRequirements: CmdStan (https://mc-stan.org/users/interfaces/cmdstan)
 URL: https://github.com/BrandonEdwards/bbsBayes
 NeedsCompilation: no
 Description: The North American Breeding Bird Survey (BBS) is a long-running
@@ -49,9 +49,11 @@ LazyData: true
 RoxygenNote: 7.2.1
 Roxygen: list(markdown = TRUE)
 Suggests: 
+    cmdstanr
     knitr,
     rmarkdown,
     roxygen2,
     testthat (>= 3.0.0)
+Additional_repositories: https://mc-stan.org/r-packages/
 Config/testthat/edition: 3
 VignetteBuilder: knitr

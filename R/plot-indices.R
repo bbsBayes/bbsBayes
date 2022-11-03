@@ -344,7 +344,7 @@ plot_indices <- function(indices = NULL,
         ggplot2::geom_point(data = to_plot,
                             ggplot2::aes(x = as.integer(.data$year),
                                          y = .data$obs_mean),
-                            colour = grDevices::grey(0.6))
+                            colour = "grey60")
     }
 
     p <- p +
@@ -361,11 +361,11 @@ plot_indices <- function(indices = NULL,
         ggplot2::geom_dotplot(
           data = dattc, mapping = ggplot2::aes(x = .data$year), drop = TRUE,
           binaxis = "x", stackdir = "up", method = "histodot", binwidth = 1,
-          width = 0.2, inherit.aes = FALSE, fill = grDevices::grey(0.6),
-          colour = grDevices::grey(0.6), alpha = 0.2, dotsize = 0.3) +
+          width = 0.2, inherit.aes = FALSE, fill = "grey60",
+          colour = "grey60", alpha = 0.2, dotsize = 0.3) +
         ggplot2::annotate(
           geom = "text", x = min(dattc$year) + 5, y = 0, label = annot,
-          alpha = 0.4, colour = grDevices::grey(0.6))
+          alpha = 0.4, colour = "grey60")
     }
 
     plot_list[[stringr::str_replace_all(paste(i), "[[:punct:]\\s]+", "_")]] <- p

@@ -33,6 +33,12 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
 
+      - name: Install cmdstan
+        run: |
+          cmdstanr::check_cmdstan_toolchain(fix = TRUE)
+          cmdstanr::install_cmdstan(cores = 2)
+        shell: Rscript {0}
+
       - name: Fetch BBS data
         run: |
           bbsBayes:::fetch_bbs_data_internal()

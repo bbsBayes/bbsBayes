@@ -62,3 +62,5 @@ making collaboration and future modifications easier.
 - use `\dontrun` for examples that won't fail, but will take a while to run.
 
 ## Random Notes
+
+- Use "grey60" rather than `grDevices::grey(0.6)` to avoid another dependency

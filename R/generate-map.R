@@ -218,7 +218,7 @@ generate_map <- function(trends,
 
   m <- ggplot2::ggplot() +
     ggplot2::geom_sf(data = map, ggplot2::aes(fill = .data$t_plot),
-                     colour = grDevices::grey(0.4), size = 0.1) +
+                     colour = "grey40", size = 0.1) +
     ggplot2::theme_minimal() +
     ggplot2::labs(title = title,
                   fill = paste0("Trend\n", start_year, "-", end_year)) +
