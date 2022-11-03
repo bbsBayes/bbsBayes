@@ -14,22 +14,19 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r, cache = TRUE}
+```{r}
 library(bbsBayes)
 library(patchwork)
 
-s <- stratify(by = "bbs_usgs")
-p <- prepare_data(s,
-                  species_to_run = "Pacific Wren",
-                  min_max_route_years = 2)
+s <- stratify(by = "bbs_usgs", sample = TRUE)
+p <- prepare_data(s, min_max_route_years = 2)
 
-map <- load_map(stratify_by = "bbs_cws") %>%
-    dplyr::filter(.data$ST_12 %in% unique(p$data$strata_name))
+map <- load_map("bbs_cws")
 plot(map[1])
-n <- prepare_spatial(map, strata_col = "ST_12")
+n <- prepare_spatial(map, p)
 
 dir.create("./model_data/")
-r <- run_model(prepped_data = p,
+m <- run_model(prepped_data = p,
                model = "first_diff",
                model_variant = "nonhier",
                spatial_data = n,
@@ -39,13 +36,13 @@ r <- run_model(prepped_data = p,
 
 
 ```{r}
-indices <- generate_indices(model_output = r,
-                            regions = c("continental",
-                                        "national",
-                                        "prov_state",
-                                        "stratum"))
+i <- generate_indices(model_output = m,
+                      regions = c("continent",
+                                  "country",
+                                  "prov_state",
+                                  "stratum"))
 
-tp <- plot_indices(indices, add_observed_means = TRUE)
+tp <- plot_indices(i, add_observed_means = TRUE)
 ```
 
 

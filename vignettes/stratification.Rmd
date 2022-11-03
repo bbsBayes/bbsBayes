@@ -2,7 +2,7 @@
 title: "Stratification"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Custom Stratification}
+  %\VignetteIndexEntry{Stratification}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -56,7 +56,7 @@ To stratify BBS data, you can use these existing stratifications by
 specifying `by = "name"` in the `stratify()` function.
 
 ```{r}
-s <- stratify(by = "bbs_usgs")
+s <- stratify(by = "bbs_usgs", species = "Canada Jay")
 ```
 
 
@@ -79,7 +79,7 @@ bbs_strata[["bbs_cws"]]
 We can now modify and use this data frame as we like.
 ```{r}
 my_cws <- filter(bbs_strata[["bbs_cws"]], country == "United States of America")
-s <- stratify(by = "bbs_cws", strata_custom = my_cws)
+s <- stratify(by = "bbs_cws", species = "Canada Jay", strata_custom = my_cws)
 ```
 
 Note that the stratification is now "bbs_cws" and "subset"
@@ -98,7 +98,7 @@ In our example we'll use WBPHS stratum boundaries for 2019.
 This is available from available from the US Fish and Wildlife Service Catalogue: <https://ecos.fws.gov/ServCat/Reference/Profile/142628>
 
 You can either download it by hand, or with the following code.
-```{r, eval = file.exists("WBPHS_stratum_boundaries_2019.zip")}
+```{r, eval = !file.exists("WBPHS_stratum_boundaries_2019.zip")}
 z <- "WBPHS_stratum_boundaries_2019.zip"
 
 download.file(url = "https://ecos.fws.gov/ServCat/DownloadFile/213149",
@@ -134,7 +134,7 @@ to apply. Let's use something informative, but short (although there's no limit)
 We also need to give the function our map.
 
 ```{r}
-s <- stratify(by = "WBPHS_2019", strata_custom = map)
+s <- stratify(by = "WBPHS_2019", species = "Canada Jay", strata_custom = map)
 ```
 
 > Note that strata names are automatically put into lower case for consistency. 
@@ -182,30 +182,6 @@ ggplot() +
 ```
 
 So we can clearly see, spatially, which points have been omitted from our data.
-
-Okay, let's continue.
-
-
-```{r}
-p <- prepare_data(data_strat, species = "Western Meadowlark", min_year = 2000)
-m <- run_model(p, model = "first_diff",
-               iter_sampling = 20, iter_warmup = 20,
-               chains = 2)
-
-#convergence(m)
-```
-
-```{r}
-i <- generate_indices(m, regions = "stratum")
-
-t <- generage_trends(i)
-
-plot_indices(i)
-
-generate_map(t)
-
-geofacet_plot(i, trends = t)
-```
 
 ## Custom stratification - Modifying existing BBS maps
 

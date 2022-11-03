@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(bbsBayes)
+library(ggplot2)
 ```
 
 
@@ -23,14 +24,14 @@ Let's start by running a quick (and dirty) model looking at the Pacific Wren.
 
 ```{r}
 m <- stratify(by = "bbs_cws", sample_data = TRUE) %>%
-  prepare_data(species = "Pacific Wren", min_year = 2009, max_year = 2018) %>%
+  prepare_data(min_year = 2009, max_year = 2018) %>%
   run_model(model = "first_diff",
             iter_sampling = 20, iter_warmup = 20, chains = 2)
 
 ```
 
 Now we can calculate our convergence metrics
-```{r}
+```{r, warning=FALSE}
 conv <- convergence(m)
 conv
 ```
@@ -42,9 +43,9 @@ We can visualize this by transforming the data frame and using ggplot2
 ```{r}
 tconv <- tidyr::pivot_longer(conv, cols = c(ess_bulk, ess_tail, rhat))
 
-ggplot2::ggplot(data = tconv, ggplot2::aes(x = variable, y = value, colour = variable_type)) +
-    ggplot2::geom_point() +
-    ggplot2::facet_wrap(~name, scales = "free_y") +
-    ggplot2::scale_colour_viridis_d()
+ggplot(data = tconv, aes(x = variable, y = value, colour = variable_type)) +
+    geom_point() +
+    facet_wrap(~name, scales = "free_y") +
+    scale_colour_viridis_d(guide = FALSE)
 ```
 

@@ -16,3 +16,4 @@ generate-map-abundance.R
 ^pkgdown$
 ^RELEASE.R$
 ^CODE_DESIGN.R$
+^\.github$

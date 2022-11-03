@@ -43,7 +43,7 @@ In our example we'll use WBPHS stratum boundaries for 2019.
 This is available from available from the US Fish and Wildlife Service Catalogue: <https://ecos.fws.gov/ServCat/Reference/Profile/142628>
 
 You can either download it by hand, or with the following code.
-```{r, eval = file.exists("WBPHS_stratum_boundaries_2019.zip")}
+```{r, eval = !file.exists("WBPHS_stratum_boundaries_2019.zip")}
 z <- "WBPHS_stratum_boundaries_2019.zip"
 
 download.file(url = "https://ecos.fws.gov/ServCat/DownloadFile/213149",
@@ -71,17 +71,10 @@ p <- prepare_data(s)
 
 Run the model (note this is not an appropriate model, as we're aiming for speed
 rather than accuracy).
-```{r, eval = !file.exists(list.files(pattern = "BBS_STAN_first_diff_hier_(.)*.rds"))}
+```{r}
 m <- run_model(p, model = "first_diff", 
                chains = 2, iter_sampling = 20, iter_warmup = 20)
 ```
-
-
-```{r, echo = FALSE}
-save_model_run(m)
-m <- readr::read_rds("BBS_STAN_first_diff_hier_2022-11-02_02.rds")
-```
-
 
 Now we can start to look at the indices and trends related to our model.
 
@@ -130,7 +123,6 @@ ggplot(data = rindex) +
 
 Now we'll create our indices and trends
 ```{r}
-
 i <- generate_indices(
   m, 
   regions = c("stratum", "country", "prov_state", "east_west"),
