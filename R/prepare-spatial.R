@@ -4,9 +4,8 @@
 #' a neighbourhood matrix is identified for use in `run_model()`
 #'
 #' @param strata_map sf data frame. Map of the strata in (MULTI)POLYGONs or
-#'   (MULTI)POINTs.
-#' @param strata_col Character. Name of the column in `strata_map` that holds
-#'   strata labels.
+#'   (MULTI)POINTs. Must have column "strata_name" matching strata output from
+#'   `prepare_data()`.
 #' @param voronoi Logical. Whether or not to use Voroni method for polygons.
 #'   (Must use Voronoi method for points).
 #' @param nearest_fill Logical. For strata with no neighbours, whether or not to
@@ -42,29 +41,17 @@
 #'
 #'
 #' @examples
-#' bbs_data <- stratify(by = "bbs_cws")
+#' bbs_data <- stratify(by = "bbs_cws", species = "Connecticut Warbler")
 #'
-#' model_data <- prepare_data(bbs_data,
-#'                            species_to_run = "Connecticut Warbler",
-#'                            model = "first_diff",
-#'                            model_variant = "spatial",
-#'                            min_max_route_years = 2)
+#' model_data <- prepare_data(bbs_data, min_max_route_years = 2)
 #'
-#' base_strata_map <- load_map(stratify_by = "bbs_cws")
+#' map <- load_map("bbs_cws")
 #'
-#' strata_df <- model_data$alt_data %>%
-#'   dplyr::select(strat,strat_name) %>%
-#'   dplyr::distinct() %>%
-#'   dplyr::arrange(strat)
-#'
-#' strata_map <- base_strata_map %>%
-#'   dplyr::inner_join(strata_df,by = c("ST_12" = "strat_name"))
-#'
-#' n <- prepare_spatial(base_strata_map, strata_col = "ST_12")
+#' sp <- prepare_spatial(map, model_data)
 #'
 #' @export
 prepare_spatial <- function(strata_map,
-                            strata_col = "strat",
+                            prepped_data,
                             voronoi = FALSE,
                             nearest_fill = FALSE,
                             island_link_dist_factor = 1.2,
@@ -76,7 +63,7 @@ prepare_spatial <- function(strata_map,
   # Checks
   check_sf(strata_map)
   check_sf(add_map)
-  check_strata_col(strata_map, strata_col)
+  check_data(prepped_data)
 
   check_in(buffer_type, c("buffer", "convex_hull"))
   check_logical(voronoi, nearest_fill, quiet)
@@ -85,18 +72,28 @@ prepare_spatial <- function(strata_map,
   # Prepare spatial data
   if(!quiet) message("Preparing spatial data...")
 
+  # Filter to only strata in prepped_data
+  strata_map <- strata_map %>%
+    dplyr::semi_join(prepped_data$raw_data, by = "strata_name")
+
+  if(nrow(strata_map) == 0) {
+    stop("There are no strata in `strata_map` that match strata in ",
+         "`prepped_data`.\nDo the values in the `strata_name` columns match?",
+         call. = FALSE)
+  }
+
   # Only summarize if necessary
-  if(dplyr::n_distinct(strata_map[[strata_col]]) != nrow(strata_map)) {
+  if(dplyr::n_distinct(strata_map[["strata_name"]]) != nrow(strata_map)) {
     if(!quiet) message("    Summarizing polygons by strata...")
     strata_map <- strata_map %>%
-      dplyr::group_by(.data[[strata_col]]) %>%
+      dplyr::group_by(.data[["strata_name"]]) %>%
       dplyr::summarise()
   }
 
   # Omit unnecessary columns and ensure strata order is the same
   strata_map <- strata_map %>%
-    dplyr::select(.data[[strata_col]]) %>%
-    dplyr::arrange(.data[[strata_col]])
+    dplyr::select(.data[["strata_name"]]) %>%
+    dplyr::arrange(.data[["strata_name"]])
 
   # Set attributes as constant to avoid sf warnings
   # (cf. https://github.com/r-spatial/sf/issues/406)
@@ -105,17 +102,18 @@ prepare_spatial <- function(strata_map,
   # Specify and check types
   geo_types <- get_geo_types(strata_map)
 
-  if(length(geo_type) > 1) {
+  if(length(geo_types) > 1) {
     stop("Multiple geometry types in `strata_map`. ",
          "Need all (MULTI)POINTS or all (MULTI)POLYGONS", call. = FALSE)
   }
 
-  if(!voronoi && geo_type != "POLYGON") {
-    message("Non-polygon spatial data provided, switching to `voronoi = TRUE`")
+  if(!voronoi && geo_types != "POLYGON") {
+    if(!quiet) message("Non-polygon spatial data provided, switching to ",
+                       "`voronoi = TRUE`")
     voronoi <- TRUE
   }
   # Calculate centres
-  if(geo_type == "POINT") {
+  if(geo_types == "POINT") {
     centres <- strata_map
   } else {
     centres <- sf::st_centroid(strata_map)
@@ -125,15 +123,15 @@ prepare_spatial <- function(strata_map,
   if(!voronoi) {
     if(!quiet) message("Identifying neighbours (non-Voronoi method)...")
     nb_db <- spdep::poly2nb(strata_map,
-                            row.names = strata_map[[strata_col]],
+                            row.names = strata_map[["strata_name"]],
                             queen = FALSE)
 
     nb_weights <- spdep::nb2WB(nb_db)
 
     # Fix missing neighbours
     if(nearest_fill && min(nb_weights$num) == 0){
-      message("Some strata have no neighbours. ",
-              "Filling by 2 nearest neighbours by centroids...")
+      if(!quiet) message("Some strata have no neighbours. ",
+                         "Filling by 2 nearest neighbours by centroids...")
 
       nn <- spdep::knearneigh(centres, k = 2)[[1]]
       no_neighbour <- which(nb_weights$num == 0)
@@ -142,7 +140,7 @@ prepare_spatial <- function(strata_map,
     }
 
     # Fix islands
-    nb_db <- fix_islands(nb_db, centres, island_link_dist_factor)
+    nb_db <- fix_islands(nb_db, centres, island_link_dist_factor, quiet)
 
     # Get bounding box
     bbox <- sf::st_bbox(strata_map) %>%
@@ -183,10 +181,10 @@ prepare_spatial <- function(strata_map,
       sf::st_cast("POLYGON") %>%
       sf::st_sf() %>%
       sf::st_join(centres, join = sf::st_contains) %>%
-      dplyr::arrange(.data[[strata_col]])
+      dplyr::arrange(.data[["strata_name"]])
 
     nb_db <- spdep::poly2nb(vint,
-                            row.names = vint[[strata_col]],
+                            row.names = vint[["strata_name"]],
                             queen = FALSE) # polygon to neighbour definition
   }
 
@@ -203,8 +201,7 @@ prepare_spatial <- function(strata_map,
   nb_mat <- spdep::nb2mat(nb_db, style = "B", zero.policy = TRUE)
 
   if(!quiet) message("Plotting neighbourhood matrices...")
-  map <- plot_neighbours(strata_map, centres, nb_db, bbox, strata_col, vint,
-                         add_map)
+  map <- plot_neighbours(strata_map, centres, nb_db, bbox, vint, add_map)
 
   # Reformat nodes and edges
   nb <- nb_fmt(nb_weights)
@@ -212,7 +209,8 @@ prepare_spatial <- function(strata_map,
   append(nb,
          list("adj_matrix" = nb_mat,
               "map" = map,
-              "strata_name" = strata_map[[strata_col]]))
+              "strata_meta" = sf::st_drop_geometry(strata_map) %>%
+                dplyr::select("strata_name")))
 }
 
 
@@ -226,6 +224,7 @@ nb_fmt <- function(nb_weights) {
 
   i_adj <- 0
   i_edge <- 0
+
   for (i in seq_along(num)) {
     for (j in seq_len(num[i])) {
       i_adj <- i_adj + 1
@@ -257,15 +256,16 @@ fix_no_neighbours <- function(which, nb_db, nn) {
 }
 
 
-fix_islands <- function(nb_db, centres, island_link_dist_factor) {
+fix_islands <- function(nb_db, centres, island_link_dist_factor, quiet) {
   dist_centres <- sf::st_distance(centres) %>%
     units::drop_units()
   islands <- spdep::n.comp.nb(nb_db)
   n_islands <- islands$nc
 
   while(n_islands > 1) {
-    message("    Isolated groups of nodes found (", n_islands - 1, "). ",
-            "Linking by distance between centroids...")
+    if(!quiet) message("    Isolated groups of nodes found (",
+                       n_islands - 1, "). ",
+                       "Linking by distance between centroids...")
 
     # Get sites in the first island and distances among them
     isld1 <- which(islands$comp.id == 1)
@@ -301,8 +301,7 @@ fix_islands <- function(nb_db, centres, island_link_dist_factor) {
 }
 
 
-plot_neighbours <- function(strata_map, centres, nb_db, bbox, strata_col,
-                            vint, add_map) {
+plot_neighbours <- function(strata_map, centres, nb_db, bbox, vint, add_map) {
 
   # Coordinates
   coords <- as.data.frame(sf::st_coordinates(centres))
@@ -331,8 +330,8 @@ plot_neighbours <- function(strata_map, centres, nb_db, bbox, strata_col,
   # Add strata map and centres
   g <- g +
     ggplot2::geom_sf(data = strata_map, alpha = 0, colour = grey(0.85)) +
-    ggplot2::geom_sf(ggplot2::aes(col = .data[[strata_col]], alpha = 0.5)) +
-    ggplot2::geom_sf_text(ggplot2::aes(label = .data[[strata_col]]), size = 5,
+    ggplot2::geom_sf(ggplot2::aes(col = .data[["strata_name"]], alpha = 0.5)) +
+    ggplot2::geom_sf_text(ggplot2::aes(label = .data[["strata_name"]]), size = 5,
                           alpha = 0.7, colour = "black")
 
   # Add nb_connect

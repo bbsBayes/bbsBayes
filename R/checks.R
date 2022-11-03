@@ -11,7 +11,7 @@ check_data <- function(data) {
     from <- "prepare_data()"
   } else if(type == "spatial_data") {
     # Don't use meta_data or meta_strata, n is an actual object returned
-    n <- c("n", "n_edges", "node1", "node2", "adj_matrix", "strata_name")
+    n <- c("n", "n_edges", "node1", "node2", "adj_matrix", "strata_meta")
     from <- "prepare_spatial()"
   } else if(type == "model_output") {
     n <- c(n, "model_fit", "non_zero_weight", "raw_data")
@@ -23,9 +23,12 @@ check_data <- function(data) {
 
   }
 
-  if(!is.list(data) || !all(names(data) %in% n)) {
+  # All n must be in names(data), but not necessarily the reverse
+  # Allows optional data like `map` in prepare_spatatial()
+  if(!is.list(data) || !all(n %in% names(data))) {
     stop("`", type, "` must a list created by `", from, "` ",
-         "containing\n`", paste0(n, collapse = "`, `"), "`", call. = FALSE)
+         "containing\n`", paste0(n, collapse = "`, `"), "`",
+         call. = FALSE)
   }
 }
 
@@ -271,9 +274,11 @@ check_spatial <- function(spatial_data, strata) {
   check_data(spatial_data)
 
   # Check for matching strata
-  if(!all(spatial_data$strata_names %in% strata)) {
-    stop("The same strata must be used in both `prepare_data()` and ",
-         "`prepare_spatial()`", call. = FALSE)
+  s <- spatial_data$strata_meta$strata_name
+  if(!all(strata %in% s) | !all(s %in% strata)) {
+    stop("The strata in `prepped_data` and `spatial_data` don't match.\n",
+         "`prepare_spatial()` should have been run with the same `prepped_data`",
+         "as `run_model()`.", call. = FALSE)
   }
 }
 
