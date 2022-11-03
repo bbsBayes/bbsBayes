@@ -28,11 +28,17 @@ format_ne_states <- function() {
 
 #' Categorize polygon by Province/State if applicable
 #'
-#' @param sf
-#' @param min_overlap
-#' @param plot
+#' @param min_overlap Numeric. The minimum proportion of overlap between a
+#'   stratum polygon and a Province or State. Below this will raise warnings.
+#' @param plot Logical. Whether to plot how polygons were assigned to Provinces
+#'   or States
+#' @keep_spatial Logical. Whether the output should be a spatial data frame or
+#'   not.
 #'
-#' @return
+#' @inheritParams
+#'
+#' @return (Spatial) data frame with strata assigned to Province/State
+#'
 #' @export
 #'
 #' @examples

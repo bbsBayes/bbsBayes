@@ -5,17 +5,7 @@
 \alias{species_sample}
 \title{Sample North American bird species list (Pacific Wren only)}
 \format{
-A data frame with 20 rows and 10 variables:
-\describe{
-\item{seq}{Sequence - USGS use}
-\item{aou}{Numerical representation of the species, designated by American Ornithological Union}
-\item{english}{Species name in English}
-\item{order}{Taxonomic order}
-\item{family}{Taxonomic family}
-\item{genus}{Taxonomic genus}
-\item{species}{Taxonomic species}
-\item{sp.bbs}{Same as aou, no leading 0}
-}
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 1 rows and 10 columns.
 }
 \usage{
 species_sample

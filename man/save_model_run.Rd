@@ -7,6 +7,8 @@
 save_model_run(model_output, path = NULL, quiet = FALSE)
 }
 \arguments{
+\item{model_output}{List. Output of \code{run_model()}.}
+
 \item{path}{Character. Optional file path to use for saved data. Defaults to
 the file path used for the original run}
 

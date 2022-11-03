@@ -6,8 +6,8 @@
 \usage{
 convergence(model_output)
 }
-\arguments{
-\item{model_fit}{}
+\value{
+Data frame of convergence metrics
 }
 \description{
 Convergence metrics

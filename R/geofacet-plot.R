@@ -497,17 +497,20 @@ geofacet_plot_tidy <- function(indices_list = NULL,
 #' "bbs_usgs" are given, the function plots multiple trajectories (one for each
 #' of the relevant strata) within each facet.
 #'
-#' @param stratify_by How were the data stratified?
-#' @param multiple Logical, if TRUE, multiple strata-level trajectories are plotted within each prov/state facet
-#' @param trends Optional dataframe of matching strata or state/province trends produced by
-#'   `generate_trends()`. If included trajectories are coloured based on the same
-#'   colour scale used in \code{generate_map}
+#' @param multiple Logical, if TRUE, multiple strata-level trajectories are
+#'   plotted within each prov/state facet
+#' @param trends Optional dataframe of matching strata or state/province trends
+#'   produced by `generate_trends()`. If included trajectories are coloured
+#'   based on the same colour scale used in `generate_map`
 #' @param slope Logical. If dataframe of trends is included, whether colours in
 #'   the plot should be based on slope trends. Default = FALSE
-#' @param add_observed_means Should the facet plots include points indicating the observed mean counts. Defaults to FALSE.  Note: scale of observed means and annual indices may not match due to imbalanced sampling among strata
-#' @param species Species name to be added onto the plot
-#' @param ci_width quantile to define the width of the plotted credible interval. Defaults to 0.95, lower = 0.025 and upper = 0.975
-#' @param col_viridis Logical flag to use "viridis" colour-blind friendly palette. Default is FALSE
+#' @param add_observed_means Should the facet plots include points indicating
+#'   the observed mean counts. Defaults to FALSE.  Note: scale of observed means
+#'   and annual indices may not match due to imbalanced sampling among strata
+#' @param ci_width quantile to define the width of the plotted credible
+#'   interval. Defaults to 0.95, lower = 0.025 and upper = 0.975
+#' @param col_viridis Logical flag to use "viridis" colour-blind friendly
+#'   palette. Default is `FALSE`
 #'
 #' @inheritParams common_docs
 #'

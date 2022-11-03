@@ -32,11 +32,16 @@ run_model(
 )
 }
 \arguments{
-\item{prepped_data}{List. Output of \code{prepare_data()}.}
+\item{prepped_data}{List. Output of \code{prepare_data()}.
+
+Use \verb{@inheritParams common_docs} to include the above in any function
+documentation with a matching argument (will only include matching args)}
 
 \item{model}{Character.}
 
 \item{spatial_data}{List. Output of \code{prepare_spatial()}.}
+
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
 
 \item{...}{}
 }

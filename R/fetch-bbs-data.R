@@ -373,10 +373,6 @@ tick <- function(pb, quiet) {
 #' downloading any data, the user must thoroughly read through the terms and
 #' conditions of the user of the data and type the word "yes" to agree.
 #'
-#' @param level Character. Which type of BBS counts to fetct, "state" or "stop".
-#'   Defaults to "state".
-#' @param release Numeric. Yearly release. Options are 2022 (default including
-#'   data through 2021 field season) or 2020 (including data through 2019)
 #' @param force Logical. Should pre-exising BBS data be overwritten? Defaults to
 #'   FALSE
 #' @param compression Character. What compression should be used to save data?
@@ -608,6 +604,12 @@ remove_bbs_data <- function(level, release, cache_dir = FALSE) {
   }
 }
 
+#' Check whether BBS data exists
+#'
+#' @inheritParams common_docs
+#'
+#' @returns `TRUE` if the data is found, `FALSE` otherwise
+#'
 #' @export
 have_bbs_data <- function(level = "state", release = 2022){
   check_in(level, c("all", "state", "stop"))

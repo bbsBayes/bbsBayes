@@ -14,8 +14,6 @@ the 50 stops along a route. Specifying "stop" provides stop-level data
 beginning in 1997, which includes counts for each stop along routes
 individually. Note that stop-level data is not currently supported by
 the modelling utilities in bbsBayes.}
-
-\item{quiet}{}
 }
 \value{
 Large list (3 elements) consisting of:

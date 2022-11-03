@@ -63,9 +63,6 @@ load_bbs_data_orig <- function(level = "state")
 #' beginning in 1997, which includes counts for each stop along routes
 #' individually. Note that stop-level data is not currently supported by
 #' the modelling utilities in bbsBayes.
-#' @param release
-#' @param sample
-#' @param quiet
 #'
 #' @return Large list (3 elements) consisting of:
 #' \item{birds}{Data frame of sample bird point count data per route, per year}

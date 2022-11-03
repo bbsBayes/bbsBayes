@@ -3,7 +3,8 @@
 #' `load_map` allows you to load a simple features object (`sf` package)
 #'   that represents a map of the strata that can be easily plotted.
 #'
-#' @param stratify_by How were the data stratified?
+#' @param stratify_by Character. Stratification type. One of
+#'   "prov_state", "bcr", "latlong", "bbs_cws", "bbs_usgs".
 #'
 #' @return sf polygon object
 #'

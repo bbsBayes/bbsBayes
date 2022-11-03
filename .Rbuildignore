@@ -1,6 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-.travis.yml
 testdata
 bbsBayes-report.html
 testfile.R
@@ -15,5 +14,10 @@ generate-map-abundance.R
 ^docs$
 ^pkgdown$
 ^RELEASE.R$
-^CODE_DESIGN.R$
+^CODE_DESIGN.md$
+^README.Rmd$
 ^\.github$
+^vignettes/articles$
+^inst/models/*_CV$
+^inst/model_outputs$
+^inst/maps/BBS_*

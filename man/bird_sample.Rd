@@ -5,24 +5,7 @@
 \alias{bird_sample}
 \title{Sample point count data per species (Pacific Wren only)}
 \format{
-A data frame with 20 rows and 15 variables:
-\describe{
-\item{statenum}{Numerical representation of state or province}
-\item{Route}{Numerican representation of the route the species was observed}
-\item{countrynum}{Numerical representation of the country}
-\item{RouteDataID}{Unique code for each year a route was run}
-\item{RPID}{Run Protocol ID}
-\item{Year}{Year the species was observed on the route}
-\item{AOU}{Numerical representation of the species, designated by American Ornithological Union}
-\item{Count10}{Counts for stops 1-10}
-\item{Count20}{Counts for stops 11-20}
-\item{Count30}{Counts for stops 21-30}
-\item{Count40}{Counts for stops 31-40}
-\item{Count50}{Counts for stops 41-50}
-\item{StopTotal}{Count for all stops}
-\item{SpeciesTotal}{Total count for the species on the route run}
-\item{BCR}{Bird Conservation Region the route was run in}
-}
+An object of class \code{data.frame} with 5243 rows and 15 columns.
 }
 \usage{
 bird_sample

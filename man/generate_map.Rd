@@ -7,6 +7,8 @@
 generate_map(trends, slope = FALSE, title = TRUE, col_viridis = TRUE)
 }
 \arguments{
+\item{trends}{Data frame. Trends produced by \code{generate_trends()}.}
+
 \item{slope}{Logical. Whether or not to map values of the alternative trend
 metric (slope of a log-linear regression) if \code{slope = TRUE} was used in
 \code{generate_trends()},  through the annual indices. Default \code{FALSE}.}
@@ -16,8 +18,6 @@ metric (slope of a log-linear regression) if \code{slope = TRUE} was used in
 
 \item{col_viridis}{Logical flag to use "viridis" colour-blind friendly
 palette. Default is FALSE}
-
-\item{trend}{Data frame. Trends produced by \code{generate_trends()}.}
 }
 \value{
 spplot object

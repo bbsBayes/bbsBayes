@@ -240,7 +240,7 @@ test_that("JAGS models run", {
 })
 
 test_that("JAGS outputs", {
-
+  skip("Do not test automatically")
   skip_on_ci()
 
   load(system.file("model_outputs", "jags_bbs_usgs_slope_pacific_wren.RData",
@@ -525,6 +525,7 @@ test_that("EXPLORE STAN outputs", {
 })
 
 test_that("STAN outputs", {
+  skip("Do not test automatically")
   skip_on_ci()
 
   load(system.file("model_outputs", "pacific_wren_slope_BBS_fit.RData",

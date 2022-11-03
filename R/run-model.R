@@ -273,7 +273,6 @@ run_model_orig <- function(jags_data = NULL,
 #'
 #'
 #'
-#' @param prepped_data List. Output of `prepare_data()`.
 #' @param model Character.
 #' @param model_variant
 #' @param spatial_data List. Output of `prepare_spatial()`.
@@ -296,6 +295,8 @@ run_model_orig <- function(jags_data = NULL,
 #' @param out_dir
 #' @param quiet
 #' @param ...
+#'
+#' @inheritParams common_docs
 #'
 #' @return
 #' @export

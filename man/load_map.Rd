@@ -7,7 +7,8 @@
 load_map(stratify_by = NULL, type = "strata")
 }
 \arguments{
-\item{stratify_by}{How were the data stratified?}
+\item{stratify_by}{Character. Stratification type. One of
+"prov_state", "bcr", "latlong", "bbs_cws", "bbs_usgs".}
 }
 \value{
 sf polygon object

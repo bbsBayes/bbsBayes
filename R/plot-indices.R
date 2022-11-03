@@ -211,13 +211,12 @@ plot_indices_orig <- function(indices_list = NULL,
 #'
 #' Generates the indices plot for each stratum modelled.
 #'
-#' @param indices List. List of indices of annual abundance and other results
-#'   produced by `generate_indices()`
 #' @param ci_width Numeric. Quantile defining the width of the plotted credible
 #'   interval. Defaults to 0.95 (lower = 0.025 and upper = 0.975)
 #' @param min_year Numeric. Minimum year to plot
 #' @param max_year Numeric. Maximum year to plot
-#' @param title_size. Numeric. Font size of plot title. Defaults to 20
+#' @param title Logical. Whether to include a title on the plot.
+#' @param title_size Numeric. Font size of plot title. Defaults to 20
 #' @param axis_title_size Numeric. Font size of axis titles. Defaults to 18
 #' @param axis_text_size Numeric. Font size of axis text. Defaults to 16
 #' @param line_width Numeric. Size of the trajectory line. Defaults to 1
@@ -228,6 +227,8 @@ plot_indices_orig <- function(indices_list = NULL,
 #'   showing the number of BBS routes included in each year. This is useful as a
 #'   visual check on the relative data-density through time because in most
 #'   cases the number of observations increases over time
+#'
+#' @inheritParams common_docs
 #'
 #' @return List of ggplot objects, each entry being a plot of a stratum indices
 #'

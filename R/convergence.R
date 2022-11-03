@@ -1,9 +1,9 @@
 
 #' Convergence metrics
 #'
-#' @param model_fit
+#' @inheritParams common_docs
 #'
-#' @return
+#' @return Data frame of convergence metrics
 #' @export
 #'
 #' @examples

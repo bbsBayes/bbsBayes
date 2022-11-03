@@ -16,7 +16,7 @@ Imports:
     magrittr,
     mgcv,
     rappdirs,
-    readr (>= 2.1.2)
+    readr (>= 2.1.2),
     rlang (>= 0.4.11),
     sbtools,
     sf (>= 1.0.8),
@@ -24,8 +24,10 @@ Imports:
     snakecase,
     stringr,
     tools,
-    units (>= 0.8.0)
-    
+    units (>= 0.8.0),
+    posterior (>= 1.2.1),
+    purrr (>= 0.3.4),
+    tidyr (>= 1.2.0)
 Depends: R (>= 3.5)
 SystemRequirements: CmdStan (https://mc-stan.org/users/interfaces/cmdstan)
 URL: https://github.com/BrandonEdwards/bbsBayes
@@ -49,11 +51,13 @@ LazyData: true
 RoxygenNote: 7.2.1
 Roxygen: list(markdown = TRUE)
 Suggests: 
-    cmdstanr
+    cmdstanr,
     knitr,
     rmarkdown,
+    rnaturalearth,
     roxygen2,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    withr
 Additional_repositories: https://mc-stan.org/r-packages/
 Config/testthat/edition: 3
 VignetteBuilder: knitr

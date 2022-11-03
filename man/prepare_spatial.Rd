@@ -21,6 +21,11 @@ prepare_spatial(
 (MULTI)POINTs. Must have column "strata_name" matching strata output from
 \code{prepare_data()}.}
 
+\item{prepped_data}{List. Output of \code{prepare_data()}.
+
+Use \verb{@inheritParams common_docs} to include the above in any function
+documentation with a matching argument (will only include matching args)}
+
 \item{voronoi}{Logical. Whether or not to use Voroni method for polygons.
 (Must use Voronoi method for points).}
 

@@ -13,7 +13,7 @@ fetch_bbs_data(
 )
 }
 \arguments{
-\item{level}{Character. Which type of BBS counts to fetct, "state" or "stop".
+\item{level}{Character. Which type of BBS counts to fetch, "state" or "stop".
 Defaults to "state".}
 
 \item{release}{Numeric. Yearly release. Options are 2022 (default including

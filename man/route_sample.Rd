@@ -5,41 +5,7 @@
 \alias{route_sample}
 \title{Sample route data per year run (Pacific Wren only)}
 \format{
-A data frame with 20 rows and 32 variables:
-\describe{
-\item{countrynum}{Numerical representation of the country}
-\item{statenum}{Numerical representation of state or province}
-\item{Route}{Numerican representation of the route the species was observed}
-\item{RouteName}{Name of the route, represented as a string}
-\item{Active}{Boolean 0 or 1 as to whether the route is currently active}
-\item{Latitude}{Latitude of the start of the route}
-\item{Longitude}{Longitude of the start of the route}
-\item{BCR}{What bird conservation region is the route in}
-\item{RouteTypeID}{Type of the route, only 1 is acceptable}
-\item{RouteTypeDetailID}{Route type detail ID}
-\item{RouteDataID}{Unique code for each year a route was run}
-\item{RPID}{Run Protocol ID}
-\item{Year}{Year the route was run}
-\item{Month}{Month the route was run}
-\item{Day}{Day the route was run}
-\item{ObsN}{Unique number for the observer on the route}
-\item{TotalSpp}{Total species observed on the route}
-\item{StartTemp}{Temperature at the start of the route}
-\item{EndTemp}{Temperature at the end of the route}
-\item{TempScale}{(C)elsius or (F)arenheit}
-\item{StartWind}{Wind type at the beginning of the route}
-\item{EndWind}{Wind type at the end of the route}
-\item{StartSky}{Sky conditions at the start of the route}
-\item{EndSky}{Sky conditions at the end of the route}
-\item{StartTime}{Time the route was started}
-\item{EndTime}{Time the route was ended}
-\item{Assistant}{Boolean 0 or 1 as to whether an assistant was used}
-\item{QualityCurrentID}{Quality current ID}
-\item{RunType}{Type of BBS route run. Only acceptable run type is 1}
-\item{State}{String representation of state or province}
-\item{St_Abrev}{Abbreviated state or province}
-\item{Country}{Abbreviated country}
-}
+An object of class \code{data.frame} with 4875 rows and 32 columns.
 }
 \usage{
 route_sample

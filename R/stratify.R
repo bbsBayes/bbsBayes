@@ -237,7 +237,7 @@ stratify_orig <- function(by = NULL,
 #'
 #'
 #' @param by Character. Stratification type. Either an established type, one of
-#'   "state", "bcr", "latlong", "bbs_cws", "bbs_usgs", or a custom name (see
+#'   "prov_state", "bcr", "latlong", "bbs_cws", "bbs_usgs", or a custom name (see
 #'   strata_custom for details).
 #' @param strata_custom Data frame or sf spatial data frame. Data frame
 #'   of modified existing stratification, or a sf spatial data frame with
