@@ -19,7 +19,7 @@ format_ne_states <- function() {
 
   rnaturalearth::ne_states(
     country = c("United States of America", "Canada"), returnclass = "sf") %>%
-    select("province_state" = "name", "code_hasc", "country" = "admin") %>%
+    dplyr::select("province_state" = "name", "code_hasc", "country" = "admin") %>%
     tidyr::separate(.data$code_hasc, sep = "\\.",
                     into = c("country_code", "prov_state")) %>%
     dplyr::mutate(prov_state = if_else(
@@ -28,11 +28,12 @@ format_ne_states <- function() {
 
 #' Categorize polygon by Province/State if applicable
 #'
+#' @param strata_map sf data frame. Strata polygons to be categorized.
 #' @param min_overlap Numeric. The minimum proportion of overlap between a
 #'   stratum polygon and a Province or State. Below this will raise warnings.
 #' @param plot Logical. Whether to plot how polygons were assigned to Provinces
 #'   or States
-#' @keep_spatial Logical. Whether the output should be a spatial data frame or
+#' @param keep_spatial Logical. Whether the output should be a spatial data frame or
 #'   not.
 #'
 #' @inheritParams
@@ -61,21 +62,21 @@ format_ne_states <- function() {
 #'}
 #'
 #'
-assign_prov_state <- function(sf, min_overlap = 0.75, plot = FALSE,
+assign_prov_state <- function(strata_map, min_overlap = 0.75, plot = FALSE,
                               keep_spatial = TRUE) {
 
   # Checks
   if(min_overlap <= 0.5) {
     stop("`min_overlap` must be greater than 0.5 (50%)", call. = FALSE)
   }
-  check_sf(sf)
+  check_sf(strata_map)
 
   ps <- format_ne_states() %>%
     dplyr::select("prov_state", "country", "country_code", "province_state") %>%
     sf::st_transform(3347) %>%
     sf::st_set_agr("constant")
 
-  ovlps <- sf %>%
+  ovlps <- strata_map %>%
     sf::st_transform(st_crs(ps)) %>%
     dplyr::group_by(.data$strata_name) %>%
     dplyr::summarize() %>%
@@ -124,7 +125,7 @@ assign_prov_state <- function(sf, min_overlap = 0.75, plot = FALSE,
     print(g)
   }
 
-  if(keep_spatial) r <- sf::st_transform(ps_assigned, sf::st_crs(sf))
+  if(keep_spatial) r <- sf::st_transform(ps_assigned, sf::st_crs(strata_map))
   if(!keep_spatial) r <- sf::st_drop_geometry(ps_assigned)
   r
 }
