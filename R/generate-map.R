@@ -166,8 +166,7 @@ generate_map_orig <- function(trend = NULL,
 #' s <- stratify(by = "bbs_cws", sample_data = TRUE)
 #'
 #' # Prepare the stratified data for use in a JAGS model.
-#' d <- prepare_data(s, species = "Pacific Wren",
-#'                   min_year = 2009, max_year = 2018)
+#' d <- prepare_data(s, min_year = 2009, max_year = 2018)
 #'
 #' # Now run the model (fast but not good, just for illustration)
 #' m <- run_model(d, model = "first_diff",
@@ -213,9 +212,7 @@ generate_map <- function(trends,
   trends$t_plot <- cut(trends$t_plot, breaks = c(-Inf, breaks, Inf),
                       labels = labls)
 
-  trends$ST_12 <- trends$region
-
-  map <- dplyr::left_join(x = map, y = trends, by = "ST_12")
+  map <- dplyr::left_join(x = map, y = trends, by = c("strata_name" = "region"))
 
   if(title) title <- paste(species, "trends", start_year, "-", end_year) else title <- NULL
 
