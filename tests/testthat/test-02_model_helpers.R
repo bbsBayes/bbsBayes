@@ -2,9 +2,7 @@
 test_that("samples_to_array()", {
   skip_on_ci()
 
-  m <- readr::read_rds(system.file("extdata",
-                                   "pacific_wren_slope_fit.rds",
-                                   package = "bbsBayes"))
+  m <- pacific_wren_model
 
   n <- m$model_fit$draws(variables = "n", format = "draws_matrix")
 
@@ -16,7 +14,6 @@ test_that("samples_to_array()", {
 
   expect_equal(n1[, 1:19], n2[, , 1])
   expect_equal(n1[, 20:38], n2[, , 2])
-  expect_equal(n1[, 20:38], n2[, , 2])
-  expect_equal(n1[, 837:855], n2[, , 45])
-  expect_equal(n1[, 932:950], n2[, , 50])
+  expect_equal(n1[, 39:57], n2[, , 3])
+  expect_equal(n1[, 96:114], n2[, , 6])
 })

@@ -63,6 +63,8 @@ test_that("check_sf()", {
   expect_error(check_sf(map[0,]), "Empty spatial data frame")
 
   # Invalid properties
+  map <- sf::read_sf(system.file("maps", "BBS_USGS_strata.shp",
+                                 package = "bbsBayes"))
   expect_error(check_sf(map), "Invalid spatial properties found")
 
   # All good once fixed
@@ -80,7 +82,7 @@ test_that("check_strata()", {
 
   for(i in c("prov_state", "bcr", "latlong", "bbs_cws", "bbs_usgs", "BBS_USGS")) {
     expect_silent(check_strata(!!i)) %>%
-      expect_equal(!!tolower(i))
+      expect_equal(c(tolower(!!i), "standard"))
   }
 
   expect_error(check_strata("bb"), "or provide an sf") # Long
@@ -101,13 +103,13 @@ test_that("check_strata()", {
   #   No change if the exact same
   b <- bbs_strata[["bbs_cws"]]
   expect_message(s <- check_strata("bbs_cws", custom = b, quiet = FALSE), "\\'bbs_cws\\'")
-  expect_equal(s, "bbs_cws")
+  expect_equal(s, c("bbs_cws", "standard"))
 
   #   Change if actually a subset
   b <- dplyr::filter(bbs_strata[["bbs_cws"]], country_code == "CA")
   expect_message(s <- check_strata("bbs_cws", custom = b, quiet = FALSE),
-                 "\\(custom subset\\)")
-  expect_equal(s, "bbs_cws (subset)")
+                 "\\(subset\\)")
+  expect_equal(s, c("bbs_cws", "subset"))
 
   # Custom
   expect_error(check_strata("custom", custom = "hi"), "provide an sf spatial")
@@ -116,10 +118,10 @@ test_that("check_strata()", {
   expect_message(s <- check_strata("my_custom",
                                    custom = load_map("bbs_cws"), quiet = FALSE),
                  "\\(custom\\)")
-  expect_equal(s, "my_custom")
+  expect_equal(s, c("my_custom", "custom"))
 
   expect_silent(s <- check_strata("My_CustOm", custom = load_map("bbs_cws")))
-  expect_equal(s, "my_custom")
+  expect_equal(s, c("my_custom", "custom"))
 
 })
 
@@ -179,3 +181,4 @@ test_that("check_numeric()", {
   expect_error(test_fun(x = NULL, y = NULL), "`x`, `y` must be a number")
 
 })
+
