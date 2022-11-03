@@ -20,7 +20,8 @@ library(assertr) # Checks to make sure data is as it should be in the end
 # are calculated from that.
 
 # USGS --------------------------------------------------
-strata_bbs_usgs <- load_map("bbs_usgs", type = "dev") %>%
+strata_bbs_usgs <- "data-raw/maps_orig/BBS_USGS_strata.shp" %>%
+  sf::read_sf() %>%
   st_make_valid() %>% # As needed when st_is_valid() fails
   rename_with(.fn = ~"strata_name", .cols = dplyr::any_of(c("strata_name", "ST_12"))) %>%
   select(strata_name) %>%
@@ -76,7 +77,8 @@ st_write(strata_bbs_cws,
 
 # BCR ----------------------------------------------------
 
-strata_bcr <- load_map("bcr", type = "dev") %>%
+strata_bcr <- "data-raw/maps_orig/BBS_BCR_strata.shp" %>%
+  sf::read_sf() %>%
   sf::st_make_valid() %>%
   rename_with(.fn = ~"strata_name", .cols = dplyr::any_of(c("strata_name", "ST_12"))) %>%
   select(strata_name) %>%
@@ -94,7 +96,8 @@ st_write(strata_bcr, file.path(system.file("maps", package = "bbsBayes"),
 
 # Latitude/Longitude -------------------------------------------------
 
-strata_latlong <- load_map("latlong", type = "dev") %>%
+strata_latlong <- "data-raw/maps_orig/BBS_LatLong_strata.shp" %>%
+  sf::read_sf() %>%
   rename_with(.fn = ~"strata_name", .cols = dplyr::any_of(c("strata_name", "ST_12"))) %>%
   select(strata_name) %>%
   mutate(area_sq_km = as.numeric(units::set_units(st_area(.), "km^2"))) %>%
@@ -115,7 +118,8 @@ st_write(strata_latlong, file.path(system.file("maps", package = "bbsBayes"),
 prov_state_names <- format_ne_states() %>%
   st_drop_geometry()
 
-strata_prov_state <- load_map("prov_state", type = "dev") %>%
+strata_prov_state <- "data-raw/maps_orig/BBS_ProvState_strata.shp" %>%
+  sf::read_sf() %>%
   rename_with(.fn = ~"strata_name", .cols = dplyr::any_of(c("strata_name", "ST_12"))) %>%
   select(strata_name) %>%
   mutate(area_sq_km = as.numeric(units::set_units(st_area(.), "km^2"))) %>%
