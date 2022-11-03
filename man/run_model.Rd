@@ -50,9 +50,8 @@ Run Bayesian model
 # knots to use for the GAM basis.
 # By default, the number of knots will be equal to the floor
 # of the total unique years for the species / 4
-model_data <- prepare_data(strat_data = strat_data,
-                           species_to_run = "Pacific Wren",
-                           model = "gam",
-                           n_knots = 9)
+#model_data <- prepare_data(strat_data,
+#                           model = "gam",
+#                           n_knots = 9)
 
 }

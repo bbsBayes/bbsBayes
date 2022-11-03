@@ -48,10 +48,11 @@ along routes individually. Note that stop-level data is not currently
 supported by the modelling utilities in bbsBayes.
 }
 \examples{
+\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 
 fetch_bbs_data(force = TRUE)
 fetch_bbs_data(level = "stop", force = TRUE)
 fetch_bbs_data(release = 2020, force = TRUE)
 fetch_bbs_data(release = 2020, level = "stop", force = TRUE)
-
+\dontshow{\}) # examplesIf}
 }

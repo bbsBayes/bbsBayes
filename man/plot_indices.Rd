@@ -59,7 +59,7 @@ Generates the indices plot for each stratum modelled.
 s <- stratify(by = "bbs_cws", sample_data = TRUE)
 
 # Prepare the stratified data for modelling
-d <- prepare_data(s, species = "Pacific Wren",
+d <- prepare_data(s,
                   min_year = 2009,
                   max_year = 2018)
 
@@ -67,9 +67,9 @@ d <- prepare_data(s, species = "Pacific Wren",
 m <- run_model(d, model = "first_diff",
                iter_sampling = 5, iter_warmup = 5, chains = 2)
 
-# Generate national, continental, and stratum indices
+# Generate country, continent, and stratum indices
 i <- generate_indices(model_output = m,
-                      regions = c("national", "continental", "stratum"))
+                      regions = c("country", "continent", "stratum"))
 
 # Now, plot_indices() will generate a list of plots for all regions
 plots <- plot_indices(i)
@@ -80,7 +80,7 @@ plots[[1]]
 names(plots)
 
 # Suppose we wanted to access the continental plot. We could do so with
-cont_plot <- plots[["Continental"]]
+cont_plot <- plots[["continental"]]
 
 # You can specify to only plot a subset of years using min_year and max_year
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{assign_prov_state}
 \alias{assign_prov_state}
-\title{Title}
+\title{Categorize polygon by Province/State if applicable}
 \usage{
 assign_prov_state(sf, min_overlap = 0.75, plot = FALSE, keep_spatial = TRUE)
 }
@@ -10,13 +10,13 @@ assign_prov_state(sf, min_overlap = 0.75, plot = FALSE, keep_spatial = TRUE)
 \item{plot}{}
 }
 \description{
-Title
+Categorize polygon by Province/State if applicable
 }
 \examples{
 
 # Demonstration of why we can't divide BCR by Provinces and States!
 map <- load_map("bcr")
-assign_prov_states(map, plot = TRUE)
+assign_prov_state(map, plot = TRUE)
 
 # Use custom stratification, using sf map object
 # e.g. with WBPHS stratum boundaries 2019
@@ -25,10 +25,10 @@ assign_prov_states(map, plot = TRUE)
 \dontrun{
 map <- sf::read_sf("../WBPHS_Stratum_Boundaries_2019") \%>\%
   rename(strata_name = STRAT) # expects this column
-s <- assign_prov_states(map, plot = TRUE)
+s <- assign_prov_state(map, plot = TRUE)
 # Some don't divide nicely, we could try a different min_overlap
 
-s <- assign_prov_states(map, min_overlap = 0.6, plot = TRUE)
+s <- assign_prov_state(map, min_overlap = 0.6, plot = TRUE)
 }
 
 

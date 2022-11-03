@@ -95,9 +95,7 @@ less than half of the population remains) over the period of the trend.
 s <- stratify(by = "bbs_cws", sample_data = TRUE)
 
 # Prepare the stratified data for use in a JAGS model.
-d <- prepare_data(s, species = "Pacific Wren",
-                  min_year = 2009,
-                  max_year = 2018)
+d <- prepare_data(s, min_year = 2009, max_year = 2018)
 
 # Now run the model (fast but not good, just for illustration)
 m <- run_model(d, model = "first_diff",

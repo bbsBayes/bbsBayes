@@ -94,19 +94,18 @@ species, and to estimate trends.
 s <- stratify(by = "bbs_cws", sample_data = TRUE)
 
 # Prepare the stratified data for use in modelling
-d <- prepare_data(s, species = "Pacific Wren",
+d <- prepare_data(s,
                   min_year = 2009,
                   max_year = 2018)
 
 # Now run the model (fast but not good, just for illustration)
 m <- run_model(d, model = "first_diff",
-               iter_sampling = 5, iter_warmup = 5, chains = 2)
+               iter_sampling = 20, iter_warmup = 20, chains = 2)
 
 # Generate the continental and stratum indices
 i <- generate_indices(model_output = m)
 
-# Generate only national indices
-i_nat <- generate_indices(model_output = m,
-                          regions = "national")
+# Generate only country indices
+i_nat <- generate_indices(model_output = m, regions = "country")
 
 }

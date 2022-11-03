@@ -54,4 +54,11 @@ making collaboration and future modifications easier.
   spatially constant throughout all geometries").
 
 
+## Testing and examples
+- When in doubt `skip_on_cran()` for tests (never run fragile tests that *might* fail)
+- Use @examplesIf interactive() to skip examples that can be run but shouldn't
+  be tested (e.g., `fetch_bbs_data()`)
+- use `\dontest` for examples that should *never* be run (try not to have too many)
+- use `\dontrun` for examples that won't fail, but will take a while to run.
+
 ## Random Notes

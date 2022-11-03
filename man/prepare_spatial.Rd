@@ -6,7 +6,7 @@
 \usage{
 prepare_spatial(
   strata_map,
-  strata_col = "strat",
+  prepped_data,
   voronoi = FALSE,
   nearest_fill = FALSE,
   island_link_dist_factor = 1.2,
@@ -18,10 +18,8 @@ prepare_spatial(
 }
 \arguments{
 \item{strata_map}{sf data frame. Map of the strata in (MULTI)POLYGONs or
-(MULTI)POINTs.}
-
-\item{strata_col}{Character. Name of the column in \code{strata_map} that holds
-strata labels.}
+(MULTI)POINTs. Must have column "strata_name" matching strata output from
+\code{prepare_data()}.}
 
 \item{voronoi}{Logical. Whether or not to use Voroni method for polygons.
 (Must use Voronoi method for points).}
@@ -66,24 +64,12 @@ link up the strata before appling a buffer at a distance of \code{buffer_dist}.
 Note that all distances are in the units of \code{sf::st_crs(strata_map)}.
 }
 \examples{
-bbs_data <- stratify(by = "bbs_cws")
+bbs_data <- stratify(by = "bbs_cws", species = "Connecticut Warbler")
 
-model_data <- prepare_data(bbs_data,
-                           species_to_run = "Connecticut Warbler",
-                           model = "first_diff",
-                           model_variant = "spatial",
-                           min_max_route_years = 2)
+model_data <- prepare_data(bbs_data, min_max_route_years = 2)
 
-base_strata_map <- load_map(stratify_by = "bbs_cws")
+map <- load_map("bbs_cws")
 
-strata_df <- model_data$alt_data \%>\%
-  dplyr::select(strat,strat_name) \%>\%
-  dplyr::distinct() \%>\%
-  dplyr::arrange(strat)
-
-strata_map <- base_strata_map \%>\%
-  dplyr::inner_join(strata_df,by = c("ST_12" = "strat_name"))
-
-n <- prepare_spatial(base_strata_map, strata_col = "ST_12")
+sp <- prepare_spatial(map, model_data)
 
 }

@@ -14,14 +14,13 @@ Convergence metrics
 }
 \examples{
 
+\donttest{
 # Toy example with Pacific Wren sample data
 # First, stratify the sample data
 s <- stratify(by = "bbs_cws", sample_data = TRUE)
 
 # Prepare the stratified data for use in modelling
-d <- prepare_data(s, species = "Pacific Wren",
-                  min_year = 2009,
-                  max_year = 2018)
+d <- prepare_data(s, min_year = 2009, max_year = 2018)
 
 # Now run the model (fast but not good, just for illustration)
 m <- run_model(d, model = "first_diff",
@@ -29,5 +28,6 @@ m <- run_model(d, model = "first_diff",
 
 # Calculate convergence metrics on each variable
 conv <- convergence(m)
+}
 
 }
