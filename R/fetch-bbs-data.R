@@ -439,13 +439,13 @@ fetch_bbs_data <- function(level = "state",
   agree <- readline(prompt = "Type \"yes\" (without quotes) to agree: ")
   if(agree != "yes") return(NULL)
 
-  fetch_bbs_data_internal(level, release, force, quiet, compression)
+  fetch_bbs_data_internal(level, release, force, quiet, out_dir, compression)
 }
 
 
 fetch_bbs_data_internal <- function(level = "state", release = 2022,
                                     force = FALSE, quiet = TRUE,
-                                    compression = "none") {
+                                    out_dir, compression = "none") {
 
   if(!quiet) message("Connecting to USGS ScienceBase...", appendLF = FALSE)
 
