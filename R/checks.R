@@ -31,6 +31,22 @@ check_data <- function(data) {
          call. = FALSE)
   }
 }
+#' Check bbs data files
+#'
+#' @param
+check_bbs_data <- function(level, release, force, quiet) {
+  out_dir <- bbs_dir(quiet)
+
+  f <- file.path(out_dir, paste0("bbs_", level, "_data_", release, ".rds"))
+
+  if(file.exists(f) & !force) {
+    stop("BBS ", level, " data for the ", release, " release already exists ",
+         "(", f, ")\n",
+         "Use \"force = TRUE\" to overwrite.", call. = FALSE)
+  }
+  f
+}
+
 
 
 #' Check model name

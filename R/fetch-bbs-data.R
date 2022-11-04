@@ -410,24 +410,7 @@ fetch_bbs_data <- function(level = "state",
 
   check_logical(c(quiet, force))
 
-  out_dir <- bbs_dir()
-
-  if(!dir.exists(out_dir)) {
-    message(paste0("Creating data directory at ", out_dir))
-    dir.create(out_dir, recursive = TRUE)
-  } else {
-    message(paste0("Using data directory at ", out_dir))
-  }
-
-  if(level == "state") f <- paste0("bbs_state_data_", release, ".rds")
-  if(level == "stop") f <- paste0("bbs_stop_data_", release, ".rds")
-
-  if(file.exists(file.path(out_dir, f)) & !force) {
-    stop("BBS ", level, " data for the ", release, " release already exists ",
-         "(", f, ")\n",
-         "Use \"force = TRUE\" to overwrite.", call. = FALSE)
-  }
-
+  out_file <- check_bbs_data(level, release, force, quiet)
 
   # Print Terms of Use
   terms <- readChar(system.file(paste0("data-terms-",release),
@@ -435,17 +418,19 @@ fetch_bbs_data <- function(level = "state",
                     file.info(system.file(paste0("data-terms-",release),
                                           package = "bbsBayes"))$size)
 
-  cat(terms)
+  message(terms)
   agree <- readline(prompt = "Type \"yes\" (without quotes) to agree: ")
   if(agree != "yes") return(NULL)
 
-  fetch_bbs_data_internal(level, release, force, quiet, out_dir, compression)
+  fetch_bbs_data_internal(level, release, force, quiet, out_file, compression)
 }
 
 
 fetch_bbs_data_internal <- function(level = "state", release = 2022,
                                     force = FALSE, quiet = TRUE,
-                                    out_dir, compression = "none") {
+                                    out_file = NULL, compression = "none") {
+
+  if(is.null(out_file)) out_file <- check_bbs_data(level, release, force, quiet)
 
   if(!quiet) message("Connecting to USGS ScienceBase...", appendLF = FALSE)
 
@@ -532,13 +517,11 @@ fetch_bbs_data_internal <- function(level = "state", release = 2022,
                    meta = data.frame(release = release,
                                      download_date = Sys.Date()))
 
-  f <- file.path(out_dir, f)
-
-  message("Saving BBS data to ", f)
-  readr::write_rds(bbs_data, file = f, compress = compression)
+  if(!quiet) message("Saving BBS data to ", out_file)
+  readr::write_rds(bbs_data, file = out_file, compress = compression)
 
   # Clean Up -------------------------
-  message("Removing temp files")
+  if(!quiet) message("Removing temp files")
   unlink(list.files(tempdir(), full.names = TRUE), recursive = TRUE)
 
 }
@@ -546,8 +529,17 @@ fetch_bbs_data_internal <- function(level = "state", release = 2022,
 
 
 
-bbs_dir <- function() {
-  rappdirs::app_dir(appname = "bbsBayes")$data()
+bbs_dir <- function(quiet = TRUE) {
+  d <- rappdirs::app_dir(appname = "bbsBayes")$data()
+
+  if(!dir.exists(d)) {
+    if(!quiet) message(paste0("Creating data directory at ", d))
+    dir.create(d, recursive = TRUE)
+  } else {
+    if(!quiet) message(paste0("Using data directory at ", d))
+  }
+
+  d
 }
 
 #' Remove bbsBayes cache
