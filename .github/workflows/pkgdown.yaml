@@ -43,8 +43,22 @@ jobs:
           cmdstanr::check_cmdstan_toolchain(fix = TRUE)
           cmdstanr::install_cmdstan(cores = 2)
         shell: Rscript {0}
-
+        
+      - name: Get cache dir
+        id: cache-dir
+        run: |
+          CACHE_DIR=$(Rscript -e 'bbsBayes:::bbs_dir()') >> $GITHUB_OUTPUT
+        shell: bash
+        
+      - name: Cache BBS data
+        id: cache-data
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.cache-dir.outputs.CACHE_DIR  }}
+          key: bbs-data-${{ secrets.BBS_DATA_VERSION }}
+          
       - name: Fetch BBS data
+        if: steps.cache-data.outputs.cache-hit != 'true'
         run: |
           bbsBayes:::fetch_bbs_data_internal()
         shell: Rscript {0}
