@@ -35,6 +35,7 @@ jobs:
             any::pkgdown
             local::.
             any::rnaturalearthhires
+            any::patchwork
           needs: website
 
       - name: Install cmdstan
