@@ -47,7 +47,7 @@ jobs:
       - name: Get cache dir
         id: cache-dir
         run: |
-          CACHE_DIR=$(Rscript -e 'bbsBayes:::bbs_dir()') >> $GITHUB_OUTPUT
+          echo CACHE_DIR=$(Rscript -e 'bbsBayes:::bbs_dir()') >> $GITHUB_OUTPUT
         shell: bash
         
       - name: Cache BBS data
