@@ -64,3 +64,8 @@ making collaboration and future modifications easier.
 ## Random Notes
 
 - Use "grey60" rather than `grDevices::grey(0.6)` to avoid another dependency
+- `species_forms` is a *exported* data frame, which means that for (stupid)
+  reasons, bbsBayes functions (like `fetch_bbs_data()`) need to reference it via
+  `bbsBayes::species_forms`
+  (See here for more details/other options:
+  https://coolbutuseless.github.io/2018/12/10/r-packages-internal-and-external-data/)

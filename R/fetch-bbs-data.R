@@ -728,7 +728,7 @@ combine_species <- function(birds, species, quiet = FALSE) {
 
   # Species list - Rename unidentified to name of combo group
   s <- species %>%
-    dplyr::left_join(species_forms, by = c("aou" = "aou_unid")) %>%
+    dplyr::left_join(bbsBayes::species_forms, by = c("aou" = "aou_unid")) %>%
     dplyr::mutate(
       english = dplyr::if_else(
         !is.na(.data$english_combined), .data$english_combined, .data$english),
@@ -739,10 +739,10 @@ combine_species <- function(birds, species, quiet = FALSE) {
     dplyr::mutate(unid_combined = TRUE)
 
   # Birds - Pull out original, non-combined, non-unidentified species, and combine
-  species_forms <- tidyr::unnest(species_forms, "aou_id")
+  sp_forms <- tidyr::unnest(bbsBayes::species_forms, "aou_id")
 
   b <- birds %>%
-    dplyr::inner_join(dplyr::select(species_forms, "aou_unid", "aou_id"),
+    dplyr::inner_join(dplyr::select(sp_forms, "aou_unid", "aou_id"),
                       by = c("aou" = "aou_id")) %>%
     dplyr::mutate(aou = .data$aou_unid) %>%
     dplyr::select(-"aou_unid") %>%
