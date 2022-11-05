@@ -609,7 +609,7 @@ remove_cache <- function(type = "bbs_data", level, release) {
 #' @returns `TRUE` if the data is found, `FALSE` otherwise
 #'
 #' @export
-have_bbs_data <- function(level = "state", release = 2022){
+have_bbs_data <- function(level = "state", release = 2022, quiet = FALSE){
   check_in(level, c("all", "state", "stop"))
   check_in(release, c("all", 2020, 2022))
 
@@ -617,6 +617,8 @@ have_bbs_data <- function(level = "state", release = 2022){
   if(release == "all") release <- c("2020", "2022")
 
   f <- file.path(bbs_dir(), paste0("bbs_", level, "_data_", release, ".rds"))
+
+  if(!quiet) message("BBS ", level, " data ", release, ": '", f, "'")
 
   file.exists(f)
 }

@@ -60,12 +60,11 @@ jobs:
 
       - name: Fetch BBS data
         if: steps.cache-data.outputs.cache-hit != 'true'
-        run: |
-          bbsBayes:::fetch_bbs_data_internal(quiet = FALSE)
+        run: bbsBayes:::fetch_bbs_data_internal(quiet = FALSE)
         shell: Rscript {0}
 
       - name: Build site
-        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE, lazy = TRUE)
         shell: Rscript {0}
 
       - name: Deploy to GitHub pages 🚀
@@ -75,3 +74,7 @@ jobs:
           clean: false
           branch: gh-pages
           folder: docs
+
+      - name: Check for data
+        run: bbsBayes::have_bbs_data()
+        shell: Rscript {0}
