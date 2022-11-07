@@ -464,7 +464,7 @@ bsl <- function(i, wy) {
 calc_slope <- function(n, min_year_num, max_year_num) {
   wy <- c(min_year_num:max_year_num)
   ne <- log(n[, wy])
-  m <-  t(apply(ne, 1, FUN = bsl))
+  m <-  t(apply(ne, 1, FUN = bsl, wy))
 
   as.vector((exp(m) - 1) * 100)
 }
