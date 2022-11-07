@@ -98,6 +98,7 @@ st_write(strata_bcr, file.path(system.file("maps", package = "bbsBayes"),
 
 strata_latlong <- "data-raw/maps_orig/BBS_LatLong_strata.shp" %>%
   sf::read_sf() %>%
+  st_make_valid() %>% # As needed when st_is_valid() fails
   rename_with(.fn = ~"strata_name", .cols = dplyr::any_of(c("strata_name", "ST_12"))) %>%
   select(strata_name) %>%
   mutate(area_sq_km = as.numeric(units::set_units(st_area(.), "km^2"))) %>%
