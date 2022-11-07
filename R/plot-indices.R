@@ -307,15 +307,15 @@ plot_indices <- function(indices = NULL,
     if(title) t <- paste0(species, " - ", i) else t <- ""
 
     if(add_number_routes){
-      if(max(to_plot$nrts) > 200) {
-        ncby_y <- ceiling(to_plot$nrts/50)
+      if(max(to_plot$n_routes) > 200) {
+        ncby_y <- ceiling(to_plot$n_routes/50)
         annot <- c("each dot ~ 50 routes")
       } else {
-        if(max(to_plot$nrts) > 100) {
-          ncby_y <- ceiling(to_plot$nrts/10)
+        if(max(to_plot$n_routes) > 100) {
+          ncby_y <- ceiling(to_plot$n_routes/10)
           annot <- c("each dot ~ 10 routes")
         } else {
-          ncby_y <- to_plot$nrts
+          ncby_y <- to_plot$n_routes
           annot <- c("each dot = 1 route")
         }
       }

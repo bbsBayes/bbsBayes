@@ -864,7 +864,8 @@ generate_indices <- function(model_output = NULL,
                                    .data$strata_p, 0)) %>%
       dplyr::group_by(.data[[rr]], .data$year_num) %>%
       dplyr::summarize(
-        dplyr::across(.cols = c(.data$obs_mean, .data$n_routes_total,
+        dplyr::across(.cols = c(.data$obs_mean, .data$n_routes,
+                                .data$n_routes_total,
                                 .data$n_non_zero, .data$flag_year),
                       sum, na.rm = TRUE),
         flag_remove = unique(.data$flag_remove),
@@ -885,7 +886,8 @@ generate_indices <- function(model_output = NULL,
       dplyr::select("year", "region", "region_type",
                     "strata_included", "strata_excluded",
                     "index", dplyr::contains("index_q"),
-                    "obs_mean", "n_routes_total", "n_non_zero", "backcast_flag") %>%
+                    "obs_mean", "n_routes", "n_routes_total", "n_non_zero",
+                    "backcast_flag") %>%
       dplyr::bind_rows(data_summary, .)
   }
 
