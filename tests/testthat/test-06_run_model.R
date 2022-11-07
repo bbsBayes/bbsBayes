@@ -68,7 +68,42 @@ test_that("create_init_def", {
   }
 })
 
-test_that("run_model", {
+
+test_that("run_model() short", {
+
+  withr::local_seed(111)
+
+  p <- stratify(by = "bbs_usgs", sample_data = TRUE, quiet = TRUE) %>%
+    prepare_data(min_max_route_years = 2)
+
+  expect_message(r <- run_model(p,
+                                model = "first_diff",
+                                out_dir = test_path(),
+                                chains = 2,
+                                iter_sampling = 10, iter_warmup = 10,
+                                refresh = 0,
+                                seed = 111)) %>%
+    # Catch all messages and notes
+    suppressMessages() %>%
+    suppressWarnings() %>%
+    utils::capture.output()
+
+    expect_type(r, "list")
+    expect_named(r, c("model_fit", "non_zero_weight", "meta_data",
+                      "meta_strata", "raw_data"))
+    expect_s3_class(r$model_fit, "CmdStanMCMC")
+
+    f <- paste0("BBS_STAN_first_diff_hier_", Sys.Date(),
+                c("-1.csv", "-2.csv", ".rds"))
+
+    expect_true(all(file.exists(f)))
+
+  # Clean up
+  unlink(list.files(test_path(), paste0("^BBS_STAN_(.)*", Sys.Date(), "(.)*.csv"), full.names = TRUE))
+})
+
+
+test_that("run_model() Full", {
 
  skip("long")
 
