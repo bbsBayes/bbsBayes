@@ -146,7 +146,7 @@ generate_map_orig <- function(trend = NULL,
 
 #' Generate a map of trends by strata
 #'
-#' `generate_map()` allows you to generate a colour-coded map of there percent
+#' `plot_map()` allows you to generate a colour-coded map of there percent
 #' change in species trends for each strata.
 #'
 #' @param trends Data frame. Trends produced by `generate_trends()`.
@@ -179,15 +179,15 @@ generate_map_orig <- function(trend = NULL,
 #' t <- generate_trends(i)
 #'
 #' # Generate the map
-#' map <- generate_map(t)
+#' map <- plot_map(t)
 #'
 #' @export
 #'
 
-generate_map <- function(trends,
-                         slope = FALSE,
-                         title = TRUE,
-                         col_viridis = TRUE) {
+plot_map <- function(trends,
+                     slope = FALSE,
+                     title = TRUE,
+                     col_viridis = TRUE) {
 
   stratify_by <- trends$meta_data$stratify_by
   species <- trends$meta_data$species

@@ -151,6 +151,6 @@ Finally we can even create geofaceted plots (which is only possible in our case
 because we assigned our strata to Provinces and States and calculated indices
 for these regions).
 ```{r}
-geofacet_plot(i, trends = t, multiple = TRUE)
+plot_geofacet(i, trends = t, multiple = TRUE)
 ```
 

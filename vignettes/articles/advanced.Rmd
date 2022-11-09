@@ -210,7 +210,7 @@ tp[[2]]
 The trends can be mapped to produce strata maps coloured by species population trends.
 
 ```{r}
-mp <- generate_map(trends, col_viridis = FALSE)
+mp <- plot_map(trends, col_viridis = FALSE)
 mp
 ```
 
@@ -218,10 +218,9 @@ mp
 
 ### Geofacet Trajectories
 
-For stratifications that can be compiled by political regions (i.e., `bbs_cws`, `bbs_usgs`, or `state`), the function `geofacet_plot` will generate a ggplot object that plots the state and province level population trajectories in facets arranged in an approximately geographic arrangement. These plots offer a concise, range-wide summary of a species' population status and trends.
 
 ```{r, eval = FALSE}
-gf <- geofacet_plot(indices_list = indices,
+gf <- plot_geofacet(indices_list = indices,
                     trends = trends,
                     multiple = TRUE,
                     slope = FALSE)
@@ -517,7 +516,7 @@ The `generate_trends()` function produces much more than just the trend estimate
 
 The default trend calculation is an interval-specific estimate of the geometric mean annual change in the population. $Trend = (\frac {n[Minyear]}{n[Maxyear]})^{(1/(Maxyear-Minyear))}$ It relies on a comparison of the annual indices in the first and last years of the trend period to quantify the mean rate of population change. However, it ignores the pattern of change between the two end-points.
 
-The user can choose an alternative estimate of change that is calculated by fitting a log-linear slope to the series of all annual indices between the two end-points (e.g., all 11 years in a 10-year trend from 2008-2018). The slope of this line could be expressed as an average annual percent change across the time-period of interest. If working with estimates derived from a model with strong annual fluctuations and for which no decomposition is possible (e.g., "firstdiff" model), this slope-based trend may be a more comprehensive measure of the average population change, that is less dependent on the particular end-point years. These slope trends can be added to the trend output table by setting the `slope = TRUE` argument in `generate_trends()`. The standard trends are still calculated, but additional columns are added that include the alternate estimates. NOTE: the `generate_map()` function can map slope trends as well with the same `slope = TRUE` argument.
+The user can choose an alternative estimate of change that is calculated by fitting a log-linear slope to the series of all annual indices between the two end-points (e.g., all 11 years in a 10-year trend from 2008-2018). The slope of this line could be expressed as an average annual percent change across the time-period of interest. If working with estimates derived from a model with strong annual fluctuations and for which no decomposition is possible (e.g., "firstdiff" model), this slope-based trend may be a more comprehensive measure of the average population change, that is less dependent on the particular end-point years. These slope trends can be added to the trend output table by setting the `slope = TRUE` argument in `generate_trends()`. The standard trends are still calculated, but additional columns are added that include the alternate estimates. NOTE: the `plot_map()` function can map slope trends as well with the same `slope = TRUE` argument.
 
 ``` {.r}
     #jags_data_firstdiff <- prepare_jags_data(stratified_data, 
@@ -533,7 +532,7 @@ The user can choose an alternative estimate of change that is calculated by fitt
                                              Min_year = 2008,
                                              Max_year = 2018,
                                              slope = TRUE)
-    generate_map(fd_slope_trends_0.8_18,
+    plot_map(fd_slope_trends_0.8_18,
                  slope = TRUE,
                  stratify_by = "bbs_usgs")
     )

@@ -6,6 +6,8 @@ making collaboration and future modifications easier.
 ## Naming
 - Snake case is used wherever possible
 - Functions are generally named `verb_noun()` i.e. `run_model()` or `prepare_data()`
+- R script files are named `foo-bar.R` whereas the main function of the file is
+  `foo_bar.R`
 
 ## Documentation
 - Descriptions for parameter arguments should follow:
@@ -62,10 +64,20 @@ making collaboration and future modifications easier.
 - use `\dontrun` for examples that won't fail, but will take a while to run.
 
 ## Random Notes
-
 - Use "grey60" rather than `grDevices::grey(0.6)` to avoid another dependency
 - `species_forms` is a *exported* data frame, which means that for (stupid)
   reasons, bbsBayes functions (like `fetch_bbs_data()`) need to reference it via
   `bbsBayes::species_forms`
   (See here for more details/other options:
   https://coolbutuseless.github.io/2018/12/10/r-packages-internal-and-external-data/)
+
+## Deprecating, Defunct-ing, and other big changes
+- See `R/bbsBayes-defunct.R` for listing all defunct packages in a document page
+- See `R/bbsBayes-deprectated.R` for listing all deprectated packages in a document page
+- `defunct()` is created in `bbsBayes-defunct.R` and can be used to both deprecate
+ and make functions defunct. It's errors if `type = "defunct"` and warns then
+ continues to replacement function if `type = "deprecated"`.
+  as well the `defunct()` function for creating a message to the user
+
+## Useful tips
+- Use Ctrl-Shift / to automatically text-wrap 

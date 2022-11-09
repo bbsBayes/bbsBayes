@@ -71,8 +71,6 @@
 #' @examples
 #'
 #'
-#' geofacet_plot_orig(i, multiple = FALSE, trends = t, stratify_by = ")
-#'
 #' @noRd
 
 
@@ -501,7 +499,7 @@ geofacet_plot_tidy <- function(indices_list = NULL,
 #'   plotted within each prov/state facet
 #' @param trends Optional dataframe of matching strata or state/province trends
 #'   produced by `generate_trends()`. If included trajectories are coloured
-#'   based on the same colour scale used in `generate_map`
+#'   based on the same colour scale used in `plot_map`
 #' @param slope Logical. If dataframe of trends is included, whether colours in
 #'   the plot should be based on slope trends. Default = FALSE
 #' @param add_observed_means Should the facet plots include points indicating
@@ -536,16 +534,16 @@ geofacet_plot_tidy <- function(indices_list = NULL,
 #' t <- generate_trends(i)
 #'
 #' # Now make the geofacet plot.
-#' geofacet_plot(i, trends = t, multiple = TRUE)
-#' geofacet_plot(i, trends = t, multiple = TRUE, col_viridis = TRUE)
-#' geofacet_plot(i, multiple = TRUE)
-#' geofacet_plot(i, trends = t, multiple = FALSE)
-#' geofacet_plot(i, multiple = FALSE)
+#' plot_geofacet(i, trends = t, multiple = TRUE)
+#' plot_geofacet(i, trends = t, multiple = TRUE, col_viridis = TRUE)
+#' plot_geofacet(i, multiple = TRUE)
+#' plot_geofacet(i, trends = t, multiple = FALSE)
+#' plot_geofacet(i, multiple = FALSE)
 #'
 #' @export
 
 
-geofacet_plot <- function(indices,
+plot_geofacet <- function(indices,
                           ci_width = 0.95,
                           multiple = FALSE,
                           trends = NULL,

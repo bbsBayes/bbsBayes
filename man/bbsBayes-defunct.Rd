@@ -62,3 +62,6 @@ waic()
 \code{p_waic()} and \code{waic()} are no longer recommended for BBS data. Use
 cross validation instead
 }
+\seealso{
+\link{bbsBayes-deprecated}
+}

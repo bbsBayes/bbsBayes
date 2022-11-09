@@ -2,9 +2,18 @@
 % Please edit documentation in R/bbsBayes-deprecated.R
 \name{bbsBayes-deprecated}
 \alias{bbsBayes-deprecated}
+\alias{generate_map}
+\alias{geofacet_plot}
 \title{bbsBayes deprecated functions}
+\usage{
+generate_map(...)
+
+geofacet_plot(..)
+}
 \description{
-No functions currently deprecated
+\code{plot_map()} supersedes \code{generate_map()}
+
+\code{plot_geofacet()} supersedes \code{geofacet_plot()}
 }
 \seealso{
 \link{bbsBayes-defunct}

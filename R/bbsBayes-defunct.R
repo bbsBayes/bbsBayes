@@ -23,12 +23,16 @@
 #'  `p_waic()` and `waic()` are no longer recommended for BBS data. Use
 #'  cross validation instead
 #'
+#' @seealso [bbsBayes-deprecated]
+#'
 NULL
 
 
-defunct <- function(usage) {
+defunct <- function(usage, type = "defunct") {
   f <- as.character(sys.call(which = sys.parent(n = 1)))
-  stop("`", f, "()` is now defunct.\nUse `", usage, "` instead.", call. = FALSE)
+  msg <- paste0("`", f, "()` is now ", type, ".\nUse `", usage, "` instead.")
+  if(type == "defunct") stop(msg, call. = FALSE)
+  if(type == "deprecated") warning(msg, call. = FALSE)
 }
 
 
