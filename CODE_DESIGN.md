@@ -74,10 +74,13 @@ making collaboration and future modifications easier.
 ## Deprecating, Defunct-ing, and other big changes
 - See `R/bbsBayes-defunct.R` for listing all defunct packages in a document page
 - See `R/bbsBayes-deprectated.R` for listing all deprectated packages in a document page
-- `defunct()` is created in `bbsBayes-defunct.R` and can be used to both deprecate
- and make functions defunct. It's errors if `type = "defunct"` and warns then
- continues to replacement function if `type = "deprecated"`.
-  as well the `defunct()` function for creating a message to the user
+- `defunct()` is created in `bbsBayes-defunct.R` and can be used to both
+  deprecate and make functions defunct. It's errors if `type = "defunct"` and
+  warns then continues to replacement function if `type = "deprecated"`. as well
+  the `defunct()` function for creating a message to the user. See `?plot_map`
+  vs `?generate_map`
+- Because v3.0.0 of this package entails such a massive overhaul, I suggest 
+  using a start up message (in `R/bbsBayes-package.R`) to share this with users
 
 ## Useful tips
 - Use Ctrl-Shift / to automatically text-wrap 
