@@ -8,6 +8,11 @@
 \alias{generate_cont_trend}
 \alias{generate_regional_trends}
 \alias{generate_strata_trends}
+\alias{get_final_values}
+\alias{get_mcmc_list}
+\alias{get_prepared_data}
+\alias{get_strata_area}
+\alias{get_composite_regions}
 \alias{plot_cont_indices}
 \alias{prepare_jags_data}
 \alias{p_waic}
@@ -26,6 +31,16 @@ generate_regional_trends()
 
 generate_strata_trends()
 
+get_final_values()
+
+get_mcmc_list()
+
+get_prepared_data()
+
+get_strata_area()
+
+get_composite_regions()
+
 plot_cont_indices()
 
 prepare_jags_data()
@@ -35,6 +50,8 @@ p_waic()
 waic()
 }
 \description{
+\subsection{Superseded}{
+
 \code{generate_indices()} supersedes
 \itemize{
 \item \code{generate_cont_indices()}
@@ -49,18 +66,33 @@ waic()
 \item \code{generate_strata_trends()}
 }
 
-\code{plot_indices()} supersedes
-\itemize{
-\item \code{plot_cont_indices()}
+\code{plot_indices()} supersedes \code{plot_cont_indices()}
+
+\code{prepare_data()} supersedes \code{prepare_jags_data()}
 }
 
-\code{prepare_data()} supersedes
-\itemize{
-\item \code{prepare_jags_data()}
-}
+\subsection{No longer relevant}{
+
+\code{get_prepared_data()} is no longer required. Access the \code{raw_data} list item
+in the output of \code{prepare_data()}. e.g., \code{prepped_data[["raw_data"]]}
+
+\code{get_mcmc_list()} is no longer required (or relevant). Access the \code{model_fit}
+list item in the output of \code{run_model()} for the \code{cmdstanr} model object.
+e.g., \code{model_output[["model_fit"]]}
+
+\code{get_final_values()} is no longer required. Use \code{cmdstanr::draws()} to
+extract final samples from the \code{model_fit} list item in the output of
+\code{run_model()}. e.g., \code{model_output[["model_fit"]]$draws()}
+
+\code{get_strata_area()} and \code{get_composite_regions()} are no longer required.
+Access the strata areas and regional data by exploring the included data
+\code{bbs_strata}. e.g, `bbs_strata[\link{"bbs_usgs"}].
 
 \code{p_waic()} and \code{waic()} are no longer recommended for BBS data. Use
 cross validation instead
+
+\code{extract_index_data()} is no longer recommended.
+}
 }
 \seealso{
 \link{bbsBayes-deprecated}
