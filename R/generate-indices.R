@@ -668,6 +668,10 @@ generate_indices_tidy <- function(jags_mod = NULL,
 #'   is desired. This is probably most relevant if max_backcast is set and so
 #'   trajectories for different time-periods could include a different subset of
 #'   strata (i.e., strata removed)
+#' @param jags_mod Defunct. Use `model_output` instead
+#' @param jags_data Defunct.
+#' @param alt_region_names Defunct. Use `regions_index` instead
+#' @param startyear Deprecated. Use `start_year` instead
 #'
 #' @inheritParams common_docs
 #'
@@ -725,7 +729,17 @@ generate_indices <- function(model_output = NULL,
                              start_year = NULL,
                              drop_exclude = FALSE,
                              max_backcast = NULL,
-                             quiet = FALSE) {
+                             quiet = FALSE,
+                             jags_mod, jags_data, alt_region_names, startyear) {
+
+  # Deprecated/Defunct args
+  if(!missing(jags_mod)) dep_stop("3.0.0", "jags_mod", "`model_output`")
+  if(!missing(jags_data)) dep_stop("3.0.0", "jags_data")
+  if(!missing(alt_region_names)) dep_stop("3.0.0", "alt_region_names", "`regions_index`")
+  if(!missing(startyear)) {
+    start_year <- startyear
+    dep_warn("3.0.0", "startyear", "`start_year`")
+  }
 
   # Checks
   check_data(model_output)

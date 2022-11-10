@@ -227,6 +227,8 @@ plot_indices_orig <- function(indices_list = NULL,
 #'   showing the number of BBS routes included in each year. This is useful as a
 #'   visual check on the relative data-density through time because in most
 #'   cases the number of observations increases over time
+#' @param species Defunct. Use `title` instead
+#' @param indices_list Deprecated. Use `indices` instead
 #'
 #' @inheritParams common_docs
 #'
@@ -286,7 +288,17 @@ plot_indices <- function(indices = NULL,
                          axis_text_size = 16,
                          line_width = 1,
                          add_observed_means = FALSE,
-                         add_number_routes = FALSE) {
+                         add_number_routes = FALSE,
+                         indices_list, species) {
+
+  # Deprecated/Defunct args
+  if(!missing(indices_list)) {
+    dep_warn("3.0.0", "indices_list", "`indices`")
+    indices <- indices_list
+  }
+  if(!missing(species)) dep_stop("3.0.0", "species", "`title`")
+
+
 
   # CHECKS
 

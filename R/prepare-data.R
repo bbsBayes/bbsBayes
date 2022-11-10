@@ -1275,6 +1275,14 @@ prepare_model_tidy <- function(model, basis, obs, n_knots, heavy_tailed) {
 #'   observations of species on at least 1 route. Defaults to 3
 #' @param min_mean_route_years Required minimum average of years per route with
 #'   the species observed. Defaults to 1.
+#' @param species Defunct. Use `species` in `stratify()` instead
+#' @param model Defunct. Use `model` in `run_model()` instead
+#' @param heavy_tailed Defunct. Use `heavy_tailed` in `run_model()` instead
+#' @param n_knots Defunct. Use `n_knots` in `run_model()` instead
+#' @param basis Defunct. Use `basis` in `run_model()` instead
+#' @param sampler Defunct.
+#' @param strat_data Defunct. Use `strata_data` instead
+#' @param strata_rem Defunct. Use `custom_strata` in `stratify()` instead
 #'
 #' @inheritParams common_docs
 #'
@@ -1305,14 +1313,43 @@ prepare_model_tidy <- function(model, basis, obs, n_knots, heavy_tailed) {
 #'
 #' model_data <- prepare_data(strat_data, min_year = 2009, max_year = 2018)
 
-prepare_data <- function(strata_data = NULL,
+prepare_data <- function(strata_data,
                          min_year = NULL,
                          max_year = NULL,
                          min_n_routes = 3,
                          min_max_route_years = 3,
-                         min_mean_route_years = 1) {
+                         min_mean_route_years = 1,
+                         quiet = FALSE,
+                         species,
+                         model, heavy_tailed, n_knots, basis, sampler,
+                         strat_data, strata_rem) {
+
+  # Deprecated/Defunct args
+  if(!missing(species)) {
+    dep_stop("3.0.0", "species", "the `species` argument in `stratify()`")
+  }
+  if(!missing(model)) {
+    dep_stop("3.0.0", "model", "the `model` argument in `run_model()`")
+  }
+  if(!missing(heavy_tailed)) {
+    dep_stop("3.0.0", "heavy_tailed",
+             "the `heavy_tailed` argument in `run_model()`")
+  }
+  if(!missing(n_knots)) {
+    dep_stop("3.0.0", "n_knots", "the `n_knots` argument in `run_model()`")
+  }
+  if(!missing(basis)) {
+    dep_stop("3.0.0", "basis", "the `basis` argument in `run_model()`")
+  }
+  if(!missing(sampler)) dep_stop("3.0.0", "sampler")
+  if(!missing(strat_data)) dep_stop("3.0.0", "strat_data", "`strata_data`")
+  if(!missing(strata_rem)) {
+    dep_stop("3.0.0", "strata_rem",
+             "the `custom_strata` argument in `stratify()`")
+  }
 
   # Checks
+  if(missing(strata_data)) stop("Missing `strata_data`", call. = FALSE)
   check_data(strata_data)
   check_numeric(min_year, max_year, allow_null = TRUE)
   check_numeric(min_n_routes, min_max_route_years, min_mean_route_years)

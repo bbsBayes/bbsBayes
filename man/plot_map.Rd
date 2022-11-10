@@ -4,7 +4,15 @@
 \alias{plot_map}
 \title{Generate a map of trends by strata}
 \usage{
-plot_map(trends, slope = FALSE, title = TRUE, col_viridis = TRUE)
+plot_map(
+  trends,
+  slope = FALSE,
+  title = TRUE,
+  col_viridis = TRUE,
+  species,
+  stratify_by,
+  select
+)
 }
 \arguments{
 \item{trends}{Data frame. Trends produced by \code{generate_trends()}.}
@@ -18,6 +26,12 @@ metric (slope of a log-linear regression) if \code{slope = TRUE} was used in
 
 \item{col_viridis}{Logical flag to use "viridis" colour-blind friendly
 palette. Default is FALSE}
+
+\item{species}{Defunct. Use \code{title} instead}
+
+\item{stratify_by}{Defunct.}
+
+\item{select}{Defunct.}
 }
 \value{
 spplot object

@@ -10,6 +10,7 @@
 \alias{generate_strata_trends}
 \alias{get_final_values}
 \alias{get_mcmc_list}
+\alias{extract_index_data}
 \alias{get_prepared_data}
 \alias{get_strata_area}
 \alias{get_composite_regions}
@@ -19,35 +20,37 @@
 \alias{waic}
 \title{bbsBayes defunct functions}
 \usage{
-generate_cont_indices()
+generate_cont_indices(...)
 
-generate_regional_indices()
+generate_regional_indices(...)
 
-generate_strata_indices()
+generate_strata_indices(...)
 
-generate_cont_trend()
+generate_cont_trend(...)
 
-generate_regional_trends()
+generate_regional_trends(...)
 
-generate_strata_trends()
+generate_strata_trends(...)
 
-get_final_values()
+get_final_values(...)
 
-get_mcmc_list()
+get_mcmc_list(...)
 
-get_prepared_data()
+extract_index_data(...)
 
-get_strata_area()
+get_prepared_data(...)
 
-get_composite_regions()
+get_strata_area(...)
 
-plot_cont_indices()
+get_composite_regions(...)
 
-prepare_jags_data()
+plot_cont_indices(...)
 
-p_waic()
+prepare_jags_data(...)
 
-waic()
+p_waic(...)
+
+waic(...)
 }
 \description{
 \subsection{Superseded}{

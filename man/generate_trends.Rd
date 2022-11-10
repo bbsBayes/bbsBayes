@@ -11,7 +11,9 @@ generate_trends(
   quantiles = c(0.025, 0.05, 0.25, 0.75, 0.95, 0.975),
   slope = FALSE,
   prob_decrease = NULL,
-  prob_increase = NULL
+  prob_increase = NULL,
+  Min_year,
+  Max_year
 )
 }
 \arguments{
@@ -37,6 +39,10 @@ optionally calculate the posterior probabilities (see Details). Default is
 \item{prob_increase}{Numeric vector. Percent-increase values for which to
 optionally calculate the posterior probabilities (see Details). Default is
 \code{NULL} (do not calculate).}
+
+\item{Min_year}{Deprecated. Use \code{min_year} instead}
+
+\item{Max_year}{Deprecated. Use \code{max_year} instead}
 }
 \value{
 Data frame with one row for each region included in the starting \code{indices} object. Contains \code{start_year}, \code{end_year}, \code{region}, \code{region-alt}, \code{region_type},

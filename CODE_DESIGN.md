@@ -73,14 +73,34 @@ making collaboration and future modifications easier.
 
 ## Deprecating, Defunct-ing, and other big changes
 - See `R/bbsBayes-defunct.R` for listing all defunct packages in a document page
-- See `R/bbsBayes-deprectated.R` for listing all deprectated packages in a document page
-- `defunct()` is created in `bbsBayes-defunct.R` and can be used to both
-  deprecate and make functions defunct. It's errors if `type = "defunct"` and
-  warns then continues to replacement function if `type = "deprecated"`. as well
-  the `defunct()` function for creating a message to the user. See `?plot_map`
+- See `R/bbsBayes-deprectated.R` for listing all deprecated packages in a document page
+- `dep_stop()` and `dep_warn()` are created in `bbsBayes-defunct.R` and can be used to 
+  stop or warn on use of functions or arguments, depending. See `?plot_map`
   vs `?generate_map`
 - Because v3.0.0 of this package entails such a massive overhaul, I suggest 
   using a start up message (in `R/bbsBayes-package.R`) to share this with users
+- To deprecate a function
+  - Add `dep_warn()` to the start of the function call and either continue, or
+    switch to new function (e.g., `R/bbsBayes-deprectated.R`)
+  - Add to documentation for `bbsBayes-deprecated`
+- To make a function defunct
+  - Add `dep_stop()` to the start of the function call and remove the rest of
+    the code (for clarity) (e.g., `R/bbsBayes-defunct.R`)
+  - Add to documentation for `bbsBayes-defunct`
+- To deprecate/defunct an argument
+  - Move the argument in the `function()` call to the end of the list, without
+    a default
+  - Move the documentation for that argument to the end of the list and mark
+   "Deprecated. Use X instead", or just "Deprecated." (or Defunct)
+  - If deprecated with a replacement, add `if(!missing(arg)) {dep_warn(...)}` to
+    the start of the function and use arg_new <- arg_old inside the condition
+    (e.g., `plot_indices()`)
+  - If defunct or without a replacement, add `if(!missing(arg)) dep_warn(...)`
+    or `if(!missing(arg)) dep_stop(...)`
+  
 
 ## Useful tips
+- Use Ctrl-Shift-L to load all package functions via `devtools::load_all()`
+  see https://r-pkgs.org/workflow101.html#sec-load-all
 - Use Ctrl-Shift / to automatically text-wrap 
+- Use Ctrl Click on any function to jump to that function's definition

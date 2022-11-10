@@ -273,28 +273,58 @@ run_model_orig <- function(jags_data = NULL,
 #'
 #'
 #'
-#' @param model Character.
-#' @param model_variant
+#' @param model Character. Type of model to run, must be one of "first_diff"
+#'   (First Differences), "gam" (General Additive Model), "gamye" (General
+#'   Additive Model with Year Effect), or "slope" (Slope model).
+#' @param model_variant Character. Model variant to run, must be one of
+#'   "nonhier" (Non-hierarchical), "hier" (Hierarchical), or "spatial"
+#'   (Spatially explicit).
 #' @param spatial_data List. Output of `prepare_spatial()`.
-#' @param heavy_tailed
-#' @param n_knots
-#' @param basis
-#' @param use_pois
-#' @param calculate_nu
-#' @param calculate_log_lik
-#' @param calculate_CV
-#' @param refresh
-#' @param chains
-#' @param parallel_chains
-#' @param iter_sampling
-#' @param iter_warmup
-#' @param adapt_delta
-#' @param max_treedepth
-#' @param init_def
-#' @param out_name
-#' @param out_dir
-#' @param quiet
-#' @param ...
+#' @param heavy_tailed Logical. Whether extra-Poisson error distributions should
+#'   be modelled as a t-distribution, with heavier tails than the standard
+#'   normal distribution. Default is `TRUE`. Recent results suggest this is best
+#'   even though it requires much longer convergence times.
+#' @param n_knots Numeric. Number of knots for "gam" and "gamye" models
+#' @param basis Character. Basis function to use for GAM smooth, one of
+#'   "original" or "mgcv". Default is "original", the same basis used in Smith
+#'   and Edwards 2020. "mgcv" is an alternate that uses the "tp" basis from the
+#'   package mgcv (also used in brms, and rstanarm). If using the "mgcv" option,
+#'   the user may want to consider adjusting the prior distributions for the
+#'   parameters and their precision.
+#' @param use_pois Logical.
+#' @param calculate_nu Logical.
+#' @param calculate_log_lik Logical.
+#' @param calculate_CV Logical.
+#' @param refresh Numeric. Passed to `cmdstanr::sample`. Number of iterations
+#'   between screen updates. If 0, only errors are shown.
+#' @param chains Numeric. Passed to `cmdstanr::sample`. Number of Markov chains
+#'   to run.
+#' @param parallel_chains Numeric. Passed to `cmdstanr::sample`. Maximum number
+#'   of chains to run in parallel.
+#' @param iter_warmup Numeric. Passed to `cmdstanr::sample`. Number of warmup
+#'   iterations per chain.
+#' @param iter_sampling Numeric. Passed to `cmdstanr::sample`. Number of
+#'   sampling (post-warmup) iterations per chain.
+#' @param adapt_delta Numeric.
+#' @param max_treedepth Numeric.
+#' @param init_def List.
+#' @param out_name Character.
+#' @param out_dir Character.
+#' @param quiet Logical
+#' @param ... Other arguments passed on to cmdstanr::sample
+#' @param jags_data Defunct.
+#' @param inits Defunct.
+#' @param parameters_to_save Defunct.
+#' @param track_n Defunct.
+#' @param n_adapt Defunct.
+#' @param n_burnin Defunct.
+#' @param n_thin Defunct.
+#' @param n_chains Defunct.
+#' @param n_saved_steps Defunct.
+#' @param n_iter Defunct.
+#' @param modules Defunct.
+#' @param parallel Defunct.
+#' @param n_cores Defunct.
 #'
 #' @inheritParams common_docs
 #'
@@ -326,8 +356,8 @@ run_model <- function(prepped_data,
                       refresh = 100,
                       chains = 4,
                       parallel_chains = 4,
-                      iter_sampling = 1000,
                       iter_warmup = 1000,
+                      iter_sampling = 1000,
                       adapt_delta = 0.95,
                       max_treedepth = 14,
                       init_def = NULL,
@@ -335,7 +365,26 @@ run_model <- function(prepped_data,
                       out_dir = ".",
                       save_output = TRUE,
                       quiet = FALSE,
+                      jags_data, inits, parameters_to_save, track_n, n_adapt,
+                      n_burnin, n_thin, n_chains, n_saved_steps, n_iter,
+                      modules, parallel, n_cores,
                       ...) {
+
+  # Deprecated/Defunct args
+  msg <- "alternate arguments for `cmdstanr` (see ?run_model)"
+  if(!missing(jags_data)) dep_stop("3.0.0", "jags_data", msg)
+  if(!missing(inits)) dep_stop("3.0.0", "inits", msg)
+  if(!missing(parameters_to_save)) dep_stop("3.0.0", "parameters_to_save", msg)
+  if(!missing(track_n)) dep_stop("3.0.0", "track_n", msg)
+  if(!missing(n_chains)) dep_stop("3.0.0", "n_chains", msg)
+  if(!missing(n_adapt)) dep_stop("3.0.0", "n_adapt", msg)
+  if(!missing(n_saved_steps)) dep_stop("3.0.0", "n_saved_steps", msg)
+  if(!missing(n_burnin)) dep_stop("3.0.0", "n_burnin", msg)
+  if(!missing(n_thin)) dep_stop("3.0.0", "n_thin", msg)
+  if(!missing(n_iter)) dep_stop("3.0.0", "n_iter", msg)
+  if(!missing(modules)) dep_stop("3.0.0", "modules", msg)
+  if(!missing(parallel)) dep_stop("3.0.0", "parallel", msg)
+  if(!missing(n_cores)) dep_stop("3.0.0", "n_cores", msg)
 
   # Check inputs
   check_data(prepped_data)

@@ -19,8 +19,8 @@ run_model(
   refresh = 100,
   chains = 4,
   parallel_chains = 4,
-  iter_sampling = 1000,
   iter_warmup = 1000,
+  iter_sampling = 1000,
   adapt_delta = 0.95,
   max_treedepth = 14,
   init_def = NULL,
@@ -28,6 +28,19 @@ run_model(
   out_dir = ".",
   save_output = TRUE,
   quiet = FALSE,
+  jags_data,
+  inits,
+  parameters_to_save,
+  track_n,
+  n_adapt,
+  n_burnin,
+  n_thin,
+  n_chains,
+  n_saved_steps,
+  n_iter,
+  modules,
+  parallel,
+  n_cores,
   ...
 )
 }
@@ -37,13 +50,92 @@ run_model(
 Use \verb{@inheritParams common_docs} to include the above in any function
 documentation with a matching argument (will only include matching args)}
 
-\item{model}{Character.}
+\item{model}{Character. Type of model to run, must be one of "first_diff"
+(First Differences), "gam" (General Additive Model), "gamye" (General
+Additive Model with Year Effect), or "slope" (Slope model).}
+
+\item{model_variant}{Character. Model variant to run, must be one of
+"nonhier" (Non-hierarchical), "hier" (Hierarchical), or "spatial"
+(Spatially explicit).}
 
 \item{spatial_data}{List. Output of \code{prepare_spatial()}.}
 
-\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
+\item{heavy_tailed}{Logical. Whether extra-Poisson error distributions should
+be modelled as a t-distribution, with heavier tails than the standard
+normal distribution. Default is \code{TRUE}. Recent results suggest this is best
+even though it requires much longer convergence times.}
 
-\item{...}{}
+\item{n_knots}{Numeric. Number of knots for "gam" and "gamye" models}
+
+\item{basis}{Character. Basis function to use for GAM smooth, one of
+"original" or "mgcv". Default is "original", the same basis used in Smith
+and Edwards 2020. "mgcv" is an alternate that uses the "tp" basis from the
+package mgcv (also used in brms, and rstanarm). If using the "mgcv" option,
+the user may want to consider adjusting the prior distributions for the
+parameters and their precision.}
+
+\item{use_pois}{Logical.}
+
+\item{calculate_nu}{Logical.}
+
+\item{calculate_log_lik}{Logical.}
+
+\item{calculate_CV}{Logical.}
+
+\item{refresh}{Numeric. Passed to \code{cmdstanr::sample}. Number of iterations
+between screen updates. If 0, only errors are shown.}
+
+\item{chains}{Numeric. Passed to \code{cmdstanr::sample}. Number of Markov chains
+to run.}
+
+\item{parallel_chains}{Numeric. Passed to \code{cmdstanr::sample}. Maximum number
+of chains to run in parallel.}
+
+\item{iter_warmup}{Numeric. Passed to \code{cmdstanr::sample}. Number of warmup
+iterations per chain.}
+
+\item{iter_sampling}{Numeric. Passed to \code{cmdstanr::sample}. Number of
+sampling (post-warmup) iterations per chain.}
+
+\item{adapt_delta}{Numeric.}
+
+\item{max_treedepth}{Numeric.}
+
+\item{init_def}{List.}
+
+\item{out_name}{Character.}
+
+\item{out_dir}{Character.}
+
+\item{quiet}{Logical}
+
+\item{jags_data}{Defunct.}
+
+\item{inits}{Defunct.}
+
+\item{parameters_to_save}{Defunct.}
+
+\item{track_n}{Defunct.}
+
+\item{n_adapt}{Defunct.}
+
+\item{n_burnin}{Defunct.}
+
+\item{n_thin}{Defunct.}
+
+\item{n_chains}{Defunct.}
+
+\item{n_saved_steps}{Defunct.}
+
+\item{n_iter}{Defunct.}
+
+\item{modules}{Defunct.}
+
+\item{parallel}{Defunct.}
+
+\item{n_cores}{Defunct.}
+
+\item{...}{Other arguments passed on to cmdstanr::sample}
 }
 \description{
 Run Bayesian model

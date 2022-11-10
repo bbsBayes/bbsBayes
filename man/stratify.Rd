@@ -11,7 +11,9 @@ stratify(
   combine_species_forms = TRUE,
   release = 2022,
   sample_data = FALSE,
-  quiet = FALSE
+  quiet = FALSE,
+  lump_species_forms,
+  bbs_data
 )
 }
 \arguments{
@@ -29,6 +31,10 @@ forms. See Details.}
 \item{sample_data}{Logical. Use sample data (just Pacific Wren)}
 
 \item{quiet}{Logical. Suppress progress messages}
+
+\item{lump_species_forms}{Deprecated. Use \code{combine_species_forms} instead}
+
+\item{bbs_data}{Defunct.}
 }
 \value{
 Large list with \code{meta_data}, \code{meta_strata}, \code{birds_strata}, and

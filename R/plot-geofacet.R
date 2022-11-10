@@ -509,6 +509,10 @@ geofacet_plot_tidy <- function(indices_list = NULL,
 #'   interval. Defaults to 0.95, lower = 0.025 and upper = 0.975
 #' @param col_viridis Logical flag to use "viridis" colour-blind friendly
 #'   palette. Default is `FALSE`
+#' @param indices_list Deprecated. Use `indices` instead
+#' @param stratify_by Defunct.
+#' @param species Defunct.
+#' @param select Defunct.
 #'
 #' @inheritParams common_docs
 #'
@@ -549,7 +553,18 @@ plot_geofacet <- function(indices,
                           trends = NULL,
                           slope = FALSE,
                           add_observed_means = FALSE,
-                          col_viridis = FALSE) {
+                          col_viridis = FALSE,
+                          indices_list, stratify_by, species, select) {
+
+  # Deprecated/Defunct args
+  if(!missing(indices_list)) {
+    dep_warn("3.0.0", "indices_list", "`indices`")
+    indices <- indices_list
+  }
+
+  if(!missing(stratify_by)) dep_stop("3.0.0", "stratify_by")
+  if(!missing(species)) dep_stop("3.0.0", "species")
+  if(!missing(select)) dep_stop("3.0.0", "select")
 
   # CHECKS
   check_data(indices)

@@ -13,7 +13,11 @@ generate_indices(
   start_year = NULL,
   drop_exclude = FALSE,
   max_backcast = NULL,
-  quiet = FALSE
+  quiet = FALSE,
+  jags_mod,
+  jags_data,
+  alt_region_names,
+  startyear
 )
 }
 \arguments{
@@ -57,6 +61,14 @@ limit (i.e., generates annual indices for the entire time series,
 regardless of when the species was first observed)}
 
 \item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
+
+\item{jags_mod}{Defunct. Use \code{model_output} instead}
+
+\item{jags_data}{Defunct.}
+
+\item{alt_region_names}{Defunct. Use \code{regions_index} instead}
+
+\item{startyear}{Deprecated. Use \code{start_year} instead}
 }
 \value{
 List of 6 objects

@@ -247,6 +247,8 @@ stratify_orig <- function(by = NULL,
 #' @param release
 #' @param sample_data Logical. Use sample data (just Pacific Wren)
 #' @param quiet Logical. Suppress progress messages
+#' @param lump_species_forms Deprecated. Use `combine_species_forms` instead
+#' @param bbs_data Defunct.
 #'
 #' @details
 #'   To define a custom subset of an existing stratification, specify the
@@ -335,7 +337,15 @@ stratify <- function(by,
                      combine_species_forms = TRUE,
                      release = 2022,
                      sample_data = FALSE,
-                     quiet = FALSE) {
+                     quiet = FALSE,
+                     lump_species_forms, bbs_data) {
+
+  # Deprecated/Defunct args
+  if(!missing(lump_species_forms)) {
+    dep_warn("3.0.0", "lump_species_forms", "`combine_species_forms`")
+    combine_species_forms <- lump_species_forms
+  }
+  if(!missing(bbs_data)) dep_stop("3.0.0", "bbs_data")
 
   # Checks
   by <- check_strata(by, custom = strata_custom, quiet = quiet)
