@@ -57,10 +57,11 @@ prepare_spatial <- function(strata_map,
                             buffer_type = "buffer",
                             buffer_dist = 10000,
                             add_map = NULL,
+                            label_size = 3,
                             quiet = FALSE) {
 
   # Checks
-  check_sf(strata_map)
+  check_sf(strata_map, check_poly = TRUE)
   check_sf(add_map)
   check_data(prepped_data)
 
@@ -202,7 +203,8 @@ prepare_spatial <- function(strata_map,
   nb_mat <- spdep::nb2mat(nb_db, style = "B", zero.policy = TRUE)
 
   if(!quiet) message("Plotting neighbourhood matrices...")
-  map <- plot_neighbours(strata_map, centres, nb_db, bbox, vint, add_map)
+  map <- plot_neighbours(strata_map, centres, nb_db, bbox, vint, add_map,
+                         label_size)
 
   # Reformat nodes and edges
   nb <- nb_fmt(nb_weights)
@@ -304,7 +306,8 @@ fix_islands <- function(nb_db, centres, island_link_dist_factor, quiet) {
 }
 
 
-plot_neighbours <- function(strata_map, centres, nb_db, bbox, vint, add_map) {
+plot_neighbours <- function(strata_map, centres, nb_db, bbox, vint, add_map,
+                            label_size) {
 
   # Coordinates
   coords <- as.data.frame(sf::st_coordinates(centres))
@@ -334,8 +337,8 @@ plot_neighbours <- function(strata_map, centres, nb_db, bbox, vint, add_map) {
   g <- g +
     ggplot2::geom_sf(data = strata_map, alpha = 0, colour = grey(0.85)) +
     ggplot2::geom_sf(ggplot2::aes(col = .data[["strata_name"]], alpha = 0.5)) +
-    ggplot2::geom_sf_text(ggplot2::aes(label = .data[["strata_name"]]), size = 5,
-                          alpha = 0.7, colour = "black")
+    ggplot2::geom_sf_text(ggplot2::aes(label = .data[["strata_name"]]),
+                          size = label_size, alpha = 0.7, colour = "black")
 
   # Add nb_connect
   g <- g +
