@@ -99,25 +99,8 @@ prepare_spatial <- function(strata_map,
   # (cf. https://github.com/r-spatial/sf/issues/406)
   sf::st_agr(strata_map) <- "constant"
 
-  # Specify and check types
-  geo_types <- get_geo_types(strata_map)
-
-  if(length(geo_types) > 1) {
-    stop("Multiple geometry types in `strata_map`. ",
-         "Need all (MULTI)POINTS or all (MULTI)POLYGONS", call. = FALSE)
-  }
-
-  if(!voronoi && geo_types != "POLYGON") {
-    if(!quiet) message("Non-polygon spatial data provided, switching to ",
-                       "`voronoi = TRUE`")
-    voronoi <- TRUE
-  }
   # Calculate centres
-  if(geo_types == "POINT") {
-    centres <- strata_map
-  } else {
-    centres <- sf::st_centroid(strata_map)
-  }
+  centres <- sf::st_centroid(strata_map)
 
   # Neighbours - NOT Voronoi -------------
   if(!voronoi) {
