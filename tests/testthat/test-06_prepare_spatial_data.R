@@ -26,27 +26,50 @@ test_that("nb_fmt()", {
 })
 
 test_that("fix_no_neighbours()", {
+  m <- load_map("latlong") %>%
+    dplyr::filter(stringr::str_detect(strata_name, "(^51)|(^38)"))
 
+  nb_db <- spdep::poly2nb(m, queen = FALSE)
+  sf::st_agr(m) <- "constant"
+  centres <- sf::st_centroid(m)
+  nb_weights <- spdep::nb2WB(nb_db)
+  nn <- spdep::knearneigh(centres, k = 2)[[1]]
+  n <- which(nb_weights$num == 0)
 
-
+  expect_silent(nb_db2 <- fix_no_neighbours(n[1], nb_db, nn))
+  expect_true(spdep::card(nb_db)[n[1]] == 0)     # No neighbours
+  expect_false(spdep::card(nb_db2)[n[1]] == 0)   # Neighbours
+  expect_true(all(spdep::card(nb_db)[nn[n[1],]] == 1))   # some neighbours
+  expect_true(all(spdep::card(nb_db2)[nn[n[1],]] == 2))  # more neighbours
 })
 
 test_that("fix_islands()", {
+  m <- load_map("latlong") %>%
+    dplyr::filter(stringr::str_detect(strata_name, "(^51)|(^38)"))
 
+  nb_db <- spdep::poly2nb(m, queen = FALSE)
+  sf::st_agr(m) <- "constant"
+  centres <- sf::st_centroid(m)
 
+  expect_silent(nb_db2 <- fix_islands(nb_db, centres, 1.2, TRUE))
 
+  expect_true(sum(spdep::card(nb_db) == 0) > 0)
+  expect_false(sum(spdep::card(nb_db2) == 0) > 0)
+
+  # Snapshots can't be run interactively
+  expect_snapshot_value(nb_db2, "json2")
 })
 
 test_that("prepare_spatial() defaults", {
 
   map <- load_map("bbs_cws")
   p <- stratify(by = "bbs_cws", sample_data = TRUE) %>%
-    prepare_data()
+    prepare_data() %>%
+    suppressMessages()
 
   expect_message(n <- prepare_spatial(map, p),
                  "Preparing") %>%
     expect_message("Identifying neighbours \\(non-Voronoi method\\)") %>%
-    expect_message("  Isolated") %>%
     expect_message("Formating") %>%
     expect_message("Plotting")
 
@@ -55,17 +78,50 @@ test_that("prepare_spatial() defaults", {
     expect_named(c("n", "n_edges", "node1", "node2", "adj_matrix", "map",
                    "strata_meta"))
 
+  # Expect matches subset of map
+  map_sub <- dplyr::filter(map, strata_name %in% p$meta_strata$strata_name)
   expect_true(is.matrix(n$adj_matrix))
-  expect_true(all(dim(n$adj_matrix) == nrow(map)))
+  expect_true(all(dim(n$adj_matrix) == nrow(map_sub)))
   expect_s3_class(n$map, "ggplot")
-  expect_equal(n$strata_meta, sf::st_drop_geometry(map[, "strata_name"]))
+  expect_equal(n$strata_meta, sf::st_drop_geometry(map_sub[, "strata_name"]))
+
+  # Snapshots can't be run interactively
+  expect_snapshot_value(n$n_edges, "json2")
+  expect_snapshot_value(n$node1, "json2")
+  expect_snapshot_value(n$node2, "json2")
+  expect_snapshot_value(n$adj_matrix, "json2")
 })
 
-test_that("prepare_spatial() vironoi", {
+test_that("prepare_spatial(nearest_fill = TRUE)", {
+  map <- load_map("latlong")
+  p <- stratify(by = "latlong", sample_data = TRUE) %>%
+    prepare_data() %>%
+    suppressMessages()
+
+  expect_message(n <- prepare_spatial(map, p, nearest_fill = TRUE),
+                 "Preparing") %>%
+    expect_message("Identifying neighbours \\(non-Voronoi method\\)") %>%
+    expect_message("Some strata have no neighbours") %>%
+    expect_message("  Isolated groups of nodes") %>%
+    expect_message("  Isolated groups of nodes") %>%
+    expect_message("  Isolated groups of nodes") %>%
+    expect_message("Formating") %>%
+    expect_message("Plotting")
+
+  # Snapshots can't be run interactively
+  expect_snapshot_value(n$n_edges, "json2")
+  expect_snapshot_value(n$node1, "json2")
+  expect_snapshot_value(n$node2, "json2")
+  expect_snapshot_value(n$adj_matrix, "json2")
+
+})
+
+test_that("prepare_spatial(voronoi = TRUE)", {
 
   map <- load_map("bbs_cws")
   p <- stratify(by = "bbs_cws", sample_data = TRUE) %>%
-    prepare_data()
+    prepare_data() %>%
+    suppressMessages()
 
   expect_message(n <- prepare_spatial(map, p, voronoi = TRUE),
                  "Preparing") %>%
@@ -78,11 +134,13 @@ test_that("prepare_spatial() vironoi", {
     expect_named(c("n", "n_edges", "node1", "node2", "adj_matrix", "map",
                    "strata_meta"))
 
+  # Expect matches subset of map
+  map_sub <- dplyr::filter(map, strata_name %in% p$meta_strata$strata_name)
   expect_true(is.matrix(n$adj_matrix))
-  expect_true(all(dim(n$adj_matrix) == nrow(map)))
+  expect_true(all(dim(n$adj_matrix) == nrow(map_sub)))
   expect_s3_class(n$map, "ggplot")
-  expect_equal(n$strata_meta, sf::st_drop_geometry(map[, "strata_name"]))
-  expect_equal(n$n, nrow(map))
+  expect_equal(n$strata_meta, sf::st_drop_geometry(map_sub[, "strata_name"]))
+  expect_equal(n$n, nrow(map_sub))
 
   # Snapshots can't be run interactively
   expect_snapshot_value(n$n_edges, "json2")
