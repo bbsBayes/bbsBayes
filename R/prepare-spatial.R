@@ -135,7 +135,9 @@ prepare_spatial <- function(strata_map,
       nn <- spdep::knearneigh(centres, k = 2)[[1]]
       no_neighbour <- which(nb_weights$num == 0)
 
-      nb_db <- purrr::map(no_neighbour, fix_no_neighbours, nb_db, nn)
+      for(w in no_neighbour) {
+        nb_db <- fix_no_neighbours(w, nb_db, nn)
+      }
     }
 
     # Fix islands
@@ -243,13 +245,15 @@ nb_fmt <- function(nb_weights) {
 
 fix_no_neighbours <- function(which, nb_db, nn) {
   for(j in 1:2){
-    n1 <- nn[j]
+    n1 <- nn[which, j]
 
     nb_db[[which]] <- as.integer(unique(c(nb_db[[which]], n1)))
-    if(nb_db[[which]][1] == 0) nb_db[[which]] <- nb_db[[which]][-1]
+    nb_db[[which]] <- nb_db[[which]][nb_db[[which]] != 0]
 
     nb_db[[n1]] <- as.integer(unique(c(nb_db[[n1]], which)))
-    if(nb_db[[n1]][1] == 0) nb_db[[n1]] <- nb_db[[n1]][-1]
+    nb_db[[n1]] <- nb_db[[n1]][nb_db[[n1]] != 0]
+
+    # message(" Linking ", which, " to ", n1)
   }
   nb_db
 }
