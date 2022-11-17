@@ -48,6 +48,13 @@
 #'
 #' sp <- prepare_spatial(map, model_data)
 #'
+#' # Visually explore the spatial linkages
+#' sp$map
+#'
+#' # Overlay subset strata map on original mapping data
+#' sp <- prepare_spatial(map, model_data, add_map = map)
+#' sp$map
+#'
 #' @export
 prepare_spatial <- function(strata_map,
                             prepped_data,

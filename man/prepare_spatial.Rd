@@ -13,6 +13,7 @@ prepare_spatial(
   buffer_type = "buffer",
   buffer_dist = 10000,
   add_map = NULL,
+  label_size = 3,
   quiet = FALSE
 )
 }
@@ -75,5 +76,12 @@ model_data <- prepare_data(bbs_data, min_max_route_years = 2)
 map <- load_map("bbs_cws")
 
 sp <- prepare_spatial(map, model_data)
+
+# Visually explore the spatial linkages
+sp$map
+
+# Overlay subset strata map on original mapping data
+sp <- prepare_spatial(map, model_data, add_map = map)
+sp$map
 
 }
