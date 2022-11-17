@@ -250,9 +250,12 @@ fix_islands <- function(nb_db, centres, island_link_dist_factor, quiet) {
   islands <- spdep::n.comp.nb(nb_db)
   n_islands <- islands$nc
 
+  if(n_islands > 1 & !quiet) {
+    message("Linking islands (isolated groups of nodes)...")
+  }
+
   while(n_islands > 1) {
-    if(!quiet) message("    Isolated groups of nodes found (",
-                       n_islands - 1, "). ",
+    if(!quiet) message("    Islands found (", n_islands - 1, "). ",
                        "Linking by distance between centroids...")
 
     # Get sites in the first island and distances among them
