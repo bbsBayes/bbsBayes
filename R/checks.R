@@ -14,13 +14,13 @@ check_data <- function(data) {
     n <- c("n", "n_edges", "node1", "node2", "adj_matrix", "strata_meta")
     from <- "prepare_spatial()"
   } else if(type == "model_output") {
-    n <- c(n, "model_fit", "non_zero_weight", "raw_data")
+    n <- c(n, "model_fit", "raw_data")
     from <- "run_model()"
   } else if(type == "indices") {
-    n <- c(n, "data_summary", "samples", "raw_data")
+    n <- c(n, "indices", "samples", "raw_data")
     from <- "generate_indices()"
   } else if (type == "trends") {
-
+     #MORE
   }
 
   # All n must be in names(data), but not necessarily the reverse

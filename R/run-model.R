@@ -490,7 +490,6 @@ run_model <- function(prepped_data,
     ...)
 
   model_output <- list("model_fit" = model_fit,
-                       "non_zero_weight" = model_data$non_zero_weight,
                        "meta_data" = meta_data,
                        "meta_strata" = prepped_data[["meta_strata"]],
                        "raw_data" = prepped_data[["raw_data"]])

@@ -69,9 +69,10 @@ test_that("create_init_def", {
 })
 
 
-test_that("run_model() short", {
+test_that("run_model() first_diff short", {
 
   withr::local_seed(111)
+  unlink(list.files(test_path(), "BBS_STAN_slope_hier_", full.names = TRUE))
 
   p <- stratify(by = "bbs_usgs", sample_data = TRUE, quiet = TRUE) %>%
     prepare_data(min_max_route_years = 2)
@@ -89,17 +90,53 @@ test_that("run_model() short", {
     utils::capture.output()
 
     expect_type(r, "list")
-    expect_named(r, c("model_fit", "non_zero_weight", "meta_data",
-                      "meta_strata", "raw_data"))
+    expect_named(r, c("model_fit", "meta_data", "meta_strata", "raw_data"))
     expect_s3_class(r$model_fit, "CmdStanMCMC")
 
     f <- paste0("BBS_STAN_first_diff_hier_", Sys.Date(),
-                c("-1.csv", "-2.csv", ".rds"))
+                c("-1.csv", "-2.csv", "_01.rds"))
 
-    expect_true(all(file.exists(f)))
+    expect_true(all(file.exists(test_path(f))))
+
+    # Clean up
+    list.files(test_path(), paste0("^BBS_STAN_(.)*", Sys.Date(), "(.)*.csv"),
+               full.names = TRUE) %>%
+      unlink()
+})
+
+test_that("run_model() slope short", {
+
+  withr::local_seed(111)
+  unlink(list.files(test_path(), "BBS_STAN_slope_hier_", full.names = TRUE))
+
+  p <- stratify(by = "bbs_usgs", sample_data = TRUE, quiet = TRUE) %>%
+    prepare_data(min_max_route_years = 2)
+
+  expect_message(r <- run_model(p,
+                                model = "slope",
+                                out_dir = test_path(),
+                                chains = 2,
+                                iter_sampling = 10, iter_warmup = 10,
+                                refresh = 0,
+                                seed = 111)) %>%
+    # Catch all messages and notes
+    suppressMessages() %>%
+    suppressWarnings() %>%
+    utils::capture.output()
+
+  expect_type(r, "list")
+  expect_named(r, c("model_fit", "meta_data", "meta_strata", "raw_data"))
+  expect_s3_class(r$model_fit, "CmdStanMCMC")
+
+  f <- paste0("BBS_STAN_slope_hier_", Sys.Date(),
+              c("-1.csv", "-2.csv", "_01.rds"))
+
+  expect_true(all(file.exists(test_path(f))))
 
   # Clean up
-  unlink(list.files(test_path(), paste0("^BBS_STAN_(.)*", Sys.Date(), "(.)*.csv"), full.names = TRUE))
+  list.files(test_path(), paste0("^BBS_STAN_(.)*", Sys.Date(), "(.)*.csv"),
+             full.names = TRUE) %>%
+    unlink()
 })
 
 

@@ -301,9 +301,10 @@ plot_indices <- function(indices = NULL,
 
 
   # CHECKS
+  check_data(indices)
 
   species <- indices$meta_data$species
-  indices <- indices$data_summary %>%
+  indices <- indices$indices %>%
     calc_luq(ci_width)
 
   cl <- "#39568c"

@@ -1442,12 +1442,13 @@ prepare_data <- function(strata_data,
     dplyr::group_by(.data$obs_route) %>%
     dplyr::mutate(first_year = dplyr::if_else(year == min(year), 1, 0)) %>%
     dplyr::ungroup() %>%
-    dplyr::arrange(.data$strata, .data$route, .data$year)
+    dplyr::arrange(.data$strata, .data$route, .data$year) %>%
+    dplyr::rename("non_zero_weight" = "p_routes_ever")
 
   weights <- obs_final %>%
-    dplyr::select("strata", "p_routes_ever") %>%
+    dplyr::select("strata", "non_zero_weight") %>%
     dplyr::distinct() %>%
-    dplyr::pull(.data$p_routes_ever)
+    dplyr::pull(.data$non_zero_weight)
 
   obs_by_site <- obs_final %>%
     dplyr::select("strata", "obs_site", "site", "observer") %>%
