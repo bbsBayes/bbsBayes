@@ -33,7 +33,12 @@ check_data <- function(data) {
 }
 #' Check bbs data files
 #'
-#' @param
+#' @param level Type of data (state or stop)
+#' @param release Year of data release, currently 2020 or 2022
+#' @param force Logical Force download even if exists
+#' @param quiet Suppress messages
+#'
+#' @noRd
 check_bbs_data <- function(level, release, force, quiet) {
   out_dir <- bbs_dir(quiet)
 

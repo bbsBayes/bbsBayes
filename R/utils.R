@@ -36,8 +36,6 @@ format_ne_states <- function() {
 #' @param keep_spatial Logical. Whether the output should be a spatial data frame or
 #'   not.
 #'
-#' @inheritParams
-#'
 #' @return (Spatial) data frame with strata assigned to Province/State
 #'
 #' @export

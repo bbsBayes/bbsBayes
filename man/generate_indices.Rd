@@ -23,42 +23,44 @@ generate_indices(
 \arguments{
 \item{model_output}{List. Output of \code{run_model()}.}
 
-\item{quantiles}{vector of quantiles to be sampled from the posterior
-distribution Defaults to c(0.025,0.05,0.25,0.5,0.75,0.95,0.975)}
+\item{quantiles}{Numeric. Vector of quantiles to be sampled from the
+posterior distribution. Default is
+\code{c(0.025, 0.05, 0.25, 0.5, 0.75, 0.95, 0.975)}. Note that these quantiles
+will be used to create confidence interval bands in \code{plot_indices()} and
+by quantiles in \code{generate_trends()}, so make sure you specify the ones you
+want to use later in this step.}
 
-\item{regions}{vector selecting regional compilation(s) to calculate. Default
-is "continent" and "stratum". Options also include "country", "prov_state",
-"bcr", and "bcr_by_country" for the stratifications that include areas that
-align with those regions.}
+\item{regions}{Character. Which region(s) to summarize and calculate indices
+for. Default is "continent" and "stratum". Options also include "country",
+"prov_state", "bcr", and "bcr_by_country". Note that some regions only
+apply to specific stratifications. You can also supply a custom region that
+exists as a column in the \code{regions_index} data frame (see
+examples for more details).}
 
-\item{regions_index}{Data frame. Index of how strata line up with regions.}
+\item{regions_index}{Data frame. Custom regions to summarize. Data frame must
+include all strata in the original data in one column (\code{strata_name}), and
+any custom regions defined as categories in other columns.}
 
-\item{alternate_n}{text string indicating the name of the alternative annual
+\item{alternate_n}{Character. Indicating the name of the alternative annual
 index parameter in a model, Default is "n", alternatives are "n2" which
-involves a different way of scaling the annual indices, "nsmooth" for the
+involves a different way of scaling the annual indices, "n_smooth" for the
 gam and gamye models which show only the smooth component of the
-trajectory, and "nslope" for the slope models which track only the linear
-slope component of the model}
+trajectory, and "n_slope" for the slope models which track only the linear
+slope component of the model.}
 
-\item{start_year}{Optional first year for which to calculate the annual
-indices if a trajectory for only the more recent portion of the time series
-is desired. This is probably most relevant if max_backcast is set and so
-trajectories for different time-periods could include a different subset of
-strata (i.e., strata removed)}
+\item{start_year}{Numeric. Trim the data record before calculating annual
+indices.}
 
-\item{drop_exclude}{logical indicating if the strata that exceed the
-max_backcast threshold should be excluded from the calculations, Default is
-FALSE (regions are flagged and listed but not dropped)}
+\item{drop_exclude}{Logical. Whether or not strata that exceed the
+\code{max_backcast} threshold should be excluded from the calculations. Default
+is \code{FALSE} (regions are flagged and listed but not dropped).}
 
-\item{max_backcast}{an optional integer indicating the maximum number of
-years to backcast the stratum-level estimates before the first year in
-which the species was observed on any route in that stratum. 5 is used in
-the CWS national estimates. If the observed data in a given stratum do not
-include at least one non-zero observation of the species between the first
-year of the BBS and start_year+max_backcast, the stratum is flagged within
-the relevant regional summary. Default value, NULL ignores any backcasting
-limit (i.e., generates annual indices for the entire time series,
-regardless of when the species was first observed)}
+\item{max_backcast}{Numeric. The number of years to back cast stratum-level
+estimates before the first year that species was observed on any route in
+that stratum. Default is \code{NULL}, which generates annual indices for the
+entire time series and ignores back-casting. CWS national estimates use a
+back cast of 5. Note that unless \code{drop_exclude = TRUE}, problematic years
+are only flagged, not omitted. See Details for more specifics.}
 
 \item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
 
@@ -98,6 +100,17 @@ Calculate annual indices of relative abundance by year for different regions.
 These indices can then be used to plot population trajectories for the
 species, and to estimate trends.
 }
+\details{
+\code{max_backcast} is a way to deal with the fact that the species of interest
+may not appear in the data until several years after the start of the record.
+\code{max_backcast} specifies how many years can occur before the stratum is flagged.
+A \code{max_backcast} of 5 will flag any stratum without a non-zero (or non-NA)
+observation within the first 5 years of the data record. Note that records
+are \emph{only} flagged unless \code{drop_exclude = TRUE}.
+If you find that the early data record is sparse and results in the
+exclusion of many strata, consider trimming the early years by specifying a
+\code{start_year}.
+}
 \examples{
 
 # Toy example with Pacific Wren sample data
@@ -118,5 +131,13 @@ i <- generate_indices(model_output = m)
 
 # Generate only country indices
 i_nat <- generate_indices(model_output = m, regions = "country")
+
+# Use a custom region specification (dummy example)
+library(dplyr)
+ri <- bbs_strata[["bbs_cws"]] \%>\%
+  mutate(my_region = if_else(prov_state \%in\% "ON", "Ontario", "Rest"))
+i_custom <- generate_indices(model_output = m,
+                             regions = c("country", "prov_state", "my_region"),
+                             regions_index = ri)
 
 }

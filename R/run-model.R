@@ -705,7 +705,6 @@ create_init_def <- function(model, model_variant, model_data, chains) {
 #' entire model output oject from `run_model()` which contains more details
 #' regarding stratification etc.
 #'
-#' @param model_output
 #' @param path Character. Optional file path to use for saved data. Defaults to
 #' the file path used for the original run
 #'

@@ -4,7 +4,7 @@
 \alias{have_bbs_data}
 \title{Check whether BBS data exists}
 \usage{
-have_bbs_data(level = "state", release = 2022)
+have_bbs_data(level = "state", release = 2022, quiet = FALSE)
 }
 \arguments{
 \item{level}{Character. Which type of BBS counts to fetch, "state" or "stop".
@@ -12,6 +12,8 @@ Defaults to "state".}
 
 \item{release}{Numeric. Yearly release. Options are 2022 (default including
 data through 2021 field season) or 2020 (including data through 2019)}
+
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
 }
 \value{
 \code{TRUE} if the data is found, \code{FALSE} otherwise

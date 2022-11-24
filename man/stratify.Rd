@@ -28,9 +28,12 @@ polygons defining the custom stratifications. See Details.}
 \item{combine_species_forms}{Logical. Whether to combine ambiguous species
 forms. See Details.}
 
+\item{release}{Numeric. Yearly release. Options are 2022 (default including
+data through 2021 field season) or 2020 (including data through 2019)}
+
 \item{sample_data}{Logical. Use sample data (just Pacific Wren)}
 
-\item{quiet}{Logical. Suppress progress messages}
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
 
 \item{lump_species_forms}{Deprecated. Use \code{combine_species_forms} instead}
 

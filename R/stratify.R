@@ -244,11 +244,11 @@ stratify_orig <- function(by = NULL,
 #'   polygons defining the custom stratifications. See Details.
 #' @param combine_species_forms Logical. Whether to combine ambiguous species
 #'   forms. See Details.
-#' @param release
 #' @param sample_data Logical. Use sample data (just Pacific Wren)
-#' @param quiet Logical. Suppress progress messages
 #' @param lump_species_forms Deprecated. Use `combine_species_forms` instead
 #' @param bbs_data Defunct.
+#'
+#' @inheritParams common_docs
 #'
 #' @details
 #'   To define a custom subset of an existing stratification, specify the
@@ -328,7 +328,6 @@ stratify_orig <- function(by = NULL,
 #'
 #'
 #'
-
 #' @export
 
 stratify <- function(by,
