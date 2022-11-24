@@ -2,10 +2,12 @@
 
 export("%>%")
 export(assign_prov_state)
-export(convergence)
 export(fetch_bbs_data)
 export(generate_indices)
 export(generate_trends)
+export(get_convergence)
+export(get_model_vars)
+export(get_summary)
 export(have_bbs_data)
 export(load_bbs_data)
 export(load_map)
