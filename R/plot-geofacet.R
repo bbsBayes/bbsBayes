@@ -568,7 +568,7 @@ plot_geofacet <- function(indices,
 
   # CHECKS
   check_data(indices)
-  stratify_by <- indices$meta_data$stratify_by
+  stratify_by <- indices[["meta_data"]]$stratify_by
 
   if(!"prov_state" %in% names(indices$meta_strata)) {
     stop("Cannot create geofacet plots for data which doesn't align with ",
@@ -582,19 +582,32 @@ plot_geofacet <- function(indices,
   alpha_ribbon <- 0.5
   r <- dplyr::if_else(multiple, "stratum", "prov_state")
 
-  species <- indices$meta_data$species
-  stratify_by <- indices$meta_data$stratify_by
-  meta_strata <- indices$meta_strata
+  species <- indices[["meta_data"]]$species
+  stratify_by <- indices[["meta_data"]]$stratify_by
+  meta_strata <- indices[["meta_strata"]]
 
-  indices <- indices$data_summary %>%
+  # Check trends if present
+  if(!is.null(trends)) {
+
+    if(any(unlist(trends$meta_data) != unlist(indices$meta_data))) {
+      stop("`trends` data must have been created from the same `indices` ",
+           "used here.\n",
+           "Meta data doesn't match (see `",
+           deparse(substitute(trends)), "[['meta_data']]` vs. `",
+           deparse(substitute(indices)), "[['meta_data']]`)",
+           call. = FALSE)
+    }
+
+    check_slope(trends[["trends"]], slope)
+    tr <- TRUE
+    trends <- dplyr::filter(trends[["trends"]], .data$region_type == .env$r)
+
+  } else tr <- FALSE
+
+  indices <- indices[["indices"]] %>%
     dplyr::filter(.data$region_type == .env$r) %>%
     calc_luq(ci_width)
 
-  if(!is.null(trends)) {
-    tr <- TRUE
-    trends <- trends$trends %>%
-      dplyr::filter(.data$region_type == .env$r)
-  } else tr <- FALSE
 
   if(stratify_by == "bbs_cws") by <- "bbs_cws" else by <- "bbs_usgs"
   facets <- load_internal_file("geofacet-grids", by)

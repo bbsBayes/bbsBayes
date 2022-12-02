@@ -190,7 +190,7 @@ generate_map_orig <- function(trend = NULL,
 plot_map <- function(trends,
                      slope = FALSE,
                      title = TRUE,
-                     col_viridis = TRUE,
+                     col_viridis = FALSE,
                      species, stratify_by, select) {
 
   # Deprecated/Defunct args
@@ -201,10 +201,10 @@ plot_map <- function(trends,
   # Checks --- MORE
   check_data(trends)
 
-  stratify_by <- trends$meta_data$stratify_by
-  species <- trends$meta_data$species
+  stratify_by <- trends[["meta_data"]]$stratify_by
+  species <- trends[["meta_data"]]$species
 
-  trends <- dplyr::filter(trends$trends, .data$region_type == "stratum")
+  trends <- dplyr::filter(trends[["trends"]], .data$region_type == "stratum")
   start_year <- min(trends$start_year)
   end_year <- min(trends$end_year)
 
@@ -217,7 +217,7 @@ plot_map <- function(trends,
              paste0("> ",breaks[length(breaks)]))
   labls <- paste0(labls, " %")
 
-
+  check_slope(trends, slope)
   if(slope) trend_col <- "slope_trend" else trend_col <- "trend"
 
   trends$t_plot <- as.numeric(as.character(trends[[trend_col]]))
