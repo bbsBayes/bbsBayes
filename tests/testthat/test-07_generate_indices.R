@@ -4,15 +4,17 @@ test_that("samples_to_array()", {
 
   n <- r$model_fit$draws(variables = "n", format = "draws_matrix")
 
+  yrs <- sort(unique(r$raw_data$year))
   expect_silent(n2 <- samples_to_array(
-    n,
-    strata_name = unique(r$raw_data$strata_name),
-    year = sort(unique(r$raw_data$year))))
+    model_output = r,
+    alternate_n = "n",
+    years_to_keep = yrs))
+
 
   expect_equal(dimnames(n2),
                list("iter" = as.character(1:20),
                     "strata_name" = unique(r$raw_data$strata_name),
-                    "year" = as.character(sort(unique(r$raw_data$year)))))
+                    "year" = as.character(yrs)))
 
   n1 <- unclass(n)
 
@@ -20,6 +22,21 @@ test_that("samples_to_array()", {
   expect_equal(n1[, 20:38], n2[, , 2], ignore_attr = TRUE)
   expect_equal(n1[, 39:57], n2[, , 3], ignore_attr = TRUE)
   expect_equal(n1[, 96:114], n2[, , 6], ignore_attr = TRUE)
+
+  # Check year range
+  yrs <- 1995:2018
+
+  expect_silent(n3 <- samples_to_array(
+    model_output = r,
+    alternate_n = "n",
+    years_to_keep = yrs))
+
+  expect_equal(dimnames(n3),
+               list("iter" = as.character(1:20),
+                    "strata_name" = unique(r$raw_data$strata_name),
+                    "year" = as.character(yrs)))
+
+  expect_equal(n2[ , , as.character(yrs)], n3)
 })
 
 
@@ -73,18 +90,26 @@ test_that("generate_indices(start_year)", {
   r <- load_test_model()
 
   # Diff start year
-  expect_silent(i <- generate_indices(r, start_year = 1995, quiet = TRUE))
-  ix <- i[["indices"]]
-  s <- i[["samples"]]
+  expect_silent(i1 <- generate_indices(r, quiet = TRUE))
+  expect_silent(i2 <- generate_indices(r, start_year = 1995, quiet = TRUE))
+  ix <- i2[["indices"]]
+  s <- i2[["samples"]]
 
-  expect_false(all(ix$year %in% i[["raw_data"]]$year))
+  expect_false(all(i1[["raw_data"]]$year %in% ix$year))
   expect_equal(min(ix$year), 1995)
+
   # Samples for all samples x all years (fewer now)
   expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(20, 24)))
+  expect_true(all(ix$year %in% i1[["indices"]]$year))
+
+  # Expect indices to be the same for the years that overlap (except n_routes_total)
+  expect_equal(dplyr::filter(i1[["indices"]], year >= 1995) %>%
+                 dplyr::select(-"n_routes_total"),
+               dplyr::select(ix, -"n_routes_total"))
 
   # Snapshots can't be run interactively
-  snp <- dplyr::select(ix, "year", "region", "obs_mean", "n_routes", "n_routes_total",
-                       "n_non_zero", "backcast_flag")
+  snp <- dplyr::select(ix, "year", "region", "obs_mean", "n_routes",
+                       "n_routes_total", "n_non_zero", "backcast_flag")
   expect_snapshot_value(snp, style = "json2")
 })
 

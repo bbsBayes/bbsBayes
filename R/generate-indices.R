@@ -583,7 +583,7 @@ generate_indices_tidy <- function(jags_mod = NULL,
                                       n_samples = .env$n_samples),
                        N_names = paste0(rr, "_", .data[[rr]]),
                        Q = purrr::map(.data$N, calc_quantiles,
-                                      .env$quantiles, .env$n_years)) %>%
+                                      .env$quantiles)) %>%
       dplyr::mutate(r = .env$rr)
 
     # Save sample stats for output
@@ -792,6 +792,7 @@ generate_indices <- function(model_output = NULL,
   } else{
     start_year <- min(raw_data$year)
   }
+  end_year <- max(raw_data$year)
 
   raw_data <- raw_data %>%
     # Set start year
@@ -808,10 +809,8 @@ generate_indices <- function(model_output = NULL,
   if(is.null(max_backcast)) max_backcast <- n_years
 
   # Posterior draws
-  n <- model_output$model_fit$draws(variables = alternate_n,
-                                    format = "draws_matrix") %>%
-    samples_to_array(strata_name = unique(raw_data$strata_name),
-                     year = sort(unique(raw_data$year)))
+  n <- samples_to_array(model_output, alternate_n,
+                        years_to_keep = start_year:end_year)
 
   # Meta strata data
   meta_strata <- raw_data %>%
@@ -849,20 +848,18 @@ generate_indices <- function(model_output = NULL,
 
   # Calculate strata/year-level observation statistics
   obs_strata <- raw_data %>%
-    dplyr::select("strata", "year_num", "first_year", "count") %>%
+    dplyr::select("strata", "year", "first_year", "count") %>%
     dplyr::group_by(.data$strata) %>%
-    tidyr::complete(year_num = seq(1, .env$n_years), first_year) %>%
-    dplyr::arrange(.data$strata, .data$year_num, .data$count) %>%
-    dplyr::group_by(.data$strata, .data$year_num, .data$first_year) %>%
+    tidyr::complete(year = seq(.env$start_year, .env$end_year), first_year) %>%
+    dplyr::arrange(.data$strata, .data$year, .data$count) %>%
+    dplyr::group_by(.data$strata, .data$year, .data$first_year) %>%
     dplyr::summarize(obs_mean = mean(.data$count, na.rm = TRUE),
                      n_routes = sum(!is.na(.data$count)),
                      n_non_zero = sum(.data$count > 0, na.rm = TRUE),
                      strata_remove_flag = 0, .groups = "drop")
 
-
   indices <- dplyr::tibble()
   N_all <- list()
-
 
   for(rr in regions) { #selecting the type of composite region
 
@@ -891,9 +888,9 @@ generate_indices <- function(model_output = NULL,
     #    - If no obs in those years, AND
     #    - first_year is AFTER the current start of the data range
     #      (i.e. flag data that has no true counts in it.)
+
     obs_region <- obs_region %>%
       dplyr::mutate(
-        year = .env$start_year + .data$year_num - 1,
         flag_remove = sum(.data$n_non_zero[seq_len(.env$max_backcast)]) < 1 &
           .data$first_year > .env$start_year,
         flag_year = dplyr::if_else(.data$flag_remove &
@@ -902,7 +899,7 @@ generate_indices <- function(model_output = NULL,
 
     # Mark strata included/excluded
     obs_region <- obs_region %>%
-      dplyr::group_by(.data[[rr]], .data$year_num) %>%
+      dplyr::group_by(.data[[rr]], .data$year) %>%
       dplyr::mutate(
         strata_included = paste0(.data$strata_name[!.data$flag_remove],
                                  collapse = " ; "),
@@ -936,7 +933,7 @@ generate_indices <- function(model_output = NULL,
       dplyr::summarize(N = purrr::map(.data$data, calc_weights, .env$n_sub),
                        N_names = paste0(rr, "_", .data[[rr]]),
                        Q = purrr::map(.data$N, calc_quantiles,
-                                      .env$quantiles, .env$n_years)) %>%
+                                      .env$quantiles)) %>%
       dplyr::mutate(r = .env$rr)
 
     # Save sample stats for output
@@ -945,10 +942,11 @@ generate_indices <- function(model_output = NULL,
     # Calculate data summaries for output
     indices <- obs_region %>%
       #dplyr::left_join(calc_alt_names(rr, meta_strata), by = rr) %>%
-      dplyr::left_join(tidyr::unnest(samples, "Q"), by = c(rr, "year_num")) %>%
       dplyr::mutate(backcast_flag = 1 - .data$flag_year,
-                    year = .env$start_year + .data$year_num - 1,
                     region_type = .env$rr) %>%
+      # Add in quantiles
+      dplyr::left_join(tidyr::unnest(samples, "Q"), by = c(rr, "year")) %>%
+      # Clean up
       dplyr::rename(region = .data[[rr]]) %>%
       dplyr::select("year", "region", "region_type",
                     "strata_included", "strata_excluded",
@@ -959,7 +957,8 @@ generate_indices <- function(model_output = NULL,
   }
 
   meta_strata <- dplyr::select(meta_strata,
-                               "strata_name", "strata", "area_sq_km", regions)
+                               "strata_name", "strata", "area_sq_km",
+                               dplyr::all_of(.env$regions))
 
   list("indices" = indices,
        "samples" = N_all,
@@ -979,6 +978,7 @@ generate_indices <- function(model_output = NULL,
 
 
 calc_weights <- function(data, n) {
+
   # Weight each sampled n
   n_weight <- n[, data$strata_name, , drop = FALSE]
 
@@ -994,12 +994,12 @@ calc_weights <- function(data, n) {
   apply(n_weight, c(1, 3), sum)
 }
 
-calc_quantiles <- function(N, quantiles, n_years) {
+calc_quantiles <- function(N, quantiles) {
   apply(N, 2, stats::quantile, probs = c(quantiles, 0.5)) %>%
     t() %>%
     as.data.frame() %>%
     setNames(c(paste0("index_q_", quantiles), "index")) %>%
-    dplyr::bind_cols(year_num = 1:n_years)
+    dplyr::bind_cols(year = as.numeric(dimnames(N)$year))
 }
 
 calc_alt_names <- function(r, region_names) {
@@ -1028,17 +1028,30 @@ calc_alt_names <- function(r, region_names) {
 #'
 #' Looks like the order of strata_x_years is S1Y1 S2Y1 S3Y1, etc.
 #'
-#' @param n Stan draws variable "n"
-#' @param n_strata Number of strata
-#' @param n_years  Number of years
+#' @param model_output Model output from `run_model()`
+#' @param alternative_n Variable to extract draws for
+#' @param years_to_keep Numeric vector. All the years (1995, 1996, etc.) to
+#'   retain in the samples array
 #'
 #' @return Three dimensional array, samples x strata x years
 #' @noRd
 
-samples_to_array <- function(n, strata_name, year) {
-  array(as.vector(n),
-        dim = c(posterior::ndraws(n), length(strata_name), length(year)),
-        dimnames = list("iter" = 1:posterior::ndraws(n),
-                        "strata_name" = strata_name,
-                        "year" = year))
+samples_to_array <- function(model_output, alternate_n, years_to_keep) {
+
+  # Extract samples
+  n <- model_output$model_fit$draws(variables = alternate_n,
+                                    format = "draws_matrix")
+  # Determine dim names
+  strata_name <- unique(model_output$raw_data$strata_name)
+  year <- sort(unique(model_output$raw_data$year))
+
+  # Transform samples to array with appropriate dimnames
+  n <- array(as.vector(n),
+             dim = c(posterior::ndraws(n), length(strata_name), length(year)),
+             dimnames = list("iter" = 1:posterior::ndraws(n),
+                             "strata_name" = strata_name,
+                             "year" = year))
+
+  # Filter to years selected
+  n[ , , as.character(years_to_keep)]
 }
