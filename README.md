@@ -1,7 +1,13 @@
 
-# bbsBayes <img src="man/figures/logo.png" align="right"/>
+<!-- badges: start -->
 
+[![R-CMD-check](https://github.com/steffilazerte/bbsBayes/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/steffilazerte/bbsBayes/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/steffilazerte/bbsBayes/branch/master/graph/badge.svg)](https://app.codecov.io/gh/steffilazerte/bbsBayes?branch=master)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/bbsBayes)](https://cran.r-project.org/package=bbsBayes)
+<!-- badges: end -->
+
+# bbsBayes <img src="man/figures/logo.png" align="right"/>
 
 This README file provides an overview of the functionality that can be
 accomplished with ‘bbsBayes’. It is intended to provide enough

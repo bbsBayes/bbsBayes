@@ -20,3 +20,4 @@ generate-map-abundance.R
 ^vignettes/articles$
 ^maps/BBS_*
 ^DEVTESTS$
+^codecov\.yml$

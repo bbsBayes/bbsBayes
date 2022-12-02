@@ -12,3 +12,8 @@ devtools::build_readme()
 # Compile articles and website
 pkgdown::build_site(lazy = TRUE)
 pkgdown::build_article("articles/models_first_diff_nonhier")
+
+
+# To create workflows (don't need to run these again)
+# usethis::use_coverage()
+# usethis::use_github_action_check_standard()
