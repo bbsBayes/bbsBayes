@@ -342,11 +342,19 @@ generate_trends <- function(indices,
     max_year <- Max_year
   }
 
-  # Checks (MORE CHECKS)
+  # Checks
   check_data(indices)
+  check_logical(slope)
+  check_numeric(quantiles)
+  check_numeric(min_year, max_year, quantiles, prob_decrease, prob_increase,
+                allow_null = TRUE)
+  check_range(quantiles, c(0, 1))
+  check_range(prob_decrease, c(1, 100))
+  check_range(prob_increase, c(1, 100))
 
-  start_year <- indices$meta_data$start_year
-  n_years <- indices$meta_data$n_years
+  start_year <- indices[["meta_data"]]$start_year
+  n_years <- indices[["meta_data"]]$n_years
+  indx <- indices[["indices"]]
 
   if(is.null(min_year)) {
     min_year <- start_year
@@ -363,45 +371,53 @@ generate_trends <- function(indices,
   }
 
   if (is.null(max_year)) {
-    max_year <- start_year + n_years - 1
-    max_year_num <- n_years
-  } else {
-    max_year_num <- 1 + (max_year - start_year)
-    if(max_year_num > n_years) {
-      message("`max_year` is beyond the date range, using maximum year of ",
-              "the data (", start_year + n_years -1, ") instead.")
-      max_year <- start_year + n_years - 1
-      max_year_num <- n_years
-    }
+    max_year <- max(indx$year)
+  } else if(max_year > max(indx$year)) {
+    message("`max_year` is beyond the date range, using maximum year of ",
+            "the data (", max_year <- max(indx$year), ") instead.")
   }
 
-  trends <- indices$data_summary %>%
+  max_year_num <- 1 + (max_year - start_year)
+
+  trends <- indx %>%
     dplyr::filter(.data$year %in% min_year:max_year) %>%
     dplyr::group_by(.data$region, .data$region_type,
                     .data$strata_included, .data$strata_excluded) %>%
     dplyr::summarize(
+      # Add in samples
       n = purrr::map2(.data$region_type, .data$region,
                       ~indices$samples[[paste0(.x, "_", .y)]]),
+      # Calculate change start to end for each iteration
       ch = purrr::map(n, ~.x[, max_year_num] / .x[, min_year_num]),
+      # Calculate change as trend for each iteration
       tr = purrr::map(ch, ~100 * ((.x^(1/(max_year_num - min_year_num))) - 1)),
-      start_year = .env$min_year,
-      end_year = .env$max_year,
-      n_strata_included = purrr::map_dbl(
-        strata_included, ~length(unlist(stringr::str_split(.x, " ; ")))),
+
+      # Median and percentiles of trend per region
       trend = purrr::map_dbl(tr, median),
       trend_q = purrr::map_df(
         tr, ~setNames(stats::quantile(.x, quantiles, names = FALSE),
                       paste0("trend_q", quantiles))),
+
+      # Percent change and quantiles thereof per region
       percent_change = purrr::map_dbl(ch, ~100 * (median(.x) - 1)),
       pc_q = purrr::map_df(
         ch, ~setNames(100 * (stats::quantile(.x, quantiles, names = FALSE) - 1),
                       paste0("percent_change_q", quantiles))),
+
+      # Other statistics
       rel_abundance = mean(.data$index),
       obs_rel_abundance = mean(.data$obs_mean),
-      n_routes = mean(.data$n_routes_total),
       mean_n_routes = mean(.data$n_routes),
+      n_routes = mean(.data$n_routes_total),
       backcast_flag = mean(.data$backcast_flag),
+
+      # Metadata
+      start_year = .env$min_year,
+      end_year = .env$max_year,
+      n_strata_included = purrr::map_dbl(
+        strata_included, ~length(unlist(stringr::str_split(.x, " ; ")))),
       .groups = "drop") %>%
+
     dplyr::distinct() %>%
     tidyr::unnest(cols = c(.data$trend_q, .data$pc_q)) %>%
     dplyr::arrange(.data$region_type, .data$region)
@@ -461,7 +477,9 @@ generate_trends <- function(indices,
     dplyr::relocate("start_year", "end_year")
 
   list("trends" = trends,
-       "meta_data" = indices$meta_data)
+       "meta_data" = indices[["meta_data"]],
+       "meta_strata" = indices[["meta_strata"]],
+       "raw_data" = indices[["raw_data"]])
 }
 
 bsl <- function(i, wy) {

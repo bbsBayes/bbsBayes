@@ -20,11 +20,12 @@ check_data <- function(data) {
     n <- c(n, "indices", "samples", "raw_data")
     from <- "generate_indices()"
   } else if (type == "trends") {
-     #MORE
+    n <- c(n, "trends", "raw_data")
+    from <- "generate_trends()"
   }
 
   # All n must be in names(data), but not necessarily the reverse
-  # Allows optional data like `map` in prepare_spatatial()
+  # Allows optional data like `map` in prepare_spatial()
   if(!is.list(data) || !all(n %in% names(data))) {
     stop("`", type, "` must a list created by `", from, "` ",
          "containing\n`", paste0(n, collapse = "`, `"), "`",
@@ -106,6 +107,17 @@ check_basis <- function(basis) {
          call. = FALSE)
   }
   basis
+}
+
+#' Check for slope
+#'
+#' @param trends Trends data
+#'
+check_slope <- function(trends, slope) {
+  if(slope && !"slope_trend" %in% names(trends)) {
+    stop("To use `slope = TRUE`, `generate_trends()` must have been also ",
+         "run with `slope = TRUE`", call. = FALSE)
+  }
 }
 
 #' Check stratification
@@ -384,3 +396,12 @@ check_in <- function(arg, opts) {
         call. = FALSE)
  }
 }
+
+check_range <- function(arg, range) {
+  if(!all(arg >= range[1] & arg <= range[2])) {
+    stop("`", deparse(substitute(arg)),"` ",
+         "must be range between ", range[1], " and ", range[2],
+         call. = FALSE)
+  }
+}
+
