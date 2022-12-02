@@ -102,9 +102,10 @@ test_that("prepare_spatial(nearest_fill = TRUE)", {
                  "Preparing") %>%
     expect_message("Identifying neighbours \\(non-Voronoi method\\)") %>%
     expect_message("Some strata have no neighbours") %>%
-    expect_message("  Isolated groups of nodes") %>%
-    expect_message("  Isolated groups of nodes") %>%
-    expect_message("  Isolated groups of nodes") %>%
+    expect_message("Linking islands") %>%
+    expect_message("  Islands found") %>%
+    expect_message("  Islands found") %>%
+    expect_message("  Islands found") %>%
     expect_message("Formating") %>%
     expect_message("Plotting")
 
