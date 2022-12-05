@@ -113,6 +113,7 @@ check_basis <- function(basis) {
 #'
 #' @param trends Trends data
 #'
+#' @noRd
 check_slope <- function(trends, slope) {
   if(slope && !"slope_trend" %in% names(trends)) {
     stop("To use `slope = TRUE`, `generate_trends()` must have been also ",

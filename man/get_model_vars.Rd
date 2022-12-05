@@ -9,6 +9,9 @@ get_model_vars(model_output, all = FALSE)
 \arguments{
 \item{model_output}{List. Output of \code{run_model()}.}
 }
+\value{
+A character vector of all model variable types.
+}
 \description{
 Returns the basic model variables types (note that most variables have
 different iterations for each strata and each year).

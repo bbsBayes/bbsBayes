@@ -12,6 +12,9 @@ get_summary(model_output, variables = NULL)
 \item{variables}{Character vector. Specific variables (e.g., "strata_raw\link{1}")
 or variable types (e.g., "strata_raw") to include.}
 }
+\value{
+A data frame of model summary statistics
+}
 \description{
 Extract and return the model summary using \code{cmdstanr::summary()}.
 }

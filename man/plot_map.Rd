@@ -8,7 +8,7 @@ plot_map(
   trends,
   slope = FALSE,
   title = TRUE,
-  col_viridis = TRUE,
+  col_viridis = FALSE,
   species,
   stratify_by,
   select

@@ -328,7 +328,9 @@ run_model_orig <- function(jags_data = NULL,
 #'
 #' @inheritParams common_docs
 #'
-#' @return
+#' @return A list containing the model output (`model_fit`), meta data for the
+#'   analysis (`meta_data`), meta data for the strata (`meta_strata`) and
+#'   prepared data counts from `prepare_data()` (`raw_data`).
 #' @export
 #'
 #' @examples
@@ -710,10 +712,20 @@ create_init_def <- function(model, model_variant, model_data, chains) {
 #'
 #' @inheritParams common_docs
 #'
-#' @return
+#' @return Nothing. Creates .rds file at `path`.
 #' @export
 #'
 #' @examples
+#'
+#' # Create dummy model run (by default model .rds file saved by `run_model()`
+#' m <- stratify(by = "bbs_cws", sample_data = TRUE) %>%
+#'   prepare_data() %>%
+#'   run_model(model = "first_diff", iter_sampling = 10,
+#'             iter_warmup = 10, chains = 2)
+#'
+#' # Deliberately save the file
+#' save_model_run(m, path = "my_model.rds")
+
 save_model_run <- function(model_output, path = NULL, quiet = FALSE) {
 
   check_data(model_output)

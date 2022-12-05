@@ -137,6 +137,11 @@ sampling (post-warmup) iterations per chain.}
 
 \item{...}{Other arguments passed on to cmdstanr::sample}
 }
+\value{
+A list containing the model output (\code{model_fit}), meta data for the
+analysis (\code{meta_data}), meta data for the strata (\code{meta_strata}) and
+prepared data counts from \code{prepare_data()} (\code{raw_data}).
+}
 \description{
 Run Bayesian model
 }

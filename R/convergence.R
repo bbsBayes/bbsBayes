@@ -50,7 +50,7 @@ get_convergence <- function(model_output, variables = NULL) {
 #'
 #' @inheritParams common_docs
 #'
-#' @return
+#' @return A character vector of all model variable types.
 #' @export
 #'
 #' @examples
@@ -87,7 +87,7 @@ get_model_vars <- function(model_output, all = FALSE) {
 #'
 #' @inheritParams common_docs
 #'
-#' @return
+#' @return A data frame of model summary statistics
 #' @export
 #'
 #' @examples

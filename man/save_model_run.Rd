@@ -14,8 +14,22 @@ the file path used for the original run}
 
 \item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
 }
+\value{
+Nothing. Creates .rds file at \code{path}.
+}
 \description{
 This function closely imitate \code{cmdstanr::save_object()} but saves the
 entire model output oject from \code{run_model()} which contains more details
 regarding stratification etc.
+}
+\examples{
+
+# Create dummy model run (by default model .rds file saved by `run_model()`
+m <- stratify(by = "bbs_cws", sample_data = TRUE) \%>\%
+  prepare_data() \%>\%
+  run_model(model = "first_diff", iter_sampling = 10,
+            iter_warmup = 10, chains = 2)
+
+# Deliberately save the file
+save_model_run(m, path = "my_model.rds")
 }
