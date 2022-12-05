@@ -43,7 +43,7 @@ m <- stratify(by = "bbs_cws", sample_data = TRUE) %>%
 
 Now we can calculate our convergence metrics
 ```{r, warning=FALSE}
-conv <- convergence(m)
+conv <- get_convergence(m)
 conv
 ```
 
@@ -59,4 +59,19 @@ ggplot(data = tconv, aes(x = variable, y = value, colour = variable_type)) +
     facet_wrap(~name, scales = "free_y") +
     scale_colour_viridis_d(guide = FALSE)
 ```
+
+We can also choose to extract only some variables. To see which ones are available,
+use the `get_model_vars()` function.
+
+```{r}
+get_model_vars(m)
+```
+
+
+We can also extract summary information from the model via the helper function `get_summary()` (wrapper for  `cmdstanr::summary()`)
+
+```{r}
+get_summary(m)
+```
+
 
