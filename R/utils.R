@@ -22,7 +22,7 @@ format_ne_states <- function() {
     dplyr::select("province_state" = "name", "code_hasc", "country" = "admin") %>%
     tidyr::separate(.data$code_hasc, sep = "\\.",
                     into = c("country_code", "prov_state")) %>%
-    dplyr::mutate(prov_state = if_else(
+    dplyr::mutate(prov_state = dplyr::if_else(
       .data$prov_state == "NF", "NL", .data$prov_state))
 }
 
@@ -75,7 +75,7 @@ assign_prov_state <- function(strata_map, min_overlap = 0.75, plot = FALSE,
     sf::st_set_agr("constant")
 
   ovlps <- strata_map %>%
-    sf::st_transform(st_crs(ps)) %>%
+    sf::st_transform(sf::st_crs(ps)) %>%
     dplyr::group_by(.data$strata_name) %>%
     dplyr::summarize() %>%
     sf::st_set_agr("constant") %>%
