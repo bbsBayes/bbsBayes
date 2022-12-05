@@ -70,7 +70,7 @@ fetch_bbs_data_internal <- function(level = "state", release = 2022,
 
   if(!quiet) message("Connecting to USGS ScienceBase...", appendLF = FALSE)
 
-  connection <- sbtools::item_get(sb_id = get_sb_id(rel_date = release))
+  connection <- sbtools::item_get(sb_id = get_sb_id(release))
 
   if(!is.null(connection) & !quiet) message("Connected!")
 
@@ -162,7 +162,11 @@ fetch_bbs_data_internal <- function(level = "state", release = 2022,
 
 }
 
-
+get_sb_id <- function(release) {
+  switch(as.character(release),
+         "2022" = "625f151ed34e85fa62b7f926",
+         "2020" = "5ea04e9a82cefae35a129d65")
+}
 
 
 bbs_dir <- function(quiet = TRUE) {
