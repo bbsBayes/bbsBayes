@@ -2,7 +2,7 @@
 % Please edit documentation in R/load-bbs-data.R
 \name{load_bbs_data}
 \alias{load_bbs_data}
-\title{Load Breeding Bird Survey dataset into R Session (TIDY)}
+\title{Load Breeding Bird Survey dataset into R Session}
 \usage{
 load_bbs_data(level = "state", release = 2022, sample = FALSE, quiet = TRUE)
 }

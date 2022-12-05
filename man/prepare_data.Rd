@@ -2,7 +2,7 @@
 % Please edit documentation in R/prepare-data.R
 \name{prepare_data}
 \alias{prepare_data}
-\title{Wrangle data to use for modelling input (STAN TIDY)}
+\title{Wrangle data to use for modelling input}
 \usage{
 prepare_data(
   strata_data,

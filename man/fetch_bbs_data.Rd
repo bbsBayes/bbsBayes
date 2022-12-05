@@ -2,7 +2,7 @@
 % Please edit documentation in R/fetch-bbs-data.R
 \name{fetch_bbs_data}
 \alias{fetch_bbs_data}
-\title{Fetch Breeding Bird Survey dataset (TIDY)}
+\title{Fetch Breeding Bird Survey dataset}
 \usage{
 fetch_bbs_data(
   level = "state",
