@@ -46,7 +46,7 @@ grViz("digraph boxes_and_circles {
   plotind [label = 'plot_indices()']
   gentre [label = 'generate_trends()']
   geo [label = 'plot_geofacet()']
-  genmap [label = 'plot__map()']
+  genmap [label = 'plot_map()']
   
 
   # several 'edge' statements

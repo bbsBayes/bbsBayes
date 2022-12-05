@@ -608,7 +608,6 @@ plot_geofacet <- function(indices,
     dplyr::filter(.data$region_type == .env$r) %>%
     calc_luq(ci_width)
 
-
   if(stratify_by == "bbs_cws") by <- "bbs_cws" else by <- "bbs_usgs"
   facets <- load_internal_file("geofacet-grids", by)
 
@@ -616,7 +615,7 @@ plot_geofacet <- function(indices,
   max_year <- max(indices$year)
   years <- as.integer(seq(min_year, max_year, length.out = 3))
 
-  uplim <- max(indices$index)
+  uplim <- max(indices$index, na.rm = TRUE)
 
   # Multiple regions per plot
   if(multiple) {

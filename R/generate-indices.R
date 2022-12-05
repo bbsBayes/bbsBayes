@@ -1053,5 +1053,6 @@ samples_to_array <- function(model_output, alternate_n, years_to_keep) {
                              "year" = year))
 
   # Filter to years selected
+  years_to_keep <- years_to_keep[years_to_keep %in% year]
   n[ , , as.character(years_to_keep)]
 }

@@ -358,15 +358,11 @@ generate_trends <- function(indices,
 
   if(is.null(min_year)) {
     min_year <- start_year
-    min_year_num <- 1
   } else {
-    min_year_num <- 1 + (min_year - start_year)
 
-    if(min_year_num < 0) {
+    if(min_year < start_year) {
       message("`min_year` is before the date range, using minimum year of ",
-              "the data (", start_year, ") instead.")
-      min_year <- start_year
-      min_year_num <- 1
+              "the data (", min_year <- start_year, ") instead.")
     }
   }
 
@@ -377,7 +373,10 @@ generate_trends <- function(indices,
             "the data (", max_year <- max(indx$year), ") instead.")
   }
 
-  max_year_num <- 1 + (max_year - start_year)
+  # For indexing by name in samples
+  min_year_chr <- as.character(min_year)
+  max_year_chr <- as.character(max_year)
+
 
   trends <- indx %>%
     dplyr::filter(.data$year %in% min_year:max_year) %>%
@@ -388,9 +387,9 @@ generate_trends <- function(indices,
       n = purrr::map2(.data$region_type, .data$region,
                       ~indices$samples[[paste0(.x, "_", .y)]]),
       # Calculate change start to end for each iteration
-      ch = purrr::map(n, ~.x[, max_year_num] / .x[, min_year_num]),
+      ch = purrr::map(n, ~.x[, .env$max_year_chr] / .x[, .env$min_year_chr]),
       # Calculate change as trend for each iteration
-      tr = purrr::map(ch, ~100 * ((.x^(1/(max_year_num - min_year_num))) - 1)),
+      tr = purrr::map(ch, ~100 * ((.x^(1/(.env$max_year - .env$min_year))) - 1)),
 
       # Median and percentiles of trend per region
       trend = purrr::map_dbl(tr, median),
@@ -439,7 +438,7 @@ generate_trends <- function(indices,
     trends <- trends %>%
       dplyr::mutate(
         sl_t = purrr::map(.data$n, calc_slope,
-                          .env$min_year_num, .env$max_year_num),
+                          .env$min_year, .env$max_year),
         slope_trend = purrr::map_dbl(.data$sl_t, stats::median),
         slope_trend_q = purrr::map_df(
           sl_t, ~setNames(stats::quantile(.x, quantiles, names = FALSE),
@@ -492,9 +491,10 @@ bsl <- function(i, wy) {
   (n * sxy - sx * sy) / (n * ssx - sx^2)
 }
 
-calc_slope <- function(n, min_year_num, max_year_num) {
-  wy <- c(min_year_num:max_year_num)
-  ne <- log(n[, wy])
+calc_slope <- function(n, min_year, max_year) {
+  browser()
+  wy <- 1:(1 + max_year - min_year) # Convert to numeric year (0, 1, 2, etc.)
+  ne <- log(n[, as.character(min_year:max_year)]) # Extract from samples by name
   m <-  t(apply(ne, 1, FUN = bsl, wy))
 
   as.vector((exp(m) - 1) * 100)

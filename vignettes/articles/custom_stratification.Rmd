@@ -140,6 +140,8 @@ We can plot each of these indices with `plot_indices()` which creates a list
 of plots. 
 
 ```{r}
+#| fig.asp = 0.5
+#| fig.width = 10
 p <- plot_indices(i)
 names(p)
 
