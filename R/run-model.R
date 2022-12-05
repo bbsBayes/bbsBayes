@@ -750,6 +750,10 @@ save_model_run <- function(model_output, path = NULL, quiet = FALSE) {
       stop("Directory does not exist, please create it first (",
            dirname(path), ")", call. = FALSE)
     }
+    if(ext(path) != "rds") {
+      stop("File must have a .rds extension", call. = FALSE)
+    }
+
   }
 
   # Ensure all lazy data loaded (see ?cmdstanr::save_object)
