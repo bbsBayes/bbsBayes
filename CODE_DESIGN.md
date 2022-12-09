@@ -55,6 +55,13 @@ making collaboration and future modifications easier.
   constant (prevents the warning "attribute variables are assumed to be
   spatially constant throughout all geometries").
 
+## Example data
+- If possible, all examples and required data are created by `data-raw/data_XXX.R`
+- Currently, all data are exported, so usable by the user as well as functions.
+- For (stupid) reasons, exported data (e.g., `species_forms`) need to be
+referenced via `bbsBayes::data` (e.g., `bbsBayes::species_forms`) *inside*
+bbsBayes functions (See here for more details/other options:
+https://coolbutuseless.github.io/2018/12/10/r-packages-internal-and-external-data/)
 
 ## Testing and examples
 - When in doubt `skip_on_cran()` for tests (never run fragile tests that *might* fail)
@@ -62,14 +69,21 @@ making collaboration and future modifications easier.
   be tested (e.g., `fetch_bbs_data()`)
 - use `\dontest` for examples that should *never* be run (try not to have too many)
 - use `\dontrun` for examples that won't fail, but will take a while to run.
+- use first_diff model output by `test-XX_run_model.R` to ensure an up-to-date model
+  example for testing `test-XX_generate_indices.R`, `test-XX_generate_trends.R`
+  and `test-XX_plots.R`
+- use `pacific_wren_slope_model` example model for tests needing to check for
+  alternate n. Don't create it in `test-XX_run_model.R` because it takes too long.
+
+## Continuous Integration (CI)
+- CI is setup with GitHub actions. The workflows (all in `.github/workflows/`
+  were created using:
+    - Package Checks - `usethis::use_github_action_check_standard()` (file is `R-CMD-check.yaml`)
+    - Code Coverage - `usethis::use_coverage()` (file is `test-coverage.yaml`)
+    - Documentation website - `usethis::use_pkgdown_github_pages()` (file is `pkgdown.yaml`)
 
 ## Random Notes
 - Use "grey60" rather than `grDevices::grey(0.6)` to avoid another dependency
-- `species_forms` is a *exported* data frame, which means that for (stupid)
-  reasons, bbsBayes functions (like `fetch_bbs_data()`) need to reference it via
-  `bbsBayes::species_forms`
-  (See here for more details/other options:
-  https://coolbutuseless.github.io/2018/12/10/r-packages-internal-and-external-data/)
 
 ## Deprecating, Defunct-ing, and other big changes
 - See `R/bbsBayes-defunct.R` for listing all defunct packages in a document page
