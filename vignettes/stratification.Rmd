@@ -102,13 +102,13 @@ In our example we'll use WBPHS stratum boundaries for 2019.
 This is available from available from the US Fish and Wildlife Service Catalogue: <https://ecos.fws.gov/ServCat/Reference/Profile/142628>
 
 You can either download it by hand, or with the following code.
-```{r, eval = !file.exists("WBPHS_stratum_boundaries_2019.zip")}
-z <- "WBPHS_stratum_boundaries_2019.zip"
+```{r}
+t <- tempfile()
 
 download.file(url = "https://ecos.fws.gov/ServCat/DownloadFile/213149",
-              destfile = z)
-unzip(z)
-unlink(z)
+              destfile = t)
+unzip(t)
+unlink(t)
 ```
 
 To use this file in bbsBayes, we need to load it as an sf object using the sf 
