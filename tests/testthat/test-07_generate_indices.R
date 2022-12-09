@@ -62,7 +62,7 @@ test_that("generate_indices()", {
 
   expect_named(s, paste0("stratum_", unique(i[["raw_data"]]$strata_name)))
 
-  # Samples for all strata x all years
+  # Samples for all iterations x all years (10 iterations x 2 chains = 20)
   expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(20, 51)))
 
   # Expect quantiles based on samples: Check a bunch of combinations
@@ -98,7 +98,7 @@ test_that("generate_indices(start_year)", {
   expect_false(all(i1[["raw_data"]]$year %in% ix$year))
   expect_equal(min(ix$year), 1995)
 
-  # Samples for all samples x all years (fewer now)
+  # Samples for all samples x all years (fewer now)  (10 iterations x 2 chains = 20)
   expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(20, 24)))
   expect_true(all(ix$year %in% i1[["indices"]]$year))
 
@@ -150,7 +150,7 @@ test_that("generate_indices(regions)", {
   expect_true(all(ix$strata_included != ""))
   expect_true(all(ix$strata_excluded == ""))
 
-  # Samples for all strata x all years
+  # Samples for all strata x all years  (10 iterations x 2 chains = 20)
   expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(20, 51)))
 
   # Expect quantiles based on samples: Check a bunch of combinations
@@ -232,8 +232,8 @@ test_that("generate_indices(alternate_n)", {
 
   expect_named(s, paste0("stratum_", unique(i[["raw_data"]]$strata_name)))
 
-  # Samples for all strata x all years
-  expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(20, 51)))
+  # Samples for all iterations x all years  (20 iterations x 2 chains = 40)
+  expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(40, 51)))
 
   # Expect quantiles based on samples: Check a bunch of combinations
   year <- c(1, 20, 50)
