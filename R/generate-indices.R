@@ -306,7 +306,7 @@ generate_indices <- function(
     # Calculate sample statistics for this composite region
     samples <- meta_strata_sub %>%
       # Create back up col for use in calculations
-      tidyr::nest(data = -.data[[rr]]) %>%
+      tidyr::nest(data = -dplyr::any_of(rr)) %>%
       dplyr::group_by(.data[[rr]]) %>%
       dplyr::summarize(N = purrr::map(.data$data, calc_weights, .env$n_sub),
                        N_names = paste0(rr, "_", .data[[rr]]),
@@ -325,7 +325,7 @@ generate_indices <- function(
       # Add in quantiles
       dplyr::left_join(tidyr::unnest(samples, "Q"), by = c(rr, "year")) %>%
       # Clean up
-      dplyr::rename(region = .data[[rr]]) %>%
+      dplyr::rename(region = dplyr::any_of(rr)) %>%
       dplyr::select("year", "region", "region_type",
                     "strata_included", "strata_excluded",
                     "index", dplyr::contains("index_q"),

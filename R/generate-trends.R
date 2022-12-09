@@ -214,7 +214,7 @@ generate_trends <- function(indices,
       .groups = "drop") %>%
 
     dplyr::distinct() %>%
-    tidyr::unnest(cols = c(.data$trend_q, .data$pc_q)) %>%
+    tidyr::unnest(cols = c("trend_q", "pc_q")) %>%
     dplyr::arrange(.data$region_type, .data$region)
 
 
@@ -240,7 +240,7 @@ generate_trends <- function(indices,
           .data$sl_t, ~stats::setNames(
             stats::quantile(.x, quantiles, names = FALSE),
             paste0("slope_trend_q_", quantiles)))) %>%
-      tidyr::unnest(.data$slope_trend_q) %>%
+      tidyr::unnest("slope_trend_q") %>%
       dplyr::mutate(
         "width_of_{q}_percent_credible_interval_slope" :=
           .data[[paste0("slope_trend_q_", q2)]] -
@@ -254,7 +254,7 @@ generate_trends <- function(indices,
         pch = purrr::map(.data$ch, ~100 * (.x - 1)),
         pch_pp = purrr::map_df(.data$pch, calc_prob_crease,
                                .env$prob_decrease, type = "decrease")) %>%
-      tidyr::unnest(.data$pch_pp) %>%
+      tidyr::unnest("pch_pp") %>%
       dplyr::select(-"pch")
   }
 
@@ -264,7 +264,7 @@ generate_trends <- function(indices,
         pch = purrr::map(.data$ch, ~100 * (.x - 1)),
         pch_pp = purrr::map_df(.data$pch, calc_prob_crease,
                                .env$prob_increase, type = "increase")) %>%
-      tidyr::unnest(.data$pch_pp) %>%
+      tidyr::unnest("pch_pp") %>%
       dplyr::select(-"pch")
   }
 
