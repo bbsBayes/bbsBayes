@@ -82,8 +82,8 @@ plot_map <- function(trends,
     ggplot2::labs(title = title,
                   fill = paste0("Trend\n", start_year, "-", end_year)) +
     ggplot2::theme(legend.position = "right",
-                   line = ggplot2::element_line(size = 0.4),
-                   rect = ggplot2::element_rect(size = 0.1),
+                   line = ggplot2::element_line(linewidth = 0.4),
+                   rect = ggplot2::element_rect(linewidth = 0.1),
                    axis.text = ggplot2::element_blank(),
                    axis.line = ggplot2::element_blank(),
                    axis.title = ggplot2::element_blank()) +

@@ -342,7 +342,7 @@ plot_neighbours <- function(strata_map, centres, nb_db, bbox, vint, add_map,
       data = nb_connect,
       ggplot2::aes(x = .data$long, y = .data$lat,
                    xend = .data$long_to, yend = .data$lat_to),
-      inherit.aes = FALSE, size = 0.3, alpha = 0.4)
+      inherit.aes = FALSE, linewidth = 0.3, alpha = 0.4)
 
   if(!is.null(vint)) {
     g <- g + ggplot2::geom_sf(data = vint, alpha = 0, colour = "grey95")
