@@ -59,9 +59,9 @@ test_that("generate_trends() basics", {
   tr <- 100 * ((ch ^ (1 / (trnd$end_year[1] - trnd$start_year[1]))) - 1)
 
   expect_equal(trnd$trend[1], median(tr))
-  expect_equal(trnd$trend_q0.025[1], quantile(tr, 0.025), ignore_attr = TRUE)
+  expect_equal(trnd$trend_q_0.025[1], quantile(tr, 0.025), ignore_attr = TRUE)
   expect_equal(trnd$percent_change[1], 100 * (median(ch) - 1))
-  expect_equal(trnd$percent_change_q0.025[1], 100 * (quantile(ch, 0.025) - 1),
+  expect_equal(trnd$percent_change_q_0.025[1], 100 * (quantile(ch, 0.025) - 1),
                ignore_attr = TRUE)
   expect_equal(trnd$rel_abundance[1], mean(ix$index[ix$region == "continent"]))
   expect_equal(trnd$obs_rel_abundance[1],
@@ -75,7 +75,7 @@ test_that("generate_trends() basics", {
   expect_equal(trnd$n_strata_included,
                stringr::str_count(trnd$strata_included, ";") + 1)
   expect_equal(trnd$width_of_95_percent_credible_interval,
-               trnd$trend_q0.975 - trnd$trend_q0.025)
+               trnd$trend_q_0.975 - trnd$trend_q_0.025)
 })
 
 test_that("generate_trends() slopes", {
@@ -86,11 +86,11 @@ test_that("generate_trends() slopes", {
                                 1, dim(i[["samples"]][[1]])[2]))
 
   expect_equal(trnd$slope_trend[1], median(s))
-  expect_equal(trnd$slope_trend_q0.025[1], quantile(s, 0.025),
+  expect_equal(trnd$slope_trend_q_0.025[1], quantile(s, 0.025),
                ignore_attr = TRUE)
 
   expect_equal(trnd$width_of_95_percent_credible_interval_slope,
-               trnd$slope_trend_q0.975 - trnd$slope_trend_q0.025)
+               trnd$slope_trend_q_0.975 - trnd$slope_trend_q_0.025)
 })
 
 test_that("generate_trends() min_year/max_year", {
@@ -143,11 +143,11 @@ test_that("generate_trends() quantiles", {
   tr <- 100 * ((ch ^ (1 / (trnd$end_year[1] - trnd$start_year[1]))) - 1)
 
   expect_equal(trnd$trend[1], median(tr))
-  expect_equal(trnd$trend_q0.33[1], quantile(tr, 0.33), ignore_attr = TRUE)
-  expect_equal(trnd$trend_q0.67[1], quantile(tr, 0.67), ignore_attr = TRUE)
+  expect_equal(trnd$trend_q_0.33[1], quantile(tr, 0.33), ignore_attr = TRUE)
+  expect_equal(trnd$trend_q_0.67[1], quantile(tr, 0.67), ignore_attr = TRUE)
 
   nm <- paste0("width_of_", 100 * (0.67-0.33), "_percent_credible_interval")
-  expect_equal(trnd[[nm]], trnd$trend_q0.67 - trnd$trend_q0.33)
+  expect_equal(trnd[[nm]], trnd$trend_q_0.67 - trnd$trend_q_0.33)
 
 })
 
