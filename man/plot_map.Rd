@@ -41,21 +41,12 @@ spplot object
 change in species trends for each strata.
 }
 \examples{
-# Toy example with Pacific Wren sample data
-# First, stratify the sample data
-s <- stratify(by = "bbs_cws", sample_data = TRUE)
-
-# Prepare the stratified data for use in a JAGS model.
-d <- prepare_data(s, min_year = 2009, max_year = 2018)
-
-# Now run the model (fast but not good, just for illustration)
-m <- run_model(d, model = "first_diff",
-               iter_sampling = 5, iter_warmup = 5, chains = 2)
+# Using the example model for Pacific Wrens...
 
 # Generate the continental and stratum indices
-i <- generate_indices(m)
+i <- generate_indices(pacific_wren_model)
 
-# Now, generate the trends
+# Now generate trends
 t <- generate_trends(i)
 
 # Generate the map

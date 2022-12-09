@@ -33,21 +33,12 @@
 #'
 #' @examples
 #'
-#' # Toy example with Pacific Wren sample data
-#' # First, stratify the sample data
-#' s <- stratify(by = "bbs_cws", sample_data = TRUE)
-#'
-#' # Prepare the stratified data for modelling
-#' d <- prepare_data(s,
-#'                   min_year = 2009,
-#'                   max_year = 2018)
-#'
-#' # Now run the model (fast but not good, just for illustration)
-#' m <- run_model(d, model = "first_diff",
-#'                iter_sampling = 10, iter_warmup = 10, chains = 2)
+#' # Using the example model for Pacific Wrens...
 #'
 #' # Generate indices
-#' i <- generate_indices(m, regions = c("stratum", "prov_state"))
+#' i <- generate_indices(pacific_wren_model,
+#'                       regions = c("stratum", "prov_state"))
+#' # Generate trends
 #' t <- generate_trends(i)
 #'
 #' # Now make the geofacet plot.
@@ -155,7 +146,7 @@ plot_geofacet <- function(indices,
       dplyr::mutate(trend_cat = cut(
         .data$trend, breaks = c(-Inf, breaks, Inf), ordered_result = TRUE)) %>%
       dplyr::inner_join(indices, by = "region") %>%
-      dplyr::arrange(region, year)
+      dplyr::arrange(.data$region, .data$year)
 
   } else {
     indices <- dplyr::mutate(indices, trend = 0, trend_cat = "no_trends")
@@ -176,10 +167,10 @@ plot_geofacet <- function(indices,
   tr_labs <- dplyr::mutate(
     tr_labs,
     lbl = dplyr::case_when(
-      !multiple & !tr ~ "",
-      !multiple &  tr ~ paste(.data$t_fmt, "%/yr"),
-      multiple &  tr ~ paste0(.data$t_fmt, " ", extra),
-      multiple & !tr ~ extra))
+      !.env$multiple & !.env$tr ~ "",
+      !.env$multiple &  .env$tr ~ paste(.data$t_fmt, "%/yr"),
+      .env$multiple &  .env$tr ~ paste0(.data$t_fmt, " ", .data$extra),
+      .env$multiple & !.env$tr ~ .data$extra))
 
 
   # Colours
@@ -192,7 +183,7 @@ plot_geofacet <- function(indices,
                     "#481567"),
     TRUE ~ c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
              "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")) %>%
-    setNames(n)
+    stats::setNames(n)
 
   # Plot
   p <- ggplot2::ggplot(data = indices) +
@@ -216,7 +207,8 @@ plot_geofacet <- function(indices,
       alpha = alpha_ribbon) +
     ggrepel::geom_text_repel(
       data = tr_labs,
-      ggplot2::aes(x = year, y = uci, label = lbl, group = .data$group),
+      ggplot2::aes(x = .data$year, y = .data$uci, label = .data$lbl,
+                   group = .data$group),
       colour = "grey60", size = 2, nudge_y = 0.2 * uplim,
       segment.alpha = 0.1) +
 
@@ -229,7 +221,7 @@ plot_geofacet <- function(indices,
   if(add_observed_means){
     p <- p +
       ggplot2::geom_point(
-        ggplot2::aes(x = year, y = obs_mean, group = .data[[group_by]]),
+        ggplot2::aes(x = .data$year, y = .data$obs_mean, group = .data$group),
         colour = "grey60", size = 0.5, alpha = alpha_ribbon)
   }
 

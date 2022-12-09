@@ -52,6 +52,9 @@ p_waic(...)
 
 waic(...)
 }
+\arguments{
+\item{...}{Original function arguments}
+}
 \description{
 \subsection{Superseded}{
 
@@ -89,7 +92,7 @@ extract final samples from the \code{model_fit} list item in the output of
 
 \code{get_strata_area()} and \code{get_composite_regions()} are no longer required.
 Access the strata areas and regional data by exploring the included data
-\code{bbs_strata}. e.g, `bbs_strata[\link{"bbs_usgs"}].
+\code{bbs_strata}. e.g, \code{bbs_strata[["bbs_usgs"]]}.
 
 \code{p_waic()} and \code{waic()} are no longer recommended for BBS data. Use
 cross validation instead

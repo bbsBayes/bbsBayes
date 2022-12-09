@@ -21,10 +21,7 @@ prepare_spatial(
 \item{strata_map}{sf data frame. Map of the strata in (MULTI)POLYGONs. Must
 have column "strata_name" matching strata output from \code{prepare_data()}.}
 
-\item{prepped_data}{List. Output of \code{prepare_data()}.
-
-Use \verb{@inheritParams common_docs} to include the above in any function
-documentation with a matching argument (will only include matching args)}
+\item{prepped_data}{List. Output of \code{prepare_data()}.}
 
 \item{voronoi}{Logical. Whether or not to use Voroni method for polygons.
 (Must use Voronoi method for points).}
@@ -49,6 +46,9 @@ Details.}
 
 \item{add_map}{sf spatial object. Spatial data to add to map output.}
 
+\item{label_size}{Numeric. Size of the labels on the map. For data with many
+different strata it can be useful to reduce the size of the labels.}
+
 \item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
 }
 \value{
@@ -69,19 +69,18 @@ link up the strata before appling a buffer at a distance of \code{buffer_dist}.
 Note that all distances are in the units of \code{sf::st_crs(strata_map)}.
 }
 \examples{
-bbs_data <- stratify(by = "bbs_cws", species = "Connecticut Warbler")
-
-model_data <- prepare_data(bbs_data, min_max_route_years = 2)
+s <- stratify(by = "bbs_cws", species = "Connecticut Warbler")
+p <- prepare_data(s, min_max_route_years = 2)
 
 map <- load_map("bbs_cws")
 
-sp <- prepare_spatial(map, model_data)
+sp <- prepare_spatial(map, p)
 
 # Visually explore the spatial linkages
 sp$map
 
 # Overlay subset strata map on original mapping data
-sp <- prepare_spatial(map, model_data, add_map = map)
+sp <- prepare_spatial(map, p, add_map = map)
 sp$map
 
 }

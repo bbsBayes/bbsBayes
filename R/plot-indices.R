@@ -27,21 +27,10 @@
 #'
 #' @examples
 #'
-#' # Toy example with Pacific Wren sample data
-#' # First, stratify the sample data
-#' s <- stratify(by = "bbs_cws", sample_data = TRUE)
-#'
-#' # Prepare the stratified data for modelling
-#' d <- prepare_data(s,
-#'                   min_year = 2009,
-#'                   max_year = 2018)
-#'
-#' # Now run the model (fast but not good, just for illustration)
-#' m <- run_model(d, model = "first_diff",
-#'                iter_sampling = 5, iter_warmup = 5, chains = 2)
+#' # Using the example model for Pacific Wrens...
 #'
 #' # Generate country, continent, and stratum indices
-#' i <- generate_indices(model_output = m,
+#' i <- generate_indices(model_output = pacific_wren_model,
 #'                       regions = c("country", "continent", "stratum"))
 #'
 #' # Now, plot_indices() will generate a list of plots for all regions

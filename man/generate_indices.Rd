@@ -113,30 +113,21 @@ exclusion of many strata, consider trimming the early years by specifying a
 }
 \examples{
 
-# Toy example with Pacific Wren sample data
-# First, stratify the sample data
-s <- stratify(by = "bbs_cws", sample_data = TRUE)
-
-# Prepare the stratified data for use in modelling
-d <- prepare_data(s,
-                  min_year = 2009,
-                  max_year = 2018)
-
-# Now run the model (fast but not good, just for illustration)
-m <- run_model(d, model = "first_diff",
-               iter_sampling = 20, iter_warmup = 20, chains = 2)
+# Using the example model for Pacific Wrens
 
 # Generate the continental and stratum indices
-i <- generate_indices(model_output = m)
+i <- generate_indices(pacific_wren_model)
 
 # Generate only country indices
-i_nat <- generate_indices(model_output = m, regions = "country")
+i_nat <- generate_indices(pacific_wren_model, regions = "country")
 
 # Use a custom region specification (dummy example)
 library(dplyr)
-ri <- bbs_strata[["bbs_cws"]] \%>\%
-  mutate(my_region = if_else(prov_state \%in\% "ON", "Ontario", "Rest"))
-i_custom <- generate_indices(model_output = m,
+ri <- bbs_strata[["bbs_cws"]]
+ri <- mutate(ri, my_region = if_else(prov_state \%in\% "ON", "Ontario", "Rest"))
+
+# Generate indices with these custom regions
+i_custom <- generate_indices(pacific_wren_model,
                              regions = c("country", "prov_state", "my_region"),
                              regions_index = ri)
 

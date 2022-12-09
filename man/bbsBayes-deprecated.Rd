@@ -8,7 +8,10 @@
 \usage{
 generate_map(...)
 
-geofacet_plot(..)
+geofacet_plot(...)
+}
+\arguments{
+\item{...}{Original function arguments}
 }
 \description{
 \code{plot_map()} supersedes \code{generate_map()}

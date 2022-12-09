@@ -10,6 +10,9 @@
 #' @param by Character. Stratification type. Either an established type, one of
 #'   "prov_state", "bcr", "latlong", "bbs_cws", "bbs_usgs", or a custom name
 #'   (see strata_custom for details).
+#' @param species Character. Bird species of interest. Can be specified by
+#'   English, French, or Scientific names, or AOU code. Use `search_species()`
+#'   for loose matching to find the exact name/code needed.
 #' @param strata_custom Data frame or sf spatial data frame. Data frame
 #'   of modified existing stratification, or a sf spatial data frame with
 #'   polygons defining the custom stratifications. See Details.
@@ -47,11 +50,19 @@
 #'
 #' @examples
 #'
-#' # Sample Data - USGS BBS stara
+#' # Sample Data - USGS BBS strata
 #' s <- stratify(by = "bbs_usgs", sample_data = TRUE)
 #'
 #' # Full data - species and stratification
 #' # Use `search_species()` to get correct species name
+#'
+#' # Stratify by CWS BBS strata
+#' s <- stratify(by = "bbs_cws", species = "Common Loon")
+#'
+#' # Use use English, French, Scientific, or AOU codes for species names
+#' s <- stratify(by = "bbs_cws", species = "Plongeon huard")
+#' s <- stratify(by = "bbs_cws", species = 70)
+#' s <- stratify(by = "bbs_cws", species = "Gavia immer")
 #'
 #' # Stratify by Bird Conservation Regions
 #' s <- stratify(by = "bcr", species = "Great Horned Owl")
@@ -61,6 +72,9 @@
 #'
 #' # Stratify by State/Province/Territory only
 #' s <- stratify(by = "prov_state", species = "Common Loon")
+#' s <- stratify(by = "prov_state", species = "Plongeon huard")
+#' s <- stratify(by = "prov_state", species = 70)
+#'
 #'
 #' # Stratify by blocks of 1 degree of latitude X 1 degree of longitude
 #' s <- stratify(by = "latlong", species = "Snowy Owl")
@@ -136,7 +150,7 @@ stratify <- function(by,
   # Check and filter species
   if(!sample_data) {
     sp_aou <- check_species(species, species_list, combine_species_forms, quiet)
-    birds <- dplyr::filter(birds, aou == .env$sp_aou)
+    birds <- dplyr::filter(birds, .data$aou == .env$sp_aou)
     if(!combine_species_forms) birds <- dplyr::filter(birds, !.data$unid_combined)
   } else {
     if(!quiet) message("Using species Pacific Wren (sample data)")
@@ -207,7 +221,7 @@ stratify <- function(by,
     if(stratify_type == "subset") {
       meta_strata <- strata_custom
     } else {
-      meta_strata <- bbs_strata[[stratify_by]]
+      meta_strata <- bbsBayes::bbs_strata[[stratify_by]]
     }
 
     # Assing NA to all routes not in stratification (omitted below)
@@ -233,7 +247,7 @@ stratify <- function(by,
       format(nrow(routes), big.mark = ","),
       " routes that do not match a stratum...")
   }
-  routes <- dplyr::filter(routes, !is.na(strata_name))
+  routes <- dplyr::filter(routes, !is.na(.data$strata_name))
 
   if(nrow(routes) == 0) {
     stop("No routes within this stratification", call. = FALSE)
@@ -276,7 +290,7 @@ stratify_map <- function(strata_map, routes, quiet = FALSE) {
 
   # Keep strata name column only
   strata_map <- dplyr::select(strata_map, "strata_name") %>%
-    dplyr::mutate(strata_name = as.character(strata_name))
+    dplyr::mutate(strata_name = as.character(.data$strata_name))
 
   n_features <- sf::st_drop_geometry(strata_map) %>%
     dplyr::pull(.data$strata_name) %>%
@@ -306,7 +320,7 @@ stratify_map <- function(strata_map, routes, quiet = FALSE) {
     sf::st_join(strata_map) %>%
     sf::st_drop_geometry() %>%
     dplyr::rename("longitude" = "lon", "latitude" = "lat") %>%
-    dplyr::select("strata_name", names(routes)) # reorder
+    dplyr::select("strata_name", dplyr::all_of(names(.env$routes))) # reorder
 
   list("meta_strata" = sf::st_drop_geometry(strata_map),
        "routes" = routes)

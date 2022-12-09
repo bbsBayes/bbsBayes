@@ -11,3 +11,16 @@
     "See the documentation for more details: https://BrandonEdwards.github.io/bbsBayes"
     )
 }
+
+
+# Dealing with CRAN Notes due to Non-standard evaluation
+.onLoad <- function(libname = find.package("bbsBayes"),
+                    pkgname = "bbsBayes"){
+  if(getRversion() >= "2.15.1")
+    utils::globalVariables(
+      # Vars used in Non-Standard Evaluations, declare here to
+      # avoid CRAN warnings
+      c("." # piping requires '.' at times
+      )
+    )
+}

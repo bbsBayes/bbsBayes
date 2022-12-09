@@ -19,17 +19,20 @@ Nothing. Creates .rds file at \code{path}.
 }
 \description{
 This function closely imitate \code{cmdstanr::save_object()} but saves the
-entire model output oject from \code{run_model()} which contains more details
+entire model output object from \code{run_model()} which contains more details
 regarding stratification etc.
+}
+\details{
+Files are saved to \code{path}, or if not provided to the original location of
+the Stan model run files (provided the original files exist).
 }
 \examples{
 
-# Create dummy model run (by default model .rds file saved by `run_model()`
-m <- stratify(by = "bbs_cws", sample_data = TRUE) \%>\%
-  prepare_data() \%>\%
-  run_model(model = "first_diff", iter_sampling = 10,
-            iter_warmup = 10, chains = 2)
+# By default, the model is saved as an RDS file during `run_model()`
 
-# Deliberately save the file
-save_model_run(m, path = "my_model.rds")
+# But you can also deliberately save the file (here with an example model)
+save_model_run(pacific_wren_model, path = "my_model.rds")
+
+# Clean up
+unlink("my_model.rds")
 }

@@ -63,21 +63,12 @@ of the relevant strata) within each facet.
 }
 \examples{
 
-# Toy example with Pacific Wren sample data
-# First, stratify the sample data
-s <- stratify(by = "bbs_cws", sample_data = TRUE)
-
-# Prepare the stratified data for modelling
-d <- prepare_data(s,
-                  min_year = 2009,
-                  max_year = 2018)
-
-# Now run the model (fast but not good, just for illustration)
-m <- run_model(d, model = "first_diff",
-               iter_sampling = 10, iter_warmup = 10, chains = 2)
+# Using the example model for Pacific Wrens...
 
 # Generate indices
-i <- generate_indices(m, regions = c("stratum", "prov_state"))
+i <- generate_indices(pacific_wren_model,
+                      regions = c("stratum", "prov_state"))
+# Generate trends
 t <- generate_trends(i)
 
 # Now make the geofacet plot.

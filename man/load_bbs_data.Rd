@@ -13,6 +13,9 @@ Defaults to "state".}
 \item{release}{Numeric. Yearly release. Options are 2022 (default including
 data through 2021 field season) or 2020 (including data through 2019)}
 
+\item{sample}{Logical. Whether or not to use the sample data for Pacific
+Wrens. Defaults to \code{FALSE}. If \code{TRUE}, \code{level} and \code{release} are ignored.}
+
 \item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
 }
 \value{

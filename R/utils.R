@@ -160,7 +160,7 @@ assign_prov_state <- function(strata_map, min_overlap = 0.75, plot = FALSE,
 #'
 search_species <- function(species, combine_species_forms = TRUE) {
   sp_list <- load_bbs_data()$species %>%
-    dplyr::filter(unid_combined == .env$combine_species_forms)
+    dplyr::filter(.data$unid_combined == .env$combine_species_forms)
 
   search <- stringr::str_split(species, " ", simplify = TRUE)
 

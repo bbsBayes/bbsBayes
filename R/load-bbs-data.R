@@ -5,6 +5,8 @@
 #' Note that this is not necessary to run a Bayesian analysis of BBS data;
 #' calling `stratify()` will do the loading for you.
 #'
+#' @param sample Logical. Whether or not to use the sample data for Pacific
+#'   Wrens. Defaults to `FALSE`. If `TRUE`, `level` and `release` are ignored.
 #' @inheritParams common_docs
 #'
 #'
@@ -21,7 +23,7 @@ load_bbs_data <- function(level = "state", release = 2022,
   # Return sample data
   if(sample) {
     if(!quiet) message("Using sample BBS data...")
-    return(bbs_data_sample)
+    return(bbsBayes::bbs_data_sample)
   }
 
   # Return full data

@@ -79,35 +79,25 @@
 #'
 #' @examples
 #'
-#' # Toy example with Pacific Wren sample data
-#' # First, stratify the sample data
-#' s <- stratify(by = "bbs_cws", sample_data = TRUE)
-#'
-#' # Prepare the stratified data for use in modelling
-#' d <- prepare_data(s,
-#'                   min_year = 2009,
-#'                   max_year = 2018)
-#'
-#' # Now run the model (fast but not good, just for illustration)
-#' m <- run_model(d, model = "first_diff",
-#'                iter_sampling = 20, iter_warmup = 20, chains = 2)
+#' # Using the example model for Pacific Wrens
 #'
 #' # Generate the continental and stratum indices
-#' i <- generate_indices(model_output = m)
+#' i <- generate_indices(pacific_wren_model)
 #'
 #' # Generate only country indices
-#' i_nat <- generate_indices(model_output = m, regions = "country")
+#' i_nat <- generate_indices(pacific_wren_model, regions = "country")
 #'
 #' # Use a custom region specification (dummy example)
 #' library(dplyr)
-#' ri <- bbs_strata[["bbs_cws"]] %>%
-#'   mutate(my_region = if_else(prov_state %in% "ON", "Ontario", "Rest"))
-#' i_custom <- generate_indices(model_output = m,
+#' ri <- bbs_strata[["bbs_cws"]]
+#' ri <- mutate(ri, my_region = if_else(prov_state %in% "ON", "Ontario", "Rest"))
+#'
+#' # Generate indices with these custom regions
+#' i_custom <- generate_indices(pacific_wren_model,
 #'                              regions = c("country", "prov_state", "my_region"),
 #'                              regions_index = ri)
 #'
 #' @export
-#'
 
 generate_indices <- function(model_output = NULL,
                              quantiles = c(0.025, 0.05, 0.25, 0.75, 0.95, 0.975),
@@ -204,7 +194,7 @@ generate_indices <- function(model_output = NULL,
       dplyr::select("strata_name", dplyr::all_of(r)) %>%
       dplyr::arrange(.data$strata_name) %>%
       dplyr::distinct() %>%
-      dplyr::mutate(strata_name = as.character(strata_name))
+      dplyr::mutate(strata_name = as.character(.data$strata_name))
 
     # Add new regional definitions to existing meta_strata
     meta_strata <- meta_strata %>%
@@ -216,7 +206,8 @@ generate_indices <- function(model_output = NULL,
   obs_strata <- raw_data %>%
     dplyr::select("strata", "year", "first_year", "count") %>%
     dplyr::group_by(.data$strata) %>%
-    tidyr::complete(year = seq(.env$start_year, .env$end_year), first_year) %>%
+    tidyr::complete(year = seq(.env$start_year, .env$end_year),
+                    .data$first_year) %>%
     dplyr::arrange(.data$strata, .data$year, .data$count) %>%
     dplyr::group_by(.data$strata, .data$year, .data$first_year) %>%
     dplyr::summarize(obs_mean = mean(.data$count, na.rm = TRUE),
@@ -246,7 +237,7 @@ generate_indices <- function(model_output = NULL,
     # Calculate observation statistics for this composite region
     obs_region <- obs_strata %>%
       dplyr::inner_join(meta_strata_sub, by = "strata") %>%
-      dplyr::mutate(obs_mean = obs_mean * area_weight_non_zero) %>%
+      dplyr::mutate(obs_mean = .data$obs_mean * .data$area_weight_non_zero) %>%
       dplyr::group_by(.data[[rr]], .data$strata)
 
     # Flag strata to remove due to max_backcast
@@ -277,7 +268,7 @@ generate_indices <- function(model_output = NULL,
       rm <- unique(obs_region$strata_name[obs_region$flag_remove])
 
       obs_region <- dplyr::filter(obs_region, !.data$flag_remove)
-      meta_strata_sub <- dplyr::filter(meta_strata_sub, !strata_name %in% rm)
+      meta_strata_sub <- dplyr::filter(meta_strata_sub, !.data$strata_name %in% rm)
       n_sub <- n[, unique(obs_region$strata_name), ] # Keep only good
     } else n_sub <- n
 
@@ -303,7 +294,7 @@ generate_indices <- function(model_output = NULL,
       dplyr::mutate(r = .env$rr)
 
     # Save sample stats for output
-    N_all <- append(N_all, setNames(samples$N, samples$N_names))
+    N_all <- append(N_all, stats::setNames(samples$N, samples$N_names))
 
     # Calculate data summaries for output
     indices <- obs_region %>%
@@ -364,7 +355,7 @@ calc_quantiles <- function(N, quantiles) {
   apply(N, 2, stats::quantile, probs = c(quantiles, 0.5)) %>%
     t() %>%
     as.data.frame() %>%
-    setNames(c(paste0("index_q_", quantiles), "index")) %>%
+    stats::setNames(c(paste0("index_q_", quantiles), "index")) %>%
     dplyr::bind_cols(year = as.numeric(dimnames(N)$year))
 }
 

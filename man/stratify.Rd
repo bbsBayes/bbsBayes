@@ -21,6 +21,10 @@ stratify(
 "prov_state", "bcr", "latlong", "bbs_cws", "bbs_usgs", or a custom name
 (see strata_custom for details).}
 
+\item{species}{Character. Bird species of interest. Can be specified by
+English, French, or Scientific names, or AOU code. Use \code{search_species()}
+for loose matching to find the exact name/code needed.}
+
 \item{strata_custom}{Data frame or sf spatial data frame. Data frame
 of modified existing stratification, or a sf spatial data frame with
 polygons defining the custom stratifications. See Details.}
@@ -73,11 +77,19 @@ See \code{vignette("stratification", package = "bbsBayes")} for more details.
 }
 \examples{
 
-# Sample Data - USGS BBS stara
+# Sample Data - USGS BBS strata
 s <- stratify(by = "bbs_usgs", sample_data = TRUE)
 
 # Full data - species and stratification
 # Use `search_species()` to get correct species name
+
+# Stratify by CWS BBS strata
+s <- stratify(by = "bbs_cws", species = "Common Loon")
+
+# Use use English, French, Scientific, or AOU codes for species names
+s <- stratify(by = "bbs_cws", species = "Plongeon huard")
+s <- stratify(by = "bbs_cws", species = 70)
+s <- stratify(by = "bbs_cws", species = "Gavia immer")
 
 # Stratify by Bird Conservation Regions
 s <- stratify(by = "bcr", species = "Great Horned Owl")
@@ -87,6 +99,9 @@ s <- stratify(by = "bbs_cws", species = "Canada Jay")
 
 # Stratify by State/Province/Territory only
 s <- stratify(by = "prov_state", species = "Common Loon")
+s <- stratify(by = "prov_state", species = "Plongeon huard")
+s <- stratify(by = "prov_state", species = 70)
+
 
 # Stratify by blocks of 1 degree of latitude X 1 degree of longitude
 s <- stratify(by = "latlong", species = "Snowy Owl")

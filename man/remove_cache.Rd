@@ -7,12 +7,17 @@
 remove_cache(type = "bbs_data", level, release)
 }
 \arguments{
-\item{level}{Character. Data to remove, one of "all", "state", or "stop"}
+\item{type}{Character. Which cached data to remove. One of "all", "bbs_data",
+or "models". If "all", removes entire cache directory (and all data
+contained therein). If "bbs_data", removes only BBS data downloaded with
+\code{fetch_bbs_data()}. If "models", removes only model executables compiled
+when \code{run_models()} is run.}
 
-\item{release}{Character/Numeric. Data to remove, one of "all", 2020, or 2022}
+\item{level}{Character. BBS data to remove, one of "all", "state", or "stop".
+Only applies if \code{type = "bbs_data"}}
 
-\item{cache_dir}{Logical. Remove entire cache directory (and all data
-contained therein)}
+\item{release}{Character/Numeric. BBS data to remove, one of "all", 2020, or
+2022. Only applies if \code{type = "bbs_data"}}
 }
 \value{
 Nothing.

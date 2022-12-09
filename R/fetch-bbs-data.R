@@ -187,10 +187,15 @@ bbs_dir <- function(quiet = TRUE) {
 #' Remove all or some of the data downloaded via `fetch_bbs_data()` as well as
 #' model executables created by `cmdstanr::cmdstan_model()` via `run_model()`.
 #'
-#' @param level Character. Data to remove, one of "all", "state", or "stop"
-#' @param release Character/Numeric. Data to remove, one of "all", 2020, or 2022
-#' @param cache_dir Logical. Remove entire cache directory (and all data
-#'   contained therein)
+#' @param type Character. Which cached data to remove. One of "all", "bbs_data",
+#'   or "models". If "all", removes entire cache directory (and all data
+#'   contained therein). If "bbs_data", removes only BBS data downloaded with
+#'   `fetch_bbs_data()`. If "models", removes only model executables compiled
+#'   when `run_models()` is run.
+#' @param level Character. BBS data to remove, one of "all", "state", or "stop".
+#'   Only applies if `type = "bbs_data"`
+#' @param release Character/Numeric. BBS data to remove, one of "all", 2020, or
+#'   2022. Only applies if `type = "bbs_data"`
 #'
 #' @return Nothing.
 #'

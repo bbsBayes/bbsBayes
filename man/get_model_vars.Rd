@@ -8,6 +8,10 @@ get_model_vars(model_output, all = FALSE)
 }
 \arguments{
 \item{model_output}{List. Output of \code{run_model()}.}
+
+\item{all}{Logical. Whether or not to return \strong{all}, specific variables (e.g.,
+\code{strata_raw[1]} or just variable types (e.g., \code{strata_raw}). Defaults to
+\code{FALSE} (variable types only).}
 }
 \value{
 A character vector of all model variable types.
@@ -18,18 +22,12 @@ different iterations for each strata and each year).
 }
 \examples{
 
-# Toy example with Pacific Wren sample data
-# First, stratify the sample data
-s <- stratify(by = "bbs_cws", sample_data = TRUE)
+# Using the example model for Pacific Wrens...
 
-# Prepare the stratified data for use in modelling
-d <- prepare_data(s, min_year = 2009, max_year = 2018)
+# List variable types
+get_model_vars(pacific_wren_model)
 
-# Now run the model (fast but not good, just for illustration)
-m <- run_model(d, model = "first_diff",
-               iter_sampling = 5, iter_warmup = 5, chains = 2)
-
-# Calculate convergence metrics on each variable
-get_model_vars(m)
+# List all variables
+get_model_vars(pacific_wren_model, all = TRUE)
 
 }

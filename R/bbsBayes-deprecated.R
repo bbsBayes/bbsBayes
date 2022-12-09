@@ -1,5 +1,7 @@
 #' bbsBayes deprecated functions
 #'
+#' @param ... Original function arguments
+#'
 #' @name bbsBayes-deprecated
 #'
 #' @description
@@ -18,7 +20,7 @@ generate_map <- function(...) {
 }
 
 #' @rdname bbsBayes-deprecated
-geofacet_plot <- function(..) {
+geofacet_plot <- function(...) {
   dep_warn("3.0.0", replace = "plot_geofacet()")
   plot_geofacet(...)
 }

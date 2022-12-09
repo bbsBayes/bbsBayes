@@ -64,9 +64,11 @@ check_model <- function(model, model_variant) {
   if(is.null(model)) stop("No `model` specified", call. = FALSE)
   model <- tolower(model)
 
-  if(!model %in% bbs_models$model) {
+  model_variant <- check_model_variant(model_variant)
+
+  if(!model %in% bbsBayes::bbs_models$model) {
     stop("Invalid `model` specified. Must be one of ",
-         paste0(unique(bbs_models$model), collapse = ", "),
+         paste0(unique(bbsBayes::bbs_models$model), collapse = ", "),
          call. = FALSE)
   }
 
@@ -85,9 +87,9 @@ check_model_variant <- function(model_variant) {
   if(is.null(model_variant)) stop("No `model_variant` specified",
                                   call. = FALSE)
   model_variant <- tolower(model_variant)
-  if(!model_variant %in% bbs_models$variant) {
+  if(!model_variant %in% bbsBayes::bbs_models$variant) {
     stop("Invalid `model_variant` specified. Must be one of ",
-         paste0(unique(bbs_models$variant), collapse = ", "),
+         paste0(unique(bbsBayes::bbs_models$variant), collapse = ", "),
          call. = FALSE)
   }
   model_variant
@@ -137,20 +139,21 @@ check_strata <- function(strata, custom = NULL, simple = FALSE,
 
   # Simple checks
   if(simple) {
-    if(!strata %in% names(bbs_strata)) {
+    if(!strata %in% names(bbsBayes::bbs_strata)) {
       stop("Invalid stratification specified, choose one of '",
-           paste0(names(bbs_strata), collapse = "', '"), "'", call. = FALSE)
+           paste0(names(bbsBayes::bbs_strata), collapse = "', '"), "'",
+           call. = FALSE)
     } else {
       return(strata)
     }
   }
 
   # Working with a custom stratification
-  if(!strata %in% names(bbs_strata)) {
+  if(!strata %in% names(bbsBayes::bbs_strata)) {
 
     if(is.null(custom) || !inherits(custom, "sf")) {
       stop("Invalid stratification specified, choose one of '",
-           paste0(names(bbs_strata), collapse = "', '"),
+           paste0(names(bbsBayes::bbs_strata), collapse = "', '"),
            "',\n or provide an sf spatial data frame to `strata_custom` ",
            "to use a custom stratification", call. = FALSE)
     }
@@ -158,7 +161,7 @@ check_strata <- function(strata, custom = NULL, simple = FALSE,
   }
 
   # Working with an established stratification
-  if(strata %in% names(bbs_strata)) {
+  if(strata %in% names(bbsBayes::bbs_strata)) {
 
     if(!is.null(custom)) {
       # Check if strata established, and custom is a data frame
@@ -171,8 +174,9 @@ check_strata <- function(strata, custom = NULL, simple = FALSE,
         # Check if strata established, and custom is a subset of the correct data
 
         # - Check cols, then check strata names
-        if(!all(names(bbs_strata[[strata]]) %in% names(custom)) ||
-           !all(custom$strata_name %in% bbs_strata[[strata]]$strata_name)) {
+        if(!all(names(bbsBayes::bbs_strata[[strata]]) %in% names(custom)) ||
+           !all(custom$strata_name %in%
+                bbsBayes::bbs_strata[[strata]]$strata_name)) {
           stop("`strata_custom` is not a subset of ",
                "`bbs_strata[[\"", strata, "\"]]`.\n",
                "If using a custom set of an established stratification ",
@@ -183,7 +187,7 @@ check_strata <- function(strata, custom = NULL, simple = FALSE,
       }
 
       # Don't modify if the exact same
-      if(!isTRUE(all.equal(bbs_strata[[strata]], custom))) {
+      if(!isTRUE(all.equal(bbsBayes::bbs_strata[[strata]], custom))) {
         type <- "subset"
       }
     }

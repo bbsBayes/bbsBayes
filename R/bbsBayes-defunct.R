@@ -1,5 +1,7 @@
 #' bbsBayes defunct functions
 #'
+#' @param ... Original function arguments
+#'
 #' @name bbsBayes-defunct
 #'
 #' @description
@@ -35,7 +37,7 @@
 #'
 #'  `get_strata_area()` and `get_composite_regions()` are no longer required.
 #'  Access the strata areas and regional data by exploring the included data
-#'  `bbs_strata`. e.g, `bbs_strata[["bbs_usgs"]].
+#'  `bbs_strata`. e.g, `bbs_strata[["bbs_usgs"]]`.
 #'
 #' `p_waic()` and `waic()` are no longer recommended for BBS data. Use
 #'  cross validation instead

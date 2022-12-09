@@ -63,19 +63,10 @@
 #'
 #' @examples
 #'
-#' # Toy example with Pacific Wren sample data
-#' # First, stratify the sample data
-#' s <- stratify(by = "bbs_cws", sample_data = TRUE)
+#' # Using the example model for Pacific Wrens...
 #'
-#' # Prepare the stratified data for use in a JAGS model.
-#' d <- prepare_data(s, min_year = 2009, max_year = 2018)
-#'
-#' # Now run the model (fast but not good, just for illustration)
-#' m <- run_model(d, model = "first_diff",
-#'                iter_sampling = 5, iter_warmup = 5, chains = 2)
-#'
-#' # Generate the continental and stratum indices
-#' i <- generate_indices(model_output = m)
+#' # Generate the continental and stratum indices#'
+#' i <- generate_indices(pacific_wren_model)
 #'
 #' # Now, generate the trends
 #' t <- generate_trends(i)
@@ -175,7 +166,7 @@ generate_trends <- function(indices,
       start_year = .env$min_year,
       end_year = .env$max_year,
       n_strata_included = purrr::map_dbl(
-        strata_included, ~length(unlist(stringr::str_split(.x, " ; ")))),
+        .data$strata_included, ~length(unlist(stringr::str_split(.x, " ; ")))),
       .groups = "drop") %>%
 
     dplyr::distinct() %>%

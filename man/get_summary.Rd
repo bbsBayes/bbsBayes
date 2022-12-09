@@ -9,8 +9,12 @@ get_summary(model_output, variables = NULL)
 \arguments{
 \item{model_output}{List. Output of \code{run_model()}.}
 
-\item{variables}{Character vector. Specific variables (e.g., "strata_raw\link{1}")
-or variable types (e.g., "strata_raw") to include.}
+\item{variables}{Character vector. Specific variables (e.g.,
+\code{"strata_raw[1]"}) or variable types (e.g., \code{"strata_raw"}) for which to
+calculate metrics. If \code{NULL} (default) all variables are returned.
+
+Use \verb{@inheritParams common_docs} to include the above in any function
+documentation with a matching argument (will only include matching args)}
 }
 \value{
 A data frame of model summary statistics
@@ -20,21 +24,10 @@ Extract and return the model summary using \code{cmdstanr::summary()}.
 }
 \examples{
 
-# Toy example with Pacific Wren sample data
-# First, stratify the sample data
-s <- stratify(by = "bbs_cws", sample_data = TRUE)
+# Using the example model for Pacific Wrens
 
-# Prepare the stratified data for use in modelling
-d <- prepare_data(s, min_year = 2009, max_year = 2018)
-
-# Now run the model (fast but not good, just for illustration)
-m <- run_model(d, model = "first_diff",
-               iter_sampling = 5, iter_warmup = 5, chains = 2)
-
-# Calculate convergence metrics on each variable, a variable type, or on a
-# single specific variable
-get_summary(m)
-get_summary(m, variables = "strata_raw")
-get_summary(m, variables = "strata_raw[9]")
+get_summary(pacific_wren_model)
+get_summary(pacific_wren_model, variables = "strata_raw")
+get_summary(pacific_wren_model, variables = "strata_raw[9]")
 
 }

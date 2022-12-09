@@ -23,6 +23,8 @@
 #'   "buffer"` or the final distance if `buffer_type = "convex_hull"`. See
 #'   Details.
 #' @param add_map sf spatial object. Spatial data to add to map output.
+#' @param label_size Numeric. Size of the labels on the map. For data with many
+#'   different strata it can be useful to reduce the size of the labels.
 #'
 #' @inheritParams common_docs
 #' @details
@@ -40,19 +42,18 @@
 #'
 #'
 #' @examples
-#' bbs_data <- stratify(by = "bbs_cws", species = "Connecticut Warbler")
-#'
-#' model_data <- prepare_data(bbs_data, min_max_route_years = 2)
+#' s <- stratify(by = "bbs_cws", species = "Connecticut Warbler")
+#' p <- prepare_data(s, min_max_route_years = 2)
 #'
 #' map <- load_map("bbs_cws")
 #'
-#' sp <- prepare_spatial(map, model_data)
+#' sp <- prepare_spatial(map, p)
 #'
 #' # Visually explore the spatial linkages
 #' sp$map
 #'
 #' # Overlay subset strata map on original mapping data
-#' sp <- prepare_spatial(map, model_data, add_map = map)
+#' sp <- prepare_spatial(map, p, add_map = map)
 #' sp$map
 #'
 #' @export
@@ -311,8 +312,8 @@ plot_neighbours <- function(strata_map, centres, nb_db, bbox, vint, add_map,
   nb_connect <- data.frame(from = rep(1:nt, sapply(nb_l$neighbours, length)),
                            to = unlist(nb_l$neighbours)) %>%
     dplyr::bind_cols(
-      setNames(coords[.$from, c("X", "Y")], c("long", "lat")),
-      setNames(coords[.$to, c("X", "Y")], c("long_to", "lat_to")))
+      stats::setNames(coords[.$from, c("X", "Y")], c("long", "lat")),
+      stats::setNames(coords[.$to, c("X", "Y")], c("long_to", "lat_to")))
 
   # Basic map
   g <- ggplot2::ggplot(data = centres) +
@@ -323,12 +324,12 @@ plot_neighbours <- function(strata_map, centres, nb_db, bbox, vint, add_map,
   # Add map layer
   if(!is.null(add_map)){
     g <- g +
-      ggplot2::geom_sf(data = add_map, alpha = 0, colour = grey(0.9))
+      ggplot2::geom_sf(data = add_map, alpha = 0, colour = "grey90")
   }
 
   # Add strata map and centres
   g <- g +
-    ggplot2::geom_sf(data = strata_map, alpha = 0, colour = grey(0.85)) +
+    ggplot2::geom_sf(data = strata_map, alpha = 0, colour = "grey85") +
     ggplot2::geom_sf(ggplot2::aes(col = .data[["strata_name"]], alpha = 0.5)) +
     ggplot2::geom_sf_text(ggplot2::aes(label = .data[["strata_name"]]),
                           size = label_size, alpha = 0.7, colour = "black")
@@ -337,11 +338,12 @@ plot_neighbours <- function(strata_map, centres, nb_db, bbox, vint, add_map,
   g <- g +
     ggplot2::geom_segment(
       data = nb_connect,
-      ggplot2::aes(x = long, y = lat, xend = long_to, yend = lat_to),
+      ggplot2::aes(x = .data$long, y = .data$lat,
+                   xend = .data$long_to, yend = .data$lat_to),
       inherit.aes = FALSE, size = 0.3, alpha = 0.4)
 
   if(!is.null(vint)) {
-    g <- g + ggplot2::geom_sf(data = vint, alpha = 0, colour = grey(0.95))
+    g <- g + ggplot2::geom_sf(data = vint, alpha = 0, colour = "grey95")
   }
 
   g
