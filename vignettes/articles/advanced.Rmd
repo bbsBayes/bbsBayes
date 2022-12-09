@@ -31,7 +31,7 @@ package-specific directory on your computer. You must agree to the terms and
 conditions of the data usage before downloading. You only need run this function
 once for each annual update of the BBS database.
 
-``` {r, eval = FALSE}
+``` {r, eval = !have_bbs_data()}
 fetch_bbs_data()
 ```
 
@@ -72,15 +72,13 @@ will run MCMC with default number of iterations. Note that this step usually
 takes a long time (e.g., 6-12 hours, or even days depending on the species,
 model).
 
-```{r}
-mod <- run_model(prepped_data, 
-                 model = "gamye",
-                 heavy_tailed = TRUE, 
+```{r, eval = FALSE}
+mod <- run_model(prepped_data, output_basename = "cws_basw_gamye",
+                 model = "gamye", heavy_tailed = TRUE, 
                  iter_sampling = 10, iter_warmup = 10, chains = 2)
-readr::write_rds(mod, "cws_bars_gamye.rds")
 ```
 
-Alternatively, you can set how many iterations for sampling or warmup steps, 
+Alternatively, you can set how many iterations for sampling or warm up steps, 
 how many chains, and how many to run in parallel.
 
 ``` {r, eval = FALSE}
@@ -90,7 +88,15 @@ mod <- run_model(prepped_data,
 ```
 
 The `run_model()` function generates a large object that includes the posterior
-draws, convergence information, data, etc.
+draws, convergence information, data, etc. By default, this a copy of this
+object is saved as an RDS file to your model directory (working directory unless
+`output_dir` is specified.
+
+You can load this in with
+```{r, eval = FALSE}
+readRDS("cws_basw_gamye.rds")
+```
+
 
 ### Convergence
 

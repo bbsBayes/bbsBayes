@@ -1,0 +1,95 @@
+---
+title: "Models in bbsBayes"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(bbsBayes)
+```
+
+There are 9 types of models that can be run with bbsBayes. For a quick overview
+you can access the `bbs_models` data frame.
+
+```{r}
+bbs_models
+```
+
+```{r}
+s <- stratify(by = "bbs_cws", sample_data = TRUE)
+p <- prepare_data(s)
+```
+
+
+
+
+
+## 1. First Difference Models (`first_diff`)
+
+### Non-hierarchical
+
+### Hierarchical
+
+### Spatial
+
+
+## 2. General Additive Models (`gam`)
+
+### Hierarchical
+
+### Spatial
+
+
+## 3. General Additive Models Year Effect(`gamye`)
+
+### Hierarchical
+
+### Spatial
+
+
+## 4. Slope (`slope`)
+
+### Hierarchical
+
+### Spatial
+
+
+# Customizing the Model Run
+
+## Customizing initial parameter values
+
+Use `init_only` to only return the initialization parameters (i.e. don't run the model)
+```{r}
+init_new <- run_model(p, model = "first_diff", model_variant = "hier",
+                      init_only = TRUE)
+```
+
+Make some changes and use `init_new` as `init`
+```{r}
+init_new[["sdnoise"]] <- 0.5
+
+m <- run_model(p, model = "first_diff", model_variant = "hier",
+               iter_warmup = 20, iter_sampling = 20, chains = 2,
+               init = init_new)
+```
+
+## Customize Stan Model File
+
+Copy model file (and modify by hand in text editor)
+```{r}
+new_model <- model_to_file("first_diff", "hier", tempdir())
+new_model
+```
+
+Then give the file path of this new file to `run_model()`
+```{r}
+m <- run_model(p, model = "first_diff", model_variant = "hier",
+               model_file = new_model,
+               iter_warmup = 20, iter_sampling = 20, chains = 2)
+```
+
