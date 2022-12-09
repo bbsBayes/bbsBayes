@@ -5,7 +5,7 @@
 \alias{pacific_wren_model}
 \title{Example model output}
 \format{
-An object of class \code{list} of length 5.
+An object of class \code{list} of length 4.
 }
 \usage{
 pacific_wren_model

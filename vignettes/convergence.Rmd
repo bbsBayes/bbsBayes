@@ -29,17 +29,21 @@ If not, install with `fetch_bbs_data()`
 fetch_bbs_data()
 ```
 
-
-
 Let's start by running a quick (and dirty) model looking at the Pacific Wren.
 
-```{r}
+```{r, eval = FALSE}
 m <- stratify(by = "bbs_cws", sample_data = TRUE) %>%
-  prepare_data(min_year = 2009, max_year = 2018) %>%
+  prepare_data() %>%
   run_model(model = "first_diff",
             iter_sampling = 20, iter_warmup = 20, chains = 2)
 
 ```
+
+Or we can use the example model included in bbsBayes, `pacific_wren_model`
+```{r}
+m <- pacific_wren_model
+```
+
 
 Now we can calculate our convergence metrics
 ```{r, warning=FALSE}

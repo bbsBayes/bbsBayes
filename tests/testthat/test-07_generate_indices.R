@@ -207,7 +207,7 @@ test_that("generate_indices(regions_index)", {
   # Alternate n
 test_that("generate_indices(alternate_n)", {
 
-  r <- load_test_model(model = "slope")
+  r <- slope_test_model
 
   # Diff annual index parameter
   expect_silent(i1 <- generate_indices(r, regions = "stratum",
