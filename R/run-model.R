@@ -1,19 +1,14 @@
-
 #' Run Bayesian model
 #'
 #'
 #'
-#' @param model Character. Type of model to run, must be one of "first_diff"
-#'   (First Differences), "gam" (General Additive Model), "gamye" (General
-#'   Additive Model with Year Effect), or "slope" (Slope model).
-#' @param model_variant Character. Model variant to run, must be one of
-#'   "nonhier" (Non-hierarchical), "hier" (Hierarchical), or "spatial"
-#'   (Spatially explicit).
+#' @param model_file Character. Location of a custom Stan model file to use.
 #' @param spatial_data List. Output of `prepare_spatial()`.
 #' @param heavy_tailed Logical. Whether extra-Poisson error distributions should
 #'   be modelled as a t-distribution, with heavier tails than the standard
 #'   normal distribution. Default is `TRUE`. Recent results suggest this is best
-#'   even though it requires much longer convergence times.
+#'   even though it requires much longer convergence times. Can only be used with
+#'   Negative Binomial models (i.e. `use_pois = FALSE`).
 #' @param n_knots Numeric. Number of knots for "gam" and "gamye" models
 #' @param basis Character. Basis function to use for GAM smooth, one of
 #'   "original" or "mgcv". Default is "original", the same basis used in Smith
@@ -21,27 +16,41 @@
 #'   package mgcv (also used in brms, and rstanarm). If using the "mgcv" option,
 #'   the user may want to consider adjusting the prior distributions for the
 #'   parameters and their precision.
-#' @param use_pois Logical.
-#' @param calculate_nu Logical.
-#' @param calculate_log_lik Logical.
-#' @param calculate_CV Logical.
-#' @param refresh Numeric. Passed to `cmdstanr::sample`. Number of iterations
+#' @param use_pois Logical. Whether to use an Over-Dispersed Poisson model (`TRUE`)
+#'   or an Negative Binomial model (`FALSE`, default).
+#' @param calculate_nu Logical. Whether to calculate the `nu` parameter as
+#'  a factor of `gamma(2, 0.1)`. Default is `FALSE`.
+#' @param calculate_log_lik Logical. Whether to calculate point-wise
+#'   log-likelihood of the data given the model. Default is `FALSE`.
+#' @param calculate_CV Logical. Whether to use cross validation.
+#' @param refresh Numeric. Passed to `cmdstanr::sample()`. Number of iterations
 #'   between screen updates. If 0, only errors are shown.
-#' @param chains Numeric. Passed to `cmdstanr::sample`. Number of Markov chains
+#' @param chains Numeric. Passed to `cmdstanr::sample()`. Number of Markov chains
 #'   to run.
-#' @param parallel_chains Numeric. Passed to `cmdstanr::sample`. Maximum number
+#' @param parallel_chains Numeric. Passed to `cmdstanr::sample()`. Maximum number
 #'   of chains to run in parallel.
-#' @param iter_warmup Numeric. Passed to `cmdstanr::sample`. Number of warmup
+#' @param iter_warmup Numeric. Passed to `cmdstanr::sample()`. Number of warmup
 #'   iterations per chain.
-#' @param iter_sampling Numeric. Passed to `cmdstanr::sample`. Number of
+#' @param iter_sampling Numeric. Passed to `cmdstanr::sample()`. Number of
 #'   sampling (post-warmup) iterations per chain.
-#' @param adapt_delta Numeric.
-#' @param max_treedepth Numeric.
-#' @param init_def List.
-#' @param out_name Character.
-#' @param out_dir Character.
-#' @param quiet Logical
-#' @param ... Other arguments passed on to cmdstanr::sample
+#' @param adapt_delta Numeric. Passed to `cmdstanr::sample()`. The adaptation
+#'   target acceptance statistic.
+#' @param max_treedepth Numeric. Passed to `cmdstanr::sample()`. The maximum
+#'   allowed tree depth for the NUTS engine. See `?cmdstanr::sample`.
+#' @param init (multiple options). An initialization method passed to the `init`
+#'   argument of `cmdstanr::sample()`. See ?cmdstanr::sample for more details.
+#'   The default (`NULL`) is for bbsBayes to supply initial parameter values
+#'   according to model and model variant selected.
+#' @param init_only Logical. Whether to return the list of initial parameter
+#'   values only (and not run the model). This is useful if you wish to see which
+#'   `init` parameters are being supplied.
+#' @param output_basename Character. Name of the files created as part of the
+#'   Stan model run and the final model output RDS file if `save_output = TRUE`.
+#' @param output_dir Character. Directory in which all model files will be
+#'   created.
+#' @param save_output Logical. Whether or not to save the model output to file
+#'   as an RDS object with all required data. Defaults to `TRUE`.
+#' @param ... Other arguments passed on to `cmdstanr::sample()`
 #' @param jags_data Defunct.
 #' @param inits Defunct.
 #' @param parameters_to_save Defunct.
@@ -58,6 +67,22 @@
 #'
 #' @inheritParams common_docs
 #'
+#' @details There are two ways you can customize
+#' the model run. The first is to supply a custom `model_file` created with the
+#' `model_to_file()` function and then edited by hand.
+#'
+#' Second, you can supply a custom list of initialization parameters. You can
+#' supply these parameters in anyway that `cmdstanr::sample()` accepts the
+#' `init` argument. One way is to use the bbsBayes created parameters and modify
+#' them as needed. To do this, setup the `run_model()` function as you would
+#' normally use it, but add `init_only = TRUE`. This will return the list of
+#' initial definitions. You can edit this list and then run your model with
+#' `run_model(... init = new_inits)`.
+#'
+#' See the [models
+#' article](https://steffilazerte.ca/bbsBayes/articles/models.html) for more
+#' advanced examples and explanations.
+#'
 #' @return A list containing the model output (`model_fit`), meta data for the
 #'   analysis (`meta_data`), meta data for the strata (`meta_strata`) and
 #'   prepared data counts from `prepare_data()` (`raw_data`).
@@ -65,18 +90,20 @@
 #'
 #' @examples
 #'
+#' s <- stratify(by = "bbs_cws", sample_data = TRUE)
+#' p <- prepare_data(s)
 #'
-#' # You can also specify the GAM model, with an optional number of
-#' # knots to use for the GAM basis.
-#' # By default, the number of knots will be equal to the floor
-#' # of the total unique years for the species / 4
-#' #model_data <- prepare_data(strat_data,
-#' #                           model = "gam",
-#' #                           n_knots = 9)
+#' # Run model (quick and dirty)
+#' m <- run_model(p, model = "first_diff", model_variant = "hier",
+#'                iter_warmup = 20, iter_sampling = 20, chains = 2)
 #'
+#' # Clean up (remove model files)
+#' unlink(list.files(pattern = paste0("BBS_STAN_first_diff_hier_", Sys.Date())))
+
 run_model <- function(prepped_data,
                       model,
                       model_variant = "hier",
+                      model_file = NULL,
                       spatial_data = NULL,
                       heavy_tailed = TRUE,
                       n_knots = NULL,
@@ -92,9 +119,10 @@ run_model <- function(prepped_data,
                       iter_sampling = 1000,
                       adapt_delta = 0.95,
                       max_treedepth = 14,
-                      init_def = NULL,
-                      out_name = NULL,
-                      out_dir = ".",
+                      init = NULL,
+                      init_only = FALSE,
+                      output_basename = NULL,
+                      output_dir = ".",
                       save_output = TRUE,
                       quiet = FALSE,
                       jags_data, inits, parameters_to_save, track_n, n_adapt,
@@ -120,8 +148,8 @@ run_model <- function(prepped_data,
 
   # Check inputs
   check_data(prepped_data)
-  model_variant <- check_model_variant(model_variant)
   model <- check_model(model, model_variant)
+  model_file <- check_model_file(model, model_variant, model_file)
   basis <- check_basis(basis)
 
   check_logical(heavy_tailed, use_pois, calculate_nu, calculate_log_lik,
@@ -150,20 +178,22 @@ run_model <- function(prepped_data,
   check_numeric(chains, parallel_chains, iter_sampling, iter_warmup)
 
   if(!heavy_tailed & !use_pois) {
-    stop("Heavy-tailed models are implied with Negative Binomial ",
-         "(`use_pois == FALSE`). Set `heavy_tailed = TRUE`",  call. = FALSE)
-  }
-
-  # Check files and directory
-  if(!dir.exists(out_dir)) {
-    stop("'", out_dir, "' does not exist. Please create it first.",
+    stop("Negative Binomial models (`use_pois == FALSE`) have to be ",
+         "heavy-tailed (`heavy_tailed = TRUE`). ",
+         "Set `heavy_tailed = TRUE` or `use_pois = TRUE`",
          call. = FALSE)
   }
 
-  if(is.null(out_name)) {
-    out_name <- paste0("BBS_STAN_", model, "_", model_variant, "_", Sys.Date())
-  } else if(!is.na(ext(out_name))) {
-    stop("`out_name` should not have a file extension", call. = FALSE)
+  # Check files and directory
+  if(!dir.exists(output_dir)) {
+    stop("'", output_dir, "' does not exist. Please create it first.",
+         call. = FALSE)
+  }
+
+  if(is.null(output_basename)) {
+    output_basename <- paste0("BBS_STAN_", model, "_", model_variant, "_", Sys.Date())
+  } else if(!is.na(ext(output_basename))) {
+    stop("`output_basename` should not have a file extension", call. = FALSE)
   }
 
 
@@ -178,33 +208,28 @@ run_model <- function(prepped_data,
   model_data <- append(model_data, params)
   model_data <- append(model_data, spatial_data[c("n_edges", "node1", "node2")])
 
-
   # Keep track of data
   meta_data <- append(
     prepped_data[["meta_data"]],
     list("model" = model,
          "model_variant" = model_variant,
+         "model_file" = model_file,
          "run_date" = Sys.time(),
          "cmdstan_path" = cmdstanr::cmdstan_path(),
          "cmdstan_version" = cmdstanr::cmdstan_version()))
 
   # Get initial values
-  if(is.null(init_def)) {
-    init_def <- create_init_def(model, model_variant, model_data, chains)
+  if(is.null(init)) {
+    init <- create_init(model, model_variant, model_data, chains)
+  } else {
+    init <- check_init(init, chains)
   }
 
-  # Load model
-  model <- system.file("models",
-                       paste0(model, "_", model_variant, "_bbs_CV.stan"),
-                       package = "bbsBayes")
+  if(init_only) return(init[[1]])
 
-  if(length(model) == 0) {
-    stop("Stan model not found. Please submit an issue at \n",
-         "https://github.com/BrandonEdwards/bbsBayes/issues", call. = FALSE)
-  }
 
   # Compile model
-  model <- cmdstanr::cmdstan_model(model, dir = bbs_dir())
+  model <- cmdstanr::cmdstan_model(model_file, dir = bbs_dir())
 
   # What here should be changeable? can use ... and reference cmdstanr docs...
   model_fit <- model$sample(
@@ -216,9 +241,9 @@ run_model <- function(prepped_data,
     parallel_chains = parallel_chains,
     adapt_delta = adapt_delta,
     max_treedepth = max_treedepth,
-    init = init_def,
-    output_dir = out_dir,
-    output_basename = out_name,
+    init = init,
+    output_dir = output_dir,
+    output_basename = output_basename,
     ...)
 
   model_output <- list("model_fit" = model_fit,
@@ -313,7 +338,7 @@ model_params <- function(model, n_strata, year, n_counts,
       scaled_year <- seq(min(year_scale),
                          max(year_scale),
                          length = n_years) %>%
-        setNames(ymin:ymax)
+        stats::setNames(ymin:ymax)
 
       if(ymin != 1) {
         new_yr <- 1:(ymin - 1)
@@ -348,49 +373,55 @@ model_params <- function(model, n_strata, year, n_counts,
 
 
 
-create_init_def <- function(model, model_variant, model_data, chains) {
+#' Create the initial definition list
+#'
+#' Creates list of initial parameter definitions to supply to
+#' `cmdstanr::sample()`.
+#'
+#' @noRd
+create_init <- function(model, model_variant, model_data, chains) {
 
   # Generic --------------
   init_generic <-
     list(
-      noise_raw  = rnorm(model_data$n_counts * model_data$use_pois, 0, 0.1),
-      strata_raw = rnorm(model_data$n_strata, 0, 0.1),
+      noise_raw  = stats::rnorm(model_data$n_counts * model_data$use_pois, 0, 0.1),
+      strata_raw = stats::rnorm(model_data$n_strata, 0, 0.1),
       STRATA     = 0,
       nu         = 10,
-      sdstrata   = runif(1, 0.01, 0.1),
+      sdstrata   = stats::runif(1, 0.01, 0.1),
       eta        = 0,
-      obs_raw    = rnorm(model_data$n_observers, 0, 0.1),
-      ste_raw    = rnorm(model_data$n_sites, 0, 0.1),
-      sdnoise    = runif(1,0.3,1.3),
-      sdobs      = runif(1,0.01,0.1),
-      sdste      = runif(1,0.01,0.2)
+      obs_raw    = stats::rnorm(model_data$n_observers, 0, 0.1),
+      ste_raw    = stats::rnorm(model_data$n_sites, 0, 0.1),
+      sdnoise    = stats::runif(1,0.3,1.3),
+      sdobs      = stats::runif(1,0.01,0.1),
+      sdste      = stats::runif(1,0.01,0.2)
       )
 
   # By model -------------
 
   # Matrices
   m_yrs1 <-  function() matrix(
-    rnorm(model_data$n_years * model_data$n_strata, 0, 0.1),
+    stats:: rnorm(model_data$n_years * model_data$n_strata, 0, 0.1),
     nrow = model_data$n_strata,
     ncol = model_data$n_years)
 
   m_yrs2 <-  function() matrix(
-    rnorm((model_data$n_years - 1) * model_data$n_strata, 0, 0.1),
+    stats::rnorm((model_data$n_years - 1) * model_data$n_strata, 0, 0.1),
     nrow = model_data$n_strata,
     ncol = model_data$n_years - 1)
 
   m_knots <- function() matrix(
-    rnorm(model_data$n_knots_year * model_data$n_strata, 0, 0.01),
+    stats::rnorm(model_data$n_knots_year * model_data$n_strata, 0, 0.01),
     nrow = model_data$n_strata,
     ncol = model_data$n_knots_year)
 
   # Vectors
-  v_rand1 <-  function() runif( 1, 0.01, 0.1)
-  v_rand2 <-  function() rnorm( 1,    0, 0.1)
-  v_strat1 <- function() runif( model_data$n_strata,   0.01, 0.1)
-  v_strat2 <- function() rnorm( model_data$n_strata,      0, 0.1)
-  v_yrs <-    function() rnorm((model_data$n_years - 1), 0, 0.1)
-  v_knots <-  function() rnorm( model_data$n_knots_year,  0, 0.1)
+  v_rand1 <-  function() stats::runif( 1, 0.01, 0.1)
+  v_rand2 <-  function() stats::rnorm( 1,    0, 0.1)
+  v_strat1 <- function() stats::runif( model_data$n_strata,   0.01, 0.1)
+  v_strat2 <- function() stats::rnorm( model_data$n_strata,      0, 0.1)
+  v_yrs <-    function() stats::rnorm((model_data$n_years - 1), 0, 0.1)
+  v_knots <-  function() stats::rnorm( model_data$n_knots_year,  0, 0.1)
 
   # Initial defs
   init_specific <- dplyr::tribble(
@@ -409,7 +440,7 @@ create_init_def <- function(model, model_variant, model_data, chains) {
 
   # Join by model and get relevant variant
   init_specific <- init_specific %>%
-    dplyr::bind_cols(bbs_models) %>%
+    dplyr::bind_cols(bbsBayes::bbs_models) %>%
     dplyr::filter(.data$model == .env$model, .data$variant == .env$model_variant) %>%
     dplyr::select(-"model", -"variant", -"file") %>%
     unlist()
@@ -434,8 +465,11 @@ create_init_def <- function(model, model_variant, model_data, chains) {
 #' Save output of run_model()
 #'
 #' This function closely imitate `cmdstanr::save_object()` but saves the
-#' entire model output oject from `run_model()` which contains more details
+#' entire model output object from `run_model()` which contains more details
 #' regarding stratification etc.
+#'
+#' Files are saved to `path`, or if not provided to the original location of
+#' the Stan model run files (provided the original files exist).
 #'
 #' @param path Character. Optional file path to use for saved data. Defaults to
 #' the file path used for the original run
@@ -447,14 +481,13 @@ create_init_def <- function(model, model_variant, model_data, chains) {
 #'
 #' @examples
 #'
-#' # Create dummy model run (by default model .rds file saved by `run_model()`
-#' m <- stratify(by = "bbs_cws", sample_data = TRUE) %>%
-#'   prepare_data() %>%
-#'   run_model(model = "first_diff", iter_sampling = 10,
-#'             iter_warmup = 10, chains = 2)
+#' # By default, the model is saved as an RDS file during `run_model()`
 #'
-#' # Deliberately save the file
-#' save_model_run(m, path = "my_model.rds")
+#' # But you can also deliberately save the file (here with an example model)
+#' save_model_run(pacific_wren_model, path = "my_model.rds")
+#'
+#' # Clean up
+#' unlink("my_model.rds")
 
 save_model_run <- function(model_output, path = NULL, quiet = FALSE) {
 
@@ -463,7 +496,13 @@ save_model_run <- function(model_output, path = NULL, quiet = FALSE) {
   model_fit <- model_output$model_fit
 
   if(is.null(path)) {
-    path <- model_fit$output_files() %>%
+    path <- model_fit$output_files()
+    if(any(!file.exists(path))) {
+      stop("Cannot find original model file location, please specify `path`",
+           call. = FALSE)
+    }
+
+    path <- path %>%
       normalizePath() %>%
       stringr::str_remove("-[0-9]{1,3}.csv$") %>%
       unique()
@@ -475,7 +514,8 @@ save_model_run <- function(model_output, path = NULL, quiet = FALSE) {
                    stringr::str_pad(n + 1, width = 2, side = "left", pad = 0),
                    ".rds")
     if(!quiet) message("Saving model output to ", path)
-  } else{
+  } else {
+
     if(!dir.exists(dirname(path))) {
       stop("Directory does not exist, please create it first (",
            dirname(path), ")", call. = FALSE)
@@ -483,7 +523,6 @@ save_model_run <- function(model_output, path = NULL, quiet = FALSE) {
     if(ext(path) != "rds") {
       stop("File must have a .rds extension", call. = FALSE)
     }
-
   }
 
   # Ensure all lazy data loaded (see ?cmdstanr::save_object)
@@ -500,3 +539,58 @@ save_model_run <- function(model_output, path = NULL, quiet = FALSE) {
 }
 
 
+#' Save model to file
+#'
+#' Save a predefined Stan model file to a local text file for editing. These
+#' files can then be used in `run_models()` by specifying the `model_file`
+#' argument.
+#'
+#' @param dir Character. Directory where file should be saved.
+#' @param overwrite Logical. Whether to overwrite an existing copy of the model
+#'   file.
+#'
+#' @inheritParams common_docs
+#'
+#' @return File path to copy of the model file.
+#'
+#' @examples
+#'
+#' # Save the Slope model in temp directory
+#' model_to_file(model = "slope", model_variant = "spatial", dir = tempdir())
+#'
+#' # Overwrite an existing copy
+#' model_to_file(model = "slope", model_variant = "spatial", dir = tempdir(),
+#'               overwrite = TRUE)
+#'
+#' # Clean up
+#' unlink(file.path(tempdir(), "slope_spatial_bbs_CV_COPY.stan"))
+#'
+#' @export
+
+model_to_file <- function(model, model_variant, dir, overwrite = FALSE) {
+
+  check_model(model, model_variant)
+
+  if(!dir.exists(dir)) stop("Directory ", dir, " does not exist", call. = FALSE)
+
+  f <- dplyr::filter(bbsBayes::bbs_models, .data$model == .env$model,
+                     .data$variant == .env$model_variant) %>%
+    dplyr::pull(file) %>%
+    system.file("models", ., package = "bbsBayes")
+
+  if(!file.exists(f)) stop("Cannot find Stan file for model \"",
+                           model, " ", model_variant, "\"", call. = FALSE)
+
+  f_new <- stringr::str_replace(basename(f), ".stan", "_COPY.stan") %>%
+    file.path(dir, .)
+
+  if(file.exists(f_new) & !overwrite) {
+    stop("An existing copy of this file (", f_new, ")\nalready exists. ",
+         "Either use `overwrite = TRUE` or rename the existing file",
+         call. = FALSE)
+  }
+
+  message("Copying model file ", basename(f), " to ", f_new)
+  file.copy(f, f_new, overwrite = overwrite)
+  f_new
+}

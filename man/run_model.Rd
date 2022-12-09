@@ -8,6 +8,7 @@ run_model(
   prepped_data,
   model,
   model_variant = "hier",
+  model_file = NULL,
   spatial_data = NULL,
   heavy_tailed = TRUE,
   n_knots = NULL,
@@ -23,9 +24,10 @@ run_model(
   iter_sampling = 1000,
   adapt_delta = 0.95,
   max_treedepth = 14,
-  init_def = NULL,
-  out_name = NULL,
-  out_dir = ".",
+  init = NULL,
+  init_only = FALSE,
+  output_basename = NULL,
+  output_dir = ".",
   save_output = TRUE,
   quiet = FALSE,
   jags_data,
@@ -45,25 +47,25 @@ run_model(
 )
 }
 \arguments{
-\item{prepped_data}{List. Output of \code{prepare_data()}.
+\item{prepped_data}{List. Output of \code{prepare_data()}.}
 
-Use \verb{@inheritParams common_docs} to include the above in any function
-documentation with a matching argument (will only include matching args)}
-
-\item{model}{Character. Type of model to run, must be one of "first_diff"
+\item{model}{Character. Type of model to use, must be one of "first_diff"
 (First Differences), "gam" (General Additive Model), "gamye" (General
 Additive Model with Year Effect), or "slope" (Slope model).}
 
-\item{model_variant}{Character. Model variant to run, must be one of
+\item{model_variant}{Character. Model variant to use, must be one of
 "nonhier" (Non-hierarchical), "hier" (Hierarchical), or "spatial"
 (Spatially explicit).}
+
+\item{model_file}{Character. Location of a custom Stan model file to use.}
 
 \item{spatial_data}{List. Output of \code{prepare_spatial()}.}
 
 \item{heavy_tailed}{Logical. Whether extra-Poisson error distributions should
 be modelled as a t-distribution, with heavier tails than the standard
 normal distribution. Default is \code{TRUE}. Recent results suggest this is best
-even though it requires much longer convergence times.}
+even though it requires much longer convergence times. Can only be used with
+Negative Binomial models (i.e. \code{use_pois = FALSE}).}
 
 \item{n_knots}{Numeric. Number of knots for "gam" and "gamye" models}
 
@@ -74,40 +76,57 @@ package mgcv (also used in brms, and rstanarm). If using the "mgcv" option,
 the user may want to consider adjusting the prior distributions for the
 parameters and their precision.}
 
-\item{use_pois}{Logical.}
+\item{use_pois}{Logical. Whether to use an Over-Dispersed Poisson model (\code{TRUE})
+or an Negative Binomial model (\code{FALSE}, default).}
 
-\item{calculate_nu}{Logical.}
+\item{calculate_nu}{Logical. Whether to calculate the \code{nu} parameter as
+a factor of \code{gamma(2, 0.1)}. Default is \code{FALSE}.}
 
-\item{calculate_log_lik}{Logical.}
+\item{calculate_log_lik}{Logical. Whether to calculate point-wise
+log-likelihood of the data given the model. Default is \code{FALSE}.}
 
-\item{calculate_CV}{Logical.}
+\item{calculate_CV}{Logical. Whether to use cross validation.}
 
-\item{refresh}{Numeric. Passed to \code{cmdstanr::sample}. Number of iterations
+\item{refresh}{Numeric. Passed to \code{cmdstanr::sample()}. Number of iterations
 between screen updates. If 0, only errors are shown.}
 
-\item{chains}{Numeric. Passed to \code{cmdstanr::sample}. Number of Markov chains
+\item{chains}{Numeric. Passed to \code{cmdstanr::sample()}. Number of Markov chains
 to run.}
 
-\item{parallel_chains}{Numeric. Passed to \code{cmdstanr::sample}. Maximum number
+\item{parallel_chains}{Numeric. Passed to \code{cmdstanr::sample()}. Maximum number
 of chains to run in parallel.}
 
-\item{iter_warmup}{Numeric. Passed to \code{cmdstanr::sample}. Number of warmup
+\item{iter_warmup}{Numeric. Passed to \code{cmdstanr::sample()}. Number of warmup
 iterations per chain.}
 
-\item{iter_sampling}{Numeric. Passed to \code{cmdstanr::sample}. Number of
+\item{iter_sampling}{Numeric. Passed to \code{cmdstanr::sample()}. Number of
 sampling (post-warmup) iterations per chain.}
 
-\item{adapt_delta}{Numeric.}
+\item{adapt_delta}{Numeric. Passed to \code{cmdstanr::sample()}. The adaptation
+target acceptance statistic.}
 
-\item{max_treedepth}{Numeric.}
+\item{max_treedepth}{Numeric. Passed to \code{cmdstanr::sample()}. The maximum
+allowed tree depth for the NUTS engine. See \code{?cmdstanr::sample}.}
 
-\item{init_def}{List.}
+\item{init}{(multiple options). An initialization method passed to the \code{init}
+argument of \code{cmdstanr::sample()}. See ?cmdstanr::sample for more details.
+The default (\code{NULL}) is for bbsBayes to supply initial parameter values
+according to model and model variant selected.}
 
-\item{out_name}{Character.}
+\item{init_only}{Logical. Whether to return the list of initial parameter
+values only (and not run the model). This is useful if you wish to see which
+\code{init} parameters are being supplied.}
 
-\item{out_dir}{Character.}
+\item{output_basename}{Character. Name of the files created as part of the
+Stan model run and the final model output RDS file if \code{save_output = TRUE}.}
 
-\item{quiet}{Logical}
+\item{output_dir}{Character. Directory in which all model files will be
+created.}
+
+\item{save_output}{Logical. Whether or not to save the model output to file
+as an RDS object with all required data. Defaults to \code{TRUE}.}
+
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
 
 \item{jags_data}{Defunct.}
 
@@ -135,7 +154,7 @@ sampling (post-warmup) iterations per chain.}
 
 \item{n_cores}{Defunct.}
 
-\item{...}{Other arguments passed on to cmdstanr::sample}
+\item{...}{Other arguments passed on to \code{cmdstanr::sample()}}
 }
 \value{
 A list containing the model output (\code{model_fit}), meta data for the
@@ -145,15 +164,31 @@ prepared data counts from \code{prepare_data()} (\code{raw_data}).
 \description{
 Run Bayesian model
 }
+\details{
+There are two ways you can customize
+the model run. The first is to supply a custom \code{model_file} created with the
+\code{model_to_file()} function and then edited by hand.
+
+Second, you can supply a custom list of initialization parameters. You can
+supply these parameters in anyway that \code{cmdstanr::sample()} accepts the
+\code{init} argument. One way is to use the bbsBayes created parameters and modify
+them as needed. To do this, setup the \code{run_model()} function as you would
+normally use it, but add \code{init_only = TRUE}. This will return the list of
+initial definitions. You can edit this list and then run your model with
+\verb{run_model(... init = new_inits)}.
+
+See the \href{https://steffilazerte.ca/bbsBayes/articles/models.html}{models article} for more
+advanced examples and explanations.
+}
 \examples{
 
+s <- stratify(by = "bbs_cws", sample_data = TRUE)
+p <- prepare_data(s)
 
-# You can also specify the GAM model, with an optional number of
-# knots to use for the GAM basis.
-# By default, the number of knots will be equal to the floor
-# of the total unique years for the species / 4
-#model_data <- prepare_data(strat_data,
-#                           model = "gam",
-#                           n_knots = 9)
+# Run model (quick and dirty)
+m <- run_model(p, model = "first_diff", model_variant = "hier",
+               iter_warmup = 20, iter_sampling = 20, chains = 2)
 
+# Clean up (remove model files)
+unlink(list.files(pattern = paste0("BBS_STAN_first_diff_hier_", Sys.Date())))
 }

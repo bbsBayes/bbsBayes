@@ -34,7 +34,7 @@ test_that("model_params()", {
 
 })
 
-test_that("create_init_def", {
+test_that("create_init", {
 
   withr::local_seed(111)
 
@@ -60,8 +60,8 @@ test_that("create_init_def", {
                              calculate_CV = FALSE))
 
 
-    expect_silent(id <- create_init_def(bbs_models$model[i], bbs_models$variant[i],
-                                        model_data = m, chains = 3)) %>%
+    expect_silent(id <- create_init(bbs_models$model[i], bbs_models$variant[i],
+                                    model_data = m, chains = 3)) %>%
       expect_type("list")
 
     expect_snapshot_value(id, style = "json2", tolerance = 0.0001)
@@ -79,7 +79,7 @@ test_that("run_model() first_diff short", {
 
   expect_message(r <- run_model(p,
                                 model = "first_diff",
-                                out_dir = test_path(),
+                                output_dir = test_path(),
                                 chains = 2,
                                 iter_sampling = 10, iter_warmup = 10,
                                 refresh = 0,
@@ -104,39 +104,14 @@ test_that("run_model() first_diff short", {
       unlink()
 })
 
-test_that("run_model() slope short", {
+test_that("run_model() slope", {
 
-  withr::local_seed(111)
-  unlink(list.files(test_path(), "BBS_STAN_slope_hier_", full.names = TRUE))
-
-  p <- stratify(by = "bbs_usgs", sample_data = TRUE, quiet = TRUE) %>%
-    prepare_data(min_max_route_years = 2)
-
-  expect_message(r <- run_model(p,
-                                model = "slope",
-                                out_dir = test_path(),
-                                chains = 2,
-                                iter_sampling = 10, iter_warmup = 10,
-                                refresh = 0,
-                                seed = 111)) %>%
-    # Catch all messages and notes
-    suppressMessages() %>%
-    suppressWarnings() %>%
-    utils::capture.output()
+  # Use example model (slope takes a while to run)
+  r <- slope_test_model
 
   expect_type(r, "list")
   expect_named(r, c("model_fit", "meta_data", "meta_strata", "raw_data"))
   expect_s3_class(r$model_fit, "CmdStanMCMC")
-
-  f <- paste0("BBS_STAN_slope_hier_", Sys.Date(),
-              c("-1.csv", "-2.csv", "_01.rds"))
-
-  expect_true(all(file.exists(test_path(f))))
-
-  # Clean up
-  list.files(test_path(), paste0("^BBS_STAN_(.)*", Sys.Date(), "(.)*.csv"),
-             full.names = TRUE) %>%
-    unlink()
 })
 
 
@@ -157,7 +132,7 @@ test_that("run_model() Full", {
                                   model = bbs_models$model[i],
                                   model_variant = bbs_models$variant[i],
                                   spatial_data = sp,
-                                  out_dir = ".", chains = 2,
+                                  output_dir = ".", chains = 2,
                                   iter_sampling = 10, iter_warmup = 10,
                                   refresh = 0,
                                   seed = 111)) %>%

@@ -95,6 +95,28 @@ check_model_variant <- function(model_variant) {
   model_variant
 }
 
+check_model_file <- function(model, model_variant, model_file) {
+  if(is.null(model_file)) {
+    f <- system.file("models",
+                     paste0(model, "_", model_variant, "_bbs_CV.stan"),
+                     package = "bbsBayes")
+  } else f <- model_file
+
+  if(!file.exists(f)) {
+    msg <- "Stan model file not found"
+    if(is.null(model_file)) {
+      msg <- c(msg, ". Please submit an issue at \n",
+               "https://github.com/BrandonEdwards/bbsBayes/issues")
+    } else {
+      msg <- c(msg, " ('", f, "')")
+    }
+
+    stop(msg, call. = FALSE)
+  }
+
+  f
+}
+
 #' Check basis value
 #'
 #' @param basis basis specified
@@ -109,6 +131,19 @@ check_basis <- function(basis) {
          call. = FALSE)
   }
   basis
+}
+
+check_init <- function(init, chains) {
+  if(inherits(init, "list")) {
+    if(length(init) != chains) {
+      message("`init` values as a list need one list per chain. ",
+              "Assuming values should be duplicated for each chain...")
+      orig <- init
+      init <- list()
+      for(n in seq_len(chains)) init[[n]] <- orig
+    }
+  }
+  init
 }
 
 #' Check for slope

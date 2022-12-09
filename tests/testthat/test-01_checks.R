@@ -118,6 +118,38 @@ test_that("check_strata()", {
 
 })
 
+test_that("model_to_file() and check_model_XXX()", {
+
+  for(i in unique(bbs_models$variant)) expect_silent(check_model_variant(i))
+  for(i in seq_len(nrow(bbs_models))) {
+    if(bbs_models$variant[i] == "nonhier") {
+      expect_warning(check_model(bbs_models$model[i], bbs_models$variant[i]))
+    } else {
+      expect_silent(check_model(bbs_models$model[i], bbs_models$variant[i]))
+    }
+    expect_silent(check_model_file(bbs_models$model[i], bbs_models$variant[i],
+                                   model_file = NULL))
+
+  }
+
+  expect_error(check_model_variant("test"))
+  expect_error(check_model("slope", "nonhier"))
+  expect_error(check_model("slope", "test"))
+  expect_error(check_model("test", "spatial"))
+  expect_error(check_model_file("slope", "hier", "test"))
+
+  expect_message(model_to_file("slope", "hier", "."))
+  expect_error(model_to_file("slope", "hier", "."))  # Can't overwrite
+  expect_message(model_to_file("slope", "hier", ".", overwrite = TRUE))
+
+  f <- "slope_hier_bbs_CV_COPY.stan"
+  expect_true(file.exists(f))
+  expect_silent(check_model_file("slope", "hier", f)) %>%
+    expect_equal(f)
+
+  unlink(f)
+})
+
 test_that("check_logical()", {
 
   expect_silent(check_logical(TRUE, FALSE, FALSE))
