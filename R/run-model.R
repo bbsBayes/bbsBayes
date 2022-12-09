@@ -315,8 +315,9 @@ model_params <- function(model, n_strata, year, n_counts,
   if(model %in% c("gam", "gamye")) {
     if(is.null(n_knots)) n_knots <- floor(length(unique((years)))/4)
     if(basis == "mgcv") {
+      # Use 'years' to avoid note (cheating as still referencing data.frame)
       smooth_basis <- mgcv::smoothCon(
-        mgcv::s(x, k = n_knots + 1, bs = "tp"), data = data.frame(x = years),
+        mgcv::s(years, k = n_knots + 1, bs = "tp"), data = data.frame(years),
         # drops constant and absorbs identifiability constraints into the basis
         absorb.cons = TRUE,
         # If TRUE, the smooth is reparameterized to turn the penalty into an
