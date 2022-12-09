@@ -31,8 +31,8 @@ m <- run_model(prepped_data = p,
                model = "first_diff",
                model_variant = "nonhier",
                spatial_data = n,
-               iter_sampling = 10, iter_warmup = 5, chains = 2,
-               out_dir = "./model_data/")
+               iter_sampling = 10, iter_warmup = 10, chains = 2,
+               output_dir = "./model_data/")
 ```
 
 
