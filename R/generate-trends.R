@@ -125,9 +125,9 @@ generate_trends <- function(indices,
             "the data (", max_year <- max(indx$year), ") instead.")
   }
 
-  # For indexing by name in samples
-  min_year_chr <- as.character(min_year)
-  max_year_chr <- as.character(max_year)
+  # For indexing
+  min_year_num <- min_year - start_year + 1
+  max_year_num <- max_year - start_year + 1
 
 
   trends <- indx %>%
@@ -139,21 +139,23 @@ generate_trends <- function(indices,
       n = purrr::map2(.data$region_type, .data$region,
                       ~indices$samples[[paste0(.x, "_", .y)]]),
       # Calculate change start to end for each iteration
-      ch = purrr::map(n, ~.x[, .env$max_year_chr] / .x[, .env$min_year_chr]),
+      ch = purrr::map(.data$n, ~.x[, .env$max_year_num] / .x[, .env$min_year_num]),
       # Calculate change as trend for each iteration
-      tr = purrr::map(ch, ~100 * ((.x^(1/(.env$max_year - .env$min_year))) - 1)),
+      tr = purrr::map(
+        .data$ch, ~100 * ((.x^(1/(.env$max_year_num - .env$min_year_num))) - 1)),
 
       # Median and percentiles of trend per region
-      trend = purrr::map_dbl(tr, median),
+      trend = purrr::map_dbl(.data$tr, stats::median),
       trend_q = purrr::map_df(
-        tr, ~setNames(stats::quantile(.x, quantiles, names = FALSE),
-                      paste0("trend_q", quantiles))),
+        .data$tr, ~stats::setNames(stats::quantile(.x, quantiles, names = FALSE),
+                                   paste0("trend_q", quantiles))),
 
       # Percent change and quantiles thereof per region
-      percent_change = purrr::map_dbl(ch, ~100 * (median(.x) - 1)),
+      percent_change = purrr::map_dbl(.data$ch, ~100 * (stats::median(.x) - 1)),
       pc_q = purrr::map_df(
-        ch, ~setNames(100 * (stats::quantile(.x, quantiles, names = FALSE) - 1),
-                      paste0("percent_change_q", quantiles))),
+        .data$ch, ~stats::setNames(
+          100 * (stats::quantile(.x, quantiles, names = FALSE) - 1),
+          paste0("percent_change_q", quantiles))),
 
       # Other statistics
       rel_abundance = mean(.data$index),
@@ -190,12 +192,13 @@ generate_trends <- function(indices,
     trends <- trends %>%
       dplyr::mutate(
         sl_t = purrr::map(.data$n, calc_slope,
-                          .env$min_year, .env$max_year),
+                          .env$min_year_num, .env$max_year_num),
         slope_trend = purrr::map_dbl(.data$sl_t, stats::median),
         slope_trend_q = purrr::map_df(
-          sl_t, ~setNames(stats::quantile(.x, quantiles, names = FALSE),
-                          paste0("slope_trend_q", quantiles)))) %>%
-      tidyr::unnest(slope_trend_q) %>%
+          .data$sl_t, ~stats::setNames(
+            stats::quantile(.x, quantiles, names = FALSE),
+            paste0("slope_trend_q", quantiles)))) %>%
+      tidyr::unnest(.data$slope_trend_q) %>%
       dplyr::mutate(
         "width_of_{q}_percent_credible_interval_slope" :=
           .data[[paste0("slope_trend_q", q2)]] -
@@ -243,10 +246,10 @@ bsl <- function(i, wy) {
   (n * sxy - sx * sy) / (n * ssx - sx^2)
 }
 
-calc_slope <- function(n, min_year, max_year) {
-  browser()
-  wy <- 1:(1 + max_year - min_year) # Convert to numeric year (0, 1, 2, etc.)
-  ne <- log(n[, as.character(min_year:max_year)]) # Extract from samples by name
+calc_slope <- function(n, min_year_num, max_year_num) {
+  wy <- min_year_num:max_year_num
+
+  ne <- log(n[, wy])
   m <-  t(apply(ne, 1, FUN = bsl, wy))
 
   as.vector((exp(m) - 1) * 100)
@@ -257,5 +260,5 @@ calc_prob_crease <- function(x, p, type = "decrease") {
   if(type == "increase") f <- function(p) length(x[x > p]) / length(x)
 
   vapply(p, FUN = f, FUN.VALUE = 1.1) %>%
-    setNames(paste0("prob_", type, "_", p, "_percent"))
+    stats::setNames(paste0("prob_", type, "_", p, "_percent"))
 }

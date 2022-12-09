@@ -400,7 +400,8 @@ samples_to_array <- function(model_output, alternate_n, years_to_keep) {
                                     format = "draws_matrix")
   # Determine dim names
   strata_name <- unique(model_output$raw_data$strata_name)
-  year <- sort(unique(model_output$raw_data$year))
+  year <- unique(model_output$raw_data$year)
+  year <- min(year):max(year)
 
   # Transform samples to array with appropriate dimnames
   n <- array(as.vector(n),
