@@ -138,7 +138,8 @@ stratify <- function(by,
   if(!inherits(strata_custom, "data.frame")) check_sf(strata_custom, col = TRUE)
 
   # Load BBS Data (full or sample)
-  bbs_data <- load_bbs_data(release = release, sample = sample_data, quiet = quiet)
+  bbs_data <- load_bbs_data(release = release, sample = sample_data,
+                            quiet = quiet)
 
   # Load and filter bbs data
   species_list <- bbs_data$species
@@ -151,7 +152,8 @@ stratify <- function(by,
   if(!sample_data) {
     sp_aou <- check_species(species, species_list, combine_species_forms, quiet)
     birds <- dplyr::filter(birds, .data$aou == .env$sp_aou)
-    if(!combine_species_forms) birds <- dplyr::filter(birds, !.data$unid_combined)
+    if(!combine_species_forms) birds <- dplyr::filter(birds,
+                                                      !.data$unid_combined)
   } else {
     if(!quiet) message("Using species Pacific Wren (sample data)")
     species <- "Pacific Wren"
@@ -161,7 +163,8 @@ stratify <- function(by,
 
   # Create temporary `rid` (because faster for birds to join)
   routes <- dplyr::mutate(
-    routes, rid = paste(.data$country_num, .data$state_num, .data$route, sep = "-"))
+    routes,
+    rid = paste(.data$country_num, .data$state_num, .data$route, sep = "-"))
 
   birds <- dplyr::select(routes, "country_num", "state_num", "route", "rid") %>%
     dplyr::distinct() %>%

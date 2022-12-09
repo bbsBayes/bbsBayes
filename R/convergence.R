@@ -37,9 +37,9 @@ get_convergence <- function(model_output, variables = NULL) {
 #' Returns the basic model variables types (note that most variables have
 #' different iterations for each strata and each year).
 #'
-#' @param all Logical. Whether or not to return **all**, specific variables (e.g.,
-#' `strata_raw[1]` or just variable types (e.g., `strata_raw`). Defaults to
-#' `FALSE` (variable types only).
+#' @param all Logical. Whether or not to return **all**, specific variables
+#'   (e.g., `strata_raw[1]` or just variable types (e.g., `strata_raw`).
+#'   Defaults to `FALSE` (variable types only).
 #'
 #' @inheritParams common_docs
 #'

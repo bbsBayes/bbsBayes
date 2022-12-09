@@ -175,7 +175,8 @@ prepare_data <- function(strata_data,
     dplyr::group_by(.data$strata_name) %>%
     dplyr::mutate(n_obs_sites = dplyr::n_distinct(.data$obs_site)) %>%
     dplyr::group_by(.data$obs_route) %>%
-    dplyr::mutate(first_year = dplyr::if_else(.data$year == min(.data$year), 1, 0)) %>%
+    dplyr::mutate(first_year = dplyr::if_else(
+      .data$year == min(.data$year), 1, 0)) %>%
     dplyr::ungroup() %>%
     dplyr::arrange(.data$strata, .data$route, .data$year) %>%
     dplyr::rename("non_zero_weight" = "p_routes_ever")

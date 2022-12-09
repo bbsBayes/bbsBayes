@@ -28,27 +28,31 @@ test_that("check_species()", {
 
   # Combined form
   s <- "Blue grouse (dusky/sooty)"
-  expect_message(a <- check_species(s, s_list, combine_species_forms = TRUE),
-                 "Filtering to species Blue Grouse \\(Dusky/Sooty\\) \\(2973\\)")
+  expect_message(
+    a <- check_species(s, s_list, combine_species_forms = TRUE),
+    "Filtering to species Blue Grouse \\(Dusky/Sooty\\) \\(2973\\)")
   expect_equal(a, 2973)
   expect_error(check_species(s, s_list, combine_species_forms = FALSE),
                "is a combined form...")
 
   # Non-Combined form
   s <- "unid. Dusky Grouse / Sooty Grouse"
-  expect_message(a <- check_species(s, s_list, combine_species_forms = FALSE),
-                 "Filtering to species unid. Dusky Grouse / Sooty Grouse \\(2973\\)")
+  expect_message(
+    a <- check_species(s, s_list, combine_species_forms = FALSE),
+    "Filtering to species unid. Dusky Grouse / Sooty Grouse \\(2973\\)")
   expect_equal(a, 2973)
   expect_error(check_species(s, s_list, combine_species_forms = TRUE),
                "is an unidentified,\nnon-combined form...")
 
   # Scientific works either way (but get different name)
   s <- "Dendragapus obscurus / fuliginosus"
-  expect_message(a <- check_species(s, s_list, combine_species_forms = TRUE),
-                 "Filtering to species Blue Grouse \\(Dusky/Sooty\\) \\(2973\\)")
+  expect_message(
+    a <- check_species(s, s_list, combine_species_forms = TRUE),
+    "Filtering to species Blue Grouse \\(Dusky/Sooty\\) \\(2973\\)")
   expect_equal(a, 2973)
-  expect_message(a <- check_species(s, s_list, combine_species_forms = FALSE),
-                 "Filtering to species unid. Dusky Grouse / Sooty Grouse \\(2973\\)")
+  expect_message(
+    a <- check_species(s, s_list, combine_species_forms = FALSE),
+    "Filtering to species unid. Dusky Grouse / Sooty Grouse \\(2973\\)")
   expect_equal(a, 2973)
 
 })
@@ -68,12 +72,14 @@ test_that("check_sf()", {
 
 test_that("check_strata()", {
 
-  for(i in c("prov_state", "bcr", "latlong", "bbs_cws", "bbs_usgs", "BBS_USGS")) {
+  for(i in c("prov_state", "bcr", "latlong", "bbs_cws", "bbs_usgs",
+             "BBS_USGS")) {
     expect_silent(check_strata(!!i, simple = TRUE)) %>%
       expect_equal(!!tolower(i))
   }
 
-  for(i in c("prov_state", "bcr", "latlong", "bbs_cws", "bbs_usgs", "BBS_USGS")) {
+  for(i in c("prov_state", "bcr", "latlong", "bbs_cws", "bbs_usgs",
+             "BBS_USGS")) {
     expect_silent(check_strata(!!i)) %>%
       expect_equal(c(tolower(!!i), "standard"))
   }
@@ -95,7 +101,8 @@ test_that("check_strata()", {
 
   #   No change if the exact same
   b <- bbs_strata[["bbs_cws"]]
-  expect_message(s <- check_strata("bbs_cws", custom = b, quiet = FALSE), "\\'bbs_cws\\'")
+  expect_message(s <- check_strata("bbs_cws", custom = b, quiet = FALSE),
+                 "\\'bbs_cws\\'")
   expect_equal(s, c("bbs_cws", "standard"))
 
   #   Change if actually a subset

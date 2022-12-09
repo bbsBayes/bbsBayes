@@ -45,37 +45,52 @@
 #'
 #' @details
 #'   `max_backcast` is a way to deal with the fact that the species of interest
-#'   may not appear in the data until several years after the start of the record.
-#'   `max_backcast` specifies how many years can occur before the stratum is flagged.
-#'   A `max_backcast` of 5 will flag any stratum without a non-zero (or non-NA)
-#'   observation within the first 5 years of the data record. Note that records
-#'   are *only* flagged unless `drop_exclude = TRUE`.
+#'   may not appear in the data until several years after the start of the
+#'   record. `max_backcast` specifies how many years can occur before the
+#'   stratum is flagged. A `max_backcast` of 5 will flag any stratum without a
+#'   non-zero (or non-NA) observation within the first 5 years of the data
+#'   record. Note that records are *only* flagged unless `drop_exclude = TRUE`.
 #'   If you find that the early data record is sparse and results in the
 #'   exclusion of many strata, consider trimming the early years by specifying a
 #'   `start_year`.
 #'
+#' @return A list containing the indices (`indices`), an array of posterior
+#'   draws (`samples`), meta data for the analysis (`meta_data`), meta data for
+#'   the strata (`meta_strata`) and prepared data counts from `prepare_data()`
+#'   (`raw_data`).
 #'
-#' @return List of 6 objects
-#'   \item{data_summary}{dataframe with the following columns}
-#'   \item{Year}{Year of particular index}
-#'   \item{Region}{Region name}
-#'   \item{Region_alt}{Long name for region}
-#'   \item{Region_type}{Type of region including continental, national,Province_State,BCR, bcr_by_country, or stratum}
-#'   \item{Strata_included}{Strata included in the annual index calculations}
-#'   \item{Strata_excluded}{Strata potentially excluded from the annual index calculations because they have no observations of the species in the first part of the time series, see arguments max_backcast and start_year}
-#'   \item{Index}{Strata-weighted count index}
-#'   \item{additional columns for each of the values in quantiles}{quantiles of the posterior distribution}
-#'   \item{obs_mean}{Mean of the observed annual counts of birds across all routes and all years. An alternative estimate of the average relative abundance of the species in the region and year. Differences between this and the annual indices are a function of the model. For composite regions (i.e., anything other than stratum-level estimates) this average count is calculated as an area-weighted average across all strata included}
-#'   \item{nrts}{Number of BBS routes that contributed data for this species, region, and year}
-#'   \item{nrts_total}{Number of BBS routes that contributed data for this species and region for all years in the selected time-series, i.e., all years since \code{start_year}}
-#'   \item{nnzero}{Number of BBS routes on which this species was observed (i.e., count is > 0) in this region and year}
-#'   \item{backcast_flag}{approximate annual average proportion of the covered species range that is free of extrapolated population trajectories. e.g., 1.0 = data cover full time-series, 0.75 = data cover 75 percent of time-series. Only calculated if max_backcast != NULL}
+#'   `indices` is a data frame with the following columns:
 #'
-#'   \item{samples}{array of all posterior draws}
-#'   \item{area-weights}{data frame of the strata names and area weights used to calculate the continental estimates}
-#'   \item{y_min}{first year used in the summary, scale 1:length of time-series}
-#'   \item{y_max}{last year used in the summary, scale 1:length of time-series}
-#'   \item{start_year}{first year used in the summary, scale 1966:2018}
+#'   - `year` - Year of particular index}
+#'   - `region` - Region name
+#'   - `region_type` - Type of region
+#'   - `strata_included` - Strata *potentially* included in the annual index
+#'   calculations
+#'   - `strata_excluded` - Strata *potentially* excluded from the annual index
+#'   calculations because they have no observations of the species in the first
+#'   part of the time series, see arguments `max_backcast` and `start_year`
+#'   - `index` - Strata-weighted count index (median)
+#'   - `index_q_XXX` - Strata-weighted count index (by different quantiles)
+#'   - `obs_mean` - Mean observed annual counts of birds across all routes and
+#'   all years. An alternative estimate of the average relative abundance of the
+#'   species in the region and year. Differences between this and the annual
+#'   indices are a function of the model. For composite regions (i.e., anything
+#'   other than stratum-level estimates) this average count is calculated as an
+#'   area-weighted average across all strata included
+#'   - `n_routes` - Number of BBS routes that contributed data for this species,
+#'   region, and year
+#'   - `n_routes_total` - Number of BBS routes that contributed data for this
+#'   species and region for all years in the selected time-series, i.e., all
+#'   years since `start_year`
+#'   - `n_non_zero` - Number of BBS routes on which this species was observed
+#'   (i.e., count is > 0) in this region and year
+#'   - `backcast_flag` - Approximate annual average proportion of the covered
+#'   species range that is free of extrapolated population trajectories. e.g.,
+#'   if 1.0, data cover full time-series; if 0.75, data cover 75 percent of
+#'   time-series. Only calculated if `max_backcast != NULL`.
+#'
+#'  `meta_data` is a list passed from `run_model()`, now including `start_year`,
+#'    the first year used in the summary.
 #'
 #' @examples
 #'
@@ -90,30 +105,34 @@
 #' # Use a custom region specification (dummy example)
 #' library(dplyr)
 #' ri <- bbs_strata[["bbs_cws"]]
-#' ri <- mutate(ri, my_region = if_else(prov_state %in% "ON", "Ontario", "Rest"))
+#' ri <- mutate(ri, my_region = if_else(prov_state %in% "ON",
+#'                                      "Ontario", "Rest"))
 #'
 #' # Generate indices with these custom regions
-#' i_custom <- generate_indices(pacific_wren_model,
-#'                              regions = c("country", "prov_state", "my_region"),
-#'                              regions_index = ri)
+#' i_custom <- generate_indices(
+#'   pacific_wren_model,
+#'   regions = c("country", "prov_state", "my_region"),
+#'   regions_index = ri)
 #'
 #' @export
 
-generate_indices <- function(model_output = NULL,
-                             quantiles = c(0.025, 0.05, 0.25, 0.75, 0.95, 0.975),
-                             regions = c("stratum", "continent"),
-                             regions_index = NULL,
-                             alternate_n = "n",
-                             start_year = NULL,
-                             drop_exclude = FALSE,
-                             max_backcast = NULL,
-                             quiet = FALSE,
-                             jags_mod, jags_data, alt_region_names, startyear) {
+generate_indices <- function(
+    model_output = NULL,
+    quantiles = c(0.025, 0.05, 0.25, 0.75, 0.95, 0.975),
+    regions = c("stratum", "continent"),
+    regions_index = NULL,
+    alternate_n = "n",
+    start_year = NULL,
+    drop_exclude = FALSE,
+    max_backcast = NULL,
+    quiet = FALSE,
+    jags_mod, jags_data, alt_region_names, startyear) {
 
   # Deprecated/Defunct args
   if(!missing(jags_mod)) dep_stop("3.0.0", "jags_mod", "`model_output`")
   if(!missing(jags_data)) dep_stop("3.0.0", "jags_data")
-  if(!missing(alt_region_names)) dep_stop("3.0.0", "alt_region_names", "`regions_index`")
+  if(!missing(alt_region_names)) dep_stop("3.0.0", "alt_region_names",
+                                          "`regions_index`")
   if(!missing(startyear)) {
     start_year <- startyear
     dep_warn("3.0.0", "startyear", "`start_year`")
@@ -153,7 +172,8 @@ generate_indices <- function(model_output = NULL,
   raw_data <- raw_data %>%
     # Set start year
     dplyr::group_by(.data[["strata"]]) %>%
-    dplyr::mutate(first_year = min(.data$year[.data$count > 0], na.rm = TRUE)) %>%
+    dplyr::mutate(first_year = min(.data$year[.data$count > 0],
+                                   na.rm = TRUE)) %>%
     dplyr::ungroup() %>%
     # Trim year range
     dplyr::filter(.data$year >= .env$start_year)
@@ -222,7 +242,7 @@ generate_indices <- function(model_output = NULL,
 
     if(!quiet) message("Processing region ", rr)
 
-    # Calculate strata-level information for sub-regions in this composite region
+    # Calculate strata-level info for sub-regions in this composite region
     meta_strata_sub <- meta_strata %>%
       # Ensure region columns are character
       dplyr::mutate("{rr}" := as.character(.data[[rr]])) %>%
@@ -251,7 +271,7 @@ generate_indices <- function(model_output = NULL,
         flag_remove = sum(.data$n_non_zero[seq_len(.env$max_backcast)]) < 1 &
           .data$first_year > .env$start_year,
         flag_year = dplyr::if_else(.data$flag_remove &
-                                     .data$year <= .data$first_year, # should be <?
+                                     .data$year < .data$first_year,
                                    .data$strata_p, 0))
 
     # Mark strata included/excluded
@@ -268,7 +288,8 @@ generate_indices <- function(model_output = NULL,
       rm <- unique(obs_region$strata_name[obs_region$flag_remove])
 
       obs_region <- dplyr::filter(obs_region, !.data$flag_remove)
-      meta_strata_sub <- dplyr::filter(meta_strata_sub, !.data$strata_name %in% rm)
+      meta_strata_sub <- dplyr::filter(meta_strata_sub,
+                                       !.data$strata_name %in% rm)
       n_sub <- n[, unique(obs_region$strata_name), ] # Keep only good
     } else n_sub <- n
 
@@ -276,9 +297,9 @@ generate_indices <- function(model_output = NULL,
       dplyr::group_by(.data$strata_included, .data$strata_excluded,
                       .add = TRUE) %>%
       dplyr::summarize(
-        dplyr::across(.cols = c(.data$obs_mean, .data$n_routes,
-                                .data$n_routes_total,
-                                .data$n_non_zero, .data$flag_year),
+        dplyr::across(.cols = c("obs_mean", "n_routes",
+                                "n_routes_total",
+                                "n_non_zero", "flag_year"),
                       sum, na.rm = TRUE),
         .groups = "drop")
 
@@ -369,8 +390,8 @@ calc_alt_names <- function(r, region_names) {
     dplyr::distinct()
 
   if(r == "bcr") {
-    region_alt_name <- dplyr::mutate(region_alt_name,
-                                     region_alt = paste0("BCR_", .data$region_alt))
+    region_alt_name <- dplyr::mutate(
+      region_alt_name, region_alt = paste0("BCR_", .data$region_alt))
   }
 
   region_alt_name

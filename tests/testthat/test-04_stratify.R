@@ -58,7 +58,8 @@ test_that("stratify(by = 'bbs_cws')", {
     expect_true()
 
   # Check meta
-  expect_named(s, c("meta_data", "meta_strata", "birds_strata", "routes_strata"))
+  expect_named(s, c("meta_data", "meta_strata", "birds_strata",
+                    "routes_strata"))
   expect_equal(s$meta_data, list(stratify_by = "bbs_cws",
                                  stratify_type = "standard",
                                  species = "Snowy Owl"))
@@ -88,7 +89,8 @@ test_that("stratify(by = 'bbs_usgs')", {
     expect_true()
 
   # Check meta
-  expect_named(s, c("meta_data", "meta_strata", "birds_strata", "routes_strata"))
+  expect_named(s, c("meta_data", "meta_strata", "birds_strata",
+                    "routes_strata"))
   expect_equal(s$meta_data, list(stratify_by = "bbs_usgs",
                                  stratify_type = "standard",
                                  species = "Snowy Owl"))
@@ -114,7 +116,8 @@ test_that("stratify(by = 'bcr')", {
     expect_true()
 
   # Check meta
-  expect_named(s, c("meta_data", "meta_strata", "birds_strata", "routes_strata"))
+  expect_named(s, c("meta_data", "meta_strata", "birds_strata",
+                    "routes_strata"))
   expect_equal(s$meta_data, list(stratify_by = "bcr",
                                  stratify_type = "standard",
                                  species = "Snowy Owl"))
@@ -142,7 +145,8 @@ test_that("stratify(by = 'latlong')", {
     #expect_true()
 
   # Check meta
-  expect_named(s, c("meta_data", "meta_strata", "birds_strata", "routes_strata"))
+  expect_named(s, c("meta_data", "meta_strata", "birds_strata",
+                    "routes_strata"))
   expect_equal(s$meta_data, list(stratify_by = "latlong",
                                  stratify_type = "standard",
                                  species = "Snowy Owl"))
@@ -164,11 +168,13 @@ test_that("stratify(by = 'prov_state')", {
     suppressMessages()
 
   # Check strata
-  all(s$routes_strata$strata_name %in% bbs_strata[["prov_state"]]$strata_name) %>%
+  all(s$routes_strata$strata_name %in%
+        bbs_strata[["prov_state"]]$strata_name) %>%
     expect_true()
 
   # Check meta
-  expect_named(s, c("meta_data", "meta_strata", "birds_strata", "routes_strata"))
+  expect_named(s, c("meta_data", "meta_strata", "birds_strata",
+                    "routes_strata"))
   expect_equal(s$meta_data, list(stratify_by = "prov_state",
                                  stratify_type = "standard",
                                  species = "Snowy Owl"))
@@ -199,7 +205,8 @@ test_that("stratify(by = subset)", {
     expect_true()
 
   # Check meta
-  expect_named(s, c("meta_data", "meta_strata", "birds_strata", "routes_strata"))
+  expect_named(s, c("meta_data", "meta_strata", "birds_strata",
+                    "routes_strata"))
   expect_equal(s$meta_data, list(stratify_by = "bbs_cws",
                                  stratify_type = "subset",
                                  species = "Snowy Owl"))
@@ -229,7 +236,8 @@ test_that("stratify(by = custom)", {
     expect_message("  Renaming")
 
   # Check meta
-  expect_named(s, c("meta_data", "meta_strata", "birds_strata", "routes_strata"))
+  expect_named(s, c("meta_data", "meta_strata", "birds_strata",
+                    "routes_strata"))
   expect_equal(s$meta_data, list(stratify_by = "my_cws",
                                  stratify_type = "custom",
                                  species = "Snowy Owl"))

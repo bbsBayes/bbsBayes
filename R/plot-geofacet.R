@@ -191,13 +191,15 @@ plot_geofacet <- function(indices,
       panel.grid.major = ggplot2::element_blank(),
       panel.grid.minor = ggplot2::element_blank(),
       panel.background = ggplot2::element_blank(),
-      axis.text.x = ggplot2::element_text(colour = "grey20", size = 5, angle = 90),
+      axis.text.x = ggplot2::element_text(
+        colour = "grey20", size = 5, angle = 90),
       axis.text.y = ggplot2::element_text(colour = "grey20", size = 5),
       strip.background = ggplot2::element_rect(fill = "grey97"),
       strip.text = ggplot2::element_text(size = 6, margin = ggplot2::margin()),
       legend.position = "none") +
-    ggplot2::labs(title = paste(species, "trajectories within Provinces and States"),
-                  x = "", y = "Annual indices") +
+    ggplot2::labs(title = paste(
+      species, "trajectories within Provinces and States"),
+      x = "", y = "Annual indices") +
     ggplot2::geom_line(
       ggplot2::aes(x = .data$year, y = .data$index, group = .data$group),
       colour = "grey60") +

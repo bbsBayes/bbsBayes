@@ -45,31 +45,70 @@ optionally calculate the posterior probabilities (see Details). Default is
 \item{Max_year}{Deprecated. Use \code{max_year} instead}
 }
 \value{
-Data frame with one row for each region included in the starting \code{indices} object. Contains \code{start_year}, \code{end_year}, \code{region}, \code{region-alt}, \code{region_type},
-\code{strata_included}, \code{strata_excluded}
-\item{Start_year}{first year of the trend}
-\item{End_year}{last year of the trend}
-\item{Region}{short name of the region}
-\item{Region_alt}{Long name for region}
-\item{Region_type}{Type of region including continental, national,Province_State,BCR, bcr_by_national, or stratum}
-\item{Strata_included}{Strata included in the trend and annual index calculations}
-\item{Strata_excluded}{Strata potentially excluded from the trend and annual index calculations because they have no observations of the species in the first part of the time series}
-\item{Trend}{Estimated mean annual percent change over the trend time-period (i.e., Start_year - End_year), according to an endpoint comparison of annual index in Start_year and the annual index in End_year}
-\item{Trend_Q_quantiles}{quantiles of the posterior distribution of Trend estimates, matching levels included in the quantiles argument}
-\item{Percent_Change}{Estimated total percent change over the trend time-period}
-\item{Percent_Change_Q_quantiles}{quantiles of the posterior distribution of Percent Change estimates, matching levels included in the quantiles argument}
-\item{Slope_Trend}{Estimated mean annual percent change over the trend time-period, according to the slope of a linear regression through the log-transformed annual indices}
-\item{Slope_Trend_Q_quantiles}{quantiles of the posterior distribution of Percent Change estimates, matching levels included in the quantiles argument}
-\item{prob_decrease_X_percent}{proportion of the posterior distribution of Percent_Change that is below the percentage values supplied in prob_decrease}
-\item{prob_increase_X_percent}{proportion of the posterior distribution of Percent_Change that is above the percentage values supplied in prob_increase}
-\item{Relative_Abundance}{Mean of the annual index values across all years. An estimate of the average relative abundance of the species in the region. Can be interepreted as the predicted average count of the species in an average year on an average route by an average observer, for the years, routes, and observers in the existing data}
-\item{Observed_Relative_Abundance}{Mean of the observed annual counts of birds across all routes and all years. An alternative estimate of the average relative abundance of the species in the region. For composite regions (i.e., anything other than stratum-level estimates) this average count is calculated as an area-weighted average across all strata included}
-\item{Number_of_Strata}{The number of strata included in the region}
-\item{Width_of_X_percent_Credible_Interval}{Width (in percent/year) of the credible interval on the Trend calculation. Calculated for the widest credible interval requested in quantiles argument. Default is 95 percent CI (i.e., Trend_Q0.975 - Trend_Q0.025)}
-\item{Width_of_X_percent_Credible_Interval_Slope}{Width (in percent/year) of the credible interval on the Trend calculation for the slope-based trend. Calculated for the widest credible interval requested in quantiles argument. Default is 95 percent CI (i.e., Slope_Trend_Q0.975 - Slope_Trend_Q0.025)}
-\item{Number_of_Routes}{The number of unique BBS routes included in the annual indices for this region and species, i.e., number of routes for this region and species for the years since \code{generate_indices(startyear)}}
-\item{Mean_Number_of_Routes}{The average number of BBS routes across years contributing data for this region and species}
-\item{backcast_flag}{approximate proportion of the included species range*years that are supported by data in a given region and year, e.g., 1.0 = data cover full time-series, 0.75 = data cover 75 percent of time-series. Only calculated if max_backcast != NULL}
+A list containing the trends (\code{trends}), meta data for the analysis
+(\code{meta_data}), meta data for the strata (\code{meta_strata}) and prepared data
+counts from \code{prepare_data()} (\code{raw_data}).
+
+\code{trends} is a data frame with one row for each region in the input
+\code{indices}. It has the following columns:
+\itemize{
+\item \code{start_year} - First year of the trend
+\item \code{end_year} - Last year of the trend
+\item \code{region} - Region name
+\item \code{region_type} - Type of region
+\item \code{strata_included} - Strata \emph{potentially} included in the annual index
+calculations
+\item \code{strata_excluded} - Strata \emph{potentially} excluded from the annual index
+calculations because they have no observations of the species in the first
+part of the time series, see arguments \code{max_backcast} and \code{start_year}
+\item \code{trend} - Estimated median annual percent change over the trend
+time-period according to end point comparison of annual indices for the
+\code{start_year} and the \code{end_year}
+\item \code{trend_q_XXX} - Trend estimates by different quantiles
+\item \code{percent_change} - Median overall estimate percent change over the trend
+time-period
+\item \code{percent_change_q_XXX} - Percent change by different quantiles
+\item \code{slope_trend} - Estimated median annual percent change over the trend
+time-period, according to the slope of a linear regression through the
+log-transformed annual indices. (Only if \code{slope = TRUE})
+\item \code{slope_trend_q_XXX} - Slope-based trend estimates by different quantiles.
+(Only if \code{slope = TRUE})
+\item \code{width_of_95_percent_credible_interval} - Width (in percent/year) of the
+credible interval on the trend calculation. Calculated for the widest
+credible interval requested in via \code{quantiles}. Default is 95 percent CI
+(i.e., \code{trend_q_0.975} - \code{trend_q_0.025})
+\item \code{width_of_95_percent_credible_interval_slope} - Width (in percent/year)
+of the credible interval on the slope-based trend calculation. Calculated
+for the widest credible interval requested in via \code{quantiles}. Default is
+95 percent CI (i.e., \code{slope_trend_q_0.975} - \code{slope_trend_q_0.025}). (Only
+if \code{slope = TRUE})
+\item \code{prob_decrease_XX_percent} - Proportion of the posterior distribution of
+\code{percent_change} that is below the percentage values in
+\code{prob_decrease} (if non-\code{Null})
+\item \code{prob_increase_XX_percent} - Proportion of the posterior distribution of
+\code{percent_change} that is above tthe percentage values in
+\code{prob_increase} (if non-\code{Null})
+\item \code{rel_abundance} - Mean annual index value across all years. An estimate
+of the average relative abundance of the species in the region. Can be
+interpreted as the predicted average count of the species in an average
+year on an average route by an average observer, for the years, routes, and
+observers in the existing data
+\item \code{obs_rel_abundance} - Mean observed annual count of birds across all
+routes and all years. An alternative estimate of the average relative
+abundance of the species in the region. For composite regions (i.e.,
+anything other than stratum-level estimates) this average count is
+calculated as an area-weighted average across all strata included.
+\item \code{n_routes} - Number of BBS routes that contributed data for this
+species and region for all years in the selected time-series, i.e., all
+years since \code{start_year}
+\item \code{mean_n_routes} - Mean number of BBS routes that contributed data for
+this species, region, and year
+\item \code{n_strata_included} - The number of strata included in the region
+\item \code{backcast_flag} - Approximate annual average proportion of the covered
+species range that is free of extrapolated population trajectories. e.g.,
+if 1.0, data cover full time-series; if 0.75, data cover 75 percent of
+time-series. Only calculated if \code{max_backcast != NULL}.
+}
 }
 \description{
 Generates trends for continent and strata and optionally for countries,

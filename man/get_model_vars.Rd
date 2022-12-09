@@ -9,9 +9,9 @@ get_model_vars(model_output, all = FALSE)
 \arguments{
 \item{model_output}{List. Output of \code{run_model()}.}
 
-\item{all}{Logical. Whether or not to return \strong{all}, specific variables (e.g.,
-\code{strata_raw[1]} or just variable types (e.g., \code{strata_raw}). Defaults to
-\code{FALSE} (variable types only).}
+\item{all}{Logical. Whether or not to return \strong{all}, specific variables
+(e.g., \code{strata_raw[1]} or just variable types (e.g., \code{strata_raw}).
+Defaults to \code{FALSE} (variable types only).}
 }
 \value{
 A character vector of all model variable types.

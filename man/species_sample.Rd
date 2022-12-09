@@ -12,14 +12,16 @@ species_sample
 }
 \description{
 A dataset containing species list of North America.
-NOTE: This only contains data for Pacific Wren, not the full data set.
-The full count set is obtained via the function \code{fetch_bbs_data}.
-The data is obtained from the United States Geological Survey and is
-subject to change as new data is added each year. See Details for citation.
 }
 \details{
-Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding, V. Aponte and M-A.R. Hudson. 2019.
-North American Breeding Bird Survey Dataset 1966 - 2018, version 2018.0.
-U.S. Geological Survey, Patuxent Wildlife Research Center. https://doi.org/10.5066/P9HE8XYJ.
+NOTE: This only contains data for Pacific Wren, not the full data set. The
+full count set is obtained via the function \code{fetch_bbs_data()}. The data
+is obtained from the United States Geological Survey and is subject to change
+as new data is added each year. See Details for citation.
+
+Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding, V. Aponte and M-A.R.
+Hudson. 2019. North American Breeding Bird Survey Dataset 1966 - 2018,
+version 2018.0. U.S. Geological Survey, Patuxent Wildlife Research Center.
+https://doi.org/10.5066/P9HE8XYJ.
 }
 \keyword{datasets}

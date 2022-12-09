@@ -206,7 +206,7 @@ check_strata <- function(strata, custom = NULL, simple = FALSE,
              "`strata_custom` must be either empty, or a data frame",
              call. = FALSE)
       } else {
-        # Check if strata established, and custom is a subset of the correct data
+        # Check if strata established, and custom is subset of the correct data
 
         # - Check cols, then check strata names
         if(!all(names(bbsBayes::bbs_strata[[strata]]) %in% names(custom)) ||
@@ -233,9 +233,11 @@ check_strata <- function(strata, custom = NULL, simple = FALSE,
   c(strata, type)
 }
 
-check_regions <- function(regions, stratify_by, stratify_type, regions_index = NULL) {
+check_regions <- function(regions, stratify_by, stratify_type,
+                          regions_index = NULL) {
 
-  r <- c("continent", "country", "stratum", "prov_state", "bcr", "bcr_by_country")
+  r <- c("continent", "country", "stratum", "prov_state", "bcr",
+         "bcr_by_country")
 
   if(!is.null(regions_index)) {
     if(!"strata_name" %in% names(regions_index)) {
@@ -321,10 +323,11 @@ check_species <- function(species, species_list, combine_species_forms,
          "English or French species name or AOU code.\n",
          "See `search_species()` for a generic search.",
          call. = FALSE)
-  } else if(nrow(s_no_combo) == 0 & !combine_species_forms & nrow(s_combo) == 1){
+  } else if(nrow(s_no_combo) == 0 &
+            !combine_species_forms & nrow(s_combo) == 1){
     stop("`combine_species_forms = FALSE` but '",
-         s_combo$english, "' is a combined form...\nif you want this species, set ",
-         "`combine_species_forms = TRUE`", call. = FALSE)
+         s_combo$english, "' is a combined form...\nif you want this species, ",
+         "set `combine_species_forms = TRUE`", call. = FALSE)
   } else if(nrow(s_combo) == 0 & combine_species_forms & nrow(s_no_combo) == 1){
     stop("`combine_species_forms = TRUE` but '",
          s_no_combo$english, "' is an unidentified,\nnon-combined form...",
@@ -350,8 +353,8 @@ check_spatial <- function(spatial_data, strata) {
   s <- spatial_data$strata_meta$strata_name
   if(!all(strata %in% s) | !all(s %in% strata)) {
     stop("The strata in `prepped_data` and `spatial_data` don't match.\n",
-         "`prepare_spatial()` should have been run with the same `prepped_data`",
-         "as `run_model()`.", call. = FALSE)
+         "`prepare_spatial()` should have been run with the same ",
+         "`prepped_data` as `run_model()`.", call. = FALSE)
   }
 }
 

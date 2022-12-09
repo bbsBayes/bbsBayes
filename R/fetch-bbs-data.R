@@ -377,7 +377,7 @@ combine_species <- function(birds, species, quiet = FALSE) {
     dplyr::distinct() %>%
     dplyr::mutate(unid_combined = TRUE)
 
-  # Birds - Pull out original, non-combined, non-unidentified species, and combine
+  # Birds - Pull out original, non-combined, non-unidentified species, & combine
   sp_forms <- tidyr::unnest(bbsBayes::species_forms, "aou_id")
 
   b <- birds %>%

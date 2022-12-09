@@ -100,7 +100,7 @@ prepare_spatial <- function(strata_map,
 
   # Omit unnecessary columns and ensure strata order is the same
   strata_map <- strata_map %>%
-    dplyr::select(.data[["strata_name"]]) %>%
+    dplyr::select("strata_name") %>%
     dplyr::arrange(.data[["strata_name"]])
 
   # Set attributes as constant to avoid sf warnings
@@ -275,7 +275,8 @@ fix_islands <- function(nb_db, centres, island_link_dist_factor, quiet) {
     isld2 <- which(
       dist_centres[closest, ] == dist_min[closest] |
         (dist_centres[closest, ] > dist_min[closest] &
-           dist_centres[closest, ] < dist_min[closest] * island_link_dist_factor)
+           dist_centres[closest, ] <
+           dist_min[closest] * island_link_dist_factor)
     )
 
     # Omit strata already in the isolated group
@@ -309,8 +310,9 @@ plot_neighbours <- function(strata_map, centres, nb_db, bbox, vint, add_map,
   nb_l <- spdep::nb2listw(nb_db, )
   nt <- length(attributes(nb_l$neighbours)$region.id)
 
-  nb_connect <- data.frame(from = rep(1:nt, sapply(nb_l$neighbours, length)),
-                           to = unlist(nb_l$neighbours)) %>%
+  nb_connect <- data.frame(
+    from = rep(1:nt, vapply(nb_l$neighbours, length, FUN.VALUE = 1L)),
+    to = unlist(nb_l$neighbours)) %>%
     dplyr::bind_cols(
       stats::setNames(coords[.$from, c("X", "Y")], c("long", "lat")),
       stats::setNames(coords[.$to, c("X", "Y")], c("long_to", "lat_to")))

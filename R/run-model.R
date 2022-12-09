@@ -7,8 +7,8 @@
 #' @param heavy_tailed Logical. Whether extra-Poisson error distributions should
 #'   be modelled as a t-distribution, with heavier tails than the standard
 #'   normal distribution. Default is `TRUE`. Recent results suggest this is best
-#'   even though it requires much longer convergence times. Can only be used with
-#'   Negative Binomial models (i.e. `use_pois = FALSE`).
+#'   even though it requires much longer convergence times. Can only be used
+#'   with Negative Binomial models (i.e. `use_pois = FALSE`).
 #' @param n_knots Numeric. Number of knots for "gam" and "gamye" models
 #' @param basis Character. Basis function to use for GAM smooth, one of
 #'   "original" or "mgcv". Default is "original", the same basis used in Smith
@@ -16,8 +16,8 @@
 #'   package mgcv (also used in brms, and rstanarm). If using the "mgcv" option,
 #'   the user may want to consider adjusting the prior distributions for the
 #'   parameters and their precision.
-#' @param use_pois Logical. Whether to use an Over-Dispersed Poisson model (`TRUE`)
-#'   or an Negative Binomial model (`FALSE`, default).
+#' @param use_pois Logical. Whether to use an Over-Dispersed Poisson model
+#'   (`TRUE`) or an Negative Binomial model (`FALSE`, default).
 #' @param calculate_nu Logical. Whether to calculate the `nu` parameter as
 #'  a factor of `gamma(2, 0.1)`. Default is `FALSE`.
 #' @param calculate_log_lik Logical. Whether to calculate point-wise
@@ -25,10 +25,10 @@
 #' @param calculate_CV Logical. Whether to use cross validation.
 #' @param refresh Numeric. Passed to `cmdstanr::sample()`. Number of iterations
 #'   between screen updates. If 0, only errors are shown.
-#' @param chains Numeric. Passed to `cmdstanr::sample()`. Number of Markov chains
-#'   to run.
-#' @param parallel_chains Numeric. Passed to `cmdstanr::sample()`. Maximum number
-#'   of chains to run in parallel.
+#' @param chains Numeric. Passed to `cmdstanr::sample()`. Number of Markov
+#'   chains to run.
+#' @param parallel_chains Numeric. Passed to `cmdstanr::sample()`. Maximum
+#'   number of chains to run in parallel.
 #' @param iter_warmup Numeric. Passed to `cmdstanr::sample()`. Number of warmup
 #'   iterations per chain.
 #' @param iter_sampling Numeric. Passed to `cmdstanr::sample()`. Number of
@@ -42,8 +42,8 @@
 #'   The default (`NULL`) is for bbsBayes to supply initial parameter values
 #'   according to model and model variant selected.
 #' @param init_only Logical. Whether to return the list of initial parameter
-#'   values only (and not run the model). This is useful if you wish to see which
-#'   `init` parameters are being supplied.
+#'   values only (and not run the model). This is useful if you wish to see
+#'   which `init` parameters are being supplied.
 #' @param output_basename Character. Name of the files created as part of the
 #'   Stan model run and the final model output RDS file if `save_output = TRUE`.
 #' @param output_dir Character. Directory in which all model files will be
@@ -191,7 +191,8 @@ run_model <- function(prepped_data,
   }
 
   if(is.null(output_basename)) {
-    output_basename <- paste0("BBS_STAN_", model, "_", model_variant, "_", Sys.Date())
+    output_basename <- paste0("BBS_STAN_", model, "_", model_variant,
+                              "_", Sys.Date())
   } else if(!is.na(ext(output_basename))) {
     stop("`output_basename` should not have a file extension", call. = FALSE)
   }
@@ -279,10 +280,10 @@ model_params <- function(model, n_strata, year, n_counts,
 
   # Cross validation options
   params[["calc_CV"]] <- as.integer(calculate_CV) # 1 = do cross-validation
-  params[["train"]] <- as.integer(1:n_counts) # indices of obs in the training dataset
+  params[["train"]] <- as.integer(1:n_counts) # indices of obs in training data
   params[["test"]] <- 1L          # indices of obs in the test dataset
-  params[["n_train"]] <- n_counts # no. training data (must == n_counts if calc_CV == 0)
-  params[["n_test"]] <- 1L        # no. testing data  (ignored if calc_CV == 0)
+  params[["n_train"]] <- n_counts # n training data (n_counts if calc_CV == 0)
+  params[["n_test"]] <- 1L        # n testing data  (ignored if calc_CV == 0)
 
 
   # Calculate additional model parameters
@@ -345,7 +346,7 @@ model_params <- function(model, n_strata, year, n_counts,
         new_yr <- 1:(ymin - 1)
         new_yr_scale <- (new_yr - recenter)/rescale
         names(new_yr_scale) <- new_yr
-        scaled_year = c(new_yr_scale, scaled_year)
+        scaled_year <- c(new_yr_scale, scaled_year)
       }
 
       ymin_scale <- scaled_year[as.character(ymin)]
@@ -356,8 +357,10 @@ model_params <- function(model, n_strata, year, n_counts,
         ymin_scale_pred <- scaled_year[as.character(1)]
       }
 
-      knotsX <- seq(ymin_scale, ymax_scale, length = (n_knots + 2))[-c(1, n_knots + 2)]
-      X_K <- (abs(outer(seq(ymin_scale, ymax_scale, length = n_years), knotsX, "-")))^3
+      knotsX <- seq(ymin_scale, ymax_scale,
+                    length = (n_knots + 2))[-c(1, n_knots + 2)]
+      X_K <- (abs(outer(seq(ymin_scale, ymax_scale, length = n_years),
+                        knotsX, "-")))^3
       X_OMEGA_all <- (abs(outer(knotsX, knotsX, "-")))^3
       X_svd_OMEGA_all <- svd(X_OMEGA_all)
       X_sqrt_OMEGA_all <- t(X_svd_OMEGA_all$v  %*%
@@ -385,7 +388,8 @@ create_init <- function(model, model_variant, model_data, chains) {
   # Generic --------------
   init_generic <-
     list(
-      noise_raw  = stats::rnorm(model_data$n_counts * model_data$use_pois, 0, 0.1),
+      noise_raw  = stats::rnorm(model_data$n_counts * model_data$use_pois,
+                                0, 0.1),
       strata_raw = stats::rnorm(model_data$n_strata, 0, 0.1),
       STRATA     = 0,
       nu         = 10,
@@ -442,7 +446,8 @@ create_init <- function(model, model_variant, model_data, chains) {
   # Join by model and get relevant variant
   init_specific <- init_specific %>%
     dplyr::bind_cols(bbsBayes::bbs_models) %>%
-    dplyr::filter(.data$model == .env$model, .data$variant == .env$model_variant) %>%
+    dplyr::filter(.data$model == .env$model,
+                  .data$variant == .env$model_variant) %>%
     dplyr::select(-"model", -"variant", -"file") %>%
     unlist()
 
@@ -450,7 +455,9 @@ create_init <- function(model, model_variant, model_data, chains) {
   init_specific <- init_specific[init_specific != ""]
 
   # Run all the functions
-  for(i in seq_along(init_specific)) init_specific[[i]] <- rlang::exec(init_specific[[i]])
+  for(i in seq_along(init_specific)) {
+    init_specific[[i]] <- rlang::exec(init_specific[[i]])
+  }
 
   # Join with generic values
   init <- append(init_generic, init_specific)

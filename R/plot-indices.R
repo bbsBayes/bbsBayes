@@ -144,7 +144,7 @@ plot_indices <- function(indices = NULL,
     p <- p +
       ggplot2::geom_line(
         data = to_plot, ggplot2::aes(x = .data$year, y = .data$index),
-        colour = cl, size = line_width) +
+        colour = cl, linewidth = line_width, ) +
       ggplot2::geom_ribbon(
         data = to_plot,
         ggplot2::aes(x = .data$year, ymin = .data$lci, ymax = .data$uci),

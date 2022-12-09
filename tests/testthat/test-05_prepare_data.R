@@ -66,7 +66,8 @@ test_that("prepare_data() - other", {
   # By strata
   expect_equal(p$model_data$n_obs_sites_strata, c(22, 15))
 
-  expect_equal(p$model_data$non_zero_weight, c(0.3571, 0.0566), tolerance = 0.001)
+  expect_equal(p$model_data$non_zero_weight, c(0.3571, 0.0566),
+               tolerance = 0.001)
 
   # Meta data
   expect_equal(p$meta_data$species, "Gyrfalcon")

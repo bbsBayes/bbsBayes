@@ -16,14 +16,17 @@ knitr::opts_chunk$set(
 
 
 ## Install [cmdstanr](https://mc-stan.org/cmdstanr/)
+It is recommended to run this is a fresh R session or restart your current
+session
 ```{r, eval = FALSE}
-# we recommend running this is a fresh R session or restarting your current session
-install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
+install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", 
+                                       getOption("repos")))
 ```
 
 ## Install cmdstan
 
-- Problems? Check out cmdstanr's vignette on [Getting Started](https://mc-stan.org/cmdstanr/articles/cmdstanr.html)
+- Problems? Check out cmdstanr's vignette on 
+[Getting Started](https://mc-stan.org/cmdstanr/articles/cmdstanr.html)
 
 ```{r, eval = FALSE}
 cmdstanr::install_cmdstan()

@@ -71,7 +71,9 @@ plot_map <- function(trends,
 
   map <- dplyr::left_join(x = map, y = trends, by = c("strata_name" = "region"))
 
-  if(title) title <- paste(species, "trends", start_year, "-", end_year) else title <- NULL
+  if(title) {
+    title <- paste(species, "trends", start_year, "-", end_year)
+  } else title <- NULL
 
   m <- ggplot2::ggplot() +
     ggplot2::geom_sf(data = map, ggplot2::aes(fill = .data$t_plot),
@@ -79,7 +81,8 @@ plot_map <- function(trends,
     ggplot2::theme_minimal() +
     ggplot2::labs(title = title,
                   fill = paste0("Trend\n", start_year, "-", end_year)) +
-    ggplot2::theme(legend.position = "right", line = ggplot2::element_line(size = 0.4),
+    ggplot2::theme(legend.position = "right",
+                   line = ggplot2::element_line(size = 0.4),
                    rect = ggplot2::element_rect(size = 0.1),
                    axis.text = ggplot2::element_blank(),
                    axis.line = ggplot2::element_blank(),

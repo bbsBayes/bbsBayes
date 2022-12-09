@@ -153,5 +153,6 @@ test_that("run_model() Full", {
   }
 
   # Clean up
-  unlink(list.files(test_path(), paste0("^BBS_STAN_(.)*_", Sys.Date()), full.names = TRUE))
+  unlink(list.files(test_path(), paste0("^BBS_STAN_(.)*_", Sys.Date()),
+                    full.names = TRUE))
 })

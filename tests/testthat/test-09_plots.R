@@ -8,8 +8,9 @@ expect_silent({
 test_that("plot_indices()", {
 
   expect_silent(p <- plot_indices(i1))
-  expect_named(p, stringr::str_replace_all(unique(i1[["indices"]]$region), "-", "_"),
-               ignore.order = TRUE)
+  expect_named(
+    p, stringr::str_replace_all(unique(i1[["indices"]]$region), "-", "_"),
+    ignore.order = TRUE)
   expect_s3_class(p[[1]], "ggplot")
 
   expect_silent(p1 <- plot_indices(i1, add_observed_means = TRUE))
@@ -43,14 +44,16 @@ expect_silent({
 test_that("plot_geofacet() diff trends", {
   # Error/message
   expect_error(plot_geofacet(i1, trends = t4), "created from the same")
-  expect_error(plot_geofacet(i1, trends = t1, slope = TRUE), "also run with `slope = TRUE`")
+  expect_error(plot_geofacet(i1, trends = t1, slope = TRUE),
+               "also run with `slope = TRUE`")
 
   # Plot combos
   expect_silent(plot_geofacet(i1, trends = t1))
   expect_silent(plot_geofacet(i1, trends = t2, slope = TRUE))
   expect_silent(plot_geofacet(i1, trends = t3))
   expect_silent(plot_geofacet(i1, trends = t1, multiple = TRUE))
-  expect_silent(plot_geofacet(i1, trends = t1, multiple = TRUE, col_viridis = TRUE))
+  expect_silent(plot_geofacet(i1, trends = t1, multiple = TRUE,
+                              col_viridis = TRUE))
   expect_silent(plot_geofacet(i1, multiple = TRUE))
   expect_silent(plot_geofacet(i1, trends = t1, multiple = FALSE))
   expect_silent(plot_geofacet(i1, multiple = FALSE))
@@ -58,7 +61,8 @@ test_that("plot_geofacet() diff trends", {
   # PLot combos, diff years
   expect_silent(plot_geofacet(i2, trends = t4))
   expect_silent(plot_geofacet(i2, trends = t4, multiple = TRUE))
-  expect_silent(plot_geofacet(i2, trends = t4, multiple = TRUE, col_viridis = TRUE))
+  expect_silent(plot_geofacet(i2, trends = t4, multiple = TRUE,
+                              col_viridis = TRUE))
   expect_silent(plot_geofacet(i2, multiple = TRUE))
   expect_silent(plot_geofacet(i2, trends = t4, multiple = FALSE))
   expect_silent(plot_geofacet(i2, multiple = FALSE))

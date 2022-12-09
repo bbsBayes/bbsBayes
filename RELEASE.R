@@ -30,8 +30,15 @@ devtools::build_readme()
 pkgdown::build_site(lazy = TRUE)
 pkgdown::build_article("articles/models_first_diff_nonhier")
 
-# Good practice --------------------------------------------------------------
-goodpractice::goodpractice()
+# Good practice checks -------------------------------------------------------
+checks <- goodpractice::all_checks()
+checks <- checks[!stringr::str_detect(checks, "covr|cyclocomp|rcmdcheck")]
+g <- goodpractice::goodpractice(checks = checks)
+goodpractice::results(g)
+g
+
+# The `init_def()` function has some lines which are too long, but I think
+# that's important given the complexity and the need for descriptions.
 
 
 

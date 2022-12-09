@@ -13,17 +13,19 @@ library(sf)
 library(stringr)
 library(assertr) # Checks to make sure data is as it should be in the end
 
-# See https://stringr.tidyverse.org/articles/regular-expressions.html#look-arounds
+# See
+# https://stringr.tidyverse.org/articles/regular-expressions.html#look-arounds
 # for more complex regular expressions
 
-# For all maps, only require `strata_name` (or equivalent), then all other details
-# are calculated from that.
+# For all maps, only require `strata_name` (or equivalent), then all other
+# details are calculated from that.
 
 # USGS --------------------------------------------------
 strata_bbs_usgs <- "data-raw/maps_orig/BBS_USGS_strata.shp" %>%
   read_sf() %>%
   st_make_valid() %>% # As needed when st_is_valid() fails
-  rename_with(.fn = ~"strata_name", .cols = dplyr::any_of(c("strata_name", "ST_12"))) %>%
+  rename_with(.fn = ~"strata_name",
+              .cols = dplyr::any_of(c("strata_name", "ST_12"))) %>%
   select(strata_name) %>%
   mutate(area_sq_km = as.numeric(units::set_units(st_area(.), "km^2"))) %>%
   mutate(country_code = str_extract(strata_name, "^(CA)|(US)|(MX)"),
@@ -40,7 +42,8 @@ strata_bbs_usgs <- "data-raw/maps_orig/BBS_USGS_strata.shp" %>%
 
 # # No differences!
 # s <- st_drop_geometry(strata_bbs_usgs)
-# waldo::compare(arrange(load_internal_file("bbs_strata", "bbs_usgs"), strata_name) %>%
+# waldo::compare(arrange(load_internal_file("bbs_strata", "bbs_usgs"),
+#                        strata_name) %>%
 #                  select(names(s)),
 #                arrange(s, strata_name), tolerance = 0.1)
 
@@ -52,7 +55,8 @@ st_write(strata_bbs_usgs,
 # CWS ----------------------------------------------------
 
 strata_bbs_cws <- strata_bbs_usgs %>%
-  mutate(prov_state = if_else(prov_state %in% c("PE", "NS"), "NSPE", prov_state),
+  mutate(prov_state = if_else(prov_state %in% c("PE", "NS"),
+                              "NSPE", prov_state),
          prov_state = if_else(bcr == 7, "BCR7", prov_state),
          strata_name = paste0(country_code, "-", prov_state, "-", bcr),
          bcr_by_country = paste0(country, "-BCR_", bcr)) %>%
@@ -66,7 +70,8 @@ strata_bbs_cws <- strata_bbs_usgs %>%
 
 # # No differences!
 # s <- st_drop_geometry(strata_bbs_cws)
-# waldo::compare(arrange(load_internal_file("bbs_strata", "bbs_cws"), strata_name) %>%
+# waldo::compare(arrange(load_internal_file("bbs_strata", "bbs_cws"),
+#                        strata_name) %>%
 #                  select(names(s)),
 #                arrange(s, strata_name), tolerance = 0.1)
 
@@ -80,7 +85,8 @@ st_write(strata_bbs_cws,
 strata_bcr <- "data-raw/maps_orig/BBS_BCR_strata.shp" %>%
   sf::read_sf() %>%
   sf::st_make_valid() %>%
-  rename_with(.fn = ~"strata_name", .cols = dplyr::any_of(c("strata_name", "ST_12"))) %>%
+  rename_with(.fn = ~"strata_name",
+              .cols = dplyr::any_of(c("strata_name", "ST_12"))) %>%
   select(strata_name) %>%
   mutate(area_sq_km = as.numeric(units::set_units(st_area(.), "km^2"))) %>%
   filter(strata_name != "BCR0") %>%
@@ -99,14 +105,16 @@ st_write(strata_bcr, file.path(system.file("maps", package = "bbsBayes"),
 strata_latlong <- "data-raw/maps_orig/BBS_LatLong_strata.shp" %>%
   sf::read_sf() %>%
   st_make_valid() %>% # As needed when st_is_valid() fails
-  rename_with(.fn = ~"strata_name", .cols = dplyr::any_of(c("strata_name", "ST_12"))) %>%
+  rename_with(.fn = ~"strata_name",
+              .cols = dplyr::any_of(c("strata_name", "ST_12"))) %>%
   select(strata_name) %>%
   mutate(area_sq_km = as.numeric(units::set_units(st_area(.), "km^2"))) %>%
   verify(nrow(.) == 2995)
 
 # # No differences!
 # s <- st_drop_geometry(strata_latlong)
-# waldo::compare(arrange(load_internal_file("bbs_strata", "latlong"), strata_name),
+# waldo::compare(arrange(load_internal_file("bbs_strata", "latlong"),
+#                strata_name),
 #                arrange(s, strata_name), tolerance = 0.1)
 
 st_write(strata_latlong, file.path(system.file("maps", package = "bbsBayes"),
@@ -115,30 +123,35 @@ st_write(strata_latlong, file.path(system.file("maps", package = "bbsBayes"),
 
 # Province/State ------------------------
 
-# Cannot include Mexico right now, as there is overlap between NL Canada and NL Mexico
+# Cannot include Mexico right now, as there is overlap between NL Canada and NL
+# Mexico
 prov_state_names <- format_ne_states() %>%
   st_drop_geometry()
 
 strata_prov_state <- "data-raw/maps_orig/BBS_ProvState_strata.shp" %>%
   read_sf() %>%
   st_make_valid() %>%
-  rename_with(.fn = ~"strata_name", .cols = dplyr::any_of(c("strata_name", "ST_12"))) %>%
+  rename_with(.fn = ~"strata_name",
+              .cols = dplyr::any_of(c("strata_name", "ST_12"))) %>%
   select(strata_name) %>%
   mutate(area_sq_km = as.numeric(units::set_units(st_area(.), "km^2"))) %>%
   mutate(prov_state = strata_name) %>%
   left_join(prov_state_names, by = "prov_state") %>%
   # For simplicity, let's omit the accent in Quebec (sorry Quebec!)
-  mutate(province_state = if_else(prov_state == "QC", "Quebec", province_state)) %>%
-  select(strata_name, area_sq_km, country, country_code, prov_state, province_state) %>%
+  mutate(province_state =
+           if_else(prov_state == "QC", "Quebec", province_state)) %>%
+  select(strata_name, area_sq_km, country, country_code, prov_state,
+         province_state) %>%
   arrange(country, prov_state) %>%
   verify(nrow(.) == 62)
 
 # # No differences!
 # s <- st_drop_geometry(strata_prov_state)
-# waldo::compare(arrange(load_internal_file("bbs_strata", "prov_state"), prov_state) %>%
-#                  mutate(province_state = tools::toTitleCase(tolower(province_state))) %>%
-#                  select(names(s)),
-#                 arrange(s, prov_state), tolerance = 0.1)
+# waldo::compare(
+#   arrange(load_internal_file("bbs_strata", "prov_state"), prov_state) %>%
+#     mutate(province_state = tools::toTitleCase(tolower(province_state))) %>%
+#     select(names(s)),
+#   arrange(s, prov_state), tolerance = 0.1)
 
 
 st_write(strata_prov_state, file.path(system.file("maps", package = "bbsBayes"),
@@ -146,10 +159,10 @@ st_write(strata_prov_state, file.path(system.file("maps", package = "bbsBayes"),
 
 
 # Save for use by users and functions -------------------
-bbs_strata = list("bbs_usgs" = st_drop_geometry(strata_bbs_usgs),
-                  "bbs_cws" = st_drop_geometry(strata_bbs_cws),
-                  "bcr" = st_drop_geometry(strata_bcr),
-                  "latlong" = st_drop_geometry(strata_latlong),
-                  "prov_state" = st_drop_geometry(strata_prov_state))
+bbs_strata <- list("bbs_usgs" = st_drop_geometry(strata_bbs_usgs),
+                   "bbs_cws" = st_drop_geometry(strata_bbs_cws),
+                   "bcr" = st_drop_geometry(strata_bcr),
+                   "latlong" = st_drop_geometry(strata_latlong),
+                   "prov_state" = st_drop_geometry(strata_prov_state))
 
 usethis::use_data(bbs_strata, overwrite = TRUE)

@@ -64,8 +64,8 @@ Additive Model with Year Effect), or "slope" (Slope model).}
 \item{heavy_tailed}{Logical. Whether extra-Poisson error distributions should
 be modelled as a t-distribution, with heavier tails than the standard
 normal distribution. Default is \code{TRUE}. Recent results suggest this is best
-even though it requires much longer convergence times. Can only be used with
-Negative Binomial models (i.e. \code{use_pois = FALSE}).}
+even though it requires much longer convergence times. Can only be used
+with Negative Binomial models (i.e. \code{use_pois = FALSE}).}
 
 \item{n_knots}{Numeric. Number of knots for "gam" and "gamye" models}
 
@@ -76,8 +76,8 @@ package mgcv (also used in brms, and rstanarm). If using the "mgcv" option,
 the user may want to consider adjusting the prior distributions for the
 parameters and their precision.}
 
-\item{use_pois}{Logical. Whether to use an Over-Dispersed Poisson model (\code{TRUE})
-or an Negative Binomial model (\code{FALSE}, default).}
+\item{use_pois}{Logical. Whether to use an Over-Dispersed Poisson model
+(\code{TRUE}) or an Negative Binomial model (\code{FALSE}, default).}
 
 \item{calculate_nu}{Logical. Whether to calculate the \code{nu} parameter as
 a factor of \code{gamma(2, 0.1)}. Default is \code{FALSE}.}
@@ -90,11 +90,11 @@ log-likelihood of the data given the model. Default is \code{FALSE}.}
 \item{refresh}{Numeric. Passed to \code{cmdstanr::sample()}. Number of iterations
 between screen updates. If 0, only errors are shown.}
 
-\item{chains}{Numeric. Passed to \code{cmdstanr::sample()}. Number of Markov chains
-to run.}
+\item{chains}{Numeric. Passed to \code{cmdstanr::sample()}. Number of Markov
+chains to run.}
 
-\item{parallel_chains}{Numeric. Passed to \code{cmdstanr::sample()}. Maximum number
-of chains to run in parallel.}
+\item{parallel_chains}{Numeric. Passed to \code{cmdstanr::sample()}. Maximum
+number of chains to run in parallel.}
 
 \item{iter_warmup}{Numeric. Passed to \code{cmdstanr::sample()}. Number of warmup
 iterations per chain.}
@@ -114,8 +114,8 @@ The default (\code{NULL}) is for bbsBayes to supply initial parameter values
 according to model and model variant selected.}
 
 \item{init_only}{Logical. Whether to return the list of initial parameter
-values only (and not run the model). This is useful if you wish to see which
-\code{init} parameters are being supplied.}
+values only (and not run the model). This is useful if you wish to see
+which \code{init} parameters are being supplied.}
 
 \item{output_basename}{Character. Name of the files created as part of the
 Stan model run and the final model output RDS file if \code{save_output = TRUE}.}

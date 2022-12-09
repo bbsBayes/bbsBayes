@@ -19,7 +19,8 @@ format_ne_states <- function() {
 
   rnaturalearth::ne_states(
     country = c("United States of America", "Canada"), returnclass = "sf") %>%
-    dplyr::select("province_state" = "name", "code_hasc", "country" = "admin") %>%
+    dplyr::select("province_state" = "name", "code_hasc",
+                  "country" = "admin") %>%
     tidyr::separate(.data$code_hasc, sep = "\\.",
                     into = c("country_code", "prov_state")) %>%
     dplyr::mutate(prov_state = dplyr::if_else(
@@ -33,8 +34,8 @@ format_ne_states <- function() {
 #'   stratum polygon and a Province or State. Below this will raise warnings.
 #' @param plot Logical. Whether to plot how polygons were assigned to Provinces
 #'   or States
-#' @param keep_spatial Logical. Whether the output should be a spatial data frame or
-#'   not.
+#' @param keep_spatial Logical. Whether the output should be a spatial data
+#'   frame or not.
 #'
 #' @return (Spatial) data frame with strata assigned to Province/State
 #'
@@ -86,11 +87,13 @@ assign_prov_state <- function(strata_map, min_overlap = 0.75, plot = FALSE,
     dplyr::group_by(.data$strata_name) %>%
     dplyr::mutate(p_area = as.numeric(.data$area / sum(.data$area))) %>%
     dplyr::mutate(note = dplyr::case_when(
-      any(.data$p_area > .env$min_overlap) & .data$p_area == max(.data$p_area) ~ "good",
+      any(.data$p_area > .env$min_overlap) &
+        .data$p_area == max(.data$p_area) ~ "good",
       !any(.data$p_area > .env$min_overlap) ~ "warn",
       TRUE ~ "ignore")) %>%
     dplyr::filter(.data$note %in% c("good", "warn")) %>%
-    dplyr::mutate(prov_state = .data$prov_state[.data$p_area == max(.data$p_area)]) %>%
+    dplyr::mutate(
+      prov_state = .data$prov_state[.data$p_area == max(.data$p_area)]) %>%
     dplyr::ungroup() %>%
     dplyr::select(-"area")
 
@@ -109,7 +112,8 @@ assign_prov_state <- function(strata_map, min_overlap = 0.75, plot = FALSE,
 
     g <- ggplot2::ggplot() +
       ggplot2::geom_sf(data = ps, colour = "black") +
-      ggplot2::geom_sf(data = ps_assigned, ggplot2::aes(fill = .data$prov_state),
+      ggplot2::geom_sf(data = ps_assigned,
+                       ggplot2::aes(fill = .data$prov_state),
                        colour = NA, alpha = 0.4) +
       ggplot2::scale_fill_viridis_d(end = 0.9) +
       ggplot2::labs(fill = "Strata assigned to Province/State",

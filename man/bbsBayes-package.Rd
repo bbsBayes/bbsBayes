@@ -14,6 +14,7 @@ The North American Breeding Bird Survey (BBS) is a long-running program that see
 Useful links:
 \itemize{
   \item \url{https://github.com/BrandonEdwards/bbsBayes}
+  \item Report bugs at \url{https://github.com/BrandonEdwards/bbsBayes/issues}
 }
 
 }

@@ -73,27 +73,44 @@ are only flagged, not omitted. See Details for more specifics.}
 \item{startyear}{Deprecated. Use \code{start_year} instead}
 }
 \value{
-List of 6 objects
-\item{data_summary}{dataframe with the following columns}
-\item{Year}{Year of particular index}
-\item{Region}{Region name}
-\item{Region_alt}{Long name for region}
-\item{Region_type}{Type of region including continental, national,Province_State,BCR, bcr_by_country, or stratum}
-\item{Strata_included}{Strata included in the annual index calculations}
-\item{Strata_excluded}{Strata potentially excluded from the annual index calculations because they have no observations of the species in the first part of the time series, see arguments max_backcast and start_year}
-\item{Index}{Strata-weighted count index}
-\item{additional columns for each of the values in quantiles}{quantiles of the posterior distribution}
-\item{obs_mean}{Mean of the observed annual counts of birds across all routes and all years. An alternative estimate of the average relative abundance of the species in the region and year. Differences between this and the annual indices are a function of the model. For composite regions (i.e., anything other than stratum-level estimates) this average count is calculated as an area-weighted average across all strata included}
-\item{nrts}{Number of BBS routes that contributed data for this species, region, and year}
-\item{nrts_total}{Number of BBS routes that contributed data for this species and region for all years in the selected time-series, i.e., all years since \code{start_year}}
-\item{nnzero}{Number of BBS routes on which this species was observed (i.e., count is > 0) in this region and year}
-\item{backcast_flag}{approximate annual average proportion of the covered species range that is free of extrapolated population trajectories. e.g., 1.0 = data cover full time-series, 0.75 = data cover 75 percent of time-series. Only calculated if max_backcast != NULL}
+A list containing the indices (\code{indices}), an array of posterior
+draws (\code{samples}), meta data for the analysis (\code{meta_data}), meta data for
+the strata (\code{meta_strata}) and prepared data counts from \code{prepare_data()}
+(\code{raw_data}).
 
-\item{samples}{array of all posterior draws}
-\item{area-weights}{data frame of the strata names and area weights used to calculate the continental estimates}
-\item{y_min}{first year used in the summary, scale 1:length of time-series}
-\item{y_max}{last year used in the summary, scale 1:length of time-series}
-\item{start_year}{first year used in the summary, scale 1966:2018}
+\code{indices} is a data frame with the following columns:
+\itemize{
+\item \code{year} - Year of particular index}
+\item \code{region} - Region name
+\item \code{region_type} - Type of region
+\item \code{strata_included} - Strata \emph{potentially} included in the annual index
+calculations
+\item \code{strata_excluded} - Strata \emph{potentially} excluded from the annual index
+calculations because they have no observations of the species in the first
+part of the time series, see arguments \code{max_backcast} and \code{start_year}
+\item \code{index} - Strata-weighted count index (median)
+\item \code{index_q_XXX} - Strata-weighted count index (by different quantiles)
+\item \code{obs_mean} - Mean observed annual counts of birds across all routes and
+all years. An alternative estimate of the average relative abundance of the
+species in the region and year. Differences between this and the annual
+indices are a function of the model. For composite regions (i.e., anything
+other than stratum-level estimates) this average count is calculated as an
+area-weighted average across all strata included
+\item \code{n_routes} - Number of BBS routes that contributed data for this species,
+region, and year
+\item \code{n_routes_total} - Number of BBS routes that contributed data for this
+species and region for all years in the selected time-series, i.e., all
+years since \code{start_year}
+\item \code{n_non_zero} - Number of BBS routes on which this species was observed
+(i.e., count is > 0) in this region and year
+\item \code{backcast_flag} - Approximate annual average proportion of the covered
+species range that is free of extrapolated population trajectories. e.g.,
+if 1.0, data cover full time-series; if 0.75, data cover 75 percent of
+time-series. Only calculated if \code{max_backcast != NULL}.
+}
+
+\code{meta_data} is a list passed from \code{run_model()}, now including \code{start_year},
+the first year used in the summary.
 }
 \description{
 Calculate annual indices of relative abundance by year for different regions.
@@ -102,11 +119,11 @@ species, and to estimate trends.
 }
 \details{
 \code{max_backcast} is a way to deal with the fact that the species of interest
-may not appear in the data until several years after the start of the record.
-\code{max_backcast} specifies how many years can occur before the stratum is flagged.
-A \code{max_backcast} of 5 will flag any stratum without a non-zero (or non-NA)
-observation within the first 5 years of the data record. Note that records
-are \emph{only} flagged unless \code{drop_exclude = TRUE}.
+may not appear in the data until several years after the start of the
+record. \code{max_backcast} specifies how many years can occur before the
+stratum is flagged. A \code{max_backcast} of 5 will flag any stratum without a
+non-zero (or non-NA) observation within the first 5 years of the data
+record. Note that records are \emph{only} flagged unless \code{drop_exclude = TRUE}.
 If you find that the early data record is sparse and results in the
 exclusion of many strata, consider trimming the early years by specifying a
 \code{start_year}.
@@ -124,11 +141,13 @@ i_nat <- generate_indices(pacific_wren_model, regions = "country")
 # Use a custom region specification (dummy example)
 library(dplyr)
 ri <- bbs_strata[["bbs_cws"]]
-ri <- mutate(ri, my_region = if_else(prov_state \%in\% "ON", "Ontario", "Rest"))
+ri <- mutate(ri, my_region = if_else(prov_state \%in\% "ON",
+                                     "Ontario", "Rest"))
 
 # Generate indices with these custom regions
-i_custom <- generate_indices(pacific_wren_model,
-                             regions = c("country", "prov_state", "my_region"),
-                             regions_index = ri)
+i_custom <- generate_indices(
+  pacific_wren_model,
+  regions = c("country", "prov_state", "my_region"),
+  regions_index = ri)
 
 }

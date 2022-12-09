@@ -80,8 +80,8 @@ test_that("generate_indices()", {
   }
 
   # Snapshots can't be run interactively
-  snp <- dplyr::select(ix, "year", "region", "obs_mean", "n_routes", "n_routes_total",
-                       "n_non_zero", "backcast_flag")
+  snp <- dplyr::select(ix, "year", "region", "obs_mean", "n_routes",
+                       "n_routes_total", "n_non_zero", "backcast_flag")
   expect_snapshot_value(snp, style = "json2")
 })
 
@@ -98,11 +98,11 @@ test_that("generate_indices(start_year)", {
   expect_false(all(i1[["raw_data"]]$year %in% ix$year))
   expect_equal(min(ix$year), 1995)
 
-  # Samples for all samples x all years (fewer now)  (10 iterations x 2 chains = 20)
+  # Samples for all samples x all years (fewer now)  (10 iter x 2 chains = 20)
   expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(20, 24)))
   expect_true(all(ix$year %in% i1[["indices"]]$year))
 
-  # Expect indices to be the same for the years that overlap (except n_routes_total)
+  # Expect indices same for years which overlap (except n_routes_total)
   expect_equal(dplyr::filter(i1[["indices"]], year >= 1995) %>%
                  dplyr::select(-"n_routes_total"),
                dplyr::select(ix, -"n_routes_total"))
@@ -126,7 +126,8 @@ test_that("generate_indices(quantiles)", {
 
   # No change in other values
   expect_silent(i1 <- generate_indices(r, quiet = TRUE))
-  expect_silent(i2 <- generate_indices(r, quantiles = c(0.3, 0.6), quiet = TRUE))
+  expect_silent(i2 <- generate_indices(r, quantiles = c(0.3, 0.6),
+                                       quiet = TRUE))
   expect_equal(i1$samples, i2$samples)
   expect_equal(dplyr::select(i1$indices, -dplyr::contains("index_q")),
                dplyr::select(i2$indices, -dplyr::contains("index_q")))
@@ -188,7 +189,8 @@ test_that("generate_indices(regions_index)", {
 
   expect_equal(nrow(ix), 19*51 + 2*51)
   expect_true(all(ix$year %in% i[["raw_data"]]$year))
-  expect_true(all(ix$region %in% c(i[["raw_data"]]$strata_name, "east", "west")))
+  expect_true(
+    all(ix$region %in% c(i[["raw_data"]]$strata_name, "east", "west")))
   expect_true(all(ix$strata_excluded == ""))
 
   ix_cust <- dplyr::filter(ix, region %in% c("east", "west"))
@@ -250,8 +252,8 @@ test_that("generate_indices(alternate_n)", {
   }
 
   # Snapshots can't be run interactively
-  snp <- dplyr::select(ix, "year", "region", "obs_mean", "n_routes", "n_routes_total",
-                       "n_non_zero", "backcast_flag")
+  snp <- dplyr::select(ix, "year", "region", "obs_mean", "n_routes",
+                       "n_routes_total", "n_non_zero", "backcast_flag")
   expect_snapshot_value(snp, style = "json2")
 })
 
@@ -317,9 +319,10 @@ test_that("generate_indices(max_backcast, drop_excluded)", {
   q <- 0.25
   y <- 10
   for(p in seq_along(prov)) {
-    expect_equal(stats::quantile(i2[["samples"]][[prov_samp[p]]][, y], q),
-                 i2_diff[i2_diff$region == prov[p], ][[paste0("index_q_", q)]][y],
-                 ignore_attr = TRUE)
+    expect_equal(
+      stats::quantile(i2[["samples"]][[prov_samp[p]]][, y], q),
+      i2_diff[i2_diff$region == prov[p], ][[paste0("index_q_", q)]][y],
+      ignore_attr = TRUE)
   }
 
 

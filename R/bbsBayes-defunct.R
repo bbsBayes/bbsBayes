@@ -74,7 +74,9 @@ dep_warn <- function(when, what = NULL, replace = NULL) {
 dep <- function(when, what, replace, type) {
   fun <- as.character(sys.call(which = sys.parent(n = 2))[1])
 
-  if(!is.null(what)) msg <- paste0("The `", what, "` argument for ") else msg <- ""
+  if(!is.null(what)) {
+    msg <- paste0("The `", what, "` argument for ")
+  } else msg <- ""
 
   msg <- paste0(msg, "`", fun, "()` is ", type, " as of bbsBayes ", when)
 

@@ -53,7 +53,8 @@ test_that("generate_trends() basics", {
   expect_true(all(trnd$strata_excluded %in% unique(ix$strata_excluded)))
 
   # See if trend calc is as it should be
-  ch <- i[["samples"]][["continent_continent"]][, as.character(trnd$end_year[1])] /
+  ch <-
+    i[["samples"]][["continent_continent"]][, as.character(trnd$end_year[1])] /
     i[["samples"]][["continent_continent"]][, as.character(trnd$start_year[1])]
   tr <- 100 * ((ch ^ (1 / (trnd$end_year[1] - trnd$start_year[1]))) - 1)
 
@@ -63,10 +64,14 @@ test_that("generate_trends() basics", {
   expect_equal(trnd$percent_change_q0.025[1], 100 * (quantile(ch, 0.025) - 1),
                ignore_attr = TRUE)
   expect_equal(trnd$rel_abundance[1], mean(ix$index[ix$region == "continent"]))
-  expect_equal(trnd$obs_rel_abundance[1], mean(ix$obs_mean[ix$region == "continent"]))
-  expect_equal(trnd$n_routes[1], mean(ix$n_routes_total[ix$region == "continent"]))
-  expect_equal(trnd$mean_n_routes[1], mean(ix$n_routes[ix$region == "continent"]))
-  expect_equal(trnd$backcast_flag[1], mean(ix$backcast_flag[ix$region == "continent"]))
+  expect_equal(trnd$obs_rel_abundance[1],
+               mean(ix$obs_mean[ix$region == "continent"]))
+  expect_equal(trnd$n_routes[1],
+               mean(ix$n_routes_total[ix$region == "continent"]))
+  expect_equal(trnd$mean_n_routes[1],
+               mean(ix$n_routes[ix$region == "continent"]))
+  expect_equal(trnd$backcast_flag[1],
+               mean(ix$backcast_flag[ix$region == "continent"]))
   expect_equal(trnd$n_strata_included,
                stringr::str_count(trnd$strata_included, ";") + 1)
   expect_equal(trnd$width_of_95_percent_credible_interval,
@@ -81,7 +86,8 @@ test_that("generate_trends() slopes", {
                                 1, dim(i[["samples"]][[1]])[2]))
 
   expect_equal(trnd$slope_trend[1], median(s))
-  expect_equal(trnd$slope_trend_q0.025[1], quantile(s, 0.025), ignore_attr = TRUE)
+  expect_equal(trnd$slope_trend_q0.025[1], quantile(s, 0.025),
+               ignore_attr = TRUE)
 
   expect_equal(trnd$width_of_95_percent_credible_interval_slope,
                trnd$slope_trend_q0.975 - trnd$slope_trend_q0.025)
@@ -114,7 +120,8 @@ test_that("generate_trends() min_year/max_year", {
   expect_false(all(trnd$start_year == min(ix$year)))
 
   # Expect samples truncated
-  ch <- i[["samples"]][["continent_continent"]][, as.character(trnd$end_year[1])] /
+  ch <-
+    i[["samples"]][["continent_continent"]][, as.character(trnd$end_year[1])] /
     i[["samples"]][["continent_continent"]][, as.character(trnd$start_year[1])]
   tr <- 100 * ((ch ^ (1 / (trnd$end_year[1] - trnd$start_year[1]))) - 1)
   expect_equal(trnd$trend[1], median(tr))
@@ -130,7 +137,8 @@ test_that("generate_trends() quantiles", {
   trnd <- trnd[["trends"]]
 
   # Expect samples summarized with diff quantiles
-  ch <- i[["samples"]][["continent_continent"]][, as.character(trnd$end_year[1])] /
+  ch <-
+    i[["samples"]][["continent_continent"]][, as.character(trnd$end_year[1])] /
     i[["samples"]][["continent_continent"]][, as.character(trnd$start_year[1])]
   tr <- 100 * ((ch ^ (1 / (trnd$end_year[1] - trnd$start_year[1]))) - 1)
 
@@ -146,8 +154,10 @@ test_that("generate_trends() quantiles", {
 test_that("generate_trends() prob_decrease/prob_increase", {
 
   # Error/message
-  expect_error(generate_trends(i, prob_decrease = 0.2), "range between 1 and 100")
-  expect_error(generate_trends(i, prob_increase = 0.2), "range between 1 and 100")
+  expect_error(generate_trends(i, prob_decrease = 0.2),
+               "range between 1 and 100")
+  expect_error(generate_trends(i, prob_increase = 0.2),
+               "range between 1 and 100")
 
   expect_silent(trnd <- generate_trends(i, prob_decrease = 10)[["trends"]])
   expect_true("prob_decrease_10_percent" %in% names(trnd))
@@ -157,11 +167,13 @@ test_that("generate_trends() prob_decrease/prob_increase", {
   expect_true("prob_increase_10_percent" %in% names(trnd))
   expect_equal(c(0.95, 0.85, 0.7, 0.40), trnd$prob_increase_10_percent[1:4])
 
-  expect_silent(trnd <- generate_trends(i, prob_decrease = c(10, 20))[["trends"]])
+  expect_silent(
+    trnd <- generate_trends(i, prob_decrease = c(10, 20))[["trends"]])
   expect_true(all(c("prob_decrease_10_percent", "prob_decrease_20_percent")
                    %in% names(trnd)))
 
-  expect_silent(trnd <- generate_trends(i, prob_increase = c(10, 20))[["trends"]])
+  expect_silent(
+    trnd <- generate_trends(i, prob_increase = c(10, 20))[["trends"]])
   expect_true(all(c("prob_increase_10_percent", "prob_increase_20_percent")
                   %in% names(trnd)))
 
@@ -186,7 +198,8 @@ test_that("generate_trends() indices diff start_year", {
   expect_true(all(trnd$end_year == max(ix$year)))
 
   # Expect samples truncated
-  ch <- i[["samples"]][["continent_continent"]][, as.character(trnd$end_year[1])] /
+  ch <-
+    i[["samples"]][["continent_continent"]][, as.character(trnd$end_year[1])] /
     i[["samples"]][["continent_continent"]][, as.character(trnd$start_year[1])]
   tr <- 100 * ((ch ^ (1 / (trnd$end_year[1] - trnd$start_year[1]))) - 1)
   expect_equal(trnd$trend[1], median(tr))

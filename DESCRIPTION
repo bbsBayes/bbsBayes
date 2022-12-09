@@ -12,7 +12,7 @@ Imports:
     dplyr (>= 1.0.0),
     ggrepel,
     geofacet,
-    ggplot2,
+    ggplot2 (>= 3.4.0),
     magrittr,
     mgcv,
     posterior (>= 1.2.1),
@@ -30,6 +30,7 @@ Imports:
 Depends: R (>= 3.5)
 SystemRequirements: CmdStan (https://mc-stan.org/users/interfaces/cmdstan)
 URL: https://github.com/BrandonEdwards/bbsBayes
+BugReports: https://github.com/BrandonEdwards/bbsBayes/issues
 NeedsCompilation: no
 Description: The North American Breeding Bird Survey (BBS) is a long-running
   program that seeks to monitor the status and trends of the breeding birds in

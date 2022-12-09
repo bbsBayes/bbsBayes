@@ -20,8 +20,8 @@ stratum polygon and a Province or State. Below this will raise warnings.}
 \item{plot}{Logical. Whether to plot how polygons were assigned to Provinces
 or States}
 
-\item{keep_spatial}{Logical. Whether the output should be a spatial data frame or
-not.}
+\item{keep_spatial}{Logical. Whether the output should be a spatial data
+frame or not.}
 }
 \value{
 (Spatial) data frame with strata assigned to Province/State
