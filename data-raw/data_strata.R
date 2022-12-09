@@ -21,7 +21,7 @@ library(assertr) # Checks to make sure data is as it should be in the end
 
 # USGS --------------------------------------------------
 strata_bbs_usgs <- "data-raw/maps_orig/BBS_USGS_strata.shp" %>%
-  sf::read_sf() %>%
+  read_sf() %>%
   st_make_valid() %>% # As needed when st_is_valid() fails
   rename_with(.fn = ~"strata_name", .cols = dplyr::any_of(c("strata_name", "ST_12"))) %>%
   select(strata_name) %>%
@@ -120,7 +120,8 @@ prov_state_names <- format_ne_states() %>%
   st_drop_geometry()
 
 strata_prov_state <- "data-raw/maps_orig/BBS_ProvState_strata.shp" %>%
-  sf::read_sf() %>%
+  read_sf() %>%
+  st_make_valid() %>%
   rename_with(.fn = ~"strata_name", .cols = dplyr::any_of(c("strata_name", "ST_12"))) %>%
   select(strata_name) %>%
   mutate(area_sq_km = as.numeric(units::set_units(st_area(.), "km^2"))) %>%

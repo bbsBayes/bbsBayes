@@ -76,3 +76,8 @@ test_that("plot_map() diff trends", {
 
   expect_silent(plot_map(t3)) # diff year range
 })
+
+expect_silent({
+  list.files(test_path(), ".rds", full.names = TRUE) %>%
+    unlink()
+})

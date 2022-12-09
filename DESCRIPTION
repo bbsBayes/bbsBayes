@@ -15,6 +15,8 @@ Imports:
     ggplot2,
     magrittr,
     mgcv,
+    posterior (>= 1.2.1),
+    purrr (>= 0.3.4),
     rappdirs,
     readr (>= 2.1.2),
     rlang (>= 0.4.11),
@@ -23,11 +25,8 @@ Imports:
     spdep (>= 1.2.7),
     snakecase,
     stringr,
-    tools,
-    units (>= 0.8.0),
-    posterior (>= 1.2.1),
-    purrr (>= 0.3.4),
-    tidyr (>= 1.2.0)
+    tidyr (>= 1.2.0),
+    units (>= 0.8.0)
 Depends: R (>= 3.5)
 SystemRequirements: CmdStan (https://mc-stan.org/users/interfaces/cmdstan)
 URL: https://github.com/BrandonEdwards/bbsBayes
