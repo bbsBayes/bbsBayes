@@ -31,7 +31,7 @@ package-specific directory on your computer. You must agree to the terms and
 conditions of the data usage before downloading. You only need run this function
 once for each annual update of the BBS database.
 
-``` {r, eval = !have_bbs_data()}
+``` {r, eval = !bbsBayes::have_bbs_data()}
 fetch_bbs_data()
 ```
 

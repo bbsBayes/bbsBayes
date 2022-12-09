@@ -39,13 +39,14 @@ jobs:
           rtools-version: ${{ matrix.config.rtools }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
-          extra-repositories: 'https://mc-stan.org/r-packages/'
+          extra-repositories: 'https://mc-stan.org/r-packages/ https://ropensci.r-universe.dev'
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
             any::rcmdcheck
             local::.
+            any::rnaturalearthhires
           needs: check
 
       - name: Install cmdstan
