@@ -80,7 +80,7 @@ the strata (\code{meta_strata}) and prepared data counts from \code{prepare_data
 
 \code{indices} is a data frame with the following columns:
 \itemize{
-\item \code{year} - Year of particular index}
+\item \code{year} - Year of particular index
 \item \code{region} - Region name
 \item \code{region_type} - Type of region
 \item \code{strata_included} - Strata \emph{potentially} included in the annual index

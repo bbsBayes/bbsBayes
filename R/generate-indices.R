@@ -61,7 +61,7 @@
 #'
 #'   `indices` is a data frame with the following columns:
 #'
-#'   - `year` - Year of particular index}
+#'   - `year` - Year of particular index
 #'   - `region` - Region name
 #'   - `region_type` - Type of region
 #'   - `strata_included` - Strata *potentially* included in the annual index
