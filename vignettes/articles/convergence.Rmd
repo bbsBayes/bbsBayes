@@ -74,7 +74,7 @@ get_model_vars(m)
 
 We can also extract summary information from the model via the helper function `get_summary()` (wrapper for  `cmdstanr::summary()`)
 
-```{r}
+```{r, warning=FALSE}
 get_summary(m)
 ```
 
