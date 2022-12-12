@@ -1,6 +1,6 @@
 
 expect_silent({
-  r <- load_test_model()
+  r <- pacific_wren_model
   i1 <- generate_indices(r, quiet = TRUE)
   i2 <- generate_indices(r, start_year = 2007, quiet = TRUE)
 })
@@ -30,7 +30,7 @@ test_that("plot_indices()", {
 
 
 expect_silent({
-  r <- load_test_model()
+  r <- pacific_wren_model
   i1 <- generate_indices(r, regions = c("stratum", "prov_state"), quiet = TRUE)
   t1 <- generate_trends(i1)
   t2 <- generate_trends(i1, slope = TRUE)

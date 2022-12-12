@@ -72,7 +72,7 @@ test_that("create_init", {
 test_that("run_model() first_diff short", {
 
   withr::local_seed(111)
-  unlink(list.files(test_path(), "BBS_STAN_slope_hier_", full.names = TRUE))
+  unlink(list.files(test_path(), "BBS_STAN_first_diff_hier_", full.names = TRUE))
 
   p <- stratify(by = "bbs_usgs", sample_data = TRUE, quiet = TRUE) %>%
     prepare_data(min_max_route_years = 2)
@@ -94,12 +94,17 @@ test_that("run_model() first_diff short", {
     expect_s3_class(r$model_fit, "CmdStanMCMC")
 
     f <- paste0("BBS_STAN_first_diff_hier_", Sys.Date(),
-                c("-1.csv", "-2.csv", "_01.rds"))
+                c("-1.csv", "-2.csv", "_01.rds")) %>%
+      test_path()
 
-    expect_true(all(file.exists(test_path(f))))
+    expect_true(all(file.exists(f)))
+
+    # Snapshots can't be run interactively
+    expect_snapshot_file(f[1])
+    expect_snapshot_file(f[2])
 
     # Clean up
-    list.files(test_path(), paste0("^BBS_STAN_(.)*", Sys.Date(), "(.)*.csv"),
+    list.files(test_path(), paste0("^BBS_STAN_(.)*", Sys.Date()),
                full.names = TRUE) %>%
       unlink()
 })

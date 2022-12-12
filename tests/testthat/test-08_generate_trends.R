@@ -2,7 +2,7 @@
 # Setup first set of indices
 
 expect_silent({
-  i <- load_test_model() %>%
+  i <- pacific_wren_model %>%
     generate_indices(quiet = TRUE)
   ix <- i[["indices"]] %>% dplyr::arrange(region_type, region, year)
 })
@@ -19,9 +19,9 @@ test_that("calc_slope()", {
 
   expect_silent(sl <- calc_slope(i[["samples"]][["continent_continent"]],
                                  1, dim(i[["samples"]][[1]])[2]))
-  expect_equal(sl[1], 1.09890394, tolerance = 0.000001)
-  expect_equal(sl[10], -0.20875669, tolerance = 0.000001)
-  expect_equal(sl[20], 0.54688807, tolerance = 0.000001)
+  expect_equal(sl[1], 0.8271085, tolerance = 0.0001)
+  expect_equal(sl[10], 0.3586897, tolerance = 0.0001)
+  expect_equal(sl[20], 0.9346181, tolerance = 0.0001)
 
 })
 
@@ -161,11 +161,11 @@ test_that("generate_trends() prob_decrease/prob_increase", {
 
   expect_silent(trnd <- generate_trends(i, prob_decrease = 10)[["trends"]])
   expect_true("prob_decrease_10_percent" %in% names(trnd))
-  expect_equal(c(0, 0.1, 0.1, 0.45), trnd$prob_decrease_10_percent[1:4])
+  expect_equal(trnd$prob_decrease_10_percent[1:4], c(0, 0.25, 0.175, 0.5))
 
   expect_silent(trnd <- generate_trends(i, prob_increase = 10)[["trends"]])
   expect_true("prob_increase_10_percent" %in% names(trnd))
-  expect_equal(c(0.95, 0.85, 0.7, 0.40), trnd$prob_increase_10_percent[1:4])
+  expect_equal(trnd$prob_increase_10_percent[1:4], c(1, 0.675, 0.475, 0.325))
 
   expect_silent(
     trnd <- generate_trends(i, prob_decrease = c(10, 20))[["trends"]])
@@ -188,7 +188,7 @@ test_that("generate_trends() prob_decrease/prob_increase", {
 
 
 test_that("generate_trends() indices diff start_year", {
-  i <- load_test_model() %>%
+  i <- pacific_wren_model %>%
     generate_indices(start_year = 2007, quiet = TRUE)
   ix <- i[["indices"]] %>% dplyr::arrange(region_type, region, year)
 

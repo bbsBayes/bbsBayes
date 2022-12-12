@@ -1,6 +1,10 @@
+expect_silent({
+  r <- pacific_wren_model
+  #20 iterations x 2 chains = 40
+  n_iter <- r$model_fit$metadata()$iter_sampling * r$model_fit$num_chains()
+})
 
 test_that("samples_to_array()", {
-  r <- load_test_model()
 
   n <- r$model_fit$draws(variables = "n", format = "draws_matrix")
 
@@ -10,9 +14,8 @@ test_that("samples_to_array()", {
     alternate_n = "n",
     years_to_keep = yrs))
 
-
   expect_equal(dimnames(n2),
-               list("iter" = as.character(1:20),
+               list("iter" = as.character(seq_len(n_iter)),
                     "strata_name" = unique(r$raw_data$strata_name),
                     "year" = as.character(yrs)))
 
@@ -32,7 +35,7 @@ test_that("samples_to_array()", {
     years_to_keep = yrs))
 
   expect_equal(dimnames(n3),
-               list("iter" = as.character(1:20),
+               list("iter" = as.character(seq_len(n_iter)),
                     "strata_name" = unique(r$raw_data$strata_name),
                     "year" = as.character(yrs)))
 
@@ -41,8 +44,6 @@ test_that("samples_to_array()", {
 
 
 test_that("generate_indices()", {
-
-  r <- load_test_model()
 
   # Basic run
   expect_message(i <- generate_indices(r, regions = "stratum"),
@@ -62,8 +63,8 @@ test_that("generate_indices()", {
 
   expect_named(s, paste0("stratum_", unique(i[["raw_data"]]$strata_name)))
 
-  # Samples for all iterations x all years (10 iterations x 2 chains = 20)
-  expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(20, 51)))
+  # Samples for all iterations x all years
+  expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(n_iter, 51)))
 
   # Expect quantiles based on samples: Check a bunch of combinations
   year <- c(1, 20, 50)
@@ -87,8 +88,6 @@ test_that("generate_indices()", {
 
 test_that("generate_indices(start_year)", {
 
-  r <- load_test_model()
-
   # Diff start year
   expect_silent(i1 <- generate_indices(r, quiet = TRUE))
   expect_silent(i2 <- generate_indices(r, start_year = 1995, quiet = TRUE))
@@ -98,8 +97,8 @@ test_that("generate_indices(start_year)", {
   expect_false(all(i1[["raw_data"]]$year %in% ix$year))
   expect_equal(min(ix$year), 1995)
 
-  # Samples for all samples x all years (fewer now)  (10 iter x 2 chains = 20)
-  expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(20, 24)))
+  # Samples for all samples x all years (fewer now)
+  expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(n_iter, 24)))
   expect_true(all(ix$year %in% i1[["indices"]]$year))
 
   # Expect indices same for years which overlap (except n_routes_total)
@@ -114,8 +113,6 @@ test_that("generate_indices(start_year)", {
 })
 
 test_that("generate_indices(quantiles)", {
-
-  r <- load_test_model()
 
   # Diff quantiles
   expect_silent(i <- generate_indices(r, quantiles = c(0.3, 0.6), quiet = TRUE))
@@ -135,7 +132,7 @@ test_that("generate_indices(quantiles)", {
 
 test_that("generate_indices(regions)", {
 
-  r <- load_test_model()
+  r <- pacific_wren_model
 
   # Diff quantiles
   expect_silent(i <- generate_indices(r,
@@ -151,8 +148,8 @@ test_that("generate_indices(regions)", {
   expect_true(all(ix$strata_included != ""))
   expect_true(all(ix$strata_excluded == ""))
 
-  # Samples for all strata x all years  (10 iterations x 2 chains = 20)
-  expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(20, 51)))
+  # Samples for all strata x all years
+  expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(n_iter, 51)))
 
   # Expect quantiles based on samples: Check a bunch of combinations
   year <- c(1, 20, 50)
@@ -173,8 +170,6 @@ test_that("generate_indices(regions)", {
 
 
 test_that("generate_indices(regions_index)", {
-
-  r <- load_test_model()
 
   ri <- bbs_strata[[r$meta_data$stratify_by]] %>%
     dplyr::mutate(east_west = dplyr::if_else(
@@ -213,7 +208,7 @@ test_that("generate_indices(alternate_n)", {
 
   # Diff annual index parameter
   expect_silent(i1 <- generate_indices(r, regions = "stratum",
-                                      alternate_n = "n", quiet = TRUE))
+                                       alternate_n = "n", quiet = TRUE))
   expect_silent(i <- generate_indices(r, regions = "stratum",
                                       alternate_n = "n_slope", quiet = TRUE))
 
@@ -260,8 +255,6 @@ test_that("generate_indices(alternate_n)", {
 
 test_that("generate_indices(max_backcast)", {
 
-  r <- load_test_model()
-
   # Diff backcast
   expect_silent(i1 <- generate_indices(r, regions = "prov_state", quiet = TRUE))
   expect_silent(i2 <- generate_indices(r, regions = "prov_state",
@@ -290,8 +283,6 @@ test_that("generate_indices(max_backcast)", {
 
 
 test_that("generate_indices(max_backcast, drop_excluded)", {
-
-  r <- load_test_model()
 
   # Diff backcast
   expect_silent(i1 <- generate_indices(r, regions = "prov_state",
