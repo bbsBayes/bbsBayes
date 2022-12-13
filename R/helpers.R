@@ -186,10 +186,10 @@ assign_prov_state <- function(strata_map, min_overlap = 0.75, plot = FALSE,
       dplyr::mutate(strata_name = as.character(.data$strata_name))
 
     g <- ggplot2::ggplot() +
-      ggplot2::geom_sf(data = ps, colour = "black") +
       ggplot2::geom_sf(data = ps_assigned,
                        ggplot2::aes(fill = .data$prov_state),
-                       colour = NA, alpha = 0.4) +
+                       colour = "grey40", alpha = 0.4) +
+      ggplot2::geom_sf(data = ps, colour = "black", fill = NA) +
       ggplot2::scale_fill_viridis_d(end = 0.9) +
       ggplot2::labs(fill = "Strata assigned to Province/State",
                     colour = "Less than min_overlap with Province/State")
