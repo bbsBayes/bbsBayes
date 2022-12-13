@@ -4,7 +4,8 @@
 #' `stratify()`.
 #'
 #' @param species Character. Search term, either name in English or French, AOU
-#'   code, or scientific genus or species.
+#'   code, or scientific genus or species. Matches by regular expression but all
+#'   lower case.
 #' @param combine_species_forms Logical. Whether or not to search the combined
 #'   species data or the uncombined species. Note that this results in different
 #'   species names.
