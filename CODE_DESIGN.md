@@ -78,9 +78,14 @@ https://coolbutuseless.github.io/2018/12/10/r-packages-internal-and-external-dat
 ## Continuous Integration (CI)
 - CI is setup with GitHub actions. The workflows (all in `.github/workflows/`
   were created using:
-    - Package Checks - `usethis::use_github_action_check_standard()` (file is `R-CMD-check.yaml`)
+    - Package Checks - `usethis::use_github_action_check_standard()` (file is
+    `R-CMD-check.yaml`)
     - Code Coverage - `usethis::use_coverage()` (file is `test-coverage.yaml`)
-    - Documentation website - `usethis::use_pkgdown_github_pages()` (file is `pkgdown.yaml`)
+    - Documentation website - `usethis::use_pkgdown_github_pages()` (file is
+    `pkgdown.yaml`)
+- Note that Package Checks don't build vignettes because a) this the download in
+  the `stratification.Rmd` vignette fails on Windows, and b) these are already
+  built (and therefore tested) in the pkgdown workflow.
 
 ## Random Notes
 - Use "grey60" rather than `grDevices::grey(0.6)` to avoid another dependency
