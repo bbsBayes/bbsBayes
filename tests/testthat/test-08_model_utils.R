@@ -9,7 +9,8 @@ test_that("get_convergence()", {
                c("variable_type", "variable", "rhat", "ess_bulk", "ess_tail"))
   expect_equal(unique(conv$variable_type), "strata_raw")
 
-  orig <- pacific_wren_model$model_fit$summary("strata_raw")
+  orig <- pacific_wren_model$model_fit$summary("strata_raw") %>%
+    suppressWarnings()
   expect_equal(orig[, c("rhat", "ess_bulk", "ess_tail")],
                conv[, c("rhat", "ess_bulk", "ess_tail")],
                ignore_attr = TRUE)

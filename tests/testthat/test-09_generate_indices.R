@@ -2,6 +2,9 @@ expect_silent({
   r <- pacific_wren_model
   #20 iterations x 2 chains = 40
   n_iter <- r$model_fit$metadata()$iter_sampling * r$model_fit$num_chains()
+
+  n_yrs <- 52
+  n_strata <- 19
 })
 
 test_that("samples_to_array()", {
@@ -55,7 +58,7 @@ test_that("generate_indices()", {
   s <- i[["samples"]]
 
   expect_s3_class(ix, "data.frame")
-  expect_equal(nrow(ix), 19*51)
+  expect_equal(nrow(ix), n_yrs * n_strata)
   expect_true(all(ix$year %in% i[["raw_data"]]$year))
   expect_true(all(ix$region %in% i[["raw_data"]]$strata_name))
   expect_true(all(ix$region == ix$strata_included))
@@ -64,7 +67,7 @@ test_that("generate_indices()", {
   expect_named(s, paste0("stratum_", unique(i[["raw_data"]]$strata_name)))
 
   # Samples for all iterations x all years
-  expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(n_iter, 51)))
+  expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(n_iter, n_yrs)))
 
   # Expect quantiles based on samples: Check a bunch of combinations
   year <- c(1, 20, 50)
@@ -98,7 +101,7 @@ test_that("generate_indices(start_year)", {
   expect_equal(min(ix$year), 1995)
 
   # Samples for all samples x all years (fewer now)
-  expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(n_iter, 24)))
+  expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(n_iter, 25)))
   expect_true(all(ix$year %in% i1[["indices"]]$year))
 
   # Expect indices same for years which overlap (except n_routes_total)
@@ -149,7 +152,7 @@ test_that("generate_indices(regions)", {
   expect_true(all(ix$strata_excluded == ""))
 
   # Samples for all strata x all years
-  expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(n_iter, 51)))
+  expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(n_iter, n_yrs)))
 
   # Expect quantiles based on samples: Check a bunch of combinations
   year <- c(1, 20, 50)
@@ -182,7 +185,7 @@ test_that("generate_indices(regions_index)", {
   ix <- i[["indices"]]
   s <- i[["samples"]]
 
-  expect_equal(nrow(ix), 19*51 + 2*51)
+  expect_equal(nrow(ix), n_strata * n_yrs + 2 * n_yrs)
   expect_true(all(ix$year %in% i[["raw_data"]]$year))
   expect_true(
     all(ix$region %in% c(i[["raw_data"]]$strata_name, "east", "west")))
@@ -221,7 +224,7 @@ test_that("generate_indices(alternate_n)", {
   s <- i[["samples"]]
 
   expect_s3_class(ix, "data.frame")
-  expect_equal(nrow(ix), 19*51)
+  expect_equal(nrow(ix), n_strata * n_yrs)
   expect_true(all(ix$year %in% i[["raw_data"]]$year))
   expect_true(all(ix$region %in% i[["raw_data"]]$strata_name))
   expect_true(all(ix$region == ix$strata_included))
@@ -230,7 +233,7 @@ test_that("generate_indices(alternate_n)", {
   expect_named(s, paste0("stratum_", unique(i[["raw_data"]]$strata_name)))
 
   # Samples for all iterations x all years  (20 iterations x 2 chains = 40)
-  expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(40, 51)))
+  expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(40, n_yrs)))
 
   # Expect quantiles based on samples: Check a bunch of combinations
   year <- c(1, 20, 50)

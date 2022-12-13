@@ -72,7 +72,8 @@ test_that("create_init", {
 test_that("run_model() first_diff short", {
 
   withr::local_seed(111)
-  unlink(list.files(test_path(), "BBS_STAN_first_diff_hier_", full.names = TRUE))
+  unlink(list.files(test_path(), "BBS_STAN_first_diff_hier_",
+                    full.names = TRUE))
 
   p <- stratify(by = "bbs_usgs", sample_data = TRUE, quiet = TRUE) %>%
     prepare_data(min_max_route_years = 2)
@@ -100,12 +101,20 @@ test_that("run_model() first_diff short", {
     expect_true(all(file.exists(f)))
 
     # Snapshots can't be run interactively
+    file.rename(f[1:2], stringr::str_remove(f[1:2], paste0(Sys.Date(), "-")))
+    f <- stringr::str_remove(f[1:2], paste0(Sys.Date(), "-"))
+
+    # Trim to omit date/run related metrics (stuff that changes)
+    for(i in f){
+      a <- readLines(i)
+      write(a[46:60], i, )
+    }
+
     expect_snapshot_file(f[1])
     expect_snapshot_file(f[2])
 
     # Clean up
-    list.files(test_path(), paste0("^BBS_STAN_(.)*", Sys.Date()),
-               full.names = TRUE) %>%
+    list.files(test_path(), paste0("^BBS_STAN_(.)*"), full.names = TRUE) %>%
       unlink()
 })
 
