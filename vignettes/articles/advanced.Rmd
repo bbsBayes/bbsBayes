@@ -602,7 +602,7 @@ east_west_trends <- generate_trends(indices = east_west_indices)
 You can easily export any of the bbsBayes models to a text file.
 
 ``` {.r}
-model_to_file(model = "slope",
+copy_model_file(model = "slope",
               filename = "my_slope_model.txt")
 ```
 

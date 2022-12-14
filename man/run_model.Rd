@@ -167,7 +167,7 @@ Run Bayesian model
 \details{
 There are two ways you can customize
 the model run. The first is to supply a custom \code{model_file} created with the
-\code{model_to_file()} function and then edited by hand.
+\code{copy_model_file()} function and then edited by hand.
 
 Second, you can supply a custom list of initialization parameters. You can
 supply these parameters in anyway that \code{cmdstanr::sample()} accepts the

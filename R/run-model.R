@@ -69,7 +69,7 @@
 #'
 #' @details There are two ways you can customize
 #' the model run. The first is to supply a custom `model_file` created with the
-#' `model_to_file()` function and then edited by hand.
+#' `copy_model_file()` function and then edited by hand.
 #'
 #' Second, you can supply a custom list of initialization parameters. You can
 #' supply these parameters in anyway that `cmdstanr::sample()` accepts the
@@ -526,7 +526,7 @@ save_model_run <- function(model_output, path = NULL, quiet = FALSE) {
 }
 
 
-#' Save model to file
+#' Copy model file
 #'
 #' Save a predefined Stan model file to a local text file for editing. These
 #' files can then be used in `run_models()` by specifying the `model_file`
@@ -543,18 +543,18 @@ save_model_run <- function(model_output, path = NULL, quiet = FALSE) {
 #' @examples
 #'
 #' # Save the Slope model in temp directory
-#' model_to_file(model = "slope", model_variant = "spatial", dir = tempdir())
+#' copy_model_file(model = "slope", model_variant = "spatial", dir = tempdir())
 #'
 #' # Overwrite an existing copy
-#' model_to_file(model = "slope", model_variant = "spatial", dir = tempdir(),
-#'               overwrite = TRUE)
+#' copy_model_file(model = "slope", model_variant = "spatial", dir = tempdir(),
+#'                 overwrite = TRUE)
 #'
 #' # Clean up
 #' unlink(file.path(tempdir(), "slope_spatial_bbs_CV_COPY.stan"))
 #'
 #' @export
 
-model_to_file <- function(model, model_variant, dir, overwrite = FALSE) {
+copy_model_file <- function(model, model_variant, dir, overwrite = FALSE) {
 
   check_model(model, model_variant)
   check_dir(dir)

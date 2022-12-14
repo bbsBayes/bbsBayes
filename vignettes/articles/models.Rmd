@@ -82,7 +82,7 @@ m <- run_model(p, model = "first_diff", model_variant = "hier",
 
 Copy model file (and modify by hand in text editor)
 ```{r}
-new_model <- model_to_file("first_diff", "hier", tempdir())
+new_model <- copy_model_file("first_diff", "hier", tempdir())
 new_model
 ```
 

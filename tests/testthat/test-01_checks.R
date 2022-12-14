@@ -205,9 +205,9 @@ test_that("model/model_file/model_variant checks", {
   expect_error(check_model("test", "spatial"))
   expect_error(check_model_file("slope", "hier", "test"))
 
-  expect_message(model_to_file("slope", "hier", "."))
-  expect_error(model_to_file("slope", "hier", "."))  # Can't overwrite
-  expect_message(model_to_file("slope", "hier", ".", overwrite = TRUE))
+  expect_message(copy_model_file("slope", "hier", "."))
+  expect_error(copy_model_file("slope", "hier", "."))  # Can't overwrite
+  expect_message(copy_model_file("slope", "hier", ".", overwrite = TRUE))
 
   f <- "slope_hier_bbs_CV_COPY.stan"
   expect_true(file.exists(f))
