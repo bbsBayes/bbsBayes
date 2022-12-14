@@ -263,7 +263,7 @@ have_bbs_data <- function(level = "state", release = 2022, quiet = FALSE){
 
   f <- file.path(bbs_dir(), paste0("bbs_", level, "_data_", release, ".rds"))
 
-  if(!quiet) message("BBS ", level, " data ", release, ": '", f, "'")
+  if(!quiet) message("Expected BBS ", level, " data ", release, ": '", f, "'")
 
   file.exists(f)
 }
