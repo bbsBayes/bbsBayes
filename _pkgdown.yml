@@ -69,6 +69,7 @@ reference:
   contents:
   - bbs_data_sample
   - bbs_strata
+  - bbs_models
   - pacific_wren_model
   - species_forms
 
