@@ -50,6 +50,7 @@ reference:
 
 - title: Indices and trends
   desc: Functions for generating indices and trends from models
+  contents:
   - starts_with("generate_")
 
 - title: Plots
