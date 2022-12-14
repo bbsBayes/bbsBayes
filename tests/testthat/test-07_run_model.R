@@ -101,15 +101,7 @@ test_that("run_model() first_diff short", {
     expect_true(all(file.exists(f)))
 
     # Snapshots can't be run interactively
-    file.rename(f[1:2], stringr::str_remove(f[1:2], paste0(Sys.Date(), "-")))
-    f <- stringr::str_remove(f[1:2], paste0(Sys.Date(), "-"))
-
-    # Trim to omit date/run related metrics (stuff that changes)
-    for(i in f){
-      a <- readLines(i)
-      write(a[46:60], i, )
-    }
-
+    f <- strip_model_files(f)
     expect_snapshot_file(f[1])
     expect_snapshot_file(f[2])
 
