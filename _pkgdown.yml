@@ -27,7 +27,7 @@ reference:
 - title: BBS Data
   desc: Functions for downloading and managing BBS data
   contents:
-  - ends_wth("bbs_data")
+  - ends_with("bbs_data")
 
 - title: Processing data
   desc: >
