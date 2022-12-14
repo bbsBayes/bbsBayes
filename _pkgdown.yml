@@ -11,17 +11,17 @@ articles:
 - title: Usage
   contents:
   - bbsBayes
-  - workflow
+  - articles/workflow
   - stratification
-  - custom_stratification
-  - models
-  - convergence
-  - advanced
+  - articles/custom_stratification
+  - articles/models
+  - articles/convergence
+  - articles/advanced
 
 - title: Model runs
   desc: Articles to illustrate the various models and for testing
   contents:
-  - models_first_diff_nonhier
+  - articles/models_first_diff_nonhier
 
 reference:
 - title: BBS Data
