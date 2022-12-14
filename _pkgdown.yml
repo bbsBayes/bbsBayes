@@ -2,3 +2,69 @@ url: http://steffilazerte.ca/bbsBayes/
 template:
   bootstrap: 5
 
+navbar:
+  structure:
+    left:  [intro, reference, articles, news]
+    right: [search, github]
+
+articles:
+- title: Usage
+  contents:
+  - bbsBayes
+  - workflow
+  - stratification
+  - custom_stratification
+  - models
+  - convergence
+  - advanced
+
+- title: Model runs
+  desc: Articles to illustrate the various models and for testing
+  contents:
+  - models_first_diff_nonhier
+
+reference:
+- title: BBS Data
+  desc: Functions for downloading and managing BBS data
+  contents:
+  - ends_wth("bbs_data")
+
+- title: Processing data
+  desc: >
+    Functions for processing BBS data according to the type of models to be run
+  contents:
+  - stratify
+  - starts_with("prepare_")
+
+- title: Stan models
+  desc: >
+    Functions for running Stan models via cmdstanr, as well as for saving and
+    evaluating convergence
+  contents:
+  - run_model
+  - save_model_run
+  - copy_model_file
+  - get_convergence
+  - get_model_vars
+  - get_summary
+
+- title: Indices and trends
+  desc: Functions for generating indices and trends from models
+  - starts_with("generate_")
+
+- title: Plots
+  desc: Functions for plotting indices and trends
+  contents:
+  - starts_with("plot_")
+
+- title: Helper functions
+  contents:
+  - search_species
+  - load_map
+  - assign_prov_state
+  - remove_cache
+
+- title: "Deprecated/Defunct functions"
+  contents:
+  - bbsBayes-defunct
+  - bbsBayes-deprecated
