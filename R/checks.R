@@ -40,7 +40,7 @@ check_data <- function(data) {
 #' @param quiet Suppress messages
 #'
 #' @noRd
-check_bbs_data <- function(level, release, force, quiet) {
+check_bbs_data <- function(level, release, force, quiet = FALSE) {
   out_dir <- bbs_dir(quiet)
 
   f <- file.path(out_dir, paste0("bbs_", level, "_data_", release, ".rds"))
@@ -95,7 +95,7 @@ check_model_variant <- function(model_variant) {
   model_variant
 }
 
-check_model_file <- function(model, model_variant, model_file) {
+check_model_file <- function(model, model_variant, model_file = NULL) {
   if(is.null(model_file)) {
     f <- system.file("models",
                      paste0(model, "_", model_variant, "_bbs_CV.stan"),
@@ -123,11 +123,11 @@ check_model_file <- function(model, model_variant, model_file) {
 #'
 #' @noRd
 check_basis <- function(basis) {
-  if(is.null(basis)) stop("No basis specified", call. = FALSE)
+  if(is.null(basis)) stop("No `basis` specified", call. = FALSE)
   basis <- tolower(basis)
   b <- c("original", "mgcv")
   if(!basis %in% b) {
-    stop("Invalid basis specified. Must be one of ", paste0(b, collapse = ", "),
+    stop("Invalid `basis` specified. Must be one of ", paste0(b, collapse = ", "),
          call. = FALSE)
   }
   basis
@@ -144,6 +144,24 @@ check_init <- function(init, chains) {
     }
   }
   init
+}
+
+check_dir <- function(output_dir) {
+  if(!dir.exists(output_dir)) {
+    stop("Directory does not exist, please create it first (", output_dir, ")",
+         call. = FALSE)
+  }
+}
+
+check_file <- function(output_basename, model, model_variant) {
+  if(is.null(output_basename)) {
+    output_basename <- paste0("BBS_STAN_", model, "_", model_variant,
+                              "_", Sys.Date())
+  } else if(!is.na(ext(output_basename))) {
+    stop("`output_basename` should not have a file extension", call. = FALSE)
+  }
+
+  output_basename
 }
 
 #' Check for slope
@@ -258,7 +276,7 @@ check_regions <- function(regions, stratify_by, stratify_type,
   if(stratify_by %in% c("bcr", "latlong") &
      any(regions %in% c("country", "prov_state"))) {
     stop(msg,
-         "BCRs and lat-long degree block stratifications can not be divided ",
+         "BCRs and lat-long degree block stratifications cannot be divided ",
          "into regions with political boundaries ('country', 'prov_state').",
          call. = FALSE)
   }
@@ -266,7 +284,7 @@ check_regions <- function(regions, stratify_by, stratify_type,
   if(stratify_by == "prov_state" & "bcr" %in% regions){
     stop(msg,
          "The States and Provinces stratification",
-         "can not be divided into BCR regions.",
+         "cannot be divided into BCR regions.",
          call. = FALSE)
   }
 
@@ -345,6 +363,13 @@ check_species <- function(species, species_list, combine_species_forms,
 }
 
 check_spatial <- function(spatial_data, strata) {
+
+  if(is.null(spatial_data)) {
+    stop("When `model_variant = 'spatial'`, you must provide a list ",
+         "of neighbour nodes\n(created with `prepare_spatial()`) to ",
+         "`spatial_data`. ",
+         "See ?run_model for details", call. = FALSE)
+  }
 
   # Check for correct data
   check_data(spatial_data)

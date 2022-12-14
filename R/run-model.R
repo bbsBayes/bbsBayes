@@ -160,15 +160,7 @@ run_model <- function(prepped_data,
   model_data <- prepped_data$model_data
 
   if(model_variant == "spatial") {
-
-    if(is.null(spatial_data)) {
-      stop("When `model_variant = 'spatial'`, you must provide a list ",
-           "of neighbour nodes\n(created with `prepare_spatial()`) to ",
-           "`spatial_data`. ",
-           "See ?run_model for details", call. = FALSE)
-    }
     check_spatial(spatial_data, unique(prepped_data$raw_data$strata_name))
-
   } else if(!is.null(spatial_data)) {
     if(!quiet) message("Model isn't spatial, ignoring `spatial_data` argument")
   }
@@ -184,19 +176,9 @@ run_model <- function(prepped_data,
          call. = FALSE)
   }
 
-  # Check files and directory
-  if(!dir.exists(output_dir)) {
-    stop("'", output_dir, "' does not exist. Please create it first.",
-         call. = FALSE)
-  }
-
-  if(is.null(output_basename)) {
-    output_basename <- paste0("BBS_STAN_", model, "_", model_variant,
-                              "_", Sys.Date())
-  } else if(!is.na(ext(output_basename))) {
-    stop("`output_basename` should not have a file extension", call. = FALSE)
-  }
-
+  # Files and directory
+  check_dir(output_dir)
+  output_basename <- check_file(output_basename, model, model_variant)
 
   # Add model settings as parameters
   params <- model_params(
@@ -524,10 +506,7 @@ save_model_run <- function(model_output, path = NULL, quiet = FALSE) {
     if(!quiet) message("Saving model output to ", path)
   } else {
 
-    if(!dir.exists(dirname(path))) {
-      stop("Directory does not exist, please create it first (",
-           dirname(path), ")", call. = FALSE)
-    }
+    check_dir(dirname(path))
     if(ext(path) != "rds") {
       stop("File must have a .rds extension", call. = FALSE)
     }
@@ -578,16 +557,9 @@ save_model_run <- function(model_output, path = NULL, quiet = FALSE) {
 model_to_file <- function(model, model_variant, dir, overwrite = FALSE) {
 
   check_model(model, model_variant)
+  check_dir(dir)
 
-  if(!dir.exists(dir)) stop("Directory ", dir, " does not exist", call. = FALSE)
-
-  f <- dplyr::filter(bbsBayes::bbs_models, .data$model == .env$model,
-                     .data$variant == .env$model_variant) %>%
-    dplyr::pull(file) %>%
-    system.file("models", ., package = "bbsBayes")
-
-  if(!file.exists(f)) stop("Cannot find Stan file for model \"",
-                           model, " ", model_variant, "\"", call. = FALSE)
+  f <- check_model_file(model, model_variant)
 
   f_new <- stringr::str_replace(basename(f), ".stan", "_COPY.stan") %>%
     file.path(dir, .)
