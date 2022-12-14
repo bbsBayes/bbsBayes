@@ -9,25 +9,23 @@ coverage](https://codecov.io/gh/steffilazerte/bbsBayes/branch/master/graph/badge
 
 # bbsBayes <img src="man/figures/logo.png" align="right"/>
 
-This README file provides an overview of the functionality that can be
-accomplished with ‘bbsBayes’. It is intended to provide enough
-information for users to perform, at the very least, replications of
-status and trend estimates from the Canadian Wildlife Service and/or
-United States Geological Survey. However, it provides more in-depth and
-advanced examples for subsetting data, custom regional summaries, and
-more.
+bbsBayes is a package for performing hierarchical Bayesian analysis of
+North American Breeding Bird Survey (BBS) data. ‘bbsBayes’ will run a
+full model analysis for one or more species that you choose, or you can
+take more control and specify how the data should be stratified,
+prepared for Stan, or modelled.
 
-Additional resources: \* [Introductory bbsBayes
-Workshop](https://github.com/AdamCSmithCWS/bbsBayes_Intro_Workshop) \*
-[Journal Article with worked example](https://doi.org/10.5334/jors.329)
+Installation instructions are below.
 
-## Overview
+See the [documentation](https://steffilazerte.ca/bbsBayes) for an
+overview of how to use bbsBayes.
 
-bbsBayes is a package to perform hierarchical Bayesian analysis of North
-American Breeding Bird Survey (BBS) data. ‘bbsBayes’ will run a full
-model analysis for one or more species that you choose, or you can take
-more control and specify how the data should be stratified, prepared for
-Stan, or modelled.
+Additional resources:
+
+- [Introductory bbsBayes
+  Workshop](https://github.com/AdamCSmithCWS/bbsBayes_Intro_Workshop)
+- [Journal Article with worked
+  example](https://doi.org/10.5334/jors.329)
 
 <img src="man/figures/BARS_Continental_Trajectory.png"/>
 <img src="man/figures/BARS_trendmap.png"/>

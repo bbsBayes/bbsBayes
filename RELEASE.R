@@ -26,7 +26,7 @@ devtools::test()
 devtools::build_readme()
 
 # Compile articles and website
-# (only for checking! GitHub Actions will build automatically
+# (only for checking! GitHub Actions will build automatically)
 pkgdown::build_site(lazy = TRUE)
 pkgdown::build_article("articles/models_first_diff_nonhier")
 
