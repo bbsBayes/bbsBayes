@@ -75,6 +75,6 @@ jobs:
 
       - uses: r-lib/actions/check-r-package@v2
         with:
-          args: 'c("--ignore-vignettes")'
-          build_args: 'c("--no-build-vignettes")'
+          args: 'c("--ignore-vignettes", "--no-manual")'
+          build_args: 'c("--no-build-vignettes", "--no-manual")'
           upload-snapshots: true
