@@ -1,3 +1,11 @@
+test_that("check_bbs_data()", {
+  expect_error(check_bbs_data(release = 2022, level = "state"), "force") %>%
+    expect_message("Using data directory")
+  expect_silent(check_bbs_data(release = 2022, level = "state",
+                               force = TRUE, quiet = TRUE))
+
+})
+
 test_that("check_species()", {
 
   s_list <- load_bbs_data()$species
@@ -55,19 +63,29 @@ test_that("check_species()", {
     "Filtering to species unid. Dusky Grouse / Sooty Grouse \\(2973\\)")
   expect_equal(a, 2973)
 
+  expect_error(check_species("test", s_list), "Invalid species")
+
 })
 
 
 test_that("check_sf()", {
 
   map <- load_map("bbs_cws")
+  pts <- load_bbs_data(sample = TRUE)$routes %>%
+    sf::st_as_sf(coords = c("longitude", "latitude"))
 
   expect_silent(check_sf(NULL))
+  expect_silent(check_sf(map))
+
   expect_error(check_sf("Hi"), "must be an 'sf' spatial data frame")
   expect_error(check_sf(map[0,]), "Empty spatial data frame")
 
-  expect_silent(check_sf(map))
+  expect_silent(check_sf(dplyr::select(map, -"strata_name")))
+  expect_error(check_sf(dplyr::select(map, -"strata_name"), col = TRUE),
+               "missing column")
 
+  expect_silent(check_sf(pts))
+  expect_error(check_sf(pts, check_poly = TRUE), "must be comprised of")
 })
 
 test_that("check_strata()", {
@@ -125,7 +143,49 @@ test_that("check_strata()", {
 
 })
 
-test_that("model_to_file() and check_model_XXX()", {
+test_that("check_regions()", {
+
+  expect_silent(check_regions("country", "bbs_cws", "standard"))
+
+  bad <- dplyr::rename(bbs_strata[["bbs_cws"]], "strata" = "strata_name")
+  expect_error(check_regions("country", "bbs_cws", "standard",
+                             regions_index = bad), "must have a `strata_name`")
+
+  expect_error(check_regions("test", "bbs_cws", "standard"),
+               "must be any of")
+
+  expect_error(check_regions("country", "bcr", "standard"),
+               "cannot be divided into regions with political boundaries")
+  expect_error(check_regions("bcr", "prov_state", "standard"),
+               "cannot be divided into BCR regions")
+  expect_error(check_regions("bcr", "custom", "custom"),
+               "can only be divided into 'stratum' and 'continent'")
+
+})
+
+test_that("check_spatial()", {
+  p <- stratify(by = "bbs_cws", sample_data = TRUE) %>%
+    prepare_data()
+  s <- prepare_spatial(load_map("bbs_cws"), p)
+  s2 <- s
+  s2$strata_meta <- s2$strata_meta[-1,]
+
+  expect_silent(check_spatial(s, unique(p$raw_data$strata_name)))
+  expect_error(check_spatial(s, unique(p$raw_data$strata_name)[-1]),
+               "don't match")
+  expect_error(check_spatial(s2, unique(p$raw_data$strata_name)),
+               "don't match")
+  expect_error(check_spatial(NULL), "must provide a list of neighbour nodes")
+})
+
+test_that("model/model_file/model_variant checks", {
+
+  expect_error(check_basis(NULL), "No `basis` specified")
+  expect_error(check_basis("test"), "Invalid")
+  expect_error(check_model(model = NULL), "No `model` specified")
+  expect_error(check_model(model = "slope", model_variant = NULL),
+               "No `model_variant` specified")
+
 
   for(i in unique(bbs_models$variant)) expect_silent(check_model_variant(i))
   for(i in seq_len(nrow(bbs_models))) {
@@ -156,6 +216,31 @@ test_that("model_to_file() and check_model_XXX()", {
 
   unlink(f)
 })
+
+test_that("check_init()", {
+
+  expect_silent(check_init(list(a = 1:5, b = 1:5), chains = 2))
+
+  # Duplicates a single list
+  expect_message(i <- check_init(list(a = 1:5), chains = 2), "Assuming values")
+  expect_length(i, 2)
+})
+
+test_that("check_dir(), check_file()", {
+  dir <- "example_test_dir"
+
+  expect_error(check_dir(dir))
+  dir.create(dir)
+  expect_silent(check_dir(dir))
+  unlink(dir, recursive = TRUE)
+
+  expect_silent(check_file("test_name", "slope", "spatial")) %>%
+    expect_equal("test_name")
+  expect_silent(check_file(NULL, "slope", "spatial")) %>%
+    expect_equal(paste0("BBS_STAN_slope_spatial_", Sys.Date()))
+  expect_error(check_file("test_name.rds"), "should not have a file extension")
+})
+
 
 test_that("check_logical()", {
 
@@ -214,3 +299,9 @@ test_that("check_numeric()", {
 
 })
 
+test_that("check_in()", {
+  expect_silent(check_in(1, 1:10))
+  expect_silent(check_in("bbs_usgs", names(bbs_strata)))
+  expect_error(check_in(1, 20:30), "must be one of")
+  expect_error(check_in("test", LETTERS), "must be one of")
+})
