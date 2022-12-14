@@ -3,14 +3,40 @@
 \docType{data}
 \name{bbs_models}
 \alias{bbs_models}
-\title{List of models available}
+\title{Stan models included in bbsBayes}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 9 rows and 3 columns.
+\subsection{\code{bbs_models}}{
+
+A data frame with 9 rows and 3 columns:
+\itemize{
+\item \code{model} - Model type
+\itemize{
+\item \code{first_diff} - First difference models
+\item \code{gam} - General Additive Models (GAM)
+\item \code{gamye} - General Additive Models (GAM) with Year Effect
+\item \code{slope} - Slope models
+}
+\item \code{variant} - Variant of the model to run
+\itemize{
+\item \code{nonhier} - Non-hierarchical models
+(only available for first difference models)
+\item \code{hier} - Hierarchical models
+\item \code{spatial} - Spatial models
+}
+\item \code{file} - Stan model file name
+}
+}
 }
 \usage{
 bbs_models
 }
 \description{
-List of models available
+These models are included in bbsBayes. The model files themselves can be
+found by running \code{system.file("models", package = "bbsBayes")}.
+}
+\details{
+To create a custom Stan model, see \code{copy_model_file()} and the \code{model_file}
+argument of \code{run_model()}. See also the \href{https://steffilazerte.ca/bbsBayes/articles/models.html}{models article} for more
+details.
 }
 \keyword{datasets}

@@ -5,12 +5,22 @@
 \alias{pacific_wren_model}
 \title{Example model output}
 \format{
-An object of class \code{list} of length 4.
+\subsection{\code{pacific_wren_model}}{
+
+A list output from \code{run_model()} with 4 items
+\itemize{
+\item \code{model_fit} - The output from \code{cmdstanr::sample()}
+\item \code{meta_data} - Meta data related to the model run
+\item \code{meta_strata} - Meta data related to the strata
+\item \code{raw_data} - Data compiled by \code{prepare_data()}
+}
+}
 }
 \usage{
 pacific_wren_model
 }
 \description{
-Pacific wren model output
+Example model output from running a hierarchical first difference model
+on the included sample data for Pacific Wrens.
 }
 \keyword{datasets}

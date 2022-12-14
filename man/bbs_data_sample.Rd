@@ -5,12 +5,35 @@
 \alias{bbs_data_sample}
 \title{Sample BBS data}
 \format{
-An object of class \code{list} of length 3.
+\subsection{\code{bbs_data_sample}}{
+
+A list containing:
+\itemize{
+\item \code{birds} - counts of each bird seen per route per
+\item \code{routes} - data for each route run per year
+\item \code{species} - species list of North America
+}
+}
+}
+\source{
+\url{https://www.sciencebase.gov/} via \code{fetch_bbs_data()}
 }
 \usage{
 bbs_data_sample
 }
 \description{
 Contains only Pacific Wren data
+}
+\details{
+A sample dataset containing only data for Pacific Wrens for the 2022
+state-level BBS data. The full count set is obtained via the function
+\code{fetch_bbs_data()}. The data is obtained from the United States Geological
+Survey and is subject to change as new data is added each year. See
+References for citation.
+}
+\references{
+Ziolkowski Jr., D.J., Lutmerding, M., Aponte, V.I., and Hudson, M-A.R., 2022,
+North American Breeding Bird Survey Dataset 1966 - 2021: U.S. Geological
+Survey data release, https://doi.org/10.5066/P97WAZE5
 }
 \keyword{datasets}

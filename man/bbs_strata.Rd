@@ -3,18 +3,20 @@
 \docType{data}
 \name{bbs_strata}
 \alias{bbs_strata}
-\title{List of established strata}
+\title{List of included strata}
 \format{
-An object of class \code{list} of length 5.
+\subsection{\code{bbs_strata}}{
+
+A list of 5 data frames
+
+Contains \code{bbs_usgs}, \code{bbs_cws}, \code{bcr}, \code{latlong} and \code{prov_state}
+}
 }
 \usage{
 bbs_strata
 }
 \description{
-Each list item contains a data frame describing the strata for that
-stratification.
-}
-\details{
-Contains \code{bbs_usgs}, \code{bbs_cws}, \code{bcr}, \code{latlong} and \code{prov_state}
+List of strata included in bbsBayes. Each list item contains a data frame
+describing the strata for that stratification (name, area, country, etc.)
 }
 \keyword{datasets}

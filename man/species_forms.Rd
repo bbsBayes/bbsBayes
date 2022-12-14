@@ -5,13 +5,23 @@
 \alias{species_forms}
 \title{Species forms}
 \format{
-An object of class \code{data.frame} with 13 rows and 5 columns.
+\subsection{\code{species_forms}}{
+
+A data frame with 13 rows and 5 columns
+\itemize{
+\item \code{aou_unid} - The AOU id number which will identify the combined unidentified form
+\item \code{ensligh_original} - The English name of the original 'unidentified' form
+\item \code{english_combined} - The English name of the new 'combined' forms
+\item \code{french_combined} - The French name of the new 'combined' forms
+\item \code{aou_id} - The AOU id numbers of all the forms which will be combined
+}
+}
 }
 \usage{
 species_forms
 }
 \description{
-Data frame of species forms that will be combined if \code{combine_species_forms}
+Species forms which will be combined if \code{combine_species_forms}
 is \code{TRUE} in \code{stratify()}.
 }
 \keyword{datasets}

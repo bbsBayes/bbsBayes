@@ -65,6 +65,13 @@ reference:
   - assign_prov_state
   - remove_cache
 
+- title: Included data
+  contents:
+  - bbs_data_sample
+  - bbs_strata
+  - pacific_wren_model
+  - species_forms
+
 - title: "Deprecated/Defunct functions"
   contents:
   - bbsBayes-defunct
