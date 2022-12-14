@@ -1,3 +1,41 @@
+test_that("bbs_dir() location", {
+  skip_on_ci()
+  expect_silent(d <- bbs_dir()) %>%
+    expect_type("character")
+  expect_true(dir.exists(d))
+})
+
+test_that("have_bbs_data() / remove_cache()", {
+  skip_on_ci()
+  expect_message(h <- have_bbs_data(), "Expected BBS state data 2022")
+  expect_true(h)
+  expect_message(remove_cache(level = "state", release = 2022),
+                 paste0("Removing ", bbs_dir(), "bbs_state_data_2022.rds"))
+  expect_message(remove_cache(level = "state", release = 2022),
+                 "No data files to remove")
+  expect_message(h <- have_bbs_data(), "Expected BBS state data 2022")
+  expect_false(h)
+
+  # Models
+  model <- cmdstanr::cmdstan_model(check_model_file("first_diff", "hier"),
+                                   dir = bbs_dir())
+  expect_true("first_diff_hier_bbs_CV" %in% list.files(bbs_dir()))
+  expect_message(remove_cache(type = "models"), "Removing")
+  expect_message(remove_cache(type = "models"), "No data files to remove")
+  expect_false("first_diff_hier_bbs_CV" %in% list.files(bbs_dir()))
+
+  # Everything
+  expect_true(d <- dir.exists(bbs_dir()))
+  expect_message(remove_cache(type = "all"), "Removing all data files")
+  expect_false(dir.exists(d))
+})
+
+test_that("bbs_dir() creation", {
+  skip_on_ci()
+  expect_message(d <- bbs_dir(quiet = FALSE), "Creating data director")
+  expect_true(dir.exists(d))
+})
+
 test_that("get_XXXX()", {
 
   skip("Long running, only run as needed")
@@ -31,23 +69,28 @@ test_that("get_XXXX()", {
 
 })
 
-test_that("fetch bbs data", {
+test_that("fetch_bbs_data()", {
 
- skip("Long running, run by hand as needed")
+  skip_on_ci()
+
+  # Adjust level and release to run all as required
 
   # Clear all
-  expect_message(remove_bbs_data(cache_dir = TRUE), "Removing all")
+  #expect_message(remove_bbs_data(cache_dir = TRUE), "Removing all")
 
-  for(i in 1:2) {
-    for(j in 1:2) {
-    level <- c("stop", "state")[i]
-    release <- c(2020, 2022)[j]
-    f <- file.path(bbs_dir(), paste0("bbs_", level, "_data_", release, ".rds"))
+  level <- c("stop", "state") # Add [2] to test only "state"
+  release <- c(2020, 2022)    # Add [2] to test only 2022
+
+  for(l in level) {
+    for(r in release) {
+    f <- file.path(bbs_dir(), paste0("bbs_", l, "_data_", r, ".rds"))
     expect_false(file.exists(f))
-    expect_message(fetch_bbs_data(level = level, release = release))
+    expect_message(fetch_bbs_data_internal(
+      level = l, release = r, check_bbs_data(l, r, force = FALSE, quiet = FALSE),
+      force = FALSE, quiet = FALSE))
     expect_true(file.exists(f))
 
-    expect_silent(b <- load_bbs_data(level, release)) %>%
+    expect_silent(b <- load_bbs_data(l, r)) %>%
       expect_type("list") %>%
       expect_named(c("birds", "routes", "species", "meta"))
 
@@ -56,7 +99,7 @@ test_that("fetch bbs data", {
     expect_s3_class(b$species, "data.frame")
     expect_s3_class(b$meta, "data.frame")
 
-    expect_equal(b$meta$release, release)
+    expect_equal(b$meta$release, r)
     expect_equal(b$meta$download_date, Sys.Date())
     }
   }
