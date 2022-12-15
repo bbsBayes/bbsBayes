@@ -218,6 +218,13 @@ plot_geofacet <- function(indices,
     ggplot2::coord_cartesian(ylim = c(0, uplim)) +
     ggplot2::scale_fill_manual(values = map_palette)
 
+  # Add subtitle with year range
+  if(tr) {
+    if(slope) t <- "slope-based trends" else t <- "trends"
+    p <- p + ggplot2::labs(subtitle = paste0("with ", t, " (calulated for ",
+                                             unique(trends$start_year), "-",
+                                             unique(trends$end_year), ")"))
+  }
 
 
   if(add_observed_means){
