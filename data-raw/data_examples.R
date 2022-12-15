@@ -1,5 +1,5 @@
 # Example data - NEW -----------------------------------------------------
-d <- load_bbs_data(level = "state", release = 2020)
+d <- load_bbs_data()
 
 bbs_data_sample <- list(
   birds = dplyr::filter(d$birds, aou == 7221),

@@ -3,8 +3,8 @@ expect_silent({
   #20 iterations x 2 chains = 40
   n_iter <- r$model_fit$metadata()$iter_sampling * r$model_fit$num_chains()
 
-  n_yrs <- 52
-  n_strata <- 19
+  n_yrs <- 54
+  n_strata <- dplyr::n_distinct(r$raw_data$strata_name)
 })
 
 test_that("samples_to_array()", {
@@ -59,7 +59,7 @@ test_that("generate_indices()", {
 
   expect_s3_class(ix, "data.frame")
   expect_equal(nrow(ix), n_yrs * n_strata)
-  expect_true(all(ix$year %in% i[["raw_data"]]$year))
+  expect_true(all(i[["raw_data"]]$year %in% ix$year)) # Can be missing from raw
   expect_true(all(ix$region %in% i[["raw_data"]]$strata_name))
   expect_true(all(ix$region == ix$strata_included))
   expect_true(all(ix$strata_excluded == ""))
@@ -101,7 +101,7 @@ test_that("generate_indices(start_year)", {
   expect_equal(min(ix$year), 1995)
 
   # Samples for all samples x all years (fewer now)
-  expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(n_iter, 25)))
+  expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(n_iter, 27)))
   expect_true(all(ix$year %in% i1[["indices"]]$year))
 
   # Expect indices same for years which overlap (except n_routes_total)
@@ -186,7 +186,7 @@ test_that("generate_indices(regions_index)", {
   s <- i[["samples"]]
 
   expect_equal(nrow(ix), n_strata * n_yrs + 2 * n_yrs)
-  expect_true(all(ix$year %in% i[["raw_data"]]$year))
+  expect_true(all(i[["raw_data"]]$year %in% ix$year)) # Can have missing in raw_data
   expect_true(
     all(ix$region %in% c(i[["raw_data"]]$strata_name, "east", "west")))
   expect_true(all(ix$strata_excluded == ""))
@@ -225,7 +225,7 @@ test_that("generate_indices(alternate_n)", {
 
   expect_s3_class(ix, "data.frame")
   expect_equal(nrow(ix), n_strata * n_yrs)
-  expect_true(all(ix$year %in% i[["raw_data"]]$year))
+  expect_true(all(i[["raw_data"]]$year %in% ix$year)) # Can have missing in raw_data
   expect_true(all(ix$region %in% i[["raw_data"]]$strata_name))
   expect_true(all(ix$region == ix$strata_included))
   expect_true(all(ix$strata_excluded == ""))
