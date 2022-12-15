@@ -177,6 +177,43 @@ test_that("run_model() first_diff spatial", {
     unlink()
 })
 
+test_that("run_model() ... args", {
+
+  skip_on_ci() # Seeds not respected on GitHub Actions for unknown reasons
+
+  withr::local_seed(111)
+  unlink(list.files(test_path(), "BBS_STAN_first_diff_hier_",
+                    full.names = TRUE))
+
+  p <- stratify(by = "bbs_usgs", sample_data = TRUE, quiet = TRUE) %>%
+    prepare_data(min_max_route_years = 2)
+
+  expect_message(r <- run_model(p,
+                                model = "first_diff",
+                                output_dir = test_path(),
+                                chains = 2,
+                                iter_sampling = 5, iter_warmup = 5,
+                                refresh = 0,
+                                seed = 111,
+                                save_latent_dynamics = TRUE)) %>%
+    # Catch all messages and notes
+    suppressMessages() %>%
+    suppressWarnings() %>%
+    utils::capture.output()
+
+  paste0("first_diff_hier_bbs_CV-diagnostic-", 1:2, ".csv") %>%
+    test_path() %>%
+    file.exists() %>%
+    all() %>%
+    expect_true()
+
+  # Clean up
+  list.files(test_path(),
+             paste0("first_diff_hier_(.)*"), full.names = TRUE) %>%
+    unlink()
+})
+
+
 
 test_that("run_model() Full", {
 
