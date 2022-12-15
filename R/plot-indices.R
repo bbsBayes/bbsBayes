@@ -138,7 +138,7 @@ plot_indices <- function(indices = NULL,
         ggplot2::geom_point(data = to_plot,
                             ggplot2::aes(x = as.integer(.data$year),
                                          y = .data$obs_mean),
-                            colour = "grey60")
+                            colour = "grey60", na.rm = TRUE)
     }
 
     p <- p +

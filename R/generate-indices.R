@@ -293,6 +293,17 @@ generate_indices <- function(
       n_sub <- n[, unique(obs_region$strata_name), ] # Keep only good
     } else n_sub <- n
 
+
+    # Missing data (a missing year identified by n_not_missing = 0)
+    missing_yrs <- obs_region %>%
+      dplyr::ungroup() %>%
+      dplyr::select("strata", "year", "obs_mean") %>%
+      dplyr::distinct() %>%
+      dplyr::group_by(.data$year) %>%
+      dplyr::summarize(n_not_missing = sum(.data$obs_mean, na.rm = TRUE)) %>%
+      dplyr::filter(.data$n_not_missing == 0) %>%
+      dplyr::pull(.data$year)
+
     obs_region <- obs_region %>%
       dplyr::group_by(.data$strata_included, .data$strata_excluded,
                       .add = TRUE) %>%
@@ -319,9 +330,13 @@ generate_indices <- function(
 
     # Calculate data summaries for output
     indices <- obs_region %>%
-      #dplyr::left_join(calc_alt_names(rr, meta_strata), by = rr) %>%
-      dplyr::mutate(backcast_flag = 1 - .data$flag_year,
-                    region_type = .env$rr) %>%
+      dplyr::mutate(
+        backcast_flag = 1 - .data$flag_year,
+        region_type = .env$rr,
+        # Replace with NA, if entire year missing
+        obs_mean = dplyr::if_else(.data$year %in% .env$missing_yrs,
+                                  NA_real_,
+                                  .data$obs_mean)) %>%
       # Add in quantiles
       dplyr::left_join(tidyr::unnest(samples, "Q"), by = c(rr, "year")) %>%
       # Clean up

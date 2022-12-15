@@ -69,6 +69,10 @@ test_that("generate_indices()", {
   # Samples for all iterations x all years
   expect_true(all(vapply(s, FUN = dim, FUN.VALUE = c(1, 1)) == c(n_iter, n_yrs)))
 
+  # Missing years have NA obs_mean (only missing 2020, no others)
+  expect_true(all(is.na(ix$obs_mean[ix$year == 2020])))
+  expect_true(all(!is.na(ix$obs_mean[ix$year != 2020])))
+
   # Expect quantiles based on samples: Check a bunch of combinations
   year <- c(1, 20, 50)
   strat <- c("CA-AB-10", "US-AK-5", "US-WA-9")
