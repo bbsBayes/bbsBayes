@@ -305,6 +305,13 @@ test_that("generate_indices(max_backcast, drop_excluded)", {
   expect_false(any(dplyr::select(i1_sub, dplyr::contains("Index")) ==
                      dplyr::select(i2_diff, dplyr::contains("Index"))))
 
+  # number of routes / total number of routes might be less (never more)
+  # There should be at least some less
+  expect_true(all(i2_diff$n_routes <= i1_sub$n_routes))
+  expect_true(any(i2_diff$n_routes <  i1_sub$n_routes))
+  expect_true(all(i2_diff$n_routes_total <= i1_sub$n_routes_total))
+  expect_true(any(i2_diff$n_routes_total <  i1_sub$n_routes_total))
+
   # Expect the same where no exclusion
   i2_same <- dplyr::filter(i2[["indices"]], .data$strata_excluded == "")
   i1_sub <- dplyr::semi_join(i1[["indices"]], i2_same, by = c("year", "region"))
