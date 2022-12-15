@@ -125,7 +125,7 @@ st_write(strata_latlong, file.path(system.file("maps", package = "bbsBayes"),
 
 # Cannot include Mexico right now, as there is overlap between NL Canada and NL
 # Mexico
-prov_state_names <- format_ne_states() %>%
+prov_state_names <- bbsBayes:::format_ne_states() %>%
   st_drop_geometry()
 
 strata_prov_state <- "data-raw/maps_orig/BBS_ProvState_strata.shp" %>%

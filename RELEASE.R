@@ -2,9 +2,14 @@
 fetch_bbs_data_internal() # Run to ensure BBS data for examples
 
 # Update exported data -------------------------------------------------------
+# To run in the background
+
 source("data-raw/data_exported.R")
 source("data-raw/data_strata.R")
-source("data-raw/data_examples.R") # Creates example data and models (takes time to run)
+
+# Sometimes need to re-build and re-load package to make sure example data updated
+devtools::build()
+job::job({source("data-raw/data_examples.R")}) # Creates example data and models (takes time to run)
 
 
 # Checks ---------------------------------------------------------------------
