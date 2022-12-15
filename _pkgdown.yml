@@ -51,12 +51,15 @@ reference:
 - title: Indices and trends
   desc: Functions for generating indices and trends from models
   contents:
-  - starts_with("generate_")
+  - generate_indices
+  - generate_trends
 
 - title: Plots
   desc: Functions for plotting indices and trends
   contents:
-  - starts_with("plot_")
+  - plot_map
+  - plot_indices
+  - plot_geofacet
 
 - title: Helper functions
   contents:
