@@ -140,7 +140,7 @@ test_that("run_model() first_diff spatial", {
   p <- stratify(by = "bbs_usgs", sample_data = TRUE, quiet = TRUE) %>%
     prepare_data(min_max_route_years = 2)
 
-  s <- prepare_spatial(load_map("bbs_usgs"), prepped_data = p)
+  s <- prepare_spatial(load_map("bbs_usgs"), prepped_data = p, quiet = TRUE)
 
   expect_message(r <- run_model(p,
                                 model = "first_diff",
