@@ -198,6 +198,7 @@ run_model <- function(prepped_data,
          "model_variant" = model_variant,
          "model_file" = model_file,
          "run_date" = Sys.time(),
+         "bbsBayes_version" = as.character(packageVersion("bbsBayes")),
          "cmdstan_path" = cmdstanr::cmdstan_path(),
          "cmdstan_version" = cmdstanr::cmdstan_version()))
 
