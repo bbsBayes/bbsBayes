@@ -228,23 +228,26 @@ remove_cache <- function(type = "bbs_data", level, release) {
     message("Removing all data files (BBS data and Stan models) ",
             "and cache directory")
     unlink(bbs_dir(), recursive = TRUE)
-  } else if(type == "bbs_data") {
-    check_in(level, c("all", "state", "stop"))
-    check_release(release, all = TRUE)
+  } else {
 
-    if(level == "all") level <- c("state", "stop")
-    if(release == "all") release <- c("2020", "2022")
+    if(type == "bbs_data") {
+      check_in(level, c("all", "state", "stop"))
+      check_release(release, all = TRUE)
 
-    f <- file.path(bbs_dir(), paste0("bbs_", level, "_data_", release, ".rds"))
-    f <- f[file.exists(f)]
-  } else if(type == "models") {
-    f <- list.files(bbs_dir(), "CV$", full.names = TRUE)
+      if(level == "all") level <- c("state", "stop")
+      if(release == "all") release <- c("2020", "2022")
+
+      f <- file.path(bbs_dir(), paste0("bbs_", level, "_data_", release, ".rds"))
+      f <- f[file.exists(f)]
+    } else if(type == "models") {
+      f <- list.files(bbs_dir(), "CV$", full.names = TRUE)
+    }
+
+    if(length(f) > 0) {
+      message("Removing ", paste0(f, collapse = ", "), " from the cache")
+      unlink(f)
+    } else message("No data files to remove")
   }
-
-  if(length(f) > 0) {
-    message("Removing ", paste0(f, collapse = ", "), " from the cache")
-    unlink(f)
-  } else message("No data files to remove")
 }
 
 #' Check whether BBS data exists
