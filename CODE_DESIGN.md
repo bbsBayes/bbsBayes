@@ -23,6 +23,27 @@ making collaboration and future modifications easier.
 
 - Use `@noRd` to document internal functions (documentation for developers that
   isn't compiled into the docs)
+  
+- Some articles are pre-compiled to avoid super long CI building or other 
+  fragile issues
+  - Setup: https://ropensci.org/blog/2019/12/08/precompute-vignettes/
+    - Precompiled vignettes have ext `.Rmd.orig`, then are compiled to `.Rmd`
+      (all R code already run, so actually Vignette to HTML is super fast)
+  - In RELEASE.R there is a step for re-pre-compiling vignettes
+
+## Storing data
+- `bbs_dir()` figures out the folder in which to store data and creates it if 
+  needed. Use this function wherever that location is required (e.g., BBS data 
+  and model executables)
+- CRAN doesn't like rappdirs any more
+- As of R 4.0.0 CRAN wants packages to use `tools::R_user_dir()`, but this isn't
+  available to older versions of R.
+- Here we use the backports package to get access to this function
+  - We import backports package
+  - We specify which function to import (see `.onLoad()` in
+  `R/bbsBayes-package.R`
+  - We use `R_user_dir()` directly (no `pkg::`, see `bbs_dir()` in
+  `R/fetch-bbs-data.R`
 
 ## Checks
 - Check functions are named as `check_XXX()` and stored in the R/checks.R file
@@ -40,15 +61,16 @@ making collaboration and future modifications easier.
 - In general, see https://ggplot2.tidyverse.org/reference/tidyeval.html, and
   https://ggplot2.tidyverse.org/reference/tidyeval.html
 - To avoid CRAN checks, use `.data[["col_name"]]` or .data$col_name to reference
-  column names on the right-hand side of = inside tidyverse functions. Use `.env$var` to reference
-  environmental variables. e.g.,
+  column names on the right-hand side of = inside tidyverse functions. Use
+  `.env$var` to reference environmental variables. e.g.,
   `dplyr::mutate(mtcars, cyl = .data$hp * .data$am)` or
   `dplyr::mutate(mtcars, mpg = .data$mpg / .env$ratio)`
 - This also allows more complex programmatic expressions, e.g., in 
   `generate_indices()` we iterate over regions in a for loop.
     - `dplyr::group_by(.data[[rr]])` (note the lack of quotes, as we're calling
       the *value* or `rr`)
-    - `dplyr::mutate("{rr}" := as.character(.data[[rr]])` (more complex see above references)
+    - `dplyr::mutate("{rr}" := as.character(.data[[rr]])` (more complex see 
+      above references)
 
 ## sf related
 - Use `sf::st_agr(sf) <- "constant"` to tell sf that the variables are spatially 

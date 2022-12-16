@@ -24,4 +24,5 @@
       c("." # piping requires '.' at times
       )
     )
+  backports::import(pkgname, "R_user_dir", force = TRUE)
 }

@@ -170,7 +170,8 @@ get_sb_id <- function(release) {
 
 
 bbs_dir <- function(quiet = TRUE) {
-  d <- rappdirs::app_dir(appname = "bbsBayes")$data()
+
+  d <- R_user_dir("bbsBayes", which = "data") #imported from backports pkg
 
   if(!dir.exists(d)) {
     if(!quiet) message(paste0("Creating data directory at ", d))

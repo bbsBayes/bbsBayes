@@ -26,7 +26,8 @@ Imports:
     snakecase,
     stringr,
     tidyr (>= 1.2.0),
-    units (>= 0.8.0)
+    units (>= 0.8.0),
+    backports (>= 1.4.1)
 Depends: R (>= 3.5)
 SystemRequirements: CmdStan (https://mc-stan.org/users/interfaces/cmdstan)
 URL: https://github.com/BrandonEdwards/bbsBayes
