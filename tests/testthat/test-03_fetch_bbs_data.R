@@ -5,12 +5,14 @@ test_that("bbs_dir() location", {
   expect_true(dir.exists(d))
 })
 
+# These tests assume that you are starting with already having the most recent
+# BBS data downloaded
 test_that("have_bbs_data() / remove_cache()", {
   skip_on_ci()
   expect_message(h <- have_bbs_data(), "Expected BBS state data 2022")
   expect_true(h)
   expect_message(remove_cache(level = "state", release = 2022),
-                 paste0("Removing ", bbs_dir(), "bbs_state_data_2022.rds"))
+                 paste0("Removing ", bbs_dir(), "/bbs_state_data_2022.rds"))
   expect_message(remove_cache(level = "state", release = 2022),
                  "No data files to remove")
   expect_message(h <- have_bbs_data(), "Expected BBS state data 2022")
@@ -25,7 +27,7 @@ test_that("have_bbs_data() / remove_cache()", {
   expect_false("first_diff_hier_bbs_CV" %in% list.files(bbs_dir()))
 
   # Everything
-  expect_true(d <- dir.exists(bbs_dir()))
+  expect_true(dir.exists(d <- bbs_dir()))
   expect_message(remove_cache(type = "all"), "Removing all data files")
   expect_false(dir.exists(d))
 })
@@ -78,8 +80,8 @@ test_that("fetch_bbs_data()", {
   # Clear all
   #expect_message(remove_bbs_data(cache_dir = TRUE), "Removing all")
 
-  level <- c("stop", "state") # Add [2] to test only "state"
-  release <- c(2020, 2022)    # Add [2] to test only 2022
+  level <- c("stop", "state")[2] # Add [2] to test only "state"
+  release <- c(2020, 2022)[2]    # Add [2] to test only 2022
 
   for(l in level) {
     for(r in release) {
@@ -87,7 +89,17 @@ test_that("fetch_bbs_data()", {
     expect_false(file.exists(f))
     expect_message(fetch_bbs_data_internal(
       level = l, release = r, check_bbs_data(l, r, force = FALSE, quiet = FALSE),
-      force = FALSE, quiet = FALSE))
+      force = FALSE, quiet = FALSE), "Using data director") %>%
+      expect_message("Connecting to USGS") %>%
+      expect_message("Connected!") %>%
+      expect_message("Downloading count data") %>%
+      expect_message("Downloading route data") %>%
+      expect_message("routes") %>%
+      expect_message("weather") %>%
+      expect_message("Downloading species data") %>%
+      expect_message("Combining species forms") %>%
+      expect_message("Saving BBS data") %>%
+      expect_message("Removing temp files")
     expect_true(file.exists(f))
 
     expect_silent(b <- load_bbs_data(l, r)) %>%

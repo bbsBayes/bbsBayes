@@ -164,9 +164,9 @@ test_that("check_regions()", {
 })
 
 test_that("check_spatial()", {
-  p <- stratify(by = "bbs_cws", sample_data = TRUE) %>%
+  p <- stratify(by = "bbs_cws", sample_data = TRUE, quiet = TRUE) %>%
     prepare_data()
-  s <- prepare_spatial(load_map("bbs_cws"), p)
+  s <- prepare_spatial(load_map("bbs_cws"), p, quiet = TRUE)
   s2 <- s
   s2$strata_meta <- s2$strata_meta[-1,]
 
