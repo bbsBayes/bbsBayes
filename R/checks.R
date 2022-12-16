@@ -147,7 +147,7 @@ check_init <- function(init, chains) {
 }
 
 check_dir <- function(output_dir) {
-  if(!dir.exists(output_dir)) {
+  if(!inherits(output_dir, "character") || !dir.exists(output_dir)) {
     stop("Directory does not exist, please create it first (", output_dir, ")",
          call. = FALSE)
   }
@@ -157,6 +157,10 @@ check_file <- function(output_basename, model, model_variant) {
   if(is.null(output_basename)) {
     output_basename <- paste0("BBS_STAN_", model, "_", model_variant,
                               "_", Sys.Date())
+  } else if(!inherits(output_basename, "character")) {
+    stop("`output_basename` should be a text string indicating the name of ",
+         "the file to create (no extension)", call. = FALSE)
+
   } else if(!is.na(ext(output_basename))) {
     stop("`output_basename` should not have a file extension", call. = FALSE)
   }
@@ -249,6 +253,12 @@ check_strata <- function(strata, custom = NULL, simple = FALSE,
   if(!quiet) message("Using '", strata, "' (", type, ") stratification")
 
   c(strata, type)
+}
+
+check_release <- function(release, all = FALSE) {
+  chk <- c("2020", "2022")
+  if(all) chk <- c("all", chk)
+  check_in(release, chk)
 }
 
 check_regions <- function(regions, stratify_by, stratify_type,
@@ -468,7 +478,7 @@ check_in <- function(arg, opts) {
 check_range <- function(arg, range) {
   if(!all(arg >= range[1] & arg <= range[2])) {
     stop("`", deparse(substitute(arg)),"` ",
-         "must be range between ", range[1], " and ", range[2],
+         "must range between ", range[1], " and ", range[2],
          call. = FALSE)
   }
 }

@@ -20,6 +20,11 @@
 load_bbs_data <- function(level = "state", release = 2022,
                           sample = FALSE, quiet = TRUE) {
 
+  # Checks
+  check_in(level, c("state", "stop"))
+  check_release(release)
+  check_logical(sample, quiet)
+
   # Return sample data
   if(sample) {
     if(!quiet) message("Using sample BBS data...")

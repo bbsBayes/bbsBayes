@@ -42,7 +42,7 @@ fetch_bbs_data <- function(level = "state",
                            compression = "none") {
 
   check_in(level, c("state", "stop"))
-  check_in(release, c(2020, 2022))
+  check_release(release)
 
   check_logical(c(quiet, force))
 
@@ -214,7 +214,7 @@ bbs_dir <- function(quiet = TRUE) {
 #' remove_cache(level = "stop", release = "all")
 #'
 #' # Remove all 2020 data
-#' remoremove_cacheve_bbs_data(level = "all", release = 2020)
+#' remove_cache(level = "all", release = 2020)
 #'
 #' # Remove 2020 stop data
 #' remove_cache(level = "stop", release = 2020)
@@ -230,7 +230,7 @@ remove_cache <- function(type = "bbs_data", level, release) {
     unlink(bbs_dir(), recursive = TRUE)
   } else if(type == "bbs_data") {
     check_in(level, c("all", "state", "stop"))
-    check_in(release, c("all", 2020, 2022))
+    check_release(release, all = TRUE)
 
     if(level == "all") level <- c("state", "stop")
     if(release == "all") release <- c("2020", "2022")
@@ -256,7 +256,7 @@ remove_cache <- function(type = "bbs_data", level, release) {
 #' @export
 have_bbs_data <- function(level = "state", release = 2022, quiet = FALSE){
   check_in(level, c("all", "state", "stop"))
-  check_in(release, c("all", 2020, 2022))
+  check_release(release, all = TRUE)
 
   if(level == "all") level <- c("state", "stop")
   if(release == "all") release <- c("2020", "2022")

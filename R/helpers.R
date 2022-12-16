@@ -3,9 +3,9 @@
 #' A helper function for finding the appropriate species name for use in
 #' `stratify()`.
 #'
-#' @param species Character. Search term, either name in English or French, AOU
-#'   code, or scientific genus or species. Matches by regular expression but all
-#'   lower case.
+#' @param species Character/Numeric. Search term, either name in English or
+#'   French, AOU code, or scientific genus or species. Matches by regular
+#'   expression but ignores case.
 #' @param combine_species_forms Logical. Whether or not to search the combined
 #'   species data or the uncombined species. Note that this results in different
 #'   species names.
@@ -20,6 +20,9 @@
 #' search_species("chickadee")
 #' search_species("mésang")
 #' search_species("Poecile")
+#' search_species(7360)
+#' search_species(73)
+#' search_species("^73") # Use regex to match aou codes starting with 73
 #' search_species("blue grouse")
 #' search_species("sooty grouse")
 #'
@@ -30,6 +33,12 @@
 #' search_species("northern flicker", combine_species_forms = FALSE)
 #'
 search_species <- function(species, combine_species_forms = TRUE) {
+
+  if(!inherits(species, c("character", "numeric"))) {
+    stop("`species` must be either a text string or number to match against ",
+         "species names or AOU codes", call. = FALSE)
+  }
+  check_logical(combine_species_forms)
   sp_list <- load_bbs_data()$species %>%
     dplyr::filter(.data$unid_combined == .env$combine_species_forms)
 
@@ -140,10 +149,14 @@ assign_prov_state <- function(strata_map, min_overlap = 0.75, plot = FALSE,
                               keep_spatial = TRUE) {
 
   # Checks
-  if(min_overlap <= 0.5) {
-    stop("`min_overlap` must be greater than 0.5 (50%)", call. = FALSE)
-  }
   check_sf(strata_map)
+  check_numeric(min_overlap)
+  check_logical(plot, keep_spatial)
+
+  if(min_overlap <= 0.5 | min_overlap > 1) {
+    stop("`min_overlap` must be betwen 0.5 and 1.0 (50-100%)", call. = FALSE)
+  }
+
 
   ps <- format_ne_states() %>%
     dplyr::select("prov_state", "country", "country_code", "province_state") %>%

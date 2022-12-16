@@ -78,4 +78,11 @@ plot_geofacet(i, multiple = TRUE)
 plot_geofacet(i, trends = t, multiple = FALSE)
 plot_geofacet(i, multiple = FALSE)
 
+# With different ci_width, specify desired quantiles in indices
+i <- generate_indices(pacific_wren_model,
+                      regions = c("stratum", "prov_state"),
+                      quantiles = c(0.005, 0.995))
+
+plot_geofacet(i, multiple = FALSE, ci_width = 0.99)
+
 }

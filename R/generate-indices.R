@@ -140,6 +140,9 @@ generate_indices <- function(
 
   # Checks
   check_data(model_output)
+  check_numeric(quantiles)
+  check_numeric(start_year, max_backcast, allow_null = TRUE)
+  check_logical(drop_exclude, quiet)
 
   # Get data
   stratify_by <- model_output$meta_data$stratify_by
@@ -148,9 +151,7 @@ generate_indices <- function(
   meta_strata <- model_output$meta_strata
 
   check_regions(regions, stratify_by, stratify_type, regions_index)
-  check_numeric(quantiles)
-  check_numeric(start_year, max_backcast, allow_null = TRUE)
-  check_logical(drop_exclude, quiet)
+
 
   # Start years
   if(!is.null(start_year)){

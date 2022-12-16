@@ -79,9 +79,12 @@ plot_indices <- function(indices = NULL,
   if(!missing(species)) dep_stop("3.0.0", "species", "`title`")
 
 
-
-  # CHECKS
+  # Checks
   check_data(indices)
+  check_logical(title, add_observed_means, add_number_routes)
+  check_numeric(ci_width, title_size, axis_title_size, axis_text_size, line_width)
+  check_numeric(min_year, max_year, allow_null = TRUE)
+  check_range(ci_width, c(0.001, 0.999))
 
   species <- indices$meta_data$species
   indices <- indices$indices %>%

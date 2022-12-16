@@ -7,9 +7,9 @@
 search_species(species, combine_species_forms = TRUE)
 }
 \arguments{
-\item{species}{Character. Search term, either name in English or French, AOU
-code, or scientific genus or species. Matches by regular expression but all
-lower case.}
+\item{species}{Character/Numeric. Search term, either name in English or
+French, AOU code, or scientific genus or species. Matches by regular
+expression but ignores case.}
 
 \item{combine_species_forms}{Logical. Whether or not to search the combined
 species data or the uncombined species. Note that this results in different
@@ -29,6 +29,9 @@ search_species("Paridae")
 search_species("chickadee")
 search_species("mésang")
 search_species("Poecile")
+search_species(7360)
+search_species(73)
+search_species("^73") # Use regex to match aou codes starting with 73
 search_species("blue grouse")
 search_species("sooty grouse")
 

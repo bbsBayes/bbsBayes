@@ -136,6 +136,8 @@ stratify <- function(by,
   stratify_by <- by[1]
   stratify_type <- by[2]
   if(!inherits(strata_custom, "data.frame")) check_sf(strata_custom, col = TRUE)
+  check_logical(combine_species_forms, sample_data, quiet)
+  check_release(release)
 
   # Load BBS Data (full or sample)
   bbs_data <- load_bbs_data(release = release, sample = sample_data,

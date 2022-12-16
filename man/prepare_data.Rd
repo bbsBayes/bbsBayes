@@ -35,10 +35,14 @@ year in data.}
 has been observed. Defaults to 3}
 
 \item{min_max_route_years}{Required minimum number of years with non-zero
-observations of species on at least 1 route. Defaults to 3}
+observations of species on at least 1 route. Defaults to 3. Only retain
+strata with at least one route where the species was observed at least once
+in this many years.}
 
 \item{min_mean_route_years}{Required minimum average of years per route with
-the species observed. Defaults to 1.}
+the species observed. Defaults to 1. Only retain strata where the average
+number of years the species was observed per route is greater than this
+value.}
 
 \item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
 

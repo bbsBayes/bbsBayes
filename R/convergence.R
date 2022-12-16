@@ -18,6 +18,8 @@
 
 get_convergence <- function(model_output, variables = NULL) {
 
+  check_data(model_output)
+
   draws <- model_output$model_fit$draws(variables)
 
   # Calculate convergence metrics on *each* variable
@@ -57,6 +59,9 @@ get_convergence <- function(model_output, variables = NULL) {
 #' get_model_vars(pacific_wren_model, all = TRUE)
 #'
 get_model_vars <- function(model_output, all = FALSE) {
+
+  check_data(model_output)
+
   v <- model_output$model_fit$draws() %>%
     posterior::variables()
 
@@ -84,5 +89,8 @@ get_model_vars <- function(model_output, all = FALSE) {
 #' get_summary(pacific_wren_model, variables = "strata_raw[9]")
 #'
 get_summary <- function(model_output, variables = NULL) {
+
+  check_data(model_output)
+
   model_output$model_fit$summary(variables)
 }

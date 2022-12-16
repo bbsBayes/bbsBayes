@@ -92,6 +92,7 @@ prepare_data <- function(strata_data,
   check_data(strata_data)
   check_numeric(min_year, max_year, allow_null = TRUE)
   check_numeric(min_n_routes, min_max_route_years, min_mean_route_years)
+  check_logical(quiet)
 
   # Get observations of interest
   obs <- strata_data$birds_strata %>%

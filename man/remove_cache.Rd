@@ -39,7 +39,7 @@ remove_cache(level = "all", release = "all")
 remove_cache(level = "stop", release = "all")
 
 # Remove all 2020 data
-remoremove_cacheve_bbs_data(level = "all", release = 2020)
+remove_cache(level = "all", release = 2020)
 
 # Remove 2020 stop data
 remove_cache(level = "stop", release = 2020)

@@ -43,8 +43,9 @@ plot_map <- function(trends,
   if(!missing(stratify_by)) dep_stop("3.0.0", "stratify_by")
   if(!missing(select)) dep_stop("3.0.0", "select")
 
-  # Checks --- MORE
+  # Checks
   check_data(trends)
+  check_logical(slope, title, col_viridis)
 
   stratify_by <- trends[["meta_data"]]$stratify_by
   species <- trends[["meta_data"]]$species

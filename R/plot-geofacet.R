@@ -48,6 +48,13 @@
 #' plot_geofacet(i, trends = t, multiple = FALSE)
 #' plot_geofacet(i, multiple = FALSE)
 #'
+#' # With different ci_width, specify desired quantiles in indices
+#' i <- generate_indices(pacific_wren_model,
+#'                       regions = c("stratum", "prov_state"),
+#'                       quantiles = c(0.005, 0.995))
+#'
+#' plot_geofacet(i, multiple = FALSE, ci_width = 0.99)
+#'
 #' @export
 
 
@@ -70,8 +77,12 @@ plot_geofacet <- function(indices,
   if(!missing(species)) dep_stop("3.0.0", "species")
   if(!missing(select)) dep_stop("3.0.0", "select")
 
-  # CHECKS
+  # Checks
   check_data(indices)
+  check_logical(multiple, slope, add_observed_means, col_viridis)
+  check_numeric(ci_width)
+  check_range(ci_width, c(0.001, 0.999))
+
   stratify_by <- indices[["meta_data"]]$stratify_by
 
   if(!"prov_state" %in% names(indices$meta_strata)) {
@@ -92,6 +103,8 @@ plot_geofacet <- function(indices,
 
   # Check trends if present
   if(!is.null(trends)) {
+
+    check_data(trends)
 
     if(any(unlist(trends$meta_data) != unlist(indices$meta_data))) {
       stop("`trends` data must have been created from the same `indices` ",
@@ -231,7 +244,7 @@ plot_geofacet <- function(indices,
     p <- p +
       ggplot2::geom_point(
         ggplot2::aes(x = .data$year, y = .data$obs_mean, group = .data$group),
-        colour = "grey60", size = 0.5, alpha = alpha_ribbon)
+        colour = "grey60", size = 0.5, alpha = alpha_ribbon, na.rm = TRUE)
   }
 
   # Add final geofacetting
