@@ -21,7 +21,7 @@ articles:
 - title: Model runs
   desc: Articles to illustrate the various models and for testing
   contents:
-  - articles/models_first_diff_nonhier
+  - starts_with("articles/models_")
 
 reference:
 - title: BBS Data
