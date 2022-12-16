@@ -1,8 +1,8 @@
 ---
-title: "Models: First Difference Non-hierarchical"
+title: "Models: GAM Spatial"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Models: First Difference Non-hierarchical}
+  %\VignetteIndexEntry{Models: GAM Spatial}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -37,43 +37,61 @@ s <- stratify(by = "bbs_cws", sample = TRUE)
 p <- prepare_data(s, min_max_route_years = 2)
 ```
 
+### Prepare spatial
+
+```r
+map <- load_map("bbs_cws")
+ggplot(map, aes(fill = strata_name)) +
+  geom_sf(show.legend = FALSE)
+```
+
+<img src="figures/gam_spatial_unnamed-chunk-5-1.png" alt="Map of North America show the CWS spatial stratification divisions as different colours"  />
+
+```r
+
+n <- prepare_spatial(map, p)
+#> Preparing spatial data...
+#> Identifying neighbours (non-Voronoi method)...
+#> Formating neighbourhood matrices...
+#> Plotting neighbourhood matrices...
+```
+
 ## Run model
 
 ```r
 m <- run_model(prepped_data = p,
-               model = "first_diff",
-               model_variant = "nonhier",
+               model = "gam",
+               model_variant = "spatial",
+               spatial_data = n,
                iter_sampling = 10, iter_warmup = 10, chains = 2)
-#> Warning: Non-hierarchial models are generally not recommended (see ?bbs_models), but provided for
-#> compatibility with USGS methods
-#> Model executable is up to date!
-#> Running MCMC with 2 chains, at most 4 in parallel...
+#> Compiling Stan program...
+#> -\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/ Running MCMC with 2 chains, at most 4 in parallel...
 #> 
 #> Chain 1 WARNING: No variance estimation is 
 #> Chain 1          performed for num_warmup < 20 
 #> Chain 1 Iteration:  1 / 20 [  5%]  (Warmup)
 #> Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
-#> Chain 1 Exception: neg_binomial_2_log_lpmf: Precision parameter is 0, but must be positive finite! (in '/tmp/RtmpFromXy/model-f841c35dd86.stan', line 228, column 3 to column 40)
+#> Chain 1 Exception: neg_binomial_2_log_lpmf: Precision parameter is 0, but must be positive finite! (in '/tmp/RtmpFromXy/model-f841294c6671.stan', line 230, column 3 to column 40)
 #> Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
 #> Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
 #> Chain 1
 #> Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
-#> Chain 1 Exception: neg_binomial_2_log_lpmf: Precision parameter is 0, but must be positive finite! (in '/tmp/RtmpFromXy/model-f841c35dd86.stan', line 228, column 3 to column 40)
+#> Chain 1 Exception: neg_binomial_2_log_lpmf: Precision parameter is 0, but must be positive finite! (in '/tmp/RtmpFromXy/model-f841294c6671.stan', line 230, column 3 to column 40)
 #> Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
 #> Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
 #> Chain 1
 #> Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
-#> Chain 1 Exception: neg_binomial_2_log_lpmf: Precision parameter is 0, but must be positive finite! (in '/tmp/RtmpFromXy/model-f841c35dd86.stan', line 228, column 3 to column 40)
+#> Chain 1 Exception: neg_binomial_2_log_lpmf: Precision parameter is 0, but must be positive finite! (in '/tmp/RtmpFromXy/model-f841294c6671.stan', line 230, column 3 to column 40)
 #> Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
 #> Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
 #> Chain 1
 #> Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
-#> Chain 1 Exception: neg_binomial_2_log_lpmf: Log location parameter[1] is -inf, but must be finite! (in '/tmp/RtmpFromXy/model-f841c35dd86.stan', line 228, column 3 to column 40)
+#> Chain 1 Exception: neg_binomial_2_log_lpmf: Precision parameter is 0, but must be positive finite! (in '/tmp/RtmpFromXy/model-f841294c6671.stan', line 230, column 3 to column 40)
 #> Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
 #> Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
 #> Chain 1
 #> Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
-#> Chain 1 Exception: neg_binomial_2_log_lpmf: Precision parameter is 0, but must be positive finite! (in '/tmp/RtmpFromXy/model-f841c35dd86.stan', line 228, column 3 to column 40)
+#> Chain 1 Exception: neg_binomial_2_log_lpmf: Precision parameter is 0, but must be positive finite! (in '/tmp/RtmpFromXy/model-f841294c6671.stan', line 230, column 3 to column 40)
 #> Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
 #> Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
 #> Chain 1
@@ -81,43 +99,41 @@ m <- run_model(prepped_data = p,
 #> Chain 2          performed for num_warmup < 20 
 #> Chain 2 Iteration:  1 / 20 [  5%]  (Warmup)
 #> Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
-#> Chain 2 Exception: neg_binomial_2_log_lpmf: Precision parameter is 0, but must be positive finite! (in '/tmp/RtmpFromXy/model-f841c35dd86.stan', line 228, column 3 to column 40)
+#> Chain 2 Exception: neg_binomial_2_log_lpmf: Precision parameter is 0, but must be positive finite! (in '/tmp/RtmpFromXy/model-f841294c6671.stan', line 230, column 3 to column 40)
 #> Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
 #> Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
 #> Chain 2
 #> Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
-#> Chain 2 Exception: neg_binomial_2_log_lpmf: Precision parameter is 0, but must be positive finite! (in '/tmp/RtmpFromXy/model-f841c35dd86.stan', line 228, column 3 to column 40)
+#> Chain 2 Exception: neg_binomial_2_log_lpmf: Precision parameter is 0, but must be positive finite! (in '/tmp/RtmpFromXy/model-f841294c6671.stan', line 230, column 3 to column 40)
 #> Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
 #> Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
 #> Chain 2
 #> Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
-#> Chain 2 Exception: neg_binomial_2_log_lpmf: Precision parameter is 0, but must be positive finite! (in '/tmp/RtmpFromXy/model-f841c35dd86.stan', line 228, column 3 to column 40)
+#> Chain 2 Exception: neg_binomial_2_log_lpmf: Precision parameter is 0, but must be positive finite! (in '/tmp/RtmpFromXy/model-f841294c6671.stan', line 230, column 3 to column 40)
 #> Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
 #> Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
 #> Chain 2
 #> Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
-#> Chain 2 Exception: neg_binomial_2_log_lpmf: Log location parameter[1645] is -inf, but must be finite! (in '/tmp/RtmpFromXy/model-f841c35dd86.stan', line 228, column 3 to column 40)
+#> Chain 2 Exception: neg_binomial_2_log_lpmf: Precision parameter is 0, but must be positive finite! (in '/tmp/RtmpFromXy/model-f841294c6671.stan', line 230, column 3 to column 40)
 #> Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
 #> Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
 #> Chain 2
 #> Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
-#> Chain 2 Exception: neg_binomial_2_log_lpmf: Precision parameter is 0, but must be positive finite! (in '/tmp/RtmpFromXy/model-f841c35dd86.stan', line 228, column 3 to column 40)
+#> Chain 2 Exception: neg_binomial_2_log_lpmf: Precision parameter is 0, but must be positive finite! (in '/tmp/RtmpFromXy/model-f841294c6671.stan', line 230, column 3 to column 40)
 #> Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
 #> Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
 #> Chain 2
-#> Chain 1 Iteration: 11 / 20 [ 55%]  (Sampling) 
 #> Chain 2 Iteration: 11 / 20 [ 55%]  (Sampling) 
-#> Chain 1 Iteration: 20 / 20 [100%]  (Sampling) 
-#> Chain 1 finished in 12.5 seconds.
+#> Chain 1 Iteration: 11 / 20 [ 55%]  (Sampling) 
 #> Chain 2 Iteration: 20 / 20 [100%]  (Sampling) 
-#> Chain 2 finished in 13.9 seconds.
+#> Chain 1 Iteration: 20 / 20 [100%]  (Sampling) 
+#> Chain 2 finished in 17.1 seconds.
+#> Chain 1 finished in 17.2 seconds.
 #> 
 #> Both chains finished successfully.
-#> Mean chain execution time: 13.2 seconds.
-#> Total execution time: 14.0 seconds.
-#> Warning: 2 of 2 chains had an E-BFMI less than 0.2.
-#> See https://mc-stan.org/misc/warnings for details.
-#> Saving model output to /home/steffi/Projects/Business/ECCC/bbsBayes/vignettes/articles/BBS_STAN_first_diff_nonhier_2022-12-16_01.rds
+#> Mean chain execution time: 17.1 seconds.
+#> Total execution time: 17.3 seconds.
+#> Saving model output to /home/steffi/Projects/Business/ECCC/bbsBayes/vignettes/articles/BBS_STAN_gam_spatial_2022-12-16_01.rds
 ```
 
 ## Explore results
@@ -128,20 +144,20 @@ m <- run_model(prepped_data = p,
 ```r
 conv <- get_convergence(m)
 conv
-#> # A tibble: 10,352 × 5
+#> # A tibble: 8,803 × 5
 #>    variable_type variable       rhat ess_bulk ess_tail
 #>    <chr>         <chr>         <dbl>    <dbl>    <dbl>
-#>  1 lp__          lp__           2.28       10       10
-#>  2 strata_raw    strata_raw[1]  1.46       10       10
-#>  3 strata_raw    strata_raw[2]  1.13       10       10
-#>  4 strata_raw    strata_raw[3]  1.25       10       10
-#>  5 strata_raw    strata_raw[4]  1.74       10       10
-#>  6 strata_raw    strata_raw[5]  1.43       10       10
-#>  7 strata_raw    strata_raw[6]  1.74       10       10
-#>  8 strata_raw    strata_raw[7]  1.42       10       10
-#>  9 strata_raw    strata_raw[8]  1.81       10       10
-#> 10 strata_raw    strata_raw[9]  1.40       10       10
-#> # … with 10,342 more rows
+#>  1 lp__          lp__          1.48        10       10
+#>  2 strata_raw    strata_raw[1] 1.27        10       10
+#>  3 strata_raw    strata_raw[2] 0.990       10       10
+#>  4 strata_raw    strata_raw[3] 1.13        10       10
+#>  5 strata_raw    strata_raw[4] 1.09        10       10
+#>  6 strata_raw    strata_raw[5] 1.15        10       10
+#>  7 strata_raw    strata_raw[6] 1.00        10       10
+#>  8 strata_raw    strata_raw[7] 1.18        10       10
+#>  9 strata_raw    strata_raw[8] 1.45        10       10
+#> 10 strata_raw    strata_raw[9] 1.29        10       10
+#> # … with 8,793 more rows
 ```
 
 ### Indices
@@ -165,7 +181,7 @@ p <- plot_indices(i, add_observed_means = TRUE)
 patchwork::wrap_plots(p, ncol = 3)
 ```
 
-<img src="figures/first_diff_nonhier_unnamed-chunk-8-1.png" alt="Grid of plots showing model indices over years for each regional division with blue lines and blue-grey ribbons to indicate the confidence intervals."  />
+<img src="figures/gam_spatial_unnamed-chunk-9-1.png" alt="Grid of plots showing model indices over years for each regional division with blue lines and blue-grey ribbons to indicate the confidence intervals."  />
 
 ### Trends
 
@@ -174,7 +190,7 @@ t <- generate_trends(indices = i)
 plot_map(trends = t)
 ```
 
-<img src="figures/first_diff_nonhier_unnamed-chunk-9-1.png" alt="Map of North America showing the stratification areas colour-coded by trend."  />
+<img src="figures/gam_spatial_unnamed-chunk-10-1.png" alt="Map of North America showing the stratification areas colour-coded by trend."  />
 
 
 ### Geofacet plots
@@ -183,14 +199,14 @@ plot_map(trends = t)
 plot_geofacet(indices = i, trends = t)
 ```
 
-<img src="figures/first_diff_nonhier_unnamed-chunk-10-1.png" alt="A grid of plots in the shap of North America, with one plot per province or state. Each plot shows the indices over time."  />
+<img src="figures/gam_spatial_unnamed-chunk-11-1.png" alt="A grid of plots in the shap of North America, with one plot per province or state. Each plot shows the indices over time."  />
 
 ## Reproducibility and Clean up
 
 ```r
 list.files(pattern = "csv|rds")
-#> [1] "BBS_STAN_first_diff_nonhier_2022-12-16_01.rds" "BBS_STAN_first_diff_nonhier_2022-12-16-1.csv" 
-#> [3] "BBS_STAN_first_diff_nonhier_2022-12-16-2.csv"
+#> [1] "BBS_STAN_gam_spatial_2022-12-16_01.rds" "BBS_STAN_gam_spatial_2022-12-16-1.csv" 
+#> [3] "BBS_STAN_gam_spatial_2022-12-16-2.csv"
 unlink(list.files(pattern = "csv|rds"))
 ```
 
@@ -279,11 +295,14 @@ devtools::session_info()
 #>  lifecycle        1.0.3   2022-10-07 [1] CRAN (R 4.2.1)
 #>  lintr            3.0.0   2022-06-13 [1] CRAN (R 4.2.1)
 #>  magrittr         2.0.3   2022-03-30 [1] CRAN (R 4.2.0)
+#>  Matrix           1.4-1   2022-03-23 [4] CRAN (R 4.1.3)
 #>  matrixStats      0.62.0  2022-04-19 [1] CRAN (R 4.2.0)
 #>  memoise          2.0.1   2021-11-26 [1] CRAN (R 4.2.0)
+#>  mgcv             1.8-40  2022-03-29 [4] CRAN (R 4.1.3)
 #>  mime             0.12    2021-09-28 [1] CRAN (R 4.2.0)
 #>  miniUI           0.1.1.1 2018-05-18 [1] CRAN (R 4.2.0)
 #>  munsell          0.5.0   2018-06-12 [1] CRAN (R 4.2.0)
+#>  nlme             3.1-157 2022-03-25 [1] CRAN (R 4.2.0)
 #>  patchwork      * 1.1.1   2020-12-17 [1] CRAN (R 4.2.0)
 #>  pillar           1.7.0   2022-02-01 [1] CRAN (R 4.2.0)
 #>  pkgbuild         1.4.0   2022-11-27 [1] CRAN (R 4.2.1)

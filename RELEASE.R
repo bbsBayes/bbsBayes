@@ -30,6 +30,39 @@ devtools::check(vignettes = FALSE) # Quicker without vignettes
 # Build documentation --------------------------------------------------------
 devtools::build_readme()
 
+# Check/update URLS
+urlchecker::url_check()
+
+# Precompile Vignettes - MUST BUILD/INSTALL PACKAGE FIRST!
+devtools::install(quick = TRUE, build = TRUE, upgrade = "never")
+source("vignettes/_PRECOMPILE.R")
+
+# Preview precompiled vignettes (click on link and hit enter)
+pkgdown::build_article("articles/models_first_diff_nonhier")
+
+
+
+# Run advanced long-running model and upload --------------------------------
+m <- stratify(by = "bbs_cws", species = "Barn Swallow") %>%
+  prepare_data(s, min_max_route_years = 5) %>%
+  run_model(output_basename = "cws_basw_gamye",
+            model = "gamye", heavy_tailed = TRUE,
+            iter_sampling = 10, iter_warmup = 10, chains = 2)
+
+# Create Tag on GitHub Repo
+piggyback::pb_new_release("steffilazerte/bbsBayes", "v3.0.0")
+
+# Save model output
+
+piggyback::pb_upload("cws_basw_gamye",
+                     repo = "cboettig/piggyback-tests",
+                     tag = "v0.0.1")
+
+
+# Local checks of website, etc. ------------------------------------------
+# These steps aren't required unless you're troubleshooting or want to
+# re-evaluate good practices, etc.
+
 # Compile articles and website
 # (only for checking! GitHub Actions will build automatically)
 pkgdown::build_site(lazy = TRUE)
@@ -44,8 +77,6 @@ g
 
 # The `init_def()` function has some lines which are too long, but I think
 # that's important given the complexity and the need for descriptions.
-
-
 
 
 # Workflow creation ----------------------------------------------------------

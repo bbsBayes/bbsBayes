@@ -1,0 +1,102 @@
+---
+title: "Models: Slope Spatial"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Models: Slope Spatial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  # For pre-compiling and pkgdown (relative to pkg home)
+  fig.path = "vignettes/articles/figures/slope_spatial_",
+  dpi = 150
+)
+```
+
+## Data prep
+
+### Load packages
+```{r}
+library(bbsBayes)
+library(patchwork)
+library(ggplot2)
+```
+
+### Stratify
+```{r}
+s <- stratify(by = "bbs_cws", sample = TRUE)
+```
+
+### Prepare counts
+```{r}
+p <- prepare_data(s, min_max_route_years = 2)
+```
+
+### Prepare spatial
+```{r, fig.cap = "", fig.alt="Map of North America show the CWS spatial stratification divisions as different colours"}
+map <- load_map("bbs_cws")
+ggplot(map, aes(fill = strata_name)) +
+  geom_sf(show.legend = FALSE)
+
+n <- prepare_spatial(map, p)
+```
+
+## Run model
+```{r}
+m <- run_model(prepped_data = p,
+               model = "slope",
+               model_variant = "spatial",
+               spatial_data = n,
+               iter_sampling = 10, iter_warmup = 10, chains = 2)
+```
+
+## Explore results
+
+### Convergence
+
+```{r}
+conv <- get_convergence(m)
+conv
+```
+
+### Indices
+```{r}
+i <- generate_indices(model_output = m,
+                      regions = c("continent",
+                                  "country",
+                                  "prov_state",
+                                  "stratum"))
+
+p <- plot_indices(i, add_observed_means = TRUE)
+```
+
+```{r, fig.cap = "", fig.alt = "Grid of plots showing model indices over years for each regional division with blue lines and blue-grey ribbons to indicate the confidence intervals.", fig.width = 16, fig.asp = length(p)/3*3 / 12}
+patchwork::wrap_plots(p, ncol = 3)
+```
+
+### Trends
+```{r, fig.cap = "", fig.alt = "Map of North America showing the stratification areas colour-coded by trend.", fig.width = 10, fig.asp = 0.8}
+t <- generate_trends(indices = i)
+plot_map(trends = t)
+```
+
+
+### Geofacet plots
+```{r, fig.width = 12, fig.asp = 0.7, fig.cap = "", fig.alt = "A grid of plots in the shap of North America, with one plot per province or state. Each plot shows the indices over time."}
+plot_geofacet(indices = i, trends = t)
+```
+
+## Reproducibility and Clean up
+```{r}
+list.files(pattern = "csv|rds")
+unlink(list.files(pattern = "csv|rds"))
+```
+
+```{r}
+devtools::session_info()
+```
