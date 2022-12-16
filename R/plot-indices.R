@@ -130,7 +130,7 @@ plot_indices <- function(indices = NULL,
                      axis.text = ggplot2::element_text(size = axis_text_size)) +
       ggplot2::labs(title = t,
                     x = "Year",
-                    y = "Annual index of abundance (mean count)") +
+                    y = "Annual index of abundance\n(mean count)") +
       ggplot2::scale_x_continuous(breaks = ~floor(pretty(.x))) +
       ggplot2::scale_y_continuous(limits = c(0, NA))
 

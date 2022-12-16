@@ -76,7 +76,7 @@ check_model <- function(model, model_variant) {
     if(model != "first_diff") stop("`model_variant` 'nonhier' only allowed ",
                                    "for `first_diff` models", call. = FALSE)
    warning("Non-hierarchial models are generally not recommended ",
-           "(see ?bbs_models), but provided for compatibility with the USGS",
+           "(see ?bbs_models), but provided for compatibility with USGS ",
            "methods", call. = FALSE, immediate. = TRUE)
   }
 

@@ -21,11 +21,11 @@ devtools::check(vignettes = FALSE) # Quicker without vignettes
 # Check examples only
 # Run all examples, can start = "function_name" to start at a specific spot
 # Note: fetch_bbs_data() will still require the "yes"
-devtools::run_examples()
-devtools::run_examples(start = "run_model")
+#devtools::run_examples()
+#devtools::run_examples(start = "run_model")
 
 # Check tests only
-devtools::test()
+#devtools::test()
 
 # Build documentation --------------------------------------------------------
 devtools::build_readme()
