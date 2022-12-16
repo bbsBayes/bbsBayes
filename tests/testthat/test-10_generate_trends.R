@@ -19,9 +19,9 @@ test_that("calc_slope()", {
 
   expect_silent(sl <- calc_slope(i[["samples"]][["continent_continent"]],
                                  1, dim(i[["samples"]][[1]])[2]))
-  expect_equal(sl[1], 0.2943111, tolerance = 0.0001)
-  expect_equal(sl[10], 0.1081318, tolerance = 0.0001)
-  expect_equal(sl[20], 0.7111325, tolerance = 0.0001)
+  expect_equal(sl[1], 0.4517838, tolerance = 0.0001)
+  expect_equal(sl[10], 0.6474289, tolerance = 0.0001)
+  expect_equal(sl[20], 1.105371, tolerance = 0.0001)
 
 })
 
@@ -161,11 +161,11 @@ test_that("generate_trends() prob_decrease/prob_increase", {
 
   expect_silent(trnd <- generate_trends(i, prob_decrease = 10)[["trends"]])
   expect_true("prob_decrease_10_percent" %in% names(trnd))
-  expect_equal(trnd$prob_decrease_10_percent[1:4], c(0, 0.10, 0.0, 0.325))
+  expect_equal(trnd$prob_decrease_10_percent[1:4], c(0, 0.25, 0.0, 0.65))
 
   expect_silent(trnd <- generate_trends(i, prob_increase = 10)[["trends"]])
   expect_true("prob_increase_10_percent" %in% names(trnd))
-  expect_equal(trnd$prob_increase_10_percent[1:4], c(0.975, 0.825, 0.975, 0.55))
+  expect_equal(trnd$prob_increase_10_percent[1:4], c(0.975, 0.650, 1, 0.3))
 
   expect_silent(
     trnd <- generate_trends(i, prob_decrease = c(10, 20))[["trends"]])
