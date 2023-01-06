@@ -64,6 +64,6 @@ test_that("assign_prov_state()", {
   expect_warning(d <- assign_prov_state(map))
   expect_silent(d <- assign_prov_state(map, min_overlap = 0.51))
 
-  unlink(test_path("Rplots.pdf")) # Created when device opened for previous examples
+  unlink(test_path("Rplots.pdf")) # Created when device opened for examples
 })
 

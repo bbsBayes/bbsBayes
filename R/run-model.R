@@ -114,7 +114,7 @@ run_model <- function(model_data,
   meta_data <- append(
     meta_data,
     list("run_date" = Sys.time(),
-         "bbsBayes_version" = as.character(packageVersion("bbsBayes")),
+         "bbsBayes_version" = as.character(utils::packageVersion("bbsBayes")),
          "cmdstan_path" = cmdstanr::cmdstan_path(),
          "cmdstan_version" = cmdstanr::cmdstan_version()))
 
