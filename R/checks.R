@@ -13,6 +13,9 @@ check_data <- function(data) {
     # Don't use meta_data or meta_strata, n is an actual object returned
     n <- c("n", "n_edges", "node1", "node2", "adj_matrix", "strata_meta")
     from <- "prepare_spatial()"
+  } else if(type == "model_data") {
+    n <- c(n, "model_data", "init_values", "raw_data")
+    from <- "prepare_model()"
   } else if(type == "model_output") {
     n <- c(n, "model_fit", "raw_data")
     from <- "run_model()"
@@ -136,8 +139,7 @@ check_basis <- function(basis) {
 check_init <- function(init, chains) {
   if(inherits(init, "list")) {
     if(length(init) != chains) {
-      message("`init` values as a list need one list per chain. ",
-              "Assuming values should be duplicated for each chain...")
+      message("One set of `init` values supplied, duplicating for each chain.")
       orig <- init
       init <- list()
       for(n in seq_len(chains)) init[[n]] <- orig
@@ -389,7 +391,7 @@ check_spatial <- function(spatial_data, strata) {
   if(!all(strata %in% s) | !all(s %in% strata)) {
     stop("The strata in `prepped_data` and `spatial_data` don't match.\n",
          "`prepare_spatial()` should have been run with the same ",
-         "`prepped_data` as `run_model()`.", call. = FALSE)
+         "`prepped_data` as `prepare_model()`.", call. = FALSE)
   }
 }
 

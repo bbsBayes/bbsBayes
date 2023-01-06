@@ -3,7 +3,6 @@
 #' Subset raw BBS data by selected species and and wrangle stratified data for
 #' use as input for models.
 #'
-#' @param strata_data List. Stratified data returned by `stratify()`
 #' @param min_n_routes Numeric. Required minimum routes per strata where species
 #'   has been observed. Defaults to 3
 #' @param min_max_route_years Required minimum number of years with non-zero
@@ -15,10 +14,10 @@
 #'   number of years the species was observed per route is greater than this
 #'   value.
 #' @param species Defunct. Use `species` in `stratify()` instead
-#' @param model Defunct. Use `model` in `run_model()` instead
-#' @param heavy_tailed Defunct. Use `heavy_tailed` in `run_model()` instead
-#' @param n_knots Defunct. Use `n_knots` in `run_model()` instead
-#' @param basis Defunct. Use `basis` in `run_model()` instead
+#' @param model Defunct. Use `model` in `prepare_model()` instead
+#' @param heavy_tailed Defunct. Use `heavy_tailed` in `prepare_model()` instead
+#' @param n_knots Defunct. Use `n_knots` in `prepare_model()` instead
+#' @param basis Defunct. Use `basis` in `prepare_model()` instead
 #' @param sampler Defunct.
 #' @param strat_data Defunct. Use `strata_data` instead
 #' @param strata_rem Defunct. Use `custom_strata` in `stratify()` instead
@@ -68,17 +67,17 @@ prepare_data <- function(strata_data,
     dep_stop("3.0.0", "species", "the `species` argument in `stratify()`")
   }
   if(!missing(model)) {
-    dep_stop("3.0.0", "model", "the `model` argument in `run_model()`")
+    dep_stop("3.0.0", "model", "the `model` argument in `prepare_model()`")
   }
   if(!missing(heavy_tailed)) {
     dep_stop("3.0.0", "heavy_tailed",
-             "the `heavy_tailed` argument in `run_model()`")
+             "the `heavy_tailed` argument in `prepare_model()`")
   }
   if(!missing(n_knots)) {
-    dep_stop("3.0.0", "n_knots", "the `n_knots` argument in `run_model()`")
+    dep_stop("3.0.0", "n_knots", "the `n_knots` argument in `prepare_model()`")
   }
   if(!missing(basis)) {
-    dep_stop("3.0.0", "basis", "the `basis` argument in `run_model()`")
+    dep_stop("3.0.0", "basis", "the `basis` argument in `prepare_model()`")
   }
   if(!missing(sampler)) dep_stop("3.0.0", "sampler")
   if(!missing(strat_data)) dep_stop("3.0.0", "strat_data", "`strata_data`")

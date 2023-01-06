@@ -52,7 +52,7 @@ options:
 - `latlong` -- Degree blocks (1 degree of latitude X 1 degree of longitude)
 
 ```{r}
-s <- stratify(by = "bbs_cws", species = "Barn Swallow",)
+s <- stratify(by = "bbs_cws", species = "Barn Swallow")
 ```
 
 #### Stan Data
@@ -62,8 +62,21 @@ set up. `prepare_data()` subsets the stratified data based on species and
 wrangles relevant data to use for Stan models.
 
 ```{r}
-prepped_data <- prepare_data(s, min_max_route_years = 5)
+p <- prepare_data(s, min_max_route_years = 5)
 ```
+
+#### Model Data
+
+To prepare to run the model, initialization parameters and other model
+parameters need to be calculated based on the model and model variant chosen.
+These are calculated in a separate step to provide more information for
+troubleshooting as well as to allow more advanced customizations of these
+parameters.
+
+```{r}
+md <- prepare_model(p, model = "gamye", heavy_tailed = TRUE)
+```
+
 
 ### MCMC
 
@@ -73,8 +86,7 @@ takes a long time (e.g., 6-12 hours, or even days depending on the species,
 model).
 
 ```{r, eval = FALSE}
-mod <- run_model(prepped_data, output_basename = "cws_basw_gamye",
-                 model = "gamye", heavy_tailed = TRUE, 
+mod <- run_model(md, output_basename = "cws_basw_gamye",
                  iter_sampling = 10, iter_warmup = 10, chains = 2)
 ```
 
@@ -82,10 +94,19 @@ Alternatively, you can set how many iterations for sampling or warm up steps,
 how many chains, and how many to run in parallel.
 
 ``` {r, eval = FALSE}
-mod <- run_model(prepped_data,
+mod <- run_model(md, output_basename = "cws_basw_gamye",
                  iter_sampling = 2000, iter_warmup = 500, 
                  chains = 4, parallel_chains = 2)
 ```
+
+```{r, echo = FALSE}
+library(piggyback)
+pb_download("iris.tsv.gz", 
+            repo = "cboettig/piggyback-tests", 
+            dest = tempdir())
+
+```
+
 
 The `run_model()` function generates a large object that includes the posterior
 draws, convergence information, data, etc. By default, this a copy of this

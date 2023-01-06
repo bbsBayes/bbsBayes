@@ -1,7 +1,7 @@
 #' Define neighbouring strata for spatial analyses
 #'
 #' Given a spatial data frame containing polygons or points to outline strata,
-#' a neighbourhood matrix is identified for use in `run_model()`
+#' a neighbourhood matrix is identified for use in `prepare_model()`
 #'
 #' @param strata_map sf data frame. Map of the strata in (MULTI)POLYGONs. Must
 #'   have column "strata_name" matching strata output from `prepare_data()`.

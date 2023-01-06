@@ -30,7 +30,7 @@
 #' found by running `system.file("models", package = "bbsBayes")`.
 #'
 #' To create a custom Stan model, see `copy_model_file()` and the `model_file`
-#' argument of `run_model()`. See also the [models
+#' argument of `prepare_model()`. See also the [models
 #' article](https://steffilazerte.ca/bbsBayes/articles/models.html) for more
 #' details.
 #'

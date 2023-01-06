@@ -7,9 +7,7 @@ fetch_bbs_data_internal() # Run to ensure BBS data for examples
 source("data-raw/data_exported.R")
 source("data-raw/data_strata.R")
 
-# Sometimes need to re-build and re-load package to make sure example data updated
-devtools::build()
-job::job({source("data-raw/data_examples.R")}) # Creates example data and models (takes time to run)
+source("data-raw/data_examples.R") # Creates example data and models (takes time to run)
 
 
 # Checks ---------------------------------------------------------------------
@@ -44,10 +42,9 @@ pkgdown::build_article("articles/models_first_diff_nonhier")
 
 # Run advanced long-running model and upload --------------------------------
 m <- stratify(by = "bbs_cws", species = "Barn Swallow") %>%
-  prepare_data(s, min_max_route_years = 5) %>%
-  run_model(output_basename = "cws_basw_gamye",
-            model = "gamye", heavy_tailed = TRUE,
-            iter_sampling = 10, iter_warmup = 10, chains = 2)
+  prepare_data(min_max_route_years = 5) %>%
+  prepare_model(model = "gamye") %>%
+  run_model(output_basename = "cws_basw_gamye")
 
 # Create Tag on GitHub Repo
 piggyback::pb_new_release("steffilazerte/bbsBayes", "v3.0.0")
@@ -55,8 +52,8 @@ piggyback::pb_new_release("steffilazerte/bbsBayes", "v3.0.0")
 # Save model output
 
 piggyback::pb_upload("cws_basw_gamye",
-                     repo = "cboettig/piggyback-tests",
-                     tag = "v0.0.1")
+                     repo = "steffilazerte/bbsBayes",
+                     tag = "v3.0.0")
 
 
 # Local checks of website, etc. ------------------------------------------

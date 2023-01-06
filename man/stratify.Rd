@@ -37,7 +37,10 @@ data through 2021 field season) or 2020 (including data through 2019)}
 
 \item{sample_data}{Logical. Use sample data (just Pacific Wren)}
 
-\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}
+
+Use \verb{@inheritParams common_docs} to include the above in any function
+documentation with a matching argument (will only include matching args)}
 
 \item{lump_species_forms}{Deprecated. Use \code{combine_species_forms} instead}
 

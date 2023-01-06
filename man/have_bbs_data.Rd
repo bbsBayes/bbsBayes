@@ -13,7 +13,10 @@ Defaults to "state".}
 \item{release}{Numeric. Yearly release. Options are 2022 (default including
 data through 2021 field season) or 2020 (including data through 2019)}
 
-\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}
+
+Use \verb{@inheritParams common_docs} to include the above in any function
+documentation with a matching argument (will only include matching args)}
 }
 \value{
 \code{TRUE} if the data is found, \code{FALSE} otherwise

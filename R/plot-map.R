@@ -3,7 +3,6 @@
 #' `plot_map()` allows you to generate a colour-coded map of there percent
 #' change in species trends for each strata.
 #'
-#' @param trends Data frame. Trends produced by `generate_trends()`.
 #' @param slope Logical. Whether or not to map values of the alternative trend
 #'   metric (slope of a log-linear regression) if `slope = TRUE` was used in
 #'   `generate_trends()`,  through the annual indices. Default `FALSE`.
@@ -14,6 +13,8 @@
 #' @param species Defunct. Use `title` instead
 #' @param stratify_by Defunct.
 #' @param select Defunct.
+#'
+#' @inheritParams common_docs
 #'
 #' @return spplot object
 #'

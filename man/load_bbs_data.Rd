@@ -16,7 +16,10 @@ data through 2021 field season) or 2020 (including data through 2019)}
 \item{sample}{Logical. Whether or not to use the sample data for Pacific
 Wrens. Defaults to \code{FALSE}. If \code{TRUE}, \code{level} and \code{release} are ignored.}
 
-\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}
+
+Use \verb{@inheritParams common_docs} to include the above in any function
+documentation with a matching argument (will only include matching args)}
 }
 \value{
 Large list (3 elements) consisting of:

@@ -54,6 +54,7 @@ grViz("digraph functions {
   strat [label = 'stratify()', fillcolor=lightpink]
   prepdata [label = 'prepare_data()', fillcolor=lightpink]
   prepspatial [label = 'prepare_spatial()', fillcolor=lightpink]
+  prepmodel [label = 'prepare_model()', fillcolor=darkolivegreen3]
   loadmap [label = 'load_map()', fillcolor=orange]
   assign_ps [label = 'assign_prov_state()', fillcolor=orange]
 
@@ -77,13 +78,15 @@ grViz("digraph functions {
   
   runmodel->remove [style=dashed]
   
-  modelfile->runmodel [style=dashed]
+  modelfile->prepmodel [style=dashed]
   
   search->strat [style=dashed]
   strat->prepdata
   prepdata->prepspatial
-  prepdata->runmodel
-  prepspatial->runmodel [color=grey50]
+  prepdata->prepmodel
+  prepspatial->prepmodel [color=grey50]
+  prepmodel->runmodel
+  
   
   runmodel->conv
   runmodel->genind

@@ -24,15 +24,16 @@ usethis::use_data(bbs_data_sample, overwrite = TRUE)
 # Example model --------------------------------------------------------
 pacific_wren_model <- stratify(by = "bbs_cws", sample_data = TRUE) %>%
   prepare_data() %>%
-  run_model(model = "first_diff", seed = 111,
-            chains = 2, iter_sampling = 20, iter_warmup = 20)
+  prepare_model(model = "first_diff", set_seed = 111) %>%
+  run_model(chains = 2, iter_sampling = 20, iter_warmup = 20, set_seed = 111)
+
 usethis::use_data(pacific_wren_model, overwrite = TRUE)
 unlink(list.files(pattern = paste0("BBS_STAN_first_diff_hier_", Sys.Date())))
 
-# Testing models (internal data
-slope_test_model <- stratify(by = "bbs_usgs", sample_data = TRUE) %>%
-  prepare_data() %>%
-  run_model(model = "slope", seed = 111,
-            chains = 2, iter_sampling = 20, iter_warmup = 20)
+# Testing models (internal data)
+slope_test_model <- p %>%
+  prepare_model(model = "slope", set_seed = 111) %>%
+  run_model(chains = 2, iter_sampling = 20, iter_warmup = 20, set_seed = 111)
+
 usethis::use_data(slope_test_model, internal = TRUE, overwrite = TRUE)
 unlink(list.files(pattern = paste0("BBS_STAN_slope_hier_", Sys.Date())))

@@ -9,6 +9,7 @@ Authors@R: c(person("Brandon P.M.", "Edwards", role = c("aut", "cre"),
               person("Steffi", "LaZerte", role = "aut",
                       email = "steffi@steffi.ca"))
 Imports:
+    backports (>= 1.4.1),
     dplyr (>= 1.0.0),
     ggrepel,
     geofacet,
@@ -27,7 +28,7 @@ Imports:
     stringr,
     tidyr (>= 1.2.0),
     units (>= 0.8.0),
-    backports (>= 1.4.1)
+    withr (>= 2.5.0)
 Depends: R (>= 3.5)
 SystemRequirements: CmdStan (https://mc-stan.org/users/interfaces/cmdstan)
 URL: https://github.com/BrandonEdwards/bbsBayes
@@ -58,8 +59,7 @@ Suggests:
     rmarkdown,
     rnaturalearth,
     roxygen2,
-    testthat (>= 3.0.0),
-    withr
+    testthat (>= 3.0.0)
 Additional_repositories: https://mc-stan.org/r-packages/
 Config/testthat/edition: 3
 VignetteBuilder: knitr

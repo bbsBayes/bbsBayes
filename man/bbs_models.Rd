@@ -36,7 +36,7 @@ found by running \code{system.file("models", package = "bbsBayes")}.
 }
 \details{
 To create a custom Stan model, see \code{copy_model_file()} and the \code{model_file}
-argument of \code{run_model()}. See also the \href{https://steffilazerte.ca/bbsBayes/articles/models.html}{models article} for more
+argument of \code{prepare_model()}. See also the \href{https://steffilazerte.ca/bbsBayes/articles/models.html}{models article} for more
 details.
 }
 \keyword{datasets}

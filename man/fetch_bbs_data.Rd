@@ -22,7 +22,10 @@ data through 2021 field season) or 2020 (including data through 2019)}
 \item{force}{Logical. Should pre-exising BBS data be overwritten? Defaults to
 FALSE}
 
-\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}}
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}
+
+Use \verb{@inheritParams common_docs} to include the above in any function
+documentation with a matching argument (will only include matching args)}
 
 \item{compression}{Character. What compression should be used to save data?
 Defaults to \code{none} which takes up the most space but is the fastest to
