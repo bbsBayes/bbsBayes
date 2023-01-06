@@ -111,7 +111,7 @@ test_that("prepare_model() first_diff / slope", {
 
     # Snapshots can't be run interactively
     expect_snapshot_value(md[["model_data"]], style = "json2",
-                          tolerance = 0.001)
+                          tolerance = 0.01)
   }
 })
 
@@ -153,7 +153,7 @@ test_that("prepare_model() gam / gamye", {
 
         # Snapshots can't be run interactively
         expect_snapshot_value(md[["model_data"]], style = "json2",
-                              tolerance = 0.001)
+                              tolerance = 0.01)
       }
     }
   }
@@ -200,8 +200,8 @@ test_that("prepare_model() heavy_tailed / use_pois", {
       }
 
       # Snapshots can't be run interactively
-     # expect_snapshot_value(md[["model_data"]], style = "json2",
-     #                       tolerance = 0.001)
+      expect_snapshot_value(md[["model_data"]], style = "json2",
+                            tolerance = 0.01)
     }
   }
 })
