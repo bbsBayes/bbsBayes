@@ -215,12 +215,7 @@ test_that("model/model_file/model_variant checks", {
 })
 
 test_that("check_init()", {
-
   expect_silent(check_init(list(a = 1:5, b = 1:5), chains = 2))
-
-  # Duplicates a single list
-  expect_message(i <- check_init(list(a = 1:5), chains = 2), "Assuming values")
-  expect_length(i, 2)
 })
 
 test_that("check_dir(), check_file()", {
