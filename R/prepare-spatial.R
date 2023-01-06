@@ -42,23 +42,22 @@
 #'
 #'
 #' @examples
-#' s <- stratify(by = "bbs_cws", species = "Connecticut Warbler")
-#' p <- prepare_data(s, min_max_route_years = 2)
 #'
 #' map <- load_map("bbs_cws")
-#'
-#' sp <- prepare_spatial(map, p)
+#' s <- stratify(by = "bbs_cws", species = "Connecticut Warbler")
+#' p <- prepare_data(s, min_max_route_years = 2)
+#' sp <- prepare_spatial(p, map)
 #'
 #' # Visually explore the spatial linkages
 #' sp$map
 #'
 #' # Overlay subset strata map on original mapping data
-#' sp <- prepare_spatial(map, p, add_map = map)
+#' sp <- prepare_spatial(p, map, add_map = map)
 #' sp$map
 #'
 #' @export
-prepare_spatial <- function(strata_map,
-                            prepped_data,
+prepare_spatial <- function(prepared_data,
+                            strata_map,
                             voronoi = FALSE,
                             nearest_fill = FALSE,
                             island_link_dist_factor = 1.2,
@@ -71,7 +70,7 @@ prepare_spatial <- function(strata_map,
   # Checks
   check_sf(strata_map, check_poly = TRUE)
   check_sf(add_map)
-  check_data(prepped_data)
+  check_data(prepared_data)
 
   check_in(buffer_type, c("buffer", "convex_hull"))
   check_logical(voronoi, nearest_fill, quiet)
@@ -80,13 +79,13 @@ prepare_spatial <- function(strata_map,
   # Prepare spatial data
   if(!quiet) message("Preparing spatial data...")
 
-  # Filter to only strata in prepped_data
+  # Filter to only strata in prepared_data
   strata_map <- strata_map %>%
-    dplyr::semi_join(prepped_data$raw_data, by = "strata_name")
+    dplyr::semi_join(prepared_data$raw_data, by = "strata_name")
 
   if(nrow(strata_map) == 0) {
     stop("There are no strata in `strata_map` that match strata in ",
-         "`prepped_data`.\nDo the values in the `strata_name` columns match?",
+         "`prepared_data`.\nDo the values in the `strata_name` columns match?",
          call. = FALSE)
   }
 
@@ -198,13 +197,14 @@ prepare_spatial <- function(strata_map,
                          label_size)
 
   # Reformat nodes and edges
-  nb <- nb_fmt(nb_weights)
+  nb <- append(
+    nb_fmt(nb_weights),
+    list("adj_matrix" = nb_mat,
+         "map" = map))
 
-  append(nb,
-         list("adj_matrix" = nb_mat,
-              "map" = map,
-              "strata_meta" = sf::st_drop_geometry(strata_map) %>%
-                dplyr::select("strata_name")))
+  append(
+    list("spatial_data" = nb),
+    prepared_data)
 }
 
 

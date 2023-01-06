@@ -65,13 +65,11 @@ test_that("run_model() first_diff spatial", {
                     full.names = TRUE))
 
   p <- stratify(by = "bbs_usgs", sample_data = TRUE, quiet = TRUE) %>%
-    prepare_data(min_max_route_years = 2)
-
-  s <- prepare_spatial(load_map("bbs_usgs"), prepped_data = p, quiet = TRUE)
+    prepare_data(min_max_route_years = 2) %>%
+    prepare_spatial(load_map("bbs_usgs"), quiet = TRUE)
 
   md <- prepare_model(p, model = "first_diff",
                       model_variant = "spatial",
-                      spatial_data = s,
                       set_seed = 111)
 
   expect_message(r <- run_model(md,
@@ -150,13 +148,11 @@ test_that("run_model() Full", {
   skip("long")
 
   p <- stratify(by = "bbs_usgs", sample_data = TRUE, quiet = TRUE) %>%
-    prepare_data(min_max_route_years = 2)
-
-  s <- prepare_spatial(load_map("bbs_cws"), p, quiet = TRUE)
+    prepare_data(min_max_route_years = 2) %>%
+    prepare_spatial(load_map("bbs_cws"), quiet = TRUE)
 
   md <- prepare_model(p, model = bbs_models$model[i],
                       model_variant = bbs_models$variant[i],
-                      spatial_data = sp,
                       set_seed = 111)
 
   for(i in seq_len(nrow(bbs_models))) {

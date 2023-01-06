@@ -6,12 +6,12 @@ check_data <- function(data) {
   if(type == "strata_data") {
     n <- c(n, "routes_strata", "birds_strata")
     from <- "stratify()"
-  } else if(type == "prepped_data") {
+  } else if(type == "prepared_data") {
     n <- c(n, "model_data", "raw_data")
     from <- "prepare_data()"
   } else if(type == "spatial_data") {
     # Don't use meta_data or meta_strata, n is an actual object returned
-    n <- c("n", "n_edges", "node1", "node2", "adj_matrix", "strata_meta")
+    n <- c("n", "n_edges", "node1", "node2", "adj_matrix")
     from <- "prepare_spatial()"
   } else if(type == "model_data") {
     n <- c(n, "model_data", "init_values", "raw_data")
@@ -374,25 +374,17 @@ check_species <- function(species, species_list, combine_species_forms,
   s$aou
 }
 
-check_spatial <- function(spatial_data, strata) {
+check_spatial <- function(spatial_data) {
 
-  if(is.null(spatial_data)) {
-    stop("When `model_variant = 'spatial'`, you must provide a list ",
-         "of neighbour nodes\n(created with `prepare_spatial()`) to ",
-         "`spatial_data`. ",
-         "See ?run_model for details", call. = FALSE)
+  if(!"spatial_data" %in% names(spatial_data)) {
+    stop("When `model_variant = 'spatial'`, `prepared_data` must be the ",
+         "output of `prepare_spatial()` in order to include the neighbour ",
+         "nodes required. See ?prepare_model for details", call. = FALSE)
   }
 
   # Check for correct data
+  spatial_data <- spatial_data[["spatial_data"]]
   check_data(spatial_data)
-
-  # Check for matching strata
-  s <- spatial_data$strata_meta$strata_name
-  if(!all(strata %in% s) | !all(s %in% strata)) {
-    stop("The strata in `prepped_data` and `spatial_data` don't match.\n",
-         "`prepare_spatial()` should have been run with the same ",
-         "`prepped_data` as `prepare_model()`.", call. = FALSE)
-  }
 }
 
 #' Check user supplied sf object

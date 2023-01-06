@@ -25,7 +25,7 @@
 #' ## No longer relevant
 #'
 #' `get_prepared_data()` is no longer required. Access the `raw_data` list item
-#' in the output of `prepare_data()`. e.g., `prepped_data[["raw_data"]]`
+#' in the output of `prepare_data()`. e.g., `prepared_data[["raw_data"]]`
 #'
 #' `get_mcmc_list()` is no longer required (or relevant). Access the `model_fit`
 #' list item in the output of `run_model()` for the `cmdstanr` model object.

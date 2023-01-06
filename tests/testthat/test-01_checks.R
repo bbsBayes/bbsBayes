@@ -165,17 +165,14 @@ test_that("check_regions()", {
 
 test_that("check_spatial()", {
   p <- stratify(by = "bbs_cws", sample_data = TRUE, quiet = TRUE) %>%
-    prepare_data()
-  s <- prepare_spatial(load_map("bbs_cws"), p, quiet = TRUE)
-  s2 <- s
-  s2$strata_meta <- s2$strata_meta[-1,]
+    prepare_data() %>%
+    prepare_spatial(load_map("bbs_cws"), quiet = TRUE)
 
-  expect_silent(check_spatial(s, unique(p$raw_data$strata_name)))
-  expect_error(check_spatial(s, unique(p$raw_data$strata_name)[-1]),
-               "don't match")
-  expect_error(check_spatial(s2, unique(p$raw_data$strata_name)),
-               "don't match")
-  expect_error(check_spatial(NULL), "must provide a list of neighbour nodes")
+  p2 <- p
+  p2 <- p2[-1]
+
+  expect_silent(check_spatial(p))
+  expect_error(check_spatial(p2), "include the neighbour nodes")
 })
 
 test_that("model/model_file/model_variant checks", {

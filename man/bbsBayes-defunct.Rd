@@ -80,7 +80,7 @@ waic(...)
 \subsection{No longer relevant}{
 
 \code{get_prepared_data()} is no longer required. Access the \code{raw_data} list item
-in the output of \code{prepare_data()}. e.g., \code{prepped_data[["raw_data"]]}
+in the output of \code{prepare_data()}. e.g., \code{prepared_data[["raw_data"]]}
 
 \code{get_mcmc_list()} is no longer required (or relevant). Access the \code{model_fit}
 list item in the output of \code{run_model()} for the \code{cmdstanr} model object.

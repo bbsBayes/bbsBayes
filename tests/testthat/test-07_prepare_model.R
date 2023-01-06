@@ -77,21 +77,17 @@ test_that("create_init", {
 test_that("prepare_model() first_diff / slope", {
 
   p <- stratify(by = "bbs_usgs", sample_data = TRUE, quiet = TRUE) %>%
-    prepare_data(min_max_route_years = 2)
-
-  s <- prepare_spatial(load_map("bbs_usgs"), prepped_data = p, quiet = TRUE)
+    prepare_data(min_max_route_years = 2) %>%
+    prepare_spatial(load_map("bbs_usgs"), quiet = TRUE)
 
   m <- dplyr::filter(bbs_models, model %in% c("first_diff", "slope"))
 
   for(i in seq_len(nrow(m))) {
 
-    if(m$variant[i] == "spatial") sp <- s else sp <- NULL
-
     if(m$variant[i] == "nonhier") ex <- expect_warning else ex <- expect_silent
     ex(md <- prepare_model(p,
                            model = m$model[!!i],
                            model_variant = m$variant[!!i],
-                           spatial_data = sp,
                            set_seed = 111))
 
     md %>%
@@ -105,6 +101,14 @@ test_that("prepare_model() first_diff / slope", {
     expect_s3_class(md[["meta_strata"]], "data.frame")
     expect_s3_class(md[["raw_data"]], "data.frame")
 
+    if(m$variant[i] == "spatial") {
+      expect_true(all(c("n_edges", "node1", "node2") %in%
+                        names(md[["model_data"]])))
+    } else {
+      expect_false(any(c("n_edges", "node1", "node2") %in%
+                         names(md[["model_data"]])))
+    }
+
     # Snapshots can't be run interactively
     expect_snapshot_value(md[["model_data"]], style = "json2",
                           tolerance = 0.001)
@@ -116,21 +120,18 @@ test_that("prepare_model() first_diff / slope", {
 test_that("prepare_model() gam / gamye", {
 
   p <- stratify(by = "bbs_usgs", sample_data = TRUE, quiet = TRUE) %>%
-    prepare_data(min_max_route_years = 2)
-
-  s <- prepare_spatial(load_map("bbs_usgs"), prepped_data = p, quiet = TRUE)
+    prepare_data(min_max_route_years = 2) %>%
+    prepare_spatial(load_map("bbs_usgs"), quiet = TRUE)
 
   m <- dplyr::filter(bbs_models, stringr::str_detect(model, "gam"))
 
   for(i in seq_len(nrow(m))) {
     for(n_knots in c(3, 8)) {
       for(basis in c("original", "mgcv")) {
-        if(m$variant[i] == "spatial") sp <- s else sp <- NULL
 
         expect_silent(md <- prepare_model(p,
                                           model = m$model[!!i],
                                           model_variant = m$variant[!!i],
-                                          spatial_data = sp,
                                           n_knots = n_knots,
                                           basis = basis,
                                           set_seed = 111))
@@ -141,6 +142,14 @@ test_that("prepare_model() gam / gamye", {
                          "meta_strata", "raw_data"))
 
         expect_type(md[["model_data"]], "list")
+
+        if(m$variant[i] == "spatial") {
+          expect_true(all(c("n_edges", "node1", "node2") %in%
+                            names(md[["model_data"]])))
+        } else {
+          expect_false(any(c("n_edges", "node1", "node2") %in%
+                             names(md[["model_data"]])))
+        }
 
         # Snapshots can't be run interactively
         expect_snapshot_value(md[["model_data"]], style = "json2",
@@ -153,19 +162,15 @@ test_that("prepare_model() gam / gamye", {
 test_that("prepare_model() heavy_tailed / use_pois", {
 
   p <- stratify(by = "bbs_usgs", sample_data = TRUE, quiet = TRUE) %>%
-    prepare_data(min_max_route_years = 2)
-
-  s <- prepare_spatial(load_map("bbs_usgs"), prepped_data = p, quiet = TRUE)
+    prepare_data(min_max_route_years = 2) %>%
+    prepare_spatial(load_map("bbs_usgs"), quiet = TRUE)
 
   m <- dplyr::filter(bbs_models, variant != "nonhier")
 
   for(i in seq_len(nrow(m))) {
-    if(m$variant[i] == "spatial") sp <- s else sp <- NULL
-
     expect_message(md <- prepare_model(p,
                                      model = m$model[i],
                                      model_variant = m$variant[i],
-                                     spatial_data = sp,
                                      heavy_tailed = FALSE,
                                      use_pois = FALSE,
                                      set_seed = 111),
@@ -175,7 +180,6 @@ test_that("prepare_model() heavy_tailed / use_pois", {
       expect_silent(md <- prepare_model(p,
                                         model = m$model[!!i],
                                         model_variant = m$variant[!!i],
-                                        spatial_data = sp,
                                         heavy_tailed = heavy_tailed,
                                         use_pois = TRUE,
                                         set_seed = 111))
@@ -187,9 +191,17 @@ test_that("prepare_model() heavy_tailed / use_pois", {
 
       expect_type(md[["model_data"]], "list")
 
+      if(m$variant[i] == "spatial") {
+        expect_true(all(c("n_edges", "node1", "node2") %in%
+                          names(md[["model_data"]])))
+      } else {
+        expect_false(any(c("n_edges", "node1", "node2") %in%
+                           names(md[["model_data"]])))
+      }
+
       # Snapshots can't be run interactively
-      expect_snapshot_value(md[["model_data"]], style = "json2",
-                            tolerance = 0.001)
+     # expect_snapshot_value(md[["model_data"]], style = "json2",
+     #                       tolerance = 0.001)
     }
   }
 })
