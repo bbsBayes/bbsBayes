@@ -75,10 +75,9 @@ Make some changes to the `init_values` and pass the `model_data` to
 `run_model()`.
 
 ```{r}
-md[["init"]][["sdnoise"]] <- 0.5
+md[["init_values"]][["sdnoise"]] <- 0.5
 
-m <- run_model(md, model = "first_diff",
-               iter_warmup = 20, iter_sampling = 20, chains = 2)
+m <- run_model(md, iter_warmup = 20, iter_sampling = 20, chains = 2)
 ```
 
 Note that you can supply different init values for each chain. If you supply one
@@ -98,6 +97,6 @@ new_model
 Then give the file path of this new file to `prepare_model()`
 ```{r}
 model_data <- prepare_model(p, model = "first_diff", model_variant = "hier",
-                   model_file = new_model)
+                            model_file = new_model)
 ```
 
