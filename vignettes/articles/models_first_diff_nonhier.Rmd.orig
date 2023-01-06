@@ -37,12 +37,14 @@ s <- stratify(by = "bbs_cws", sample = TRUE)
 p <- prepare_data(s, min_max_route_years = 2)
 ```
 
+### Prepare model
+```{r}
+md <- prepare_model(p, model = "first_diff", model_variant = "nonhier")
+```
+
 ## Run model
 ```{r}
-m <- run_model(prepped_data = p,
-               model = "first_diff",
-               model_variant = "nonhier",
-               iter_sampling = 10, iter_warmup = 10, chains = 2)
+m <- run_model(md, iter_sampling = 10, iter_warmup = 10, chains = 2)
 ```
 
 ## Explore results

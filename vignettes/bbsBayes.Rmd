@@ -120,6 +120,16 @@ See `prepare_data()` for more details on how you can customize this step.
 p <- prepare_data(s)
 ```
 
+### Prepare the model
+
+Next we will prepare the model parameters and initialization values.
+See `prepare_model()` for more details on how you can customize this step.
+
+```{r}
+md <- prepare_model(p, model = "first_diff")
+```
+
+
 ### Run model
 
 Now we can run the model.
@@ -129,8 +139,7 @@ is 3. In the interest of speed for this example, we are using much lower values,
 but note that this almost certainly will result in problems with our model.
 
 ```{r, eval = FALSE}
-m <- run_model(p, model = "first_diff",
-               iter_sampling = 20, iter_warmup = 20, chains = 2)
+m <- run_model(md, iter_sampling = 20, iter_warmup = 20, chains = 2)
 ```
 
 ```{r, echo = FALSE}

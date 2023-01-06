@@ -43,16 +43,17 @@ map <- load_map("bbs_cws")
 ggplot(map, aes(fill = strata_name)) +
   geom_sf(show.legend = FALSE)
 
-n <- prepare_spatial(map, p)
+n <- prepare_spatial(p, map)
+```
+
+### Prepare model
+```{r}
+md <- prepare_model(n, model = "slope", model_variant = "spatial")
 ```
 
 ## Run model
 ```{r}
-m <- run_model(prepped_data = p,
-               model = "slope",
-               model_variant = "spatial",
-               spatial_data = n,
-               iter_sampling = 10, iter_warmup = 10, chains = 2)
+m <- run_model(md, iter_sampling = 10, iter_warmup = 10, chains = 2)
 ```
 
 ## Explore results

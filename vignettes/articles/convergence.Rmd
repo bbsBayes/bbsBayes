@@ -34,8 +34,8 @@ Let's start by running a quick (and dirty) model looking at the Pacific Wren.
 ```{r, eval = FALSE}
 m <- stratify(by = "bbs_cws", sample_data = TRUE) %>%
   prepare_data() %>%
-  run_model(model = "first_diff",
-            iter_sampling = 20, iter_warmup = 20, chains = 2)
+  prepare_model(model = "first_diff") %>%
+  run_model(iter_sampling = 20, iter_warmup = 20, chains = 2)
 
 ```
 

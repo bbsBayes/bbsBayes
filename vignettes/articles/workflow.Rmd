@@ -83,7 +83,7 @@ grViz("digraph functions {
   search->strat [style=dashed]
   strat->prepdata
   prepdata->prepspatial
-  prepdata->prepmodel
+  prepdata->prepmodel [color=grey50]
   prepspatial->prepmodel [color=grey50]
   prepmodel->runmodel
   

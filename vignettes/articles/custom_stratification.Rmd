@@ -74,11 +74,11 @@ we're using a custom stratification or not.
 p <- prepare_data(s)
 ```
 
-Run the model (note this is not an appropriate model, as we're aiming for speed
+Prepare and run the model (note this is not an appropriate model, as we're aiming for speed
 rather than accuracy).
 ```{r}
-m <- run_model(p, model = "first_diff", 
-               chains = 2, iter_sampling = 20, iter_warmup = 20)
+m <- prepare_model(p, model = "first_diff") %>%
+  run_model(chains = 2, iter_sampling = 20, iter_warmup = 20)
 ```
 
 Now we can start to look at the indices and trends related to our model.
