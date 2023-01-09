@@ -66,6 +66,9 @@ prepare_model <- function(prepared_data,
                           set_seed = NULL,
                           quiet = FALSE) {
 
+  # Set seed
+  if(!is.null(set_seed)) withr::local_seed(set_seed)
+
   # Check inputs
   check_data(prepared_data)
   model <- check_model(model, model_variant)
@@ -112,7 +115,6 @@ prepare_model <- function(prepared_data,
          "model_file" = model_file))
 
   # Get initial values
-  if(!is.null(set_seed)) withr::local_seed(set_seed)
   init_values <- create_init(model, model_variant, model_data)
 
   list("model_data" = model_data,
