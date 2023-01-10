@@ -14,10 +14,17 @@
 #'   target acceptance statistic.
 #' @param max_treedepth Numeric. Passed to `cmdstanr::sample()`. The maximum
 #'   allowed tree depth for the NUTS engine. See `?cmdstanr::sample`.
+#' @param k Numeric. The K-fold group to run for cross-validation. Only relevant
+#'   if folds defined by `prepare_model(calculate_cv = TRUE)` or custom
+#'   definition. See `?prepare_model` or the [models
+#'   article](https://steffilazerte.ca/bbsBayes/articles/models.html) for more
+#'   details.
 #' @param output_basename Character. Name of the files created as part of the
 #'   Stan model run and the final model output RDS file if `save_model = TRUE`.
 #' @param output_dir Character. Directory in which all model files will be
 #'   created.
+#' @param overwrite Logical. Whether to overwrite an existing model output file
+#'   when saving
 #' @param save_model Logical. Whether or not to save the model output to file
 #'   as an RDS object with all required data. Defaults to `TRUE`.
 #' @param ... Other arguments passed on to `cmdstanr::sample()`

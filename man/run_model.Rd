@@ -60,6 +60,11 @@ target acceptance statistic.}
 \item{max_treedepth}{Numeric. Passed to \code{cmdstanr::sample()}. The maximum
 allowed tree depth for the NUTS engine. See \code{?cmdstanr::sample}.}
 
+\item{k}{Numeric. The K-fold group to run for cross-validation. Only relevant
+if folds defined by \code{prepare_model(calculate_cv = TRUE)} or custom
+definition. See \code{?prepare_model} or the \href{https://steffilazerte.ca/bbsBayes/articles/models.html}{models article} for more
+details.}
+
 \item{output_basename}{Character. Name of the files created as part of the
 Stan model run and the final model output RDS file if \code{save_model = TRUE}.}
 
@@ -68,6 +73,9 @@ created.}
 
 \item{save_model}{Logical. Whether or not to save the model output to file
 as an RDS object with all required data. Defaults to \code{TRUE}.}
+
+\item{overwrite}{Logical. Whether to overwrite an existing model output file
+when saving}
 
 \item{set_seed}{Numeric. If \code{NULL} (default) no seed is set. Otherwise an
 integer number to be used with \code{withr::with_seed()} internally to ensure

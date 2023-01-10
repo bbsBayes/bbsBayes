@@ -23,7 +23,20 @@
 #'  a factor of `gamma(2, 0.1)`. Default is `FALSE`.
 #' @param calculate_log_lik Logical. Whether to calculate point-wise
 #'   log-likelihood of the data given the model. Default is `FALSE`.
-#' @param calculate_CV Logical. Whether to use cross validation.
+#' @param calculate_cv Logical. Whether to use bbsBayes' cross validation. See
+#'   Details below.
+#' @param cv_k Numeric. The number of K folds to include (only relevant if
+#'   `calculate_cv = TRUE`).
+#' @param cv_fold_groups Character. The data column to use when determining the
+#'   grouping level of the observations to be assigned to different fold groups.
+#'   Must be one of `obs_n` or `routes` (only relevant if `calculate_cv =
+#'   TRUE`). See the [models
+#'   article](https://steffilazerte.ca/bbsBayes/articles/models.html) for more
+#'   details.
+#' @param cv_omit_singles Logical. Whether to omit test groups with no
+#'   replication (only relevant if `calculate_cv = TRUE`). See the [models
+#'   article](https://steffilazerte.ca/bbsBayes/articles/models.html) for more
+#'   details.
 #'
 #' @inheritParams common_docs
 #'
@@ -35,6 +48,10 @@
 #' (`init_values`) in the output of `prepare_model()` to customize the `init`
 #' supplied to `cmdstanr::sample()`. You can supply these parameters in anyway
 #' that `cmdstanr::sample()` accepts the `init` argument.
+#'
+#' To implement bbsBayes' version of cross validation, set `calculate_cv =
+#' TRUE`. You can set up your own system for cross validation by modifying the
+#' `folds` list-item in the output of `prepare_model()`.
 #'
 #' See the [models
 #' article](https://steffilazerte.ca/bbsBayes/articles/models.html) for more

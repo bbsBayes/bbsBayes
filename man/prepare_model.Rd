@@ -62,6 +62,21 @@ a factor of \code{gamma(2, 0.1)}. Default is \code{FALSE}.}
 \item{calculate_log_lik}{Logical. Whether to calculate point-wise
 log-likelihood of the data given the model. Default is \code{FALSE}.}
 
+\item{calculate_cv}{Logical. Whether to use bbsBayes' cross validation. See
+Details below.}
+
+\item{cv_k}{Numeric. The number of K folds to include (only relevant if
+\code{calculate_cv = TRUE}).}
+
+\item{cv_fold_groups}{Character. The data column to use when determining the
+grouping level of the observations to be assigned to different fold groups.
+Must be one of \code{obs_n} or \code{routes} (only relevant if \code{calculate_cv = TRUE}). See the \href{https://steffilazerte.ca/bbsBayes/articles/models.html}{models article} for more
+details.}
+
+\item{cv_omit_singles}{Logical. Whether to omit test groups with no
+replication (only relevant if \code{calculate_cv = TRUE}). See the \href{https://steffilazerte.ca/bbsBayes/articles/models.html}{models article} for more
+details.}
+
 \item{set_seed}{Numeric. If \code{NULL} (default) no seed is set. Otherwise an
 integer number to be used with \code{withr::with_seed()} internally to ensure
 reproducibility.}
@@ -70,8 +85,6 @@ reproducibility.}
 
 Use \verb{@inheritParams common_docs} to include the above in any function
 documentation with a matching argument (will only include matching args)}
-
-\item{calculate_CV}{Logical. Whether to use cross validation.}
 }
 \value{
 A list containing the pared model data (\code{model_data}), initialization
@@ -91,6 +104,9 @@ Second, you can edit or overwrite the initialization parameters
 (\code{init_values}) in the output of \code{prepare_model()} to customize the \code{init}
 supplied to \code{cmdstanr::sample()}. You can supply these parameters in anyway
 that \code{cmdstanr::sample()} accepts the \code{init} argument.
+
+To implement bbsBayes' version of cross validation, set \code{calculate_cv = TRUE}. You can set up your own system for cross validation by modifying the
+\code{folds} list-item in the output of \code{prepare_model()}.
 
 See the \href{https://steffilazerte.ca/bbsBayes/articles/models.html}{models article} for more
 advanced examples and explanations.
