@@ -2,7 +2,7 @@
 % Please edit documentation in R/prepare-data.R
 \name{prepare_data}
 \alias{prepare_data}
-\title{Wrangle data to use for modelling input}
+\title{Filter for data quality}
 \usage{
 prepare_data(
   strata_data,
@@ -32,22 +32,19 @@ year in data.}
 year in data.}
 
 \item{min_n_routes}{Numeric. Required minimum routes per strata where species
-has been observed. Defaults to 3}
+has been observed. Default 3.}
 
-\item{min_max_route_years}{Required minimum number of years with non-zero
-observations of species on at least 1 route. Defaults to 3. Only retain
-strata with at least one route where the species was observed at least once
-in this many years.}
+\item{min_max_route_years}{Numeric. Required minimum number of years with
+non-zero observations of species on at least 1 route. Default 3. Only
+retain strata with at least one route where the species was observed at
+least once in this many years.}
 
-\item{min_mean_route_years}{Required minimum average of years per route with
-the species observed. Defaults to 1. Only retain strata where the average
-number of years the species was observed per route is greater than this
-value.}
+\item{min_mean_route_years}{Numeric. Required minimum average of years per
+route with the species observed. Default 1. Only retain strata where the
+average number of years the species was observed per route is greater than
+this value.}
 
-\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}
-
-Use \verb{@inheritParams common_docs} to include the above in any function
-documentation with a matching argument (will only include matching args)}
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}.}
 
 \item{species}{Defunct. Use \code{species} in \code{stratify()} instead}
 
@@ -70,30 +67,27 @@ List of prepared (meta) data to be used for modelling and further
 steps.
 \itemize{
 \item \code{model_data} list of data formatted for use in Stan modelling
-\item \code{meta_data} contains \code{species}, \code{stratify_by}, and \code{stratify_type}
-\item \code{meta_strata} contains a data frame listing strata names and area for all
-strata relevant to the data (i.e. some may have been removed due to lack of
-count data). Specifically, \code{strata_name} (the label of the stratum),
-\code{strata} (the numeric code) and \code{area_sq_km}
+\item \code{meta_data} meta data defining the analysis
+\item \code{meta_strata} data frame listing strata meta data
 \item \code{raw_data} contains a data frame of summarized data used to create
 \code{model_data} (just formatted more nicely)
 }
 }
 \description{
-Subset raw BBS data by selected species and and wrangle stratified data for
-use as input for models.
+Check and filter the stratified data by minimum required samples for
+modelling, and prepare data format for use by models.
 }
 \examples{
 # Toy example with Pacific Wren sample data
 
 # First, stratify the sample data
 
-strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
+s <- stratify(by = "bbs_cws", sample_data = TRUE)
 
 # Prepare the stratified data for use in a model. In this
 #   toy example, we will set the minimum year as 2009 and
 #   maximum year as 2018, effectively only setting up to
 #   model 10 years of data.
 
-model_data <- prepare_data(strat_data, min_year = 2009, max_year = 2018)
+p <- prepare_data(s, min_year = 2009, max_year = 2018)
 }

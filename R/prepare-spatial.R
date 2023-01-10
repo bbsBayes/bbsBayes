@@ -1,45 +1,52 @@
 #' Define neighbouring strata for spatial analyses
 #'
-#' Given a spatial data frame containing polygons or points to outline strata,
-#' a neighbourhood matrix is identified for use in `prepare_model()`
+#' Given the prepared data and a spatial data frame of polygons outlining
+#' strata, identify a neighbourhood matrix for use in modelling.
 #'
-#' @param strata_map sf data frame. Map of the strata in (MULTI)POLYGONs. Must
-#'   have column "strata_name" matching strata output from `prepare_data()`.
-#' @param voronoi Logical. Whether or not to use Voroni method for polygons.
-#'   (Must use Voronoi method for points).
+#' @param strata_map `sf` Data Frame. `sf` map of the strata in
+#'   (MULTI)POLYGONs. Must have column "strata_name" matching strata output from
+#'   `prepare_data()`.
+#' @param voronoi Logical. Whether or not to use Voroni method. Default `FALSE`.
 #' @param nearest_fill Logical. For strata with no neighbours, whether or not to
 #'   fill in by centroids of the 2 nearest neighbours when **not** using the
-#'   Voronoi method.
+#'   Voronoi method. Default `FALSE`.
 #' @param island_link_dist_factor Numeric. Distances within a factor of this
 #'   amount are considered nearest strata neighbours. Used when linking
 #'   otherwise isolated islands of strata, when **not** using the
-#'   Voronoi method.
+#'   Voronoi method. Default 1.2.
 #' @param buffer_type Character. Which buffer type to use when using the Voronoi
-#'   method. Must be one of `buffer` or `convex_hull`. See Details for
+#'   method. Must be one of `buffer` (default) or `convex_hull`. See Details for
 #'   specifics.
 #' @param buffer_dist Numeric. Distance to buffer and link the strata if not
 #'   connected when using the Voronoi method. Units are that of
 #'   `sf::st_crs(strata_map)`. This is the *starting* distance if `buffer_type =
-#'   "buffer"` or the final distance if `buffer_type = "convex_hull"`. See
-#'   Details.
-#' @param add_map sf spatial object. Spatial data to add to map output.
+#'   "buffer"` or the final distance if `buffer_type = "convex_hull"`. Default
+#'   10000. See Details.
+#' @param add_map `sf` object. Spatial data to add to map output.
 #' @param label_size Numeric. Size of the labels on the map. For data with many
-#'   different strata it can be useful to reduce the size of the labels.
+#'   different strata it can be useful to reduce the size of the labels. Default
+#'   3.
 #'
 #' @inheritParams common_docs
+#'
 #' @details
 #' When using the Voronoi method, a buffer is used to fill around and link
 #' strata together. If the `buffer_type` is `buffer`, `buffer_dist` is the
 #' starting distance over which to buffer. If not all strata are linked, this
 #' distance is increased by 10% and applied again, repeating until all strata
 #' are linked. If `buffer_type` is `convex_hull`, then a convex hull is used to
-#' link up the strata before appling a buffer at a distance of `buffer_dist`.
+#' link up the strata before applying a buffer at a distance of `buffer_dist`.
 #' Note that all distances are in the units of `sf::st_crs(strata_map)`.
 #'
-#'
-#' @returns List containing samples, nodes, adjacent matrix and map visualizing
-#'   the matrix
-#'
+#' @return List of prepared (meta) data to be used for modelling and further
+#'   steps.
+#'   - `spatial_data` list of samples, nodes, adjacent matrix and map
+#'      visualizing the matrix
+#'   - `model_data` list of data formatted for use in Stan modelling
+#'   - `meta_data` meta data defining the analysis
+#'   - `meta_strata` data frame listing strata meta data
+#'   - `raw_data` contains a data frame of summarized data used to create
+#'     `model_data` (just formatted more nicely)
 #'
 #' @examples
 #'

@@ -1,6 +1,6 @@
 #' Stratify and filter Breeding Bird Survey data
 #'
-#' Assigns count data to strata and filters by species of interest. Routes are
+#' Assign count data to strata and filter by species of interest. Routes are
 #' assigned to strata based on their geographic location and the stratification
 #' specified by the user. Species are filtered by matching English, French or
 #' Scientific names to those in the BBS species data (see `search_species()` for
@@ -9,16 +9,17 @@
 #'
 #' @param by Character. Stratification type. Either an established type, one of
 #'   "prov_state", "bcr", "latlong", "bbs_cws", "bbs_usgs", or a custom name
-#'   (see strata_custom for details).
+#'   (see `strata_custom` for details).
 #' @param species Character. Bird species of interest. Can be specified by
 #'   English, French, or Scientific names, or AOU code. Use `search_species()`
 #'   for loose matching to find the exact name/code needed.
-#' @param strata_custom Data frame or sf spatial data frame. Data frame
-#'   of modified existing stratification, or a sf spatial data frame with
+#' @param strata_custom (`sf`) Data Frame. Data frame
+#'   of modified existing stratification, or a `sf` spatial data frame with
 #'   polygons defining the custom stratifications. See Details.
 #' @param combine_species_forms Logical. Whether to combine ambiguous species
-#'   forms. See Details.
-#' @param sample_data Logical. Use sample data (just Pacific Wren)
+#'   forms. Default `TRUE`. See Details.
+#' @param sample_data Logical. Use sample data (just Pacific Wrens). Default
+#'   `FALSE`.
 #' @param lump_species_forms Deprecated. Use `combine_species_forms` instead
 #' @param bbs_data Defunct.
 #'
@@ -37,16 +38,25 @@
 #'
 #'   If `combine_species_forms` is `TRUE` (default), species with multiple forms
 #'   (e.g., "unid. Dusky Grouse / Sooty Grouse") are included in overall species
-#'   groupings (e.g., "unid." are combined with "Dusky Grouse" and "Sooty
+#'   groupings (i.e., "unid." are combined with "Dusky Grouse" and "Sooty
 #'   Grouse" into "Blue Grouse (Dusky/Sooty)"). If the user wishes to keep the
 #'   forms separate, `combine_species_forms` can be set to `FALSE`. See the data
 #'   frame `species_forms`, for which species are set to be combined with which
 #'   other species.
 #'
-#'   See `vignette("stratification", package = "bbsBayes")` for more details.
+#'   See `vignette("stratification", package = "bbsBayes")` and the article
+#'   [custom
+#'   stratification](https://steffilazerte.ca/bbsBayes/articles/custom_stratification.html)
+#'   for more details.
 #'
-#' @return Large list with `meta_data`, `meta_strata`, `birds_strata`, and
-#'   `routes_strata`
+#' @return List of (meta) data.
+#'   - `meta_data` meta data defining the analysis
+#'   - `meta_strata` contains a data frame listing strata names and area for all
+#'      strata relevant to the data (i.e. some may have been removed due to lack
+#'      of count data). Contains at least `strata_name` (the label of the
+#'      stratum), and `area_sq_km` (area of the stratum).
+#'   - `birds_strata` contains stratified count-level data filtered by species
+#'   - `routes_strata` contains stratified route-level data filtered by species
 #'
 #' @examples
 #'

@@ -33,19 +33,20 @@ prepare_model(
 Additive Model with Year Effect), or "slope" (Slope model).}
 
 \item{model_variant}{Character. Model variant to use, must be one of
-"nonhier" (Non-hierarchical), "hier" (Hierarchical), or "spatial"
+"nonhier" (Non-hierarchical), "hier" (Hierarchical; default), or "spatial"
 (Spatially explicit).}
 
-\item{model_file}{Character. Location of a custom Stan model file to use.}
+\item{model_file}{Character. Optional location of a custom Stan model file to
+use.}
 
 \item{use_pois}{Logical. Whether to use an Over-Dispersed Poisson model
-(\code{TRUE}) or an Negative Binomial model (\code{FALSE}, default).}
+(\code{TRUE}) or an Negative Binomial model (\code{FALSE}; default).}
 
 \item{heavy_tailed}{Logical. Whether extra-Poisson error distributions should
 be modelled as a t-distribution, with heavier tails than the standard
-normal distribution. Default is \code{TRUE}. Recent results suggest this is best
+normal distribution. Default \code{TRUE}. Recent results suggest this is best
 even though it requires much longer convergence times. Can only be set to
-FALSE with Poisson models (i.e. \code{use_pois = TRUE}).}
+\code{FALSE} with Poisson models (i.e. \code{use_pois = TRUE}).}
 
 \item{n_knots}{Numeric. Number of knots for "gam" and "gamye" models}
 
@@ -57,48 +58,56 @@ the user may want to consider adjusting the prior distributions for the
 parameters and their precision.}
 
 \item{calculate_nu}{Logical. Whether to calculate the \code{nu} parameter as
-a factor of \code{gamma(2, 0.1)}. Default is \code{FALSE}.}
+a factor of \code{gamma(2, 0.1)}. Default \code{FALSE}.}
 
 \item{calculate_log_lik}{Logical. Whether to calculate point-wise
-log-likelihood of the data given the model. Default is \code{FALSE}.}
+log-likelihood of the data given the model. Default \code{FALSE}.}
 
 \item{calculate_cv}{Logical. Whether to use bbsBayes' cross validation. See
-Details below.}
+Details.}
 
 \item{cv_k}{Numeric. The number of K folds to include (only relevant if
-\code{calculate_cv = TRUE}).}
+\code{calculate_cv = TRUE}). Default 10.}
 
 \item{cv_fold_groups}{Character. The data column to use when determining the
 grouping level of the observations to be assigned to different fold groups.
-Must be one of \code{obs_n} or \code{routes} (only relevant if \code{calculate_cv = TRUE}). See the \href{https://steffilazerte.ca/bbsBayes/articles/models.html}{models article} for more
+Must be one of \code{obs_n} (default) or \code{routes} (only relevant if
+\code{calculate_cv = TRUE}). See the \href{https://steffilazerte.ca/bbsBayes/articles/models.html}{models article} for more
 details.}
 
 \item{cv_omit_singles}{Logical. Whether to omit test groups with no
-replication (only relevant if \code{calculate_cv = TRUE}). See the \href{https://steffilazerte.ca/bbsBayes/articles/models.html}{models article} for more
+replication (only relevant if \code{calculate_cv = TRUE}). Default \code{TRUE.} See
+the \href{https://steffilazerte.ca/bbsBayes/articles/models.html}{models article} for more
 details.}
 
 \item{set_seed}{Numeric. If \code{NULL} (default) no seed is set. Otherwise an
 integer number to be used with \code{withr::with_seed()} internally to ensure
 reproducibility.}
 
-\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}
-
-Use \verb{@inheritParams common_docs} to include the above in any function
-documentation with a matching argument (will only include matching args)}
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}.}
 }
 \value{
-A list containing the pared model data (\code{model_data}), initialization
-parameters (\code{init_values}), meta data for the analysis (\code{meta_data}), meta
-data for the strata (\code{meta_strata}) and prepared data counts from
-\code{prepare_data()} (\code{raw_data}).
+A list of prepared data.
+\itemize{
+\item \code{model_data} list of data formatted for use in Stan modelling
+\item \code{init_values} list of initialization parameters
+\item \code{folds} if \code{calculate_cv = TRUE}, a vector of k-fold groups each
+observation is assigned to (otherwise \code{NULL})
+\item \code{meta_data} meta data defining the analysis
+\item \code{meta_strata} data frame listing strata meta data
+\item \code{raw_data} contains a data frame of summarized data used to create
+\code{model_data} (just formatted more nicely)
+}
 }
 \description{
-Prepare model parameters
+Calculate and format the prepared data for use in modelling. Different
+parameters are definied for different types of models (see \code{?bbs_models} for
+a list of models included in bbsBayes).
 }
 \details{
-There are two ways you can customize
-the model run. The first is to supply a custom \code{model_file} created with the
-\code{copy_model_file()} function and then edited by hand.
+There are two ways you can customize the model run. The first is to supply a
+custom \code{model_file} created with the \code{copy_model_file()} function and then
+edited by hand.
 
 Second, you can edit or overwrite the initialization parameters
 (\code{init_values}) in the output of \code{prepare_model()} to customize the \code{init}

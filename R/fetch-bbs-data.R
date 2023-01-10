@@ -1,30 +1,39 @@
 #' Fetch Breeding Bird Survey dataset
 #'
-#' Use File Transfer Protocol (FTP) to fetch Breeding Bird Survey data from the
-#' United States Geological Survey (USGS) FTP site. This is the raw data that is
-#' uploaded to the site before any analyses are performed. A package-specific
-#' directory is created on the user's computer (see documentation of
-#' `rappdirs::appdir` for details of where this directory lives), and the BBS
-#' data is saved to that directory for use by other functions. Before
-#' downloading any data, the user must thoroughly read through the terms and
-#' conditions of the user of the data and type the word "yes" to agree.
+#' Fetch and download Breeding Bird Survey data from the United States
+#' Geological Survey (USGS) FTP site. This is the raw data that is uploaded to
+#' the site before any analyses are performed. Users can download different
+#' types (`state`, `stop`) and different releases (currently `2020` and `2022`).
 #'
-#' @param force Logical. Should pre-exising BBS data be overwritten? Defaults to
-#'   FALSE
+#' @param force Logical. Should pre-exising BBS data be overwritten? Default
+#'   FALSE.
 #' @param compression Character. What compression should be used to save data?
-#'   Defaults to `none` which takes up the most space but is the fastest to
+#'   Default is `none` which takes up the most space but is the fastest to
 #'   load. Must be one of `none`, `gz`, `bz2`, or `xz` (passed to
 #'   `readr::write_rds()`'s `compress` argument).
 #'
 #'
 #' @inheritParams common_docs
 #'
-#' @details BBS `state` level counts provide counts beginning in 1966,
-#'   aggregated in five bins, each of which contains cumulative counts from 10
-#'   of the 50 stops along a route. In contrats BBS `stop` level counts provides
-#'   stop-level data beginning in 1997, which includes counts for each stop
-#'   along routes individually. Note that stop-level data is not currently
-#'   supported by the modelling utilities in bbsBayes.
+#' @details
+#'
+#' Users will be asked before saving the BBS data to a package-specific
+#' directory created on their computer. Before downloading any data, users must
+#' thoroughly read through the USGS terms and conditions for that data and enter
+#' the word "yes" to agree.
+#'
+#' BBS `state` level counts provide counts beginning in 1966, aggregated in five
+#' bins, each of which contains cumulative counts from 10 of the 50 stops along
+#' a route. In contrast BBS `stop` level counts provides stop-level data
+#' beginning in 1997, which includes counts for each stop along routes
+#' individually. **Note that stop-level data is not currently supported by the
+#' modelling utilities in bbsBayes.**
+#'
+#' There are two releases for each type of data, `2020` and `2022`. By default
+#' all functions use the most recent release unless otherwise specified. For
+#' example, the `release` argument in `stratify()` can be changed to `2020` to
+#' use the 2020 release of state-level counts.
+#'
 #'
 #' @examplesIf interactive()
 #'
@@ -194,9 +203,9 @@ bbs_dir <- function(quiet = TRUE) {
 #'   `fetch_bbs_data()`. If "models", removes only model executables compiled
 #'   when `run_models()` is run.
 #' @param level Character. BBS data to remove, one of "all", "state", or "stop".
-#'   Only applies if `type = "bbs_data"`
+#'   Only applies if `type = "bbs_data"`.
 #' @param release Character/Numeric. BBS data to remove, one of "all", 2020, or
-#'   2022. Only applies if `type = "bbs_data"`
+#'   2022. Only applies if `type = "bbs_data"`.
 #'
 #' @return Nothing.
 #'

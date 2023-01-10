@@ -1,16 +1,17 @@
 # common_docs ------------------
 #' Common arguments and documentation for various functions
 #'
-#' @param level Character. Which type of BBS counts to fetch, "state" or "stop".
-#'   Defaults to "state".
-#' @param release Numeric. Yearly release. Options are 2022 (default including
-#'   data through 2021 field season) or 2020 (including data through 2019)
+#' @param level Character. Which type of BBS counts to use, "state" or "stop".
+#'   Default "state".
+#' @param release Numeric. Which yearly release to use, 2022 (including data
+#'   through 2021 field season) or 2020 (including data through 2019). Default
+#'   2022.
 #' @param sf Spatial data frame. PLACEHOLDER
 #' @param model Character. Type of model to use, must be one of "first_diff"
 #'   (First Differences), "gam" (General Additive Model), "gamye" (General
 #'   Additive Model with Year Effect), or "slope" (Slope model).
 #' @param model_variant Character. Model variant to use, must be one of
-#'   "nonhier" (Non-hierarchical), "hier" (Hierarchical), or "spatial"
+#'   "nonhier" (Non-hierarchical), "hier" (Hierarchical; default), or "spatial"
 #'   (Spatially explicit).
 #' @param min_year Numeric. Minimum year to use. Default (`NULL`) uses first
 #'   year in data.
@@ -31,8 +32,9 @@
 #' @param set_seed Numeric. If `NULL` (default) no seed is set. Otherwise an
 #'   integer number to be used with `withr::with_seed()` internally to ensure
 #'   reproducibility.
-#' @param quiet Logical. Suppress progress messages? Default `FALSE`
+#' @param quiet Logical. Suppress progress messages? Default `FALSE`.
 #'
+#' @details
 #' Use `@inheritParams common_docs` to include the above in any function
 #' documentation with a matching argument (will only include matching args)
 #'

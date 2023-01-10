@@ -1,14 +1,14 @@
-#' Load Breeding Bird Survey dataset into R Session
+#' Load Breeding Bird Survey data
 #'
-#' Loads the raw, unstratified BBS data into the current R session.
-#' The data must have been previously fetched using `fetch_bbs_data()`.
-#' Note that this is not necessary to run a Bayesian analysis of BBS data;
-#' calling `stratify()` will do the loading for you.
+#' Load the local, minimally processed, raw, unstratified data.
+#' The data must have been previously fetched using `fetch_bbs_data()`. This
+#' function is provided for custom explorations and is not part of the analysis
+#' workflow; `stratify()` will do the loading for you.
 #'
 #' @param sample Logical. Whether or not to use the sample data for Pacific
-#'   Wrens. Defaults to `FALSE`. If `TRUE`, `level` and `release` are ignored.
+#'   Wrens (see ?bbs_data_sample). Default is `FALSE`. If `TRUE`, `level` and
+#'   `release` are ignored.
 #' @inheritParams common_docs
-#'
 #'
 #' @return Large list (3 elements) consisting of:
 #' \item{birds}{Data frame of sample bird point count data per route, per year}

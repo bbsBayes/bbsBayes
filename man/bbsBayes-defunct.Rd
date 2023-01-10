@@ -95,7 +95,7 @@ Access the strata areas and regional data by exploring the included data
 \code{bbs_strata}. e.g, \code{bbs_strata[["bbs_usgs"]]}.
 
 \code{p_waic()} and \code{waic()} are no longer recommended for BBS data. Use
-cross validation instead
+cross validation instead.
 
 \code{extract_index_data()} is no longer recommended.
 }

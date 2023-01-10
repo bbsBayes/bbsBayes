@@ -34,7 +34,9 @@ reference:
     Functions for processing BBS data according to the type of models to be run
   contents:
   - stratify
-  - starts_with("prepare_")
+  - prepare_data
+  - prepare_spatial
+  - prepare_model
 
 - title: Stan models
   desc: >

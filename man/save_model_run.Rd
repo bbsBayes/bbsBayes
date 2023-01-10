@@ -12,10 +12,7 @@ save_model_run(model_output, path = NULL, quiet = FALSE)
 \item{path}{Character. Optional file path to use for saved data. Defaults to
 the file path used for the original run}
 
-\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}
-
-Use \verb{@inheritParams common_docs} to include the above in any function
-documentation with a matching argument (will only include matching args)}
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}.}
 }
 \value{
 Nothing. Creates .rds file at \code{path}.

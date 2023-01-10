@@ -13,42 +13,46 @@ fetch_bbs_data(
 )
 }
 \arguments{
-\item{level}{Character. Which type of BBS counts to fetch, "state" or "stop".
-Defaults to "state".}
+\item{level}{Character. Which type of BBS counts to use, "state" or "stop".
+Default "state".}
 
-\item{release}{Numeric. Yearly release. Options are 2022 (default including
-data through 2021 field season) or 2020 (including data through 2019)}
+\item{release}{Numeric. Which yearly release to use, 2022 (including data
+through 2021 field season) or 2020 (including data through 2019). Default
+2022.}
 
-\item{force}{Logical. Should pre-exising BBS data be overwritten? Defaults to
-FALSE}
+\item{force}{Logical. Should pre-exising BBS data be overwritten? Default
+FALSE.}
 
-\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}
-
-Use \verb{@inheritParams common_docs} to include the above in any function
-documentation with a matching argument (will only include matching args)}
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}.}
 
 \item{compression}{Character. What compression should be used to save data?
-Defaults to \code{none} which takes up the most space but is the fastest to
+Default is \code{none} which takes up the most space but is the fastest to
 load. Must be one of \code{none}, \code{gz}, \code{bz2}, or \code{xz} (passed to
 \code{readr::write_rds()}'s \code{compress} argument).}
 }
 \description{
-Use File Transfer Protocol (FTP) to fetch Breeding Bird Survey data from the
-United States Geological Survey (USGS) FTP site. This is the raw data that is
-uploaded to the site before any analyses are performed. A package-specific
-directory is created on the user's computer (see documentation of
-\code{rappdirs::appdir} for details of where this directory lives), and the BBS
-data is saved to that directory for use by other functions. Before
-downloading any data, the user must thoroughly read through the terms and
-conditions of the user of the data and type the word "yes" to agree.
+Fetch and download Breeding Bird Survey data from the United States
+Geological Survey (USGS) FTP site. This is the raw data that is uploaded to
+the site before any analyses are performed. Users can download different
+types (\code{state}, \code{stop}) and different releases (currently \code{2020} and \code{2022}).
 }
 \details{
-BBS \code{state} level counts provide counts beginning in 1966,
-aggregated in five bins, each of which contains cumulative counts from 10
-of the 50 stops along a route. In contrats BBS \code{stop} level counts provides
-stop-level data beginning in 1997, which includes counts for each stop
-along routes individually. Note that stop-level data is not currently
-supported by the modelling utilities in bbsBayes.
+Users will be asked before saving the BBS data to a package-specific
+directory created on their computer. Before downloading any data, users must
+thoroughly read through the USGS terms and conditions for that data and enter
+the word "yes" to agree.
+
+BBS \code{state} level counts provide counts beginning in 1966, aggregated in five
+bins, each of which contains cumulative counts from 10 of the 50 stops along
+a route. In contrast BBS \code{stop} level counts provides stop-level data
+beginning in 1997, which includes counts for each stop along routes
+individually. \strong{Note that stop-level data is not currently supported by the
+modelling utilities in bbsBayes.}
+
+There are two releases for each type of data, \code{2020} and \code{2022}. By default
+all functions use the most recent release unless otherwise specified. For
+example, the \code{release} argument in \code{stratify()} can be changed to \code{2020} to
+use the 2020 release of state-level counts.
 }
 \examples{
 \dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

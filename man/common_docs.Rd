@@ -4,11 +4,12 @@
 \alias{common_docs}
 \title{Common arguments and documentation for various functions}
 \arguments{
-\item{level}{Character. Which type of BBS counts to fetch, "state" or "stop".
-Defaults to "state".}
+\item{level}{Character. Which type of BBS counts to use, "state" or "stop".
+Default "state".}
 
-\item{release}{Numeric. Yearly release. Options are 2022 (default including
-data through 2021 field season) or 2020 (including data through 2019)}
+\item{release}{Numeric. Which yearly release to use, 2022 (including data
+through 2021 field season) or 2020 (including data through 2019). Default
+2022.}
 
 \item{sf}{Spatial data frame. PLACEHOLDER}
 
@@ -17,7 +18,7 @@ data through 2021 field season) or 2020 (including data through 2019)}
 Additive Model with Year Effect), or "slope" (Slope model).}
 
 \item{model_variant}{Character. Model variant to use, must be one of
-"nonhier" (Non-hierarchical), "hier" (Hierarchical), or "spatial"
+"nonhier" (Non-hierarchical), "hier" (Hierarchical; default), or "spatial"
 (Spatially explicit).}
 
 \item{min_year}{Numeric. Minimum year to use. Default (\code{NULL}) uses first
@@ -48,13 +49,14 @@ calculate metrics. If \code{NULL} (default) all variables are returned.}
 integer number to be used with \code{withr::with_seed()} internally to ensure
 reproducibility.}
 
-\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}
-
-Use \verb{@inheritParams common_docs} to include the above in any function
-documentation with a matching argument (will only include matching args)}
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}.}
 }
 \description{
 Common arguments and documentation for various functions
+}
+\details{
+Use \verb{@inheritParams common_docs} to include the above in any function
+documentation with a matching argument (will only include matching args)
 }
 \section{NatureCounts account}{
 

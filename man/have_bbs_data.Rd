@@ -2,25 +2,29 @@
 % Please edit documentation in R/fetch-bbs-data.R
 \name{have_bbs_data}
 \alias{have_bbs_data}
-\title{Check whether BBS data exists}
+\title{Check whether BBS data exists locally}
 \usage{
 have_bbs_data(level = "state", release = 2022, quiet = FALSE)
 }
 \arguments{
-\item{level}{Character. Which type of BBS counts to fetch, "state" or "stop".
-Defaults to "state".}
+\item{level}{Character. BBS data to check, one of "all", "state", or "stop".
+Default "state".}
 
-\item{release}{Numeric. Yearly release. Options are 2022 (default including
-data through 2021 field season) or 2020 (including data through 2019)}
+\item{release}{Character/Numeric. BBS data to check, one of "all", 2020, or
+2022. Default 2022.}
 
-\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}
-
-Use \verb{@inheritParams common_docs} to include the above in any function
-documentation with a matching argument (will only include matching args)}
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}.}
 }
 \value{
 \code{TRUE} if the data is found, \code{FALSE} otherwise
 }
 \description{
-Check whether BBS data exists
+Use this function to check if you have the BBS data downloaded and where
+bbsBayes is expecting to find it. If it returns \code{FALSE}, the data is not
+present; use \code{fetch_bbs_data()} to retrieve it.
+}
+\examples{
+have_bbs_data()
+have_bbs_data(release = 2020)
+have_bbs_data(release = "all", level = "all")
 }

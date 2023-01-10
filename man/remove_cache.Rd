@@ -14,10 +14,10 @@ contained therein). If "bbs_data", removes only BBS data downloaded with
 when \code{run_models()} is run.}
 
 \item{level}{Character. BBS data to remove, one of "all", "state", or "stop".
-Only applies if \code{type = "bbs_data"}}
+Only applies if \code{type = "bbs_data"}.}
 
 \item{release}{Character/Numeric. BBS data to remove, one of "all", 2020, or
-2022. Only applies if \code{type = "bbs_data"}}
+2022. Only applies if \code{type = "bbs_data"}.}
 }
 \value{
 Nothing.

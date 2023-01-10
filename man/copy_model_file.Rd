@@ -12,7 +12,7 @@ copy_model_file(model, model_variant, dir, overwrite = FALSE)
 Additive Model with Year Effect), or "slope" (Slope model).}
 
 \item{model_variant}{Character. Model variant to use, must be one of
-"nonhier" (Non-hierarchical), "hier" (Hierarchical), or "spatial"
+"nonhier" (Non-hierarchical), "hier" (Hierarchical; default), or "spatial"
 (Spatially explicit).}
 
 \item{dir}{Character. Directory where file should be saved.}

@@ -81,10 +81,7 @@ when saving}
 integer number to be used with \code{withr::with_seed()} internally to ensure
 reproducibility.}
 
-\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}
-
-Use \verb{@inheritParams common_docs} to include the above in any function
-documentation with a matching argument (will only include matching args)}
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}.}
 
 \item{jags_data}{Defunct.}
 

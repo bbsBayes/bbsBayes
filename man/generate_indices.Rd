@@ -62,10 +62,7 @@ entire time series and ignores back-casting. CWS national estimates use a
 back cast of 5. Note that unless \code{drop_exclude = TRUE}, problematic years
 are only flagged, not omitted. See Details for more specifics.}
 
-\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}
-
-Use \verb{@inheritParams common_docs} to include the above in any function
-documentation with a matching argument (will only include matching args)}
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}.}
 
 \item{jags_mod}{Defunct. Use \code{model_output} instead}
 

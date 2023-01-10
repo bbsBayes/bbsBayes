@@ -40,7 +40,7 @@
 #'  `bbs_strata`. e.g, `bbs_strata[["bbs_usgs"]]`.
 #'
 #' `p_waic()` and `waic()` are no longer recommended for BBS data. Use
-#'  cross validation instead
+#'  cross validation instead.
 #'
 #'  `extract_index_data()` is no longer recommended.
 #'

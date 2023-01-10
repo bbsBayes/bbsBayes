@@ -2,24 +2,23 @@
 % Please edit documentation in R/load-bbs-data.R
 \name{load_bbs_data}
 \alias{load_bbs_data}
-\title{Load Breeding Bird Survey dataset into R Session}
+\title{Load Breeding Bird Survey data}
 \usage{
 load_bbs_data(level = "state", release = 2022, sample = FALSE, quiet = TRUE)
 }
 \arguments{
-\item{level}{Character. Which type of BBS counts to fetch, "state" or "stop".
-Defaults to "state".}
+\item{level}{Character. Which type of BBS counts to use, "state" or "stop".
+Default "state".}
 
-\item{release}{Numeric. Yearly release. Options are 2022 (default including
-data through 2021 field season) or 2020 (including data through 2019)}
+\item{release}{Numeric. Which yearly release to use, 2022 (including data
+through 2021 field season) or 2020 (including data through 2019). Default
+2022.}
 
 \item{sample}{Logical. Whether or not to use the sample data for Pacific
-Wrens. Defaults to \code{FALSE}. If \code{TRUE}, \code{level} and \code{release} are ignored.}
+Wrens (see ?bbs_data_sample). Default is \code{FALSE}. If \code{TRUE}, \code{level} and
+\code{release} are ignored.}
 
-\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}
-
-Use \verb{@inheritParams common_docs} to include the above in any function
-documentation with a matching argument (will only include matching args)}
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}.}
 }
 \value{
 Large list (3 elements) consisting of:
@@ -28,8 +27,8 @@ Large list (3 elements) consisting of:
 \item{species}{Sample list of North American bird species}
 }
 \description{
-Loads the raw, unstratified BBS data into the current R session.
-The data must have been previously fetched using \code{fetch_bbs_data()}.
-Note that this is not necessary to run a Bayesian analysis of BBS data;
-calling \code{stratify()} will do the loading for you.
+Load the local, minimally processed, raw, unstratified data.
+The data must have been previously fetched using \code{fetch_bbs_data()}. This
+function is provided for custom explorations and is not part of the analysis
+workflow; \code{stratify()} will do the loading for you.
 }

@@ -19,39 +19,46 @@ stratify(
 \arguments{
 \item{by}{Character. Stratification type. Either an established type, one of
 "prov_state", "bcr", "latlong", "bbs_cws", "bbs_usgs", or a custom name
-(see strata_custom for details).}
+(see \code{strata_custom} for details).}
 
 \item{species}{Character. Bird species of interest. Can be specified by
 English, French, or Scientific names, or AOU code. Use \code{search_species()}
 for loose matching to find the exact name/code needed.}
 
-\item{strata_custom}{Data frame or sf spatial data frame. Data frame
-of modified existing stratification, or a sf spatial data frame with
+\item{strata_custom}{(\code{sf}) Data Frame. Data frame
+of modified existing stratification, or a \code{sf} spatial data frame with
 polygons defining the custom stratifications. See Details.}
 
 \item{combine_species_forms}{Logical. Whether to combine ambiguous species
-forms. See Details.}
+forms. Default \code{TRUE}. See Details.}
 
-\item{release}{Numeric. Yearly release. Options are 2022 (default including
-data through 2021 field season) or 2020 (including data through 2019)}
+\item{release}{Numeric. Which yearly release to use, 2022 (including data
+through 2021 field season) or 2020 (including data through 2019). Default
+2022.}
 
-\item{sample_data}{Logical. Use sample data (just Pacific Wren)}
+\item{sample_data}{Logical. Use sample data (just Pacific Wrens). Default
+\code{FALSE}.}
 
-\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}
-
-Use \verb{@inheritParams common_docs} to include the above in any function
-documentation with a matching argument (will only include matching args)}
+\item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}.}
 
 \item{lump_species_forms}{Deprecated. Use \code{combine_species_forms} instead}
 
 \item{bbs_data}{Defunct.}
 }
 \value{
-Large list with \code{meta_data}, \code{meta_strata}, \code{birds_strata}, and
-\code{routes_strata}
+List of (meta) data.
+\itemize{
+\item \code{meta_data} meta data defining the analysis
+\item \code{meta_strata} contains a data frame listing strata names and area for all
+strata relevant to the data (i.e. some may have been removed due to lack
+of count data). Contains at least \code{strata_name} (the label of the
+stratum), and \code{area_sq_km} (area of the stratum).
+\item \code{birds_strata} contains stratified count-level data filtered by species
+\item \code{routes_strata} contains stratified route-level data filtered by species
+}
 }
 \description{
-Assigns count data to strata and filters by species of interest. Routes are
+Assign count data to strata and filter by species of interest. Routes are
 assigned to strata based on their geographic location and the stratification
 specified by the user. Species are filtered by matching English, French or
 Scientific names to those in the BBS species data (see \code{search_species()} for
@@ -70,13 +77,15 @@ data frame with polygons identifying the different strata to
 
 If \code{combine_species_forms} is \code{TRUE} (default), species with multiple forms
 (e.g., "unid. Dusky Grouse / Sooty Grouse") are included in overall species
-groupings (e.g., "unid." are combined with "Dusky Grouse" and "Sooty
+groupings (i.e., "unid." are combined with "Dusky Grouse" and "Sooty
 Grouse" into "Blue Grouse (Dusky/Sooty)"). If the user wishes to keep the
 forms separate, \code{combine_species_forms} can be set to \code{FALSE}. See the data
 frame \code{species_forms}, for which species are set to be combined with which
 other species.
 
-See \code{vignette("stratification", package = "bbsBayes")} for more details.
+See \code{vignette("stratification", package = "bbsBayes")} and the article
+\href{https://steffilazerte.ca/bbsBayes/articles/custom_stratification.html}{custom stratification}
+for more details.
 }
 \examples{
 
