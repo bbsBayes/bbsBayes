@@ -251,13 +251,28 @@ remove_cache <- function(type = "bbs_data", level, release) {
   }
 }
 
-#' Check whether BBS data exists
+#' Check whether BBS data exists locally
+#'
+#' Use this function to check if you have the BBS data downloaded and where
+#' bbsBayes is expecting to find it. If it returns `FALSE`, the data is not
+#' present; use `fetch_bbs_data()` to retrieve it.
+#'
+#' @param level Character. BBS data to check, one of "all", "state", or "stop".
+#'   Default "state".
+#' @param release Character/Numeric. BBS data to check, one of "all", 2020, or
+#'   2022. Default 2022.
 #'
 #' @inheritParams common_docs
 #'
 #' @returns `TRUE` if the data is found, `FALSE` otherwise
 #'
 #' @export
+#'
+#' @examples
+#' have_bbs_data()
+#' have_bbs_data(release = 2020)
+#' have_bbs_data(release = "all", level = "all")
+
 have_bbs_data <- function(level = "state", release = 2022, quiet = FALSE){
   check_in(level, c("all", "state", "stop"))
   check_release(release, all = TRUE)
@@ -265,9 +280,16 @@ have_bbs_data <- function(level = "state", release = 2022, quiet = FALSE){
   if(level == "all") level <- c("state", "stop")
   if(release == "all") release <- c("2020", "2022")
 
-  f <- file.path(bbs_dir(), paste0("bbs_", level, "_data_", release, ".rds"))
+  # To get all combos
+  f <- vector()
+  for(r in release) f <- c(f, paste0("bbs_", level, "_data_", r, ".rds"))
+  f <- file.path(bbs_dir(), f)
 
-  if(!quiet) message("Expected BBS ", level, " data ", release, ": '", f, "'")
+  if(!quiet) {
+    msg <- paste0("Expected BBS ", level, " data ", release, ": '", f, "'")
+    msg <- paste0(msg, collapse = "\n")
+    message(msg)
+  }
 
   file.exists(f)
 }
