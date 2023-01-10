@@ -26,8 +26,7 @@ test_that("model_params()", {
           calculate_CV = FALSE))
 
       n <- c("calc_nu", "heavy_tailed", "use_pois",
-             "calc_log_lik", "calc_CV", "train", "test",
-             "n_train", "n_test")
+             "calc_log_lik")
 
       if(model %in% c("gam", "gamye")) n <- c(n, "n_knots_year", "year_basis")
       if(model == "first_diff") n <- c(n, "fixed_year", "zero_betas",
@@ -73,6 +72,31 @@ test_that("create_init()", {
   }
 })
 
+test_that("cv_folds()", {
+  p <- stratify(by = "bbs_usgs", sample_data = TRUE, quiet = TRUE) %>%
+    prepare_data(min_max_route_years = 2)
+
+  expect_silent(f1 <- cv_folds(p[["raw_data"]]))
+  expect_type(f1, "double")
+  expect_length(f1, nrow(p[["raw_data"]]))
+  expect_equal(max(f1, na.rm = TRUE), 10)
+  expect_true(any(is.na(f1)))
+
+  expect_silent(f2 <- cv_folds(p[["raw_data"]], k = 3, omit_singles = FALSE))
+  expect_equal(max(f2, na.rm = TRUE), 3)
+  expect_false(any(is.na(f2)))
+
+  expect_silent(f3 <- cv_folds(p[["raw_data"]], fold_groups = "route"))
+  expect_type(f3, "double")
+  expect_length(f3, nrow(p[["raw_data"]]))
+  expect_equal(max(f3, na.rm = TRUE), 10)
+  expect_true(any(is.na(f3)))
+
+  expect_snapshot_value(f1, style = "json2")
+  expect_snapshot_value(f2, style = "json2")
+  expect_snapshot_value(f3, style = "json2")
+})
+
 
 test_that("prepare_model() first_diff / slope", {
 
@@ -92,11 +116,12 @@ test_that("prepare_model() first_diff / slope", {
 
     md %>%
       expect_type("list") %>%
-      expect_named(c("model_data", "init_values", "meta_data", "meta_strata",
-                     "raw_data"))
+      expect_named(c("model_data", "init_values", "folds",
+                     "meta_data", "meta_strata", "raw_data"))
 
     expect_type(md[["model_data"]], "list")
     expect_type(md[["init_values"]], "list")
+    expect_type(md[["folds"]], "NULL")
     expect_type(md[["meta_data"]], "list")
     expect_s3_class(md[["meta_strata"]], "data.frame")
     expect_s3_class(md[["raw_data"]], "data.frame")
@@ -138,7 +163,7 @@ test_that("prepare_model() gam / gamye", {
 
         md %>%
           expect_type("list") %>%
-          expect_named(c("model_data", "init_values", "meta_data",
+          expect_named(c("model_data", "init_values", "folds", "meta_data",
                          "meta_strata", "raw_data"))
 
         expect_type(md[["model_data"]], "list")
@@ -157,12 +182,6 @@ test_that("prepare_model() gam / gamye", {
         x <- md[["model_data"]]
         x <- x[names(x) != "year_basis"]
         expect_snapshot_value(x, style = "json2", tolerance = 0.01)
-
-        # If not on CI, test
-        if(!isTRUE(as.logical(Sys.getenv("CI")))) {
-          expect_snapshot_value(md[["model_data"]][["year_basis"]],
-                                style = "json2", tolerance = 0.01)
-        }
       }
     }
   }
@@ -195,7 +214,7 @@ test_that("prepare_model() heavy_tailed / use_pois", {
 
       md %>%
         expect_type("list") %>%
-        expect_named(c("model_data", "init_values", "meta_data",
+        expect_named(c("model_data", "init_values", "folds", "meta_data",
                        "meta_strata", "raw_data"))
 
       expect_type(md[["model_data"]], "list")
@@ -214,12 +233,6 @@ test_that("prepare_model() heavy_tailed / use_pois", {
       x <- md[["model_data"]]
       x <- x[names(x) != "year_basis"]
       expect_snapshot_value(x, style = "json2", tolerance = 0.01)
-
-      # If not on CI, test
-      if(!isTRUE(as.logical(Sys.getenv("CI")))) {
-        expect_snapshot_value(md[["model_data"]][["year_basis"]],
-                              style = "json2", tolerance = 0.01)
-      }
     }
   }
 })

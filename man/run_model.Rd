@@ -13,9 +13,11 @@ run_model(
   iter_sampling = 1000,
   adapt_delta = 0.95,
   max_treedepth = 14,
+  k = NULL,
   output_basename = NULL,
   output_dir = ".",
-  save_output = TRUE,
+  save_model = TRUE,
+  overwrite = FALSE,
   set_seed = NULL,
   quiet = FALSE,
   jags_data,
@@ -59,12 +61,12 @@ target acceptance statistic.}
 allowed tree depth for the NUTS engine. See \code{?cmdstanr::sample}.}
 
 \item{output_basename}{Character. Name of the files created as part of the
-Stan model run and the final model output RDS file if \code{save_output = TRUE}.}
+Stan model run and the final model output RDS file if \code{save_model = TRUE}.}
 
 \item{output_dir}{Character. Directory in which all model files will be
 created.}
 
-\item{save_output}{Logical. Whether or not to save the model output to file
+\item{save_model}{Logical. Whether or not to save the model output to file
 as an RDS object with all required data. Defaults to \code{TRUE}.}
 
 \item{set_seed}{Numeric. If \code{NULL} (default) no seed is set. Otherwise an

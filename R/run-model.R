@@ -15,10 +15,10 @@
 #' @param max_treedepth Numeric. Passed to `cmdstanr::sample()`. The maximum
 #'   allowed tree depth for the NUTS engine. See `?cmdstanr::sample`.
 #' @param output_basename Character. Name of the files created as part of the
-#'   Stan model run and the final model output RDS file if `save_output = TRUE`.
+#'   Stan model run and the final model output RDS file if `save_model = TRUE`.
 #' @param output_dir Character. Directory in which all model files will be
 #'   created.
-#' @param save_output Logical. Whether or not to save the model output to file
+#' @param save_model Logical. Whether or not to save the model output to file
 #'   as an RDS object with all required data. Defaults to `TRUE`.
 #' @param ... Other arguments passed on to `cmdstanr::sample()`
 #' @param jags_data Defunct.
@@ -70,9 +70,11 @@ run_model <- function(model_data,
                       iter_sampling = 1000,
                       adapt_delta = 0.95,
                       max_treedepth = 14,
+                      k = NULL,
                       output_basename = NULL,
                       output_dir = ".",
-                      save_output = TRUE,
+                      save_model = TRUE,
+                      overwrite = FALSE,
                       set_seed = NULL,
                       quiet = FALSE,
                       jags_data, inits, parameters_to_save, track_n, n_adapt,
@@ -98,11 +100,16 @@ run_model <- function(model_data,
 
   # Check inputs
   check_data(model_data)
-  check_logical(save_output, quiet)
+  check_logical(save_model, overwrite, quiet)
   check_numeric(refresh, chains, parallel_chains, iter_sampling, iter_warmup,
                 adapt_delta, max_treedepth)
 
   meta_data <- model_data[["meta_data"]]
+  raw_data <- model_data[["raw_data"]]
+  meta_strata <- model_data[["meta_strata"]]
+  init_values <- model_data[["init_values"]]
+  folds <- model_data[["folds"]]
+  model_data <- model_data[["model_data"]]
 
   # Files and directory
   check_dir(output_dir)
@@ -119,15 +126,43 @@ run_model <- function(model_data,
          "cmdstan_version" = cmdstanr::cmdstan_version()))
 
   # Check init values
-  init_values <- check_init(model_data[["init_values"]], chains)
+  init_values <- check_init(init_values, chains)
+
+  # Setup cross validation
+  if(!is.null(k)) {
+    check_cv(folds, k)
+
+    model_data[["test"]] <- which(folds == k)
+    model_data[["train"]] <- which(folds != k)
+    model_data[["n_test"]] <- length(model_data[["test"]])
+    model_data[["n_train"]] <- length(model_data[["train"]])
+    model_data[["calc_CV"]] <- 1
+
+    meta_data <- append(meta_data, list("k" = k))
+    output_basename <- paste0(output_basename, "_k", k)
+
+  } else {
+    model_data[["test"]] <- 1L
+    model_data[["train"]] <- as.integer(1:model_data[["n_counts"]])
+    model_data[["n_test"]] <- 1L
+    model_data[["n_train"]] <- model_data[["n_counts"]]
+    model_data[["calc_CV"]] <- 0
+  }
+
+  # Check if overwriting
+  if(save_model & !overwrite & file.exists(paste0(output_basename, ".rds"))){
+    stop("File ", output_basename, ".rds already exists. Either choose a new ",
+         "basename, or specify `overwrite = TRUE`", call. = FALSE)
+  }
 
   # Compile model
   model <- cmdstanr::cmdstan_model(meta_data[["model_file"]], dir = bbs_dir())
 
+
   # Run model
   if(!is.null(set_seed)) withr::local_seed(set_seed)
   model_fit <- model$sample(
-    data = model_data[["model_data"]],
+    data = model_data,
     refresh = refresh,
     chains = chains,
     iter_sampling = iter_sampling,
@@ -142,10 +177,10 @@ run_model <- function(model_data,
 
   model_output <- list("model_fit" = model_fit,
                        "meta_data" = meta_data,
-                       "meta_strata" = model_data[["meta_strata"]],
-                       "raw_data" = model_data[["raw_data"]])
+                       "meta_strata" = meta_strata,
+                       "raw_data" = raw_data)
 
-  if(save_output) save_model_run(model_output)
+  if(save_model) save_model_run(model_output)
 
   model_output
 }
@@ -193,14 +228,10 @@ save_model_run <- function(model_output, path = NULL, quiet = FALSE) {
     path <- path %>%
       normalizePath() %>%
       stringr::str_remove("-[0-9]{1,3}.csv$") %>%
-      unique()
+      unique() %>%
+      paste0(".rds")
 
-    n <- length(list.files(path = dirname(path),
-                           pattern = paste0(basename(path), "[.]*.rds$")))
 
-    path <- paste0(path, "_",
-                   stringr::str_pad(n + 1, width = 2, side = "left", pad = 0),
-                   ".rds")
     if(!quiet) message("Saving model output to ", path)
   } else {
 

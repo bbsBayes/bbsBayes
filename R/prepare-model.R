@@ -62,7 +62,10 @@ prepare_model <- function(prepared_data,
                           basis = "mgcv",
                           calculate_nu = FALSE,
                           calculate_log_lik = FALSE,
-                          calculate_CV = FALSE,
+                          calculate_cv = FALSE,
+                          cv_k = 10,
+                          cv_fold_groups = "obs_n",
+                          cv_omit_singles = TRUE,
                           set_seed = NULL,
                           quiet = FALSE) {
 
@@ -76,7 +79,9 @@ prepare_model <- function(prepared_data,
   basis <- check_basis(basis)
 
   check_logical(heavy_tailed, use_pois, calculate_nu, calculate_log_lik,
-                calculate_CV, quiet)
+                calculate_cv, cv_omit_singles, quiet)
+  check_numeric(cv_k)
+  check_in(cv_fold_groups, c("obs_n", "route"))
 
   model_data <- prepared_data[["model_data"]]
 
@@ -117,8 +122,18 @@ prepare_model <- function(prepared_data,
   # Get initial values
   init_values <- create_init(model, model_variant, model_data)
 
+  # Create K-fold groupings
+  if(calculate_cv) {
+   folds <- cv_folds(prepared_data[["raw_data"]],
+                     k = cv_k,
+                     fold_groups = cv_fold_groups,
+                     omit_singles = cv_omit_singles)
+  } else folds <- NULL
+
+
   list("model_data" = model_data,
        "init_values" = init_values,
+       "folds" = folds,
        "meta_data" = meta_data,
        "meta_strata" = prepared_data[["meta_strata"]],
        "raw_data" = prepared_data[["raw_data"]])
@@ -144,14 +159,6 @@ model_params <- function(model, n_strata, year, n_counts,
 
   # Calc point-wise log-likelihood of data given model
   params[["calc_log_lik"]] <- as.integer(calculate_log_lik)
-
-  # Cross validation options
-  params[["calc_CV"]] <- as.integer(calculate_CV) # 1 = do cross-validation
-  params[["train"]] <- as.integer(1:n_counts) # indices of obs in training data
-  params[["test"]] <- 1L          # indices of obs in the test dataset
-  params[["n_train"]] <- n_counts # n training data (n_counts if calc_CV == 0)
-  params[["n_test"]] <- 1L        # n testing data  (ignored if calc_CV == 0)
-
 
   # Calculate additional model parameters
   ymin <- min(year)
@@ -328,4 +335,85 @@ create_init <- function(model, model_variant, model_data) {
 
   # Join with generic values
   append(init_generic, init_specific)
+}
+
+
+#' Create cross validation groups
+#'
+#' @param data Original `raw_data`
+#' @param K Number of folds
+#' @param fold_groups Grouping factor to use for the folds (obs_n or Route_Factored)
+#' @param na_singles
+#' @param strata_group
+#' @param first_year
+#'
+#' @noRd
+cv_folds <- function(raw_data,
+                     k = 10,  # number of folds
+                     fold_groups = "obs_n",
+                     omit_singles = TRUE){
+
+  # fold_groups is the critical grouping factor for the leave future out
+  # cross-validation. Each fold-k identifies a test-set of observations that
+  # include all future observations from a randomly selected set of groups in
+  # fold_group (e.g., all future observations for a set of observers)
+  # balanced across all routes and strata
+
+  # ID training and testing
+  # Each training-fold (inverse of those in fold-k) must include all values of
+  # fold_groups. This is challenging for fold_groups with only 1-year of data -
+  # they can't be used in any of the testing sets
+
+  # Split observers in to K groups, based on fold_groups
+  cv <- dplyr::mutate(raw_data,
+                      grouping = .data[[fold_groups]])
+
+  n_groups <- length(unique(cv$grouping))
+
+  # Make a dataframe that assigns each group to one of the K folds
+  # after sorting by Stratum, so that each stratum is represented in each fold
+  grps <- cv %>%
+    dplyr::distinct(.data$grouping, .data$strata_name) %>%
+    dplyr::arrange(.data$strata_name) %>%
+    dplyr::distinct(grouping) %>%
+    dplyr::mutate(fold = rep(1:.env$k, length.out = n_groups))
+
+
+  # Optional: Exclude all groups with no replication from testing sets
+  if(omit_singles){
+    n_events_by_group <- cv %>%
+      dplyr::group_by(.data$grouping, .data$first_year) %>%
+      dplyr::summarise(n_events = dplyr::n(), .groups = "drop") %>%
+      dplyr::group_by(.data$grouping) %>%
+      dplyr::summarise(n_cats = dplyr::n(),
+                       only_first_year = dplyr::if_else(.data$n_cats == 1,
+                                                        TRUE,
+                                                        FALSE),
+                       n_events_cv = sum(.data$n_events),
+                       .groups = "drop")
+
+    cv <- cv %>%
+      dplyr::left_join(n_events_by_group, by = "grouping") %>%
+      dplyr::left_join(grps, by = "grouping") %>%
+      dplyr::group_by(grouping) %>%
+      dplyr::mutate(
+        # bumps first-year observations to the previous fold
+        fold2 = .data$fold - .data$first_year,
+        # wrap around the list of K values for fold == 1 and first_year == 1
+        fold = dplyr::if_else(.data$fold2 < 1,
+                              .env$k,
+                              .data$fold2),
+        # remove groups with only first-year observer route combinations
+        fold = dplyr::if_else(.data$only_first_year, NA_real_, .data$fold))
+
+  } else {
+    cv <- cv %>%
+      dplyr::left_join(grps, by = "grouping") %>%
+      dplyr::group_by(grouping) %>%
+      # bumps first-year observations to the next fold
+      dplyr::mutate(fold2 = .data$fold + .data$first_year,
+                    fold = dplyr::if_else(.data$fold2 > .env$k, 1, .data$fold2))
+  }
+
+  dplyr::pull(cv, .data$fold)
 }

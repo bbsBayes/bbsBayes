@@ -15,7 +15,10 @@ prepare_model(
   basis = "mgcv",
   calculate_nu = FALSE,
   calculate_log_lik = FALSE,
-  calculate_CV = FALSE,
+  calculate_cv = FALSE,
+  cv_k = 10,
+  cv_fold_groups = "obs_n",
+  cv_omit_singles = TRUE,
   set_seed = NULL,
   quiet = FALSE
 )
@@ -59,8 +62,6 @@ a factor of \code{gamma(2, 0.1)}. Default is \code{FALSE}.}
 \item{calculate_log_lik}{Logical. Whether to calculate point-wise
 log-likelihood of the data given the model. Default is \code{FALSE}.}
 
-\item{calculate_CV}{Logical. Whether to use cross validation.}
-
 \item{set_seed}{Numeric. If \code{NULL} (default) no seed is set. Otherwise an
 integer number to be used with \code{withr::with_seed()} internally to ensure
 reproducibility.}
@@ -69,6 +70,8 @@ reproducibility.}
 
 Use \verb{@inheritParams common_docs} to include the above in any function
 documentation with a matching argument (will only include matching args)}
+
+\item{calculate_CV}{Logical. Whether to use cross validation.}
 }
 \value{
 A list containing the pared model data (\code{model_data}), initialization

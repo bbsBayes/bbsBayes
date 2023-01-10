@@ -14,7 +14,7 @@ check_data <- function(data) {
     n <- c("n", "n_edges", "node1", "node2", "adj_matrix")
     from <- "prepare_spatial()"
   } else if(type == "model_data") {
-    n <- c(n, "model_data", "init_values", "raw_data")
+    n <- c(n, "model_data", "init_values", "folds", "raw_data")
     from <- "prepare_model()"
   } else if(type == "model_output") {
     n <- c(n, "model_fit", "raw_data")
@@ -146,6 +146,28 @@ check_init <- function(init, chains) {
     }
   }
   init
+}
+
+check_cv <- function(folds, k) {
+
+  if(is.null(folds)) {
+    stop("Missing K-folds specification.\nFor cross-validation, ",
+         "either create a `folds` list item in `model_data`,\n",
+         "or use the bbsBayes method by setting `calculate_cv = TRUE` in ",
+         "`prepare_model()`.\n",
+         "If you don't want to use cross-validation, leave `k` NULL.\n",
+         "See Models article for more details: ",
+         "https://steffilazerte.ca/bbsBayes/articles/models.html",
+         call. = FALSE)
+  } else if(!is.numeric(folds)) {
+    stop("Incorrect K-folds specification.\n",
+         "The `folds` list item in `model_data` must be numeric, marking the ",
+         "K-folds group of each observation in the data.", call. = FALSE)
+  } else if(k > max(folds, na.rm = TRUE)) {
+    stop("Higher `k` than the number of K-fold groups.\n",
+         "`k = ", k, "` but the max K-fold group is ", max(folds, na.rm = TRUE),
+         call. = FALSE)
+  }
 }
 
 check_dir <- function(output_dir) {

@@ -28,7 +28,7 @@ test_that("run_model() first_diff short", {
     expect_s3_class(r[["raw_data"]], "data.frame")
 
     f <- paste0("BBS_STAN_first_diff_hier_", Sys.Date(),
-                c("-1.csv", "-2.csv", "_01.rds")) %>%
+                c("-1.csv", "-2.csv", ".rds")) %>%
       test_path()
 
     expect_true(all(file.exists(f)))
@@ -92,7 +92,7 @@ test_that("run_model() first_diff spatial", {
   expect_s3_class(r[["raw_data"]], "data.frame")
 
   f <- paste0("BBS_STAN_first_diff_spatial_", Sys.Date(),
-              c("-1.csv", "-2.csv", "_01.rds")) %>%
+              c("-1.csv", "-2.csv", ".rds")) %>%
     test_path()
 
   expect_true(all(file.exists(f)))
@@ -141,6 +141,29 @@ test_that("run_model() ... args", {
     unlink()
 })
 
+
+test_that("run_model() CV", {
+  p <- stratify(by = "bbs_usgs", sample_data = TRUE, quiet = TRUE) %>%
+    prepare_data(min_max_route_years = 2)
+
+  md <- prepare_model(p, "first_diff")
+  expect_error(run_model(md, k = 10), "Missing K-folds specification") %>%
+    suppressMessages()
+
+  md <- prepare_model(p, "first_diff", calculate_cv = TRUE, cv_k = 2)
+
+  expect_message(
+    m <- run_model(md, k = 1, chains = 2, iter_warmup = 10,
+                   iter_sampling = 10)) %>%
+    suppressMessages() %>%
+    capture.output()
+
+  expect_equal(m[["meta_data"]][["k"]], 1)
+
+  # Clean up
+  unlink(list.files(test_path(), paste0("^BBS_STAN_(.)*_", Sys.Date()),
+                    full.names = TRUE))
+})
 
 
 test_that("run_model() Full", {

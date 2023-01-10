@@ -218,6 +218,18 @@ test_that("check_init()", {
   expect_silent(check_init(list(a = 1:5, b = 1:5), chains = 2))
 })
 
+test_that("check_cv()", {
+  f <- NULL
+  expect_error(check_cv(f, k = 10), "Missing K-folds specification")
+
+  f <- "Hi"
+  expect_error(check_cv(f, k = 10), "Incorrect K-folds specification")
+
+  f <- rep(1:4, 10)
+  expect_error(check_cv(f, k = 10), "Higher `k` than the number of K-fold")
+})
+
+
 test_that("check_dir(), check_file()", {
   dir <- "example_test_dir"
 

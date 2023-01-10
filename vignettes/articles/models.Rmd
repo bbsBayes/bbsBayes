@@ -59,9 +59,39 @@ p <- prepare_data(s)
 ### Spatial
 
 
-# Customizing the Model Run
+## Advanced Modelling
 
-## Customizing initial parameter values
+### Cross-fold Validation
+
+For cross fold validation, you'll need to define which observations are part 
+of a test set and which are part of a training set.
+
+To use the method implemented by bbsBayes, we'll specify `calculate_cv` as
+`TRUE` during the `prepare_model()` step. By default, this will prepare 10 test
+sets (K-folds, `cv_k`) using `obs_n` as the grouping variable (`cv_fold_groups`)
+and omitting groups with only single observations (`cv_omit_singles`).
+
+MORE DETAILS ON HOW CHOSEN
+
+```{r}
+md <- stratify(by = "bbs_usgs", sample_data = TRUE, quiet = TRUE) %>%
+  prepare_data(min_max_route_years = 2) %>%
+  prepare_model("first_diff", calculate_cv = TRUE, cv_k = 3) 
+```
+
+Now our model data (`md`) has a list item called `folds` which contains the 
+fold groups assigned to each observation. To use this, you'll need to loop your
+model and specify the `k` iteration.
+
+```{r}
+for(k in 1:3) {
+  run_model(md, k = k, chains = 2, iter_warmup = 10, iter_sampling = 10, overwrite = TRUE)
+}
+```
+
+AND NOW...
+
+### Customizing initial parameter values
 
 To customize the initial parameter values you can create the model data with
 `prepare_model()` and then either edit or overwrite the `init_values` item in
@@ -86,7 +116,7 @@ will duplicate them for each chain for you. If you supply a list of init values
 such that the length is the same as the number of chains, your input will be 
 used as is.
 
-## Customize Stan Model File
+### Customize Stan Model File
 
 Copy model file (and modify by hand in text editor)
 ```{r}
