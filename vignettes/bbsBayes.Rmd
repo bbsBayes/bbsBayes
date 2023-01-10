@@ -193,3 +193,7 @@ We can plot these on a map
 plot_map(t)
 ```
 
+```{r, include = FALSE}
+unlink(list.files(pattern = "^BBS_STAN_(\\w|\\d|-)+.(csv|rds)"))
+```
+

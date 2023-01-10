@@ -156,3 +156,6 @@ for these regions).
 plot_geofacet(i, trends = t, multiple = TRUE)
 ```
 
+```{r, include = FALSE}
+unlink(list.files(pattern = "^BBS_STAN_(\\w|\\d|-)+.(csv|rds)"))
+```
