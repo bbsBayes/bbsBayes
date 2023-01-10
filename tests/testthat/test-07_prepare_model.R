@@ -22,8 +22,7 @@ test_that("model_params()", {
           basis = b,
           use_pois = FALSE,
           calculate_nu = FALSE,
-          calculate_log_lik = FALSE,
-          calculate_CV = FALSE))
+          calculate_log_lik = FALSE))
 
       n <- c("calc_nu", "heavy_tailed", "use_pois",
              "calc_log_lik")
@@ -58,8 +57,7 @@ test_that("create_init()", {
                              basis = "mgcv",
                              use_pois = FALSE,
                              calculate_nu = FALSE,
-                             calculate_log_lik = FALSE,
-                             calculate_CV = FALSE))
+                             calculate_log_lik = FALSE))
 
 
     withr::with_seed(111, {

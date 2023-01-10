@@ -118,7 +118,7 @@ prepare_model <- function(prepared_data,
     year = model_data[["year"]],
     n_counts = model_data[["n_counts"]],
     basis, n_knots, heavy_tailed, use_pois,
-    calculate_nu, calculate_log_lik, calculate_CV)
+    calculate_nu, calculate_log_lik)
 
   # Create master parameter list
   model_data <- append(model_data, params)
@@ -158,7 +158,7 @@ prepare_model <- function(prepared_data,
 
 model_params <- function(model, n_strata, year, n_counts,
                          basis, n_knots, heavy_tailed, use_pois,
-                         calculate_nu, calculate_log_lik, calculate_CV) {
+                         calculate_nu, calculate_log_lik) {
 
 
   params <- list()
