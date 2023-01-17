@@ -1,5 +1,5 @@
 
-> ⚠️This work has moved t o[bbsBayes/ bbsBayes2](https://github.com/bbsBayes/bbsBayes2)⚠️
+> ⚠️This work has moved to [bbsBayes/ bbsBayes2](https://github.com/bbsBayes/bbsBayes2)⚠️
 > 
 > This fork was originally designed to do an update/overhaul of bbsBayes, but
 > it was decided that these modifications were extensive enough to warrant a new
