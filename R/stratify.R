@@ -20,6 +20,10 @@
 #'   forms. Default `TRUE`. See Details.
 #' @param sample_data Logical. Use sample data (just Pacific Wrens). Default
 #'   `FALSE`.
+#' @param return_omitted Logical. Whether or not to return a data frame of
+#'   route-years which were omitted during stratification as they did not
+#'   overlap with any stratum. For checking and troubleshooting. Default
+#'   `FALSE`.
 #' @param lump_species_forms Deprecated. Use `combine_species_forms` instead
 #' @param bbs_data Defunct.
 #'
@@ -89,6 +93,10 @@
 #' # Stratify by blocks of 1 degree of latitude X 1 degree of longitude
 #' s <- stratify(by = "latlong", species = "Snowy Owl")
 #'
+#' # Check routes omitted by stratification
+#' s <- stratify(by = "latlong", species = "Snowy Owl", return_omitted = TRUE)
+#' s[["routes_omitted"]]
+#'
 #' # Use combined or non-combined species forms
 #'
 #' search_species("Sooty grouse")
@@ -131,6 +139,7 @@ stratify <- function(by,
                      combine_species_forms = TRUE,
                      release = 2022,
                      sample_data = FALSE,
+                     return_omitted = FALSE,
                      quiet = FALSE,
                      lump_species_forms, bbs_data) {
 
@@ -250,28 +259,44 @@ stratify <- function(by,
     meta_strata <- strata_custom[["meta_strata"]]
   }
 
+  # routes - create rt_uni and rt_uni_y value with newly defined combined states
+  if(!quiet) message("  Renaming routes...")
+  routes <- dplyr::mutate(routes,
+                          route = paste0(.data$state_num, "-", .data$route))
+
   # Omit strata with no routes
   meta_strata <- dplyr::semi_join(meta_strata, routes, by = "strata_name")
 
   # Omit routes that do not fit in to strata
   n_na <- sum(is.na(routes$strata_name))
+
   if(!quiet & n_na > 0) {
-    message(
-      "  Omitting ",
-      format(n_na, big.mark = ","), "/",
-      format(nrow(routes), big.mark = ","),
-      " routes that do not match a stratum...")
+    if(return_omitted) {
+      msg <- "\n    Returning omitted routes."
+    } else {
+      msg <- paste0("\n    To see omitted routes use `return_omitted = TRUE` ",
+                    "(see ?stratify)")
+    }
+
+    message("  Omitting ",
+            format(n_na, big.mark = ","), "/",
+            format(nrow(routes), big.mark = ","),
+            " route-years that do not match a stratum.",
+            msg)
+  }
+
+  # Filter omitted routes
+  if(return_omitted) {
+    routes_omitted <- dplyr::filter(routes, is.na(.data$strata_name)) %>%
+      dplyr::select("year", "strata_name", "country", "state", "route",
+                    "route_name", "latitude", "longitude", "bcr", "obs_n",
+                    "total_spp")
   }
   routes <- dplyr::filter(routes, !is.na(.data$strata_name))
 
   if(nrow(routes) == 0) {
     stop("No routes within this stratification", call. = FALSE)
   }
-
-  # routes - create rt_uni and rt_uni_y value with newly defined combined states
-  if(!quiet) message("  Renaming routes...")
-  routes <- dplyr::mutate(routes,
-                          route = paste0(.data$state_num, "-", .data$route))
 
   # birds - create rt_uni and rt_uni_y by index then join
   b_index <- dplyr::select(birds, "rid", "year", "state_num", "route") %>%
@@ -288,12 +313,18 @@ stratify <- function(by,
   }
 
   # Return list
-  list("meta_data" = list("stratify_by" = stratify_by,
-                          "stratify_type" = stratify_type,
-                          "species" = species),
-       "meta_strata" = meta_strata,
-       "birds_strata" = dplyr::select(birds, -"rid"),
-       "routes_strata" = dplyr::select(routes, -"rid"))
+  out <- list("meta_data" = list("stratify_by" = stratify_by,
+                                 "stratify_type" = stratify_type,
+                                 "species" = species),
+              "meta_strata" = meta_strata,
+              "birds_strata" = dplyr::select(birds, -"rid"),
+              "routes_strata" = dplyr::select(routes, -"rid"))
+
+  if(return_omitted) {
+    out <- append(out, list("routes_omitted" = routes_omitted))
+  }
+
+  out
 }
 
 stratify_map <- function(strata_map, routes, quiet = FALSE) {

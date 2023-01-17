@@ -64,7 +64,7 @@ s <- stratify(by = "bbs_usgs", species = "Canada Jay")
 ```
 
 
-## Subsettin an existing stratification
+## Subsetting an existing stratification
 
 But what if you want to use the BBS CWS stratification, but only really want
 to look at Canadian regions?
@@ -168,7 +168,30 @@ ggplot() +
 Based on the message we received during stratification and this map, 
 it looks as if our custom stratification is excluding some BBS data. 
 
-Let's see what that looks like by comparing to the raw BBS data.
+We can re-run the stratification with `return_omitted = TRUE` which will attach
+a data frame of omitted strata to the output.
+```{r}
+s <- stratify(by = "WBPHS_2019", species = "Canada Jay", strata_custom = map,
+              return_omitted = TRUE)
+s[["routes_omitted"]]
+```
+
+Let's take a look at this visually.
+
+```{r}
+omitted <- st_as_sf(s[["routes_omitted"]], coords = c("longitude", "latitude"), 
+                    crs= 4326)
+
+ggplot() +
+  geom_sf(data = map, aes(fill = factor(strata_name)), alpha = 0.3) +
+  geom_sf(data = r, aes(colour = factor(strata_name)), size = 1, alpha = 0.5) +
+  geom_sf(data = omitted, size = 0.75, alpha = 0.5) +
+  scale_fill_viridis_d(aesthetics = c("colour", "fill"), guide = NULL) 
+```
+
+
+We could also look at this visually by comparing the stratified data to the raw
+BBS data.
 
 First we load the raw routes data, then we'll add it to our plot.
 
@@ -185,7 +208,8 @@ ggplot() +
   scale_fill_viridis_d(aesthetics = c("colour", "fill"), guide = NULL) 
 ```
 
-So we can clearly see, spatially, which points have been omitted from our data.
+So either way, we can clearly see, spatially, which points have been omitted
+from our data.
 
 ## Custom stratification - Modifying existing BBS maps
 

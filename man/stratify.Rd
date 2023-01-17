@@ -11,6 +11,7 @@ stratify(
   combine_species_forms = TRUE,
   release = 2022,
   sample_data = FALSE,
+  return_omitted = FALSE,
   quiet = FALSE,
   lump_species_forms,
   bbs_data
@@ -37,6 +38,11 @@ through 2021 field season) or 2020 (including data through 2019). Default
 2022.}
 
 \item{sample_data}{Logical. Use sample data (just Pacific Wrens). Default
+\code{FALSE}.}
+
+\item{return_omitted}{Logical. Whether or not to return a data frame of
+route-years which were omitted during stratification as they did not
+overlap with any stratum. For checking and troubleshooting. Default
 \code{FALSE}.}
 
 \item{quiet}{Logical. Suppress progress messages? Default \code{FALSE}.}
@@ -117,6 +123,10 @@ s <- stratify(by = "prov_state", species = 70)
 
 # Stratify by blocks of 1 degree of latitude X 1 degree of longitude
 s <- stratify(by = "latlong", species = "Snowy Owl")
+
+# Check routes omitted by stratification
+s <- stratify(by = "latlong", species = "Snowy Owl", return_omitted = TRUE)
+s[["routes_omitted"]]
 
 # Use combined or non-combined species forms
 

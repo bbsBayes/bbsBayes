@@ -35,7 +35,7 @@ test_that("stratify_map() with messy map", {
 })
 
 
-test_that("stratify(by = 'bbs_cws')", {
+test_that("stratify - bbs_cws", {
 
   expect_message(stratify(by = "bbs_cws", sample_data = TRUE),
                  "Using 'bbs_cws' \\(standard\\) stratification") %>%
@@ -69,7 +69,7 @@ test_that("stratify(by = 'bbs_cws')", {
   expect_equal(s$meta_strata, comp)
 })
 
-test_that("stratify(by = 'bbs_usgs')", {
+test_that("stratify - bbs_usgs", {
 
   expect_message(stratify(by = "bbs_usgs", sample_data = TRUE),
                  "Using 'bbs_usgs' \\(standard\\) stratification") %>%
@@ -101,7 +101,7 @@ test_that("stratify(by = 'bbs_usgs')", {
 
 })
 
-test_that("stratify(by = 'bcr')", {
+test_that("stratify - bcr", {
 
   expect_message(stratify(by = "bcr", sample_data = TRUE),
                  "Using 'bcr' \\(standard\\) stratification") %>%
@@ -128,7 +128,7 @@ test_that("stratify(by = 'bcr')", {
 
 })
 
-test_that("stratify(by = 'latlong')", {
+test_that("stratify - latlong & return_omitted", {
 
   expect_message(stratify(by = "latlong", sample_data = TRUE),
                  "Using 'latlong' \\(standard\\) stratification") %>%
@@ -136,17 +136,28 @@ test_that("stratify(by = 'latlong')", {
 
   expect_message(s <- stratify(by = "latlong", species = "Snowy Owl"),
                  "Using 'latlong' \\(standard\\) stratification") %>%
+    expect_message("To see omitted routes") %>%
     suppressMessages()
 
-  # Check strata - Some (80) routes are outside of the grid, but would still be
-  # consider BCR 31 (for example).
+  expect_false("routes_omitted" %in% names(s))
 
-  #all(s$routes_strata$strata_name %in% bbs_strata[["latlong"]]$strata_name) %>%
-    #expect_true()
+  expect_message(s <- stratify(by = "latlong", species = "Snowy Owl",
+                               return_omitted = TRUE),
+                 "Using 'latlong' \\(standard\\) stratification") %>%
+    expect_message("Returning omitted routes") %>%
+    suppressMessages()
+
+  expect_true("routes_omitted" %in% names(s))
+  expect_true(all(names(s[["routes_omitted"]]) %in% names(s[["routes_strata"]])))
+  expect_true(all(is.na(s[["routes_omitted"]]$strata_name)))
+  expect_equal(nrow(dplyr::semi_join(s[["routes_strata"]],
+                                    s[["routes_omitted"]],
+                                    by = c("year", "route"))),
+               0) # No overlap
 
   # Check meta
   expect_named(s, c("meta_data", "meta_strata", "birds_strata",
-                    "routes_strata"))
+                    "routes_strata", "routes_omitted"))
   expect_equal(s$meta_data, list(stratify_by = "latlong",
                                  stratify_type = "standard",
                                  species = "Snowy Owl"))
@@ -157,7 +168,7 @@ test_that("stratify(by = 'latlong')", {
 
 })
 
-test_that("stratify(by = 'prov_state')", {
+test_that("stratify - prov_state", {
 
   expect_message(stratify(by = "prov_state", sample_data = TRUE),
                  "Using 'prov_state' \\(standard\\) stratification") %>%
@@ -186,7 +197,7 @@ test_that("stratify(by = 'prov_state')", {
 })
 
 
-test_that("stratify(by = subset)", {
+test_that("stratify - subset", {
 
   sub <- dplyr::filter(bbs_strata[["bbs_cws"]], country == "Canada")
 
@@ -217,7 +228,7 @@ test_that("stratify(by = subset)", {
 
 })
 
-test_that("stratify(by = custom)", {
+test_that("stratify - custom", {
 
   map <- load_map(stratify_by = "bbs_cws")
 
