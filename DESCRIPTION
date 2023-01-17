@@ -58,8 +58,9 @@ Suggests:
     knitr,
     rmarkdown,
     rnaturalearth,
+    rnaturalearthhires,
     roxygen2,
     testthat (>= 3.0.0)
-Additional_repositories: https://mc-stan.org/r-packages/
+Additional_repositories: https://mc-stan.org/r-packages/, https://ropensci.r-universe.dev
 Config/testthat/edition: 3
 VignetteBuilder: knitr
