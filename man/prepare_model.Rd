@@ -63,16 +63,16 @@ a factor of \code{gamma(2, 0.1)}. Default \code{FALSE}.}
 \item{calculate_log_lik}{Logical. Whether to calculate point-wise
 log-likelihood of the data given the model. Default \code{FALSE}.}
 
-\item{calculate_cv}{Logical. Whether to use bbsBayes' cross validation. See
-Details.}
+\item{calculate_cv}{Logical. Whether to use bbsBayes' cross validation.
+Note this is \strong{experimental}. See Details.}
 
 \item{cv_k}{Numeric. The number of K folds to include (only relevant if
-\code{calculate_cv = TRUE}). Default 10.}
+\code{calculate_cv = TRUE}). Default 10. Note this is \strong{experimental}.}
 
 \item{cv_fold_groups}{Character. The data column to use when determining the
 grouping level of the observations to be assigned to different fold groups.
 Must be one of \code{obs_n} (default) or \code{routes} (only relevant if
-\code{calculate_cv = TRUE}). See the \href{https://steffilazerte.ca/bbsBayes/articles/models.html}{models article} for more
+\code{calculate_cv = TRUE}). Note this is \strong{experimental}. See the \href{https://steffilazerte.ca/bbsBayes/articles/models.html}{models article} for more
 details.}
 
 \item{cv_omit_singles}{Logical. Whether to omit test groups with no

@@ -74,17 +74,20 @@ test_that("cv_folds()", {
   p <- stratify(by = "bbs_usgs", sample_data = TRUE, quiet = TRUE) %>%
     prepare_data(min_max_route_years = 2)
 
-  expect_silent(f1 <- cv_folds(p[["raw_data"]]))
+  expect_message(cv_folds(p[["raw_data"]]), "experimental")
+  expect_silent(f1 <- cv_folds(p[["raw_data"]], quiet = TRUE))
   expect_type(f1, "double")
   expect_length(f1, nrow(p[["raw_data"]]))
   expect_equal(max(f1, na.rm = TRUE), 10)
   expect_true(any(is.na(f1)))
 
-  expect_silent(f2 <- cv_folds(p[["raw_data"]], k = 3, omit_singles = FALSE))
+  expect_silent(f2 <- cv_folds(p[["raw_data"]], k = 3,
+                               omit_singles = FALSE, quiet = TRUE))
   expect_equal(max(f2, na.rm = TRUE), 3)
   expect_false(any(is.na(f2)))
 
-  expect_silent(f3 <- cv_folds(p[["raw_data"]], fold_groups = "route"))
+  expect_silent(f3 <- cv_folds(p[["raw_data"]],
+                               fold_groups = "route", quiet = TRUE))
   expect_type(f3, "double")
   expect_length(f3, nrow(p[["raw_data"]]))
   expect_equal(max(f3, na.rm = TRUE), 10)

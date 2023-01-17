@@ -27,14 +27,14 @@
 #'  a factor of `gamma(2, 0.1)`. Default `FALSE`.
 #' @param calculate_log_lik Logical. Whether to calculate point-wise
 #'   log-likelihood of the data given the model. Default `FALSE`.
-#' @param calculate_cv Logical. Whether to use bbsBayes' cross validation. See
-#'   Details.
+#' @param calculate_cv Logical. Whether to use bbsBayes' cross validation.
+#'   Note this is **experimental**. See Details.
 #' @param cv_k Numeric. The number of K folds to include (only relevant if
-#'   `calculate_cv = TRUE`). Default 10.
+#'   `calculate_cv = TRUE`). Default 10. Note this is **experimental**.
 #' @param cv_fold_groups Character. The data column to use when determining the
 #'   grouping level of the observations to be assigned to different fold groups.
 #'   Must be one of `obs_n` (default) or `routes` (only relevant if
-#'   `calculate_cv = TRUE`). See the [models
+#'   `calculate_cv = TRUE`). Note this is **experimental**. See the [models
 #'   article](https://steffilazerte.ca/bbsBayes/articles/models.html) for more
 #'   details.
 #' @param cv_omit_singles Logical. Whether to omit test groups with no
@@ -156,7 +156,8 @@ prepare_model <- function(prepared_data,
    folds <- cv_folds(prepared_data[["raw_data"]],
                      k = cv_k,
                      fold_groups = cv_fold_groups,
-                     omit_singles = cv_omit_singles)
+                     omit_singles = cv_omit_singles,
+                     quiet = quiet)
   } else folds <- NULL
 
 
@@ -380,7 +381,10 @@ create_init <- function(model, model_variant, model_data) {
 cv_folds <- function(raw_data,
                      k = 10,  # number of folds
                      fold_groups = "obs_n",
-                     omit_singles = TRUE){
+                     omit_singles = TRUE,
+                     quiet = FALSE){
+
+  if(!quiet) message("Note that bbsBayes cross validation is experimental!")
 
   # fold_groups is the critical grouping factor for the leave future out
   # cross-validation. Each fold-k identifies a test-set of observations that
