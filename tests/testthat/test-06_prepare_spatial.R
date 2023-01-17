@@ -20,8 +20,8 @@ test_that("nb_fmt()", {
   expect_equal(length(n[["node2"]]), length(nb_weights[["adj"]])/2)
 
   # Snapshots can't be run interactively
-  expect_snapshot_value(n[["node1"]], "json2")
-  expect_snapshot_value(n[["node2"]], "json2")
+  expect_snapshot_value_safe(n[["node1"]], "json2")
+  expect_snapshot_value_safe(n[["node2"]], "json2")
 
 })
 
@@ -57,7 +57,7 @@ test_that("fix_islands()", {
   expect_false(sum(spdep::card(nb_db2) == 0) > 0)
 
   # Snapshots can't be run interactively
-  expect_snapshot_value(nb_db2, "json2")
+  expect_snapshot_value_safe(nb_db2, "json2")
 })
 
 test_that("prepare_spatial() defaults", {
@@ -88,10 +88,10 @@ test_that("prepare_spatial() defaults", {
   expect_s3_class(n[["map"]], "ggplot")
 
   # Snapshots can't be run interactively
-  expect_snapshot_value(n[["n_edges"]], "json2")
-  expect_snapshot_value(n[["node1"]], "json2")
-  expect_snapshot_value(n[["node2"]], "json2")
-  expect_snapshot_value(n[["adj_matrix"]], "json2")
+  expect_snapshot_value_safe(n[["n_edges"]], "json2")
+  expect_snapshot_value_safe(n[["node1"]], "json2")
+  expect_snapshot_value_safe(n[["node2"]], "json2")
+  expect_snapshot_value_safe(n[["adj_matrix"]], "json2")
 })
 
 test_that("prepare_spatial(nearest_fill = TRUE)", {
@@ -114,10 +114,10 @@ test_that("prepare_spatial(nearest_fill = TRUE)", {
   n <- n[["spatial_data"]]
 
   # Snapshots can't be run interactively
-  expect_snapshot_value(n[["n_edges"]], "json2")
-  expect_snapshot_value(n[["node1"]], "json2")
-  expect_snapshot_value(n[["node2"]], "json2")
-  expect_snapshot_value(n[["adj_matrix"]], "json2")
+  expect_snapshot_value_safe(n[["n_edges"]], "json2")
+  expect_snapshot_value_safe(n[["node1"]], "json2")
+  expect_snapshot_value_safe(n[["node2"]], "json2")
+  expect_snapshot_value_safe(n[["adj_matrix"]], "json2")
 
 })
 
@@ -149,9 +149,9 @@ test_that("prepare_spatial(voronoi = TRUE)", {
   expect_equal(n[["n"]], nrow(map_sub))
 
   # Snapshots can't be run interactively
-  expect_snapshot_value(n[["n_edges"]], "json2")
-  expect_snapshot_value(n[["node1"]], "json2")
-  expect_snapshot_value(n[["node2"]], "json2")
-  expect_snapshot_value(n[["adj_matrix"]], "json2")
+  expect_snapshot_value_safe(n[["n_edges"]], "json2")
+  expect_snapshot_value_safe(n[["node1"]], "json2")
+  expect_snapshot_value_safe(n[["node2"]], "json2")
+  expect_snapshot_value_safe(n[["adj_matrix"]], "json2")
 
 })

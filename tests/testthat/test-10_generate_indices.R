@@ -90,7 +90,7 @@ test_that("generate_indices()", {
   # Snapshots can't be run interactively
   snp <- dplyr::select(ix, "year", "region", "obs_mean", "n_routes",
                        "n_routes_total", "n_non_zero", "backcast_flag")
-  expect_snapshot_value(snp, style = "json2")
+  expect_snapshot_value_safe(snp, style = "json2")
 })
 
 test_that("generate_indices(start_year)", {
@@ -116,7 +116,7 @@ test_that("generate_indices(start_year)", {
   # Snapshots can't be run interactively
   snp <- dplyr::select(ix, "year", "region", "obs_mean", "n_routes",
                        "n_routes_total", "n_non_zero", "backcast_flag")
-  expect_snapshot_value(snp, style = "json2")
+  expect_snapshot_value_safe(snp, style = "json2")
 })
 
 test_that("generate_indices(quantiles)", {
@@ -256,7 +256,7 @@ test_that("generate_indices(alternate_n)", {
   # Snapshots can't be run interactively
   snp <- dplyr::select(ix, "year", "region", "obs_mean", "n_routes",
                        "n_routes_total", "n_non_zero", "backcast_flag")
-  expect_snapshot_value(snp, style = "json2")
+  expect_snapshot_value_safe(snp, style = "json2")
 })
 
 
@@ -285,7 +285,7 @@ test_that("generate_indices(max_backcast)", {
   snp <- dplyr::select(i2[["indices"]],
                        "year", "region", "n_non_zero", "backcast_flag",
                        "strata_included", "strata_excluded")
-  expect_snapshot_value(snp, style = "json2")
+  expect_snapshot_value_safe(snp, style = "json2")
 })
 
 
@@ -335,5 +335,5 @@ test_that("generate_indices(max_backcast, drop_excluded)", {
   snp <- dplyr::select(i2[["indices"]],
                        "year", "region", "n_non_zero", "backcast_flag",
                        "strata_included", "strata_excluded")
-  expect_snapshot_value(snp, style = "json2")
+  expect_snapshot_value_safe(snp, style = "json2")
 })

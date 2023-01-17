@@ -33,15 +33,15 @@ test_that("prepare_data() - sample", {
 
   # Snap shots (can't be run interactively)
   # By Observation
-  expect_snapshot_value(
+  expect_snapshot_value_safe(
     p$model_data[c("count", "strat", "year", "site", "observer", "first_year")],
     style = "json2")
 
   # Matrix
-  expect_snapshot_value(p$model_data[c("ste_mat", "obs_mat")], style = "json2")
+  expect_snapshot_value_safe(p$model_data[c("ste_mat", "obs_mat")], style = "json2")
 
   # Data
-  expect_snapshot_value(p$raw_data, style = "json2")
+  expect_snapshot_value_safe(p$raw_data, style = "json2")
 
 })
 
@@ -77,15 +77,15 @@ test_that("prepare_data() - other", {
 
   # Snap shots (can't be run interactively)
   # By Observation
-  expect_snapshot_value(
+  expect_snapshot_value_safe(
     p$model_data[c("count", "strat", "year", "site", "observer", "first_year")],
     style = "json2")
 
   # Matrix
-  expect_snapshot_value(p$model_data[c("ste_mat", "obs_mat")], style = "json2")
+  expect_snapshot_value_safe(p$model_data[c("ste_mat", "obs_mat")], style = "json2")
 
   # Data
-  expect_snapshot_value(p$raw_data, style = "json2")
+  expect_snapshot_value_safe(p$raw_data, style = "json2")
 
 })
 

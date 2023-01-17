@@ -13,3 +13,18 @@ strip_model_files <- function(files) {
 
   f_new
 }
+
+
+
+#' Wrapper for `expect_snapshot_value()` from testthat
+#'
+#' Copies parameters over from `expect_snapshot_value()`
+#'
+#' @noRd
+expect_snapshot_value_safe <- function(...) {
+
+   if(!interactive()) {
+     expect_snapshot_value(...)
+   } else message("Skipping snapshot tests because interactive")
+
+}

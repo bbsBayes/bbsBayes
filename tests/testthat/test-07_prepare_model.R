@@ -66,7 +66,7 @@ test_that("create_init()", {
         expect_type("list")
     })
 
-    expect_snapshot_value(id, style = "json2", tolerance = 0.0001)
+    expect_snapshot_value_safe(id, style = "json2", tolerance = 0.0001)
   }
 })
 
@@ -93,9 +93,9 @@ test_that("cv_folds()", {
   expect_equal(max(f3, na.rm = TRUE), 10)
   expect_true(any(is.na(f3)))
 
-  expect_snapshot_value(f1, style = "json2")
-  expect_snapshot_value(f2, style = "json2")
-  expect_snapshot_value(f3, style = "json2")
+  expect_snapshot_value_safe(f1, style = "json2")
+  expect_snapshot_value_safe(f2, style = "json2")
+  expect_snapshot_value_safe(f3, style = "json2")
 })
 
 
@@ -136,8 +136,8 @@ test_that("prepare_model() first_diff / slope", {
     }
 
     # Snapshots can't be run interactively
-    expect_snapshot_value(md[["model_data"]], style = "json2",
-                          tolerance = 0.01)
+    expect_snapshot_value_safe(md[["model_data"]], style = "json2",
+                               tolerance = 0.01)
   }
 })
 
@@ -182,7 +182,7 @@ test_that("prepare_model() gam / gamye", {
         # For reasons (?) year_basis sometimes switches signs when testing on CI
         x <- md[["model_data"]]
         x <- x[names(x) != "year_basis"]
-        expect_snapshot_value(x, style = "json2", tolerance = 0.01)
+        expect_snapshot_value_safe(x, style = "json2", tolerance = 0.01)
       }
     }
   }
@@ -233,7 +233,7 @@ test_that("prepare_model() heavy_tailed / use_pois", {
       # For reasons (?) year_basis sometimes switches signs when testing on CI
       x <- md[["model_data"]]
       x <- x[names(x) != "year_basis"]
-      expect_snapshot_value(x, style = "json2", tolerance = 0.01)
+      expect_snapshot_value_safe(x, style = "json2", tolerance = 0.01)
     }
   }
 })
