@@ -451,10 +451,31 @@ check_sf <- function(sf, check_poly = FALSE, col = FALSE) {
 }
 
 check_rnaturalearth <- function() {
-  if(!requireNamespace("rnaturalearth", quietly = TRUE)){
-    stop("The 'rnaturalearth' package is required for this function.\n",
-         "You can install with: `install.packages('rnaturalearth')`",
-         call. = FALSE)
+
+  rne <- requireNamespace("rnaturalearth", quietly = TRUE)
+  rnehr <- requireNamespace("rnaturalearthhires", quietly = TRUE)
+
+  if(!rne){
+    stop(
+      "The 'rnaturalearth' and 'rnaturalearthhires' packages are required ",
+      "for this function.\n",
+      "You can install them with:\n\n",
+      "  install.packages(\"rnaturalearth\")\n",
+      "  install.packages(\"rnaturalearthhires\",\n",
+      "                   repos = c(\"https://ropensci.r-universe.dev\",",
+      "\"https://cloud.r-project.org\"))",
+      call. = FALSE)
+  }
+
+  if(!rnehr) {
+    stop(
+      "The 'rnaturalearthhires' package is required ",
+      "for this function.\n",
+      "You can install it with:\n\n",
+      "  install.packages(\"rnaturalearthhires\",\n",
+      "                   repos = c(\"https://ropensci.r-universe.dev\",",
+      "\"https://cloud.r-project.org\"))",
+      call. = FALSE)
   }
 }
 
