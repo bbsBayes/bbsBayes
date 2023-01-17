@@ -24,7 +24,7 @@ strip_model_files <- function(files) {
 expect_snapshot_value_safe <- function(...) {
 
    if(!interactive()) {
-     expect_snapshot_value(...)
+     testthat::expect_snapshot_value(...)
    } else message("Skipping snapshot tests because interactive")
 
 }

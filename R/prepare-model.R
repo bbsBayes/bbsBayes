@@ -370,12 +370,12 @@ create_init <- function(model, model_variant, model_data) {
 
 #' Create cross validation groups
 #'
-#' @param data Original `raw_data`
-#' @param K Number of folds
-#' @param fold_groups Grouping factor to use for the folds (obs_n or Route_Factored)
-#' @param na_singles
-#' @param strata_group
-#' @param first_year
+#' @param raw_data Original `raw_data`
+#' @param k Number of folds
+#' @param fold_groups Grouping factor to use for the folds (obs_n or
+#'   Route_Factored)
+#' @param omit_singles Whether or not to omit groups with single observations
+#' @param quiet Suppress messages
 #'
 #' @noRd
 cv_folds <- function(raw_data,
