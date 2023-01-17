@@ -168,6 +168,7 @@ assign_prov_state <- function(strata_map, min_overlap = 0.75, plot = FALSE,
     dplyr::group_by(.data$strata_name) %>%
     dplyr::summarize() %>%
     sf::st_set_agr("constant") %>%
+    sf::st_make_valid() %>%
     sf::st_intersection(ps) %>%
     dplyr::mutate(area = sf::st_area(.))
 
