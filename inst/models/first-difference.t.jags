@@ -5,7 +5,7 @@ model
 #### also corrects an error in the previous versions where n2 was calculated incorrectly (missing the intercept term)
 	for( k in 1 : ncounts )
 	{
-		Eloglambda1[k] <- obs[strat[k],obser[k]] + eta*firstyr[k] + yeareffect[strat[k],year[k]]
+		Eloglambda[k] <- obs[strat[k],obser[k]] + eta*firstyr[k] + yeareffect[strat[k],year[k]]
 	 	loglambda[k] ~ dt(Eloglambda[k], taunoise,nu)
 	 	log(lambda[k]) <- loglambda[k]
 		count[k] ~ dpois(lambda[k])
