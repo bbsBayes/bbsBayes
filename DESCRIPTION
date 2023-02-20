@@ -23,7 +23,7 @@ Imports:
   mgcv
 Depends: R (>= 3.5)
 SystemRequirements: JAGS 4.3.0 (https://sourceforge.net/projects/mcmc-jags/)
-URL: https://github.com/BrandonEdwards/bbsBayes
+URL: https://github.com/bbsBayes/bbsBayes
 NeedsCompilation: no
 Description: The North American Breeding Bird Survey (BBS) is a long-running
   program that seeks to monitor the status and trends of the breeding birds in

@@ -1,25 +1,28 @@
-citHeader("To cite the bbsBayes in publication, please use:")
-
-citEntry(
-  entry = "article",
+bibentry(bibtype = "Article",
   title = "bbsBayes: An R Package for Hierarchical Bayesian Analysis of North American Breeding Bird Survey Data",
   year = "2021",
   journal = "Journal of Open Research Software",
   volume = "9",
   issue = "1",
-  url = "https://doi.org/10.5334/jors.329",
-  author = "Edwards, Brandon PM and Smith, Adam C",
+  url = "10.5334/jors.329",
+  author = c(person(given = "Brandon P.M.",
+                    family = "Edwards"),
+             person(given = "Adam C.",
+                    family = "Smith")),
+  header = "To cite the bbsBayes in publication, please use:",
   textVersion = "Edwards, B.P.M and A.C. Smith. (2021). bbsBayes: An R Package for Hierarchical Bayesian Analysis of North American Breeding Bird Survey Data. Journal of Open Research Software 9(1), p.19. https://doi.org/10.5334/jors.329"
 )
 
-
-citHeader("To cite the Breeding Bird Survey data in publication, please use:")
-
-citEntry(
-  entry = "misc",
+bibentry(
+  bibtype = "misc",
   title = "North American Breeding Bird Survey Dataset 1966 - 2019",
   version = "2020",
   publisher = "U.S. Geological Survey, Patuxent Wildlife Research Center.",
-  author = "Pardieck, Keith L. and Ziolkowski Jr., Dave J. and Lutmerding, M. and Aponte, Veronica and Hudson, Marie-Anne R.",
+  author = c(person(family = "Pardieck",given ="Keith L."),
+             person(family = "Ziolkowski Jr.", given = "Dave J."),
+             person(family = "Lutmerding", given =  "M."),
+             person(family = "Aponte", given = "Veronica"),
+             person(family =  "Hudson", given = "Marie-Anne R.")),
+  header = "To cite the Breeding Bird Survey data in publication, please use:",
   textVersion = "Pardieck, K.L., Ziolkowski Jr., D.J., Lutmerding, M., Aponte, V.I., and Hudson, M-A.R., 2020, North American Breeding Bird Survey Dataset 1966 - 2019: U.S. Geological Survey data release, https://doi.org/10.5066/P9J6QUF6."
 )
